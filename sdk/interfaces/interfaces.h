@@ -1,0 +1,109 @@
+#pragma once
+
+#include "../definitions/ivengineclient.h"
+#include "../definitions/iinput.h"
+#include "../definitions/iclientmode.h"
+#include "../definitions/cvar.h"
+#include "../../libsigscan.h"
+#include "../../vtables.h"
+#include "createinterface.h"
+#include "../definitions/isurface.h"
+#include "../definitions/icliententitylist.h"
+#include "../definitions/ienginevgui.h"
+#include "../definitions/enginetool.h"
+#include <dlfcn.h>
+
+namespace interfaces
+{
+	inline IVEngineClient014* engine = nullptr;
+	inline IBaseClientDLL* baseClientDll = nullptr;
+	inline IClientMode* clientMode = nullptr;
+	inline ICvar* vstdlib = nullptr;
+	inline void* vgui = nullptr;
+	inline ISurface* surface = nullptr;
+	inline IClientEntityList* entitylist = nullptr;
+	inline IEngineVGui* enginevgui = nullptr;
+	inline IEngineTool* enginetool = nullptr;
+}
+
+namespace factories
+{
+	inline CreateInterfaceFn engine = nullptr;
+	inline CreateInterfaceFn client = nullptr;
+	inline CreateInterfaceFn vstdlib = nullptr;
+	inline CreateInterfaceFn vgui = nullptr;
+	inline CreateInterfaceFn surface = nullptr;
+	inline CreateInterfaceFn enginevgui = nullptr;
+};
+
+template <typename T>
+inline bool GetInterface(T*& out, CreateInterfaceFn factory, const char* name)
+{
+	if (out)
+		return true;
+
+	out = reinterpret_cast<T*>(factory(name, nullptr));
+	return out != nullptr;
+}
+
+inline bool InitializeInterfaces()
+{
+	{ // engine factory
+		void* enginelib = dlopen("./bin/linux64/engine.so", RTLD_NOLOAD | RTLD_NOW);
+		if (!enginelib)
+			return false;
+	
+		factories::engine = (CreateInterfaceFn)dlsym(enginelib, "CreateInterface");
+	}
+
+	{ // baseClientDll factory
+		void* clientlib = dlopen("./tf/bin/linux64/client.so", RTLD_NOLOAD | RTLD_NOW);
+		if (!clientlib)
+			return false;
+	
+		factories::client = (CreateInterfaceFn)dlsym(clientlib, "CreateInterface");
+	}
+
+	{ // vstdlib factory (console commands)
+		void* vstdlib = dlopen("./bin/linux64/libvstdlib.so", RTLD_NOLOAD | RTLD_NOW);
+		if (!vstdlib)
+			return false;
+	
+		factories::vstdlib = (CreateInterfaceFn)dlsym(vstdlib, "CreateInterface");
+	}
+
+	{ // vgui2 factory (paint traverse)
+		void* vgui2 = dlopen("./bin/linux64/vgui2.so", RTLD_NOLOAD | RTLD_NOW);
+		if (!vgui2)
+			return false;
+
+		factories::vgui = (CreateInterfaceFn)dlsym(vgui2, "CreateInterface");
+	}
+
+	{ // surface factory (draw library)
+		void* surface = dlopen("./bin/linux64/vguimatsurface.so", RTLD_NOLOAD | RTLD_NOW);
+		if (!surface)
+			return false;
+
+		factories::surface = (CreateInterfaceFn)dlsym(surface, "CreateInterface");
+	}
+
+	// get interfaces
+	// i should probably check if they return false
+	GetInterface(interfaces::engine, factories::engine, "VEngineClient014");
+	GetInterface(interfaces::enginevgui, factories::engine, "VEngineVGui002");
+	GetInterface(interfaces::baseClientDll, factories::client, "VClient017");
+	GetInterface(interfaces::vstdlib, factories::vstdlib, "VEngineCvar004");
+	GetInterface(interfaces::vgui, factories::vgui, "VGUI_Panel009");
+	GetInterface(interfaces::surface, factories::surface, "VGUI_Surface030");
+	GetInterface(interfaces::entitylist, factories::client, "VClientEntityList003");
+	GetInterface(interfaces::enginetool, factories::engine, "VENGINETOOL003");
+
+	{ // ClientModeShared
+		uintptr_t leaInstr = (uintptr_t)sigscan_module("client.so", "48 8D 05 ? ? ? ? 40 0F B6 F6 48 8B 38");
+		uintptr_t g_pClientMode_addr = vtable::ResolveRIP(leaInstr, 3, 7); // lea rax, [g_pClientMode]
+		interfaces::clientMode = *reinterpret_cast<IClientMode**>(g_pClientMode_addr);;
+	}
+
+	return true;
+}
