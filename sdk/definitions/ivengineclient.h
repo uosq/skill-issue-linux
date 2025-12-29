@@ -4,6 +4,7 @@
 #include <sys/types.h>
 #include "types.h"
 #include "../interfaces/createinterface.h"
+#include "../definitions/cviewsetup.h"
 
 class IMaterial;
 class model_t;
@@ -32,7 +33,6 @@ class KeyValues;
 class CGlobalVarsBase;
 class ClientClass;
 class ScreenFade_t;
-class CViewSetup;
 class ClientFrameStage_t;
 class vrect_t;
 class bf_read;

@@ -4,6 +4,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <dlfcn.h>
+#include "sdk/helpers/fonts.h"
 
 // lsp is tripping, i am using it "Included header sdk.h is not used directly (fix available)"
 
@@ -13,6 +14,8 @@ void *MainThread(void*)
 {
 	if (!InitializeInterfaces())
 		return nullptr;
+
+	fontManager.Init();
 
 	HookCreateMove();
 	HookEngineVGuiPaint();

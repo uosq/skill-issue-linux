@@ -6,6 +6,7 @@
 #include <cwchar>
 #include <string>
 #include "../sdk/classes/entity.h"
+#include "../sdk/helpers/helper.h"
 
 //using PaintTraverseFn = void (*)(IPanel* thisptr, VPANEL vguiPanel, bool forceRepaint, bool allowForce);
 using PaintTraverseFn = void (*)(IEngineVGui* thisptr, VGuiPanel_t type);
@@ -17,34 +18,21 @@ inline void HookedEngineVGuiPaint(IEngineVGui* thisptr, VGuiPanel_t type)
 {
 	originalPaintTraverse(thisptr, type);
 
-	interfaces::surface->DrawSetColor(255, 255, 255, 255);
-	interfaces::surface->DrawFilledRect(0, 0, 100, 100);
+	interfaces::surface->DrawSetColor(40, 40, 40, 255);
+	helper::draw::FilledRect(100, 100, 800, 800);
 
-	interfaces::surface->DrawSetColor(255, 0, 0, 255);
-	interfaces::surface->DrawOutlinedCircle(50, 50, 48, 64);
+	HFont font = helper::draw::GetCurrentFont();
+	helper::draw::SetFont(font);
 
-	Color color(255, 0, 0, 255);
-	interfaces::surface->DrawSetTextFont(font);
-	interfaces::surface->DrawSetTextColor(color);
-	interfaces::surface->DrawSetTextPos(100, 100);
-	interfaces::surface->DrawPrintText(L"Hello, world!", wcslen(L"Hello, world"));
+	/*int width, height;
+	std::wstring text = helper::draw::ConvertStringToWChar("Hello, world!");
+	interfaces::surface->GetTextSize(font, text.c_str(), width, height);
 
-	if (int maxclients = interfaces::enginetool->GetMaxClients())
-	{
-		for (int i = 0; i < maxclients; i++)
-		{
-			IClientEntity* entity = interfaces::entitylist->GetClientEntity(i);
-			if (!entity)
-				continue;
-		}
-	}
+	helper::draw::Text(50, 50, (Color){255, 255, 255, 255}, "Hello, world!\n");*/
 }
 
 inline void HookEngineVGuiPaint()
 {
-	font = interfaces::surface->CreateFont();
-	interfaces::surface->SetFontGlyphSet(font, "Verdana", 16, 400, 0, 0, 0);
-
 	auto vt = vtable::get(interfaces::enginevgui);
 	originalPaintTraverse = vtable::hook(vt, 15, HookedEngineVGuiPaint);
 	
@@ -54,5 +42,7 @@ inline void HookEngineVGuiPaint()
 		gcc/clang puts the constructor&destructor at the start of the class
 	*/
 
-	interfaces::vstdlib->ConsolePrintf("Hooked EngineVGui::Paint!\n");
+	Color_t color;
+	color.SetRGB(100, 255, 100, 255);
+	helper::console::ColoredPrint("EngineVGui::Paint hooked\n", color);
 }
