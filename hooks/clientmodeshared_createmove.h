@@ -1,6 +1,5 @@
 #pragma once
 
-#include "../sdk/sdk.h"
 #include "../sdk/interfaces/interfaces.h"
 #include "../sdk/classes/entity.h"
 #include "../sdk/classes/player.h"
@@ -18,16 +17,13 @@ inline bool HookedCreateMove (IClientMode* thisptr, float sample_frametime, CUse
 	Vector originalAngles = pCmd->viewangles;
 
 	// populate movement
-	originalCreateMove(thisptr, sample_frametime, pCmd);
-
-	Player* pLocal = helper::engine::GetLocalPlayer();
-	helper::console::Print((std::to_string(pLocal->m_iTeamNum()) + "\n").c_str());
+	int ret = originalCreateMove(thisptr, sample_frametime, pCmd);
 
 	/*Vector targetAngles = Vector(0, 0, 0);
 	pCmd->viewangles = targetAngles;
-
-	SDK::FixMovement(pCmd, originalAngles, targetAngles);*/
-	// Return false so the engine doesn't apply it to engine->SetViewAngles; (this is stupid)
+	
+	helper::engine::FixMovement(pCmd, originalAngles, targetAngles);
+	// Return false so the engine doesn't apply it to engine->SetViewAngles; (this is stupid)*/
 	return false;
 }
 

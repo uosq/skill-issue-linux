@@ -1,7 +1,9 @@
 #pragma once
 
+#include "ihandleentity.h"
 #include "ivengineclient.h"
 #include "types.h"
+#include "eclassid.h"
 
 struct Ray_t;
 class CGameTrace;
@@ -63,16 +65,7 @@ class IPVSNotify
 {
 public:
 	virtual void OnPVSStatusChanged( bool bInPVS ) = 0;
-};
-
-// An IHandleEntity-derived class can go into an entity list and use ehandles.
-class IHandleEntity
-{
-public:
-	virtual ~IHandleEntity() {}
-	virtual void SetRefEHandle( const CBaseHandle &handle ) = 0;
-	virtual const CBaseHandle& GetRefEHandle() const = 0;
-};
+};;
 
 // This is the client's version of IUnknown. We may want to use a QueryInterface-like
 // mechanism if this gets big.
@@ -168,6 +161,14 @@ public:
 	virtual void			SetDestroyedOnRecreateEntities( void ) = 0;
 
 	virtual void			OnDataUnchangedInPVS() = 0;
+
+	inline ETFClassID GetClassID()
+	{
+		if (auto pClientClass = GetClientClass())
+			return static_cast<ETFClassID>(pClientClass->classID);
+
+		return static_cast<ETFClassID>(0);
+	}
 };
 
 class CClientThinkHandlePtr;

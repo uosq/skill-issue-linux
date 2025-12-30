@@ -1,8 +1,5 @@
 #pragma once
 
-// Source: https://github.com/Doctor-Coomer/TeamFortress2-Linux-Internal/blob/main/classes/entity.hpp
-// yes, I have basically pasted this but changed the names
-
 #include <string>
 #include <string.h>
 #include <cstdint>
@@ -11,183 +8,57 @@
 #include "../definitions/icliententity.h"
 #include "../netvars/netvar.h"
 
-// https://github.com/rei-2/Amalgam/blob/c1c6bf64d739538b48a301ddc5e1a988cb9b479c/Amalgam/src/SDK/Definitions/Definitions.h#L1032
-enum class_id {
-  AMMO_OR_HEALTH_PACK = 1,
-  DISPENSER = 86,
-  SENTRY = 88,
-  TELEPORTER = 89,
-  ARROW = 122,
-  PLAYER = 247,
-  ROCKET = 264,
-  PILL_OR_STICKY = 217,
-  FLARE = 257,
-  CROSSBOW_BOLT = 259,
-  SNIPER_DOT = 118,
-  CAPTURE_FLAG = 26,
-  OBJECTIVE_RESOURCE = 235
-};
+#define MULTIPLAYER_BACKUP 90
 
-enum tf_team {
-  TEAM_UNKNOWN = 0,
-  TEAM_SPECTATOR,
-  TEAM_RED,
-  TEAM_BLU
-};
+//typedef CHandle<CBaseEntity> EHANDLE;
 
-enum pickup_type {
-  UNKNOWN,
-  MEDKIT,
-  AMMOPACK,
-};
-
-enum entity_flags {
-    FL_ONGROUND = (1 << 0),
-    FL_DUCKING = (1 << 1),
-    FL_WATERJUMP = (1 << 2),
-    FL_ONTRAIN = (1 << 3),
-    FL_INRAIN = (1 << 4),
-    FL_FROZEN = (1 << 5),
-    FL_ATCONTROLS = (1 << 6),
-    FL_CLIENT = (1 << 7),
-    FL_FAKECLIENT = (1 << 8),
-    FL_INWATER = (1 << 9),
-    FL_FLY = (1 << 10),
-    FL_SWIM = (1 << 11),
-    FL_CONVEYOR = (1 << 12),
-    FL_NPC = (1 << 13),
-    FL_GODMODE = (1 << 14),
-    FL_NOTARGET = (1 << 15),
-    FL_AIMTARGET = (1 << 16),
-    FL_PARTIALGROUND = (1 << 17),
-    FL_STATICPROP = (1 << 18),
-    FL_GRAPHED = (1 << 19),
-    FL_GRENADE = (1 << 20),
-    FL_STEPMOVEMENT = (1 << 21),
-    FL_DONTTOUCH = (1 << 22),
-    FL_BASEVELOCITY = (1 << 23),
-    FL_WORLDBRUSH = (1 << 24),
-    FL_OBJECT = (1 << 25),
-    FL_KILLME = (1 << 26),
-    FL_ONFIRE = (1 << 27),
-    FL_DISSOLVING = (1 << 28),
-    FL_TRANSRAGDOLL = (1 << 29),
-    FL_UNBLOCKABLE_BY_PLAYER = (1 << 30)
-};
-
-class Entity {
+class CBaseEntity : public IClientEntity
+{
 public:
-	NETVAR(m_iTeamNum, "CBaseEntity->m_iTeamNum", int)
+	NETVAR(m_flAnimTime, "CBaseEntity->m_flAnimTime", float);
+	NETVAR(m_flSimulationTime, "CBaseEntity->m_flSimulationTime", float);
+	NETVAR(m_ubInterpolationFrame, "CBaseEntity->m_ubInterpolationFrame", int);
+	NETVAR(m_vecOrigin, "CBaseEntity->m_vecOrigin", Vec3);
+	NETVAR(m_angRotation, "CBaseEntity->m_angRotation", Vec3);
+	NETVAR(m_nModelIndex, "CBaseEntity->m_nModelIndex", int);
+	NETVAR(m_fEffects, "CBaseEntity->m_fEffects", int);
+	NETVAR(m_nRenderMode, "CBaseEntity->m_nRenderMode", int);
+	NETVAR(m_nRenderFX, "CBaseEntity->m_nRenderFX", int);
+	NETVAR(m_clrRender, "CBaseEntity->m_clrRender", Color);
+	NETVAR(m_iTeamNum, "CBaseEntity->m_iTeamNum", int);
+	NETVAR(m_CollisionGroup, "CBaseEntity->m_CollisionGroup", int);
+	NETVAR(m_flGravity, "CBaseEntity->m_flGravity", float);
+	NETVAR(m_flElasticity, "CBaseEntity->m_flElasticity", float);
+	NETVAR(m_flShadowCastDistance, "CBaseEntity->m_flShadowCastDistance", float);
+	NETVAR(m_hOwnerEntity, "CBaseEntity->m_hOwnerEntity", CBaseEntity*);
+	NETVAR(m_hEffectEntity, "CBaseEntity->m_hEffectEntity", CBaseEntity*);
+	NETVAR(moveparent, "CBaseEntity->moveparent", int);
+	NETVAR(m_iParentAttachment, "CBaseEntity->m_iParentAttachment", int);
+	NETVAR(m_Collision, "CBaseEntity->m_Collision", void*);
+	NETVAR(m_vecMinsPreScaled, "CBaseEntity->m_vecMinsPreScaled", Vec3);
+	NETVAR(m_vecMaxsPreScaled, "CBaseEntity->m_vecMaxsPreScaled", Vec3);
+	NETVAR(m_vecMins, "CBaseEntity->m_vecMins", Vec3);
+	NETVAR(m_vecMaxs, "CBaseEntity->m_vecMaxs", Vec3);
+	NETVAR(m_nSolidType, "CBaseEntity->m_nSolidType", int);
+	NETVAR(m_usSolidFlags, "CBaseEntity->m_usSolidFlags", int);
+	NETVAR(m_nSurroundType, "CBaseEntity->m_nSurroundType", int);
+	NETVAR(m_triggerBloat, "CBaseEntity->m_triggerBloat", int);
+	NETVAR(m_bUniformTriggerBloat, "CBaseEntity->m_bUniformTriggerBloat", bool);
+	NETVAR(m_vecSpecifiedSurroundingMinsPreScaled, "CBaseEntity->m_vecSpecifiedSurroundingMinsPreScaled", Vec3);
+	NETVAR(m_vecSpecifiedSurroundingMaxsPreScaled, "CBaseEntity->m_vecSpecifiedSurroundingMaxsPreScaled", Vec3);
+	NETVAR(m_vecSpecifiedSurroundingMins, "CBaseEntity->m_vecSpecifiedSurroundingMins", Vec3);
+	NETVAR(m_vecSpecifiedSurroundingMaxs, "CBaseEntity->m_vecSpecifiedSurroundingMaxs", Vec3);
+	NETVAR(m_iTextureFrameIndex, "CBaseEntity->m_iTextureFrameIndex", int);
+	NETVAR(m_PredictableID, "CBaseEntity->m_PredictableID", int);
+	NETVAR(m_bIsPlayerSimulated, "CBaseEntity->m_bIsPlayerSimulated", bool);
+	NETVAR(m_bSimulatedEveryTick, "CBaseEntity->m_bSimulatedEveryTick", bool);
+	NETVAR(m_bAnimatedEveryTick, "CBaseEntity->m_bAnimatedEveryTick", bool);
+	NETVAR(m_bAlternateSorting, "CBaseEntity->m_bAlternateSorting", bool);
+	NETVAR(m_nModelIndexOverrides, "CBaseEntity->m_nModelIndexOverrides", void*);
+	NETVAR(movetype, "CBaseEntity->movetype", int);
 
-	int get_owner_entity_handle(void) {
-		return *(int*)(this + 0x754);
-	}
-
-	// does this even work?
-	Entity* get_owner_entity(void) {
-		return reinterpret_cast<Entity*>(interfaces::entitylist->GetClientEntity(this->get_owner_entity_handle()));
-	}
-  
-	Vector get_origin(void) {
-	// x + 0x328, y + 0x332, z + 0x346
-		return *(Vec3*)(this + 0x328);
-	}
-
-	int get_ent_flags(void) {
-		return *(int*)(this + 0x460);
-	}
-  
-	// TODO: Substitute "void*" with real class type
-	void* get_networkable(void) {
-		return (void*)(this + 0x10);
-	}
-
-	void* get_renderable(void) {
-		return (void*)(this + 0x8);
-	}
-
-	enum tf_team get_team(void)  {
-		return (enum tf_team)*(int*)(this + 0xDC);
-	}
-  
-	int get_index(void) {
-		void* networkable = get_networkable();
-		void** vtable = *(void***)networkable;
-
-		int (*get_index_fn)(void*) = (int (*)(void*))vtable[9];
-
-		return get_index_fn(networkable);
-	}
-  
-	const char* get_model_name(void) {
-		uintptr_t base_class = *(uintptr_t*)(this + 0x88);
-		if (base_class == (uintptr_t)0) return "";
-	
-		return (const char*)*(unsigned long*)(base_class + 0x8);
-	}
-  
-	bool is_dormant(void) {
-		void* networkable = get_networkable();
-		void** vtable = *(void ***)networkable;
-
-		bool (*is_dormant_fn)(void*) = (bool (*)(void*))vtable[8];
-
-		return is_dormant_fn(networkable);
-	}  
-  
-	void* get_client_class(void) {
-		void* networkable = get_networkable();
-		void** vtable = *(void ***)networkable;
-
-		void* (*get_client_class_fn)(void*) = (void* (*)(void*))vtable[2];
-
-		return get_client_class_fn(networkable);
-	}
-  
-	int get_class_id(void) {
-	void* client_class = get_client_class();
-		return *(int*)((unsigned long)(client_class) + 0x28);
-	}
-
-	int get_tickbase(void) {
-		return *(int*)(this + 0x1718);
-	}
-
-	void set_tickbase(int tickbase) {
-		*(int*)(this + 0x1718) = tickbase;
-	}
-
-  
-	float get_simulation_time(void) {
-		return *(float*)(this + 0x98);
-	}
-  
-	bool is_building(void) {
-		switch (this->get_class_id()) {
-			case class_id::SENTRY:
-			case class_id::DISPENSER:
-			case class_id::TELEPORTER:
-			return true;
-		}
-
-		return false;
-	}
-
-  
-	enum pickup_type get_pickup_type(void) {
-		const char* model_name = get_model_name();
-    
-		if (strstr(model_name, "models/items/ammopack")) {
-			return pickup_type::AMMOPACK;
-		}
-
-		if (strstr(model_name, "models/items/medkit") ||
-		strstr(model_name, "models/props_medieval/medieval_meat.mdl") ||
-		strstr(model_name, "models/props_halloween/halloween_medkit"))
-		{
-			return pickup_type::MEDKIT;
-		}
-
-		return pickup_type::UNKNOWN;
+	int GetIndex()
+	{
+		return GetClientNetworkable()->entindex();
 	}
 };

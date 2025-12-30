@@ -1,0 +1,2607 @@
+
+[CWeaponIFMSteadyCam]
+
+[CWeaponIFMBaseCamera]
+CWeaponIFMBaseCamera->m_flRenderAspectRatio = 0x10d8
+CWeaponIFMBaseCamera->m_flRenderFOV = 0x10dc
+CWeaponIFMBaseCamera->m_flRenderArmLength = 0x10e0
+CWeaponIFMBaseCamera->m_vecRenderPosition = 0x10e4
+CWeaponIFMBaseCamera->m_angRenderAngles = 0x10f0
+
+[CWeaponIFMBase]
+
+[CMannVsMachineStats]
+CMannVsMachineStats->m_iCurrentWaveIdx = 0x810
+CMannVsMachineStats->m_iServerWaveID = 0x814
+CMannVsMachineStats->nCreditsDropped = 0x7b8
+CMannVsMachineStats->nCreditsAcquired = 0x7bc
+CMannVsMachineStats->nCreditsBonus = 0x7c0
+CMannVsMachineStats->nPlayerDeaths = 0x7c4
+CMannVsMachineStats->nBuyBacks = 0x7c8
+CMannVsMachineStats->m_runningTotalWaveStats = 0x7b0
+CMannVsMachineStats->nCreditsDropped = 0x7d8
+CMannVsMachineStats->nCreditsAcquired = 0x7dc
+CMannVsMachineStats->nCreditsBonus = 0x7e0
+CMannVsMachineStats->nPlayerDeaths = 0x7e4
+CMannVsMachineStats->nBuyBacks = 0x7e8
+CMannVsMachineStats->m_previousWaveStats = 0x7d0
+CMannVsMachineStats->nCreditsDropped = 0x7f8
+CMannVsMachineStats->nCreditsAcquired = 0x7fc
+CMannVsMachineStats->nCreditsBonus = 0x800
+CMannVsMachineStats->nPlayerDeaths = 0x804
+CMannVsMachineStats->nBuyBacks = 0x808
+CMannVsMachineStats->m_currentWaveStats = 0x7f0
+CMannVsMachineStats->m_iCurrencyCollectedForRespec = 0x890
+CMannVsMachineStats->m_nRespecsAwardedInWave = 0x894
+
+[CTFTankBoss]
+
+[CTFBaseBoss]
+CTFBaseBoss->m_lastHealthPercentage = 0x1218
+
+[CBossAlpha]
+CBossAlpha->m_isNuking = 0x120c
+
+[NextBotCombatCharacter]
+
+[CTFBotHintEngineerNest]
+CTFBotHintEngineerNest->m_bHasActiveTeleporter = 0x7ae
+
+[CBotNPCMinion]
+CBotNPCMinion->m_stunTarget = 0x120c
+
+[CBotNPC]
+CBotNPC->m_laserTarget = 0x120c
+CBotNPC->m_isNuking = 0x1228
+
+[CTFProjectile_SpellKartBats]
+
+[CTFProjectile_SpellKartOrb]
+
+[CTFHellZap]
+
+[CTFProjectile_SpellLightningOrb]
+
+[CTFProjectile_SpellTransposeTeleport]
+
+[CTFProjectile_SpellMeteorShower]
+
+[CTFProjectile_SpellSpawnBoss]
+
+[CTFProjectile_SpellMirv]
+
+[CTFProjectile_SpellPumpkin]
+
+[CTFProjectile_SpellSpawnHorde]
+
+[CTFProjectile_SpellSpawnZombie]
+
+[CTFProjectile_SpellBats]
+
+[CTFProjectile_SpellFireball]
+
+[CTFSpellBook]
+CTFSpellBook->m_iSelectedSpellIndex = 0x10d4
+CTFSpellBook->m_iSpellCharges = 0x10d8
+CTFSpellBook->m_flTimeNextSpell = 0x10d0
+CTFSpellBook->m_bFiredAttack = 0x10dc
+
+[CHightower_TeleportVortex]
+CHightower_TeleportVortex->m_iState = 0xc20
+
+[CTeleportVortex]
+CTeleportVortex->m_iState = 0xc20
+
+[CZombie]
+CZombie->m_flHeadScale = 0x120c
+
+[CMerasmusDancer]
+
+[CMerasmus]
+CMerasmus->m_bRevealed = 0x1259
+CMerasmus->m_bIsDoingAOEAttack = 0x125a
+CMerasmus->m_bStunned = 0x125b
+
+[CEyeballBoss]
+CEyeballBoss->m_lookAtSpot = 0x120c
+CEyeballBoss->m_attitude = 0x1218
+
+[CHeadlessHatman]
+
+[CTFRocketPack]
+CTFRocketPack->m_flInitLaunchTime = 0x10a8
+CTFRocketPack->m_flLaunchTime = 0x10ac
+CTFRocketPack->m_flToggleEndTime = 0x10b0
+CTFRocketPack->m_bEnabled = 0x10b5
+
+[CTFProjectile_MechanicalArmOrb]
+
+[CTFMechanicalArm]
+
+[CTFWearableCampaignItem]
+CTFWearableCampaignItem->m_nState = 0xed0
+
+[CTFWearableLevelableItem]
+CTFWearableLevelableItem->m_unLevel = 0xed0
+
+[CTFWearableRazorback]
+
+[CTFWearableDemoShield]
+
+[CTFFlareGun_Revenge]
+CTFFlareGun_Revenge->m_fLastExtinguishTime = 0x10b4
+
+[CTFFlareGun]
+CTFFlareGun->m_flChargeBeginTime = 0x1098
+
+[CTFBaseRocket]
+CTFBaseRocket->m_vInitialVelocity = 0xc10
+CTFBaseRocket->m_vecOrigin = 0x448
+CTFBaseRocket->m_angRotation = 0x454
+CTFBaseRocket->m_iDeflected = 0xc1c
+CTFBaseRocket->m_hLauncher = 0xc28
+
+[CTFWeaponBaseMelee]
+
+[CTFWeaponBaseGun]
+
+[CTFWeaponBaseMerasmusGrenade]
+
+[CTFWeaponBaseGrenadeProj]
+CTFWeaponBaseGrenadeProj->m_vInitialVelocity = 0xc38
+CTFWeaponBaseGrenadeProj->m_bCritical = 0xc54
+CTFWeaponBaseGrenadeProj->m_iDeflected = 0xc48
+CTFWeaponBaseGrenadeProj->m_vecOrigin = 0x448
+CTFWeaponBaseGrenadeProj->m_angRotation = 0x454
+CTFWeaponBaseGrenadeProj->m_hDeflectOwner = 0xc4c
+
+[CTFWeaponBase]
+CTFWeaponBase->m_bLowered = 0xf98
+CTFWeaponBase->m_iReloadMode = 0xf74
+CTFWeaponBase->m_bResetParity = 0x103c
+CTFWeaponBase->m_bReloadedThroughAnimEvent = 0x1054
+CTFWeaponBase->m_bDisguiseWeapon = 0x1060
+CTFWeaponBase->m_flLastCritCheckTime = 0xfa8
+CTFWeaponBase->m_flReloadPriorNextFire = 0xf78
+CTFWeaponBase->m_flLastFireTime = 0x1064
+CTFWeaponBase->m_flEffectBarRegenTime = 0xf6c
+CTFWeaponBase->m_flObservedCritChance = 0x1070
+CTFWeaponBase->LocalActiveTFWeaponData = 0x0
+CTFWeaponBase->NonLocalTFWeaponData = 0x0
+CTFWeaponBase->m_flEnergy = 0x1058
+CTFWeaponBase->m_hExtraWearable = 0x1068
+CTFWeaponBase->m_hExtraWearableViewModel = 0x106c
+CTFWeaponBase->m_bBeingRepurposedForTaunt = 0x1074
+CTFWeaponBase->m_nKillComboClass = 0x1078
+CTFWeaponBase->m_nKillComboCount = 0x107c
+CTFWeaponBase->m_flInspectAnimEndTime = 0x1080
+CTFWeaponBase->m_nInspectStage = 0x1084
+CTFWeaponBase->m_iConsecutiveShots = 0x105c
+
+[CTFWearableRobotArm]
+
+[CTFRobotArm]
+CTFRobotArm->m_hRobotArm = 0x10a8
+
+[CTFWrench]
+
+[CTFProjectile_ThrowableBreadMonster]
+
+[CTFProjectile_ThrowableBrick]
+
+[CTFProjectile_ThrowableRepel]
+
+[CTFProjectile_Throwable]
+
+[CTFThrowable]
+CTFThrowable->m_flChargeBeginTime = 0x10a8
+
+[CTFSyringeGun]
+
+[CTFKatana]
+CTFKatana->m_bIsBloody = 0x10ac
+
+[CTFSword]
+
+[CSniperDot]
+CSniperDot->m_flChargeStartTime = 0x7e0
+
+[CTFSniperRifleClassic]
+CTFSniperRifleClassic->m_bCharging = 0x10b4
+
+[CTFSniperRifleDecap]
+
+[CTFSniperRifle]
+CTFSniperRifle->m_flChargedDamage = 0x109c
+CTFSniperRifle->SniperRifleLocalData = 0x0
+
+[CTFChargedSMG]
+CTFChargedSMG->m_flMinicritCharge = 0x1098
+
+[CTFSMG]
+
+[CTFSlap]
+CTFSlap->m_bFirstHit = 0x10a6
+CTFSlap->m_nNumKills = 0x10a8
+
+[CTFShovel]
+
+[CTFShotgunBuildingRescue]
+
+[CTFPEPBrawlerBlaster]
+
+[CTFSodaPopper]
+
+[CTFShotgun_Revenge]
+
+[CTFScatterGun]
+
+[CTFShotgun_Pyro]
+
+[CTFShotgun_HWG]
+
+[CTFShotgun_Soldier]
+
+[CTFShotgun]
+
+[CTFCrossbow]
+CTFCrossbow->m_flRegenerateDuration = 0x10a0
+CTFCrossbow->m_flLastUsedTimestamp = 0x10a4
+
+[CTFRocketLauncher_Mortar]
+
+[CTFRocketLauncher_AirStrike]
+
+[CTFRocketLauncher_DirectHit]
+
+[CTFRocketLauncher]
+
+[CTFRevolver]
+
+[CTFDRGPomson]
+
+[CTFRaygun]
+CTFRaygun->m_bUseNewProjectileCode = 0x10a5
+
+[CTFPistol_ScoutSecondary]
+
+[CTFPistol_ScoutPrimary]
+
+[CTFPistol_Scout]
+
+[CTFPistol]
+
+[CTFPipebombLauncher]
+CTFPipebombLauncher->m_iPipebombCount = 0x10a0
+CTFPipebombLauncher->m_flChargeBeginTime = 0x10d8
+CTFPipebombLauncher->PipebombLauncherLocalData = 0x0
+
+[CTFWeaponPDA_Spy]
+
+[CTFWeaponPDA_Engineer_Destroy]
+
+[CTFWeaponPDA_Engineer_Build]
+
+[CTFWeaponPDAExpansion_Teleporter]
+
+[CTFWeaponPDAExpansion_Dispenser]
+
+[CTFWeaponPDA]
+
+[CTFParticleCannon]
+CTFParticleCannon->m_flChargeBeginTime = 0x10a0
+CTFParticleCannon->m_iChargeEffect = 0x10a4
+
+[CTFParachute_Secondary]
+
+[CTFParachute_Primary]
+
+[CTFParachute]
+
+[CTFMinigun]
+CTFMinigun->m_iWeaponState = 0x1098
+CTFMinigun->m_bCritShot = 0x109c
+
+[CTFMedigunShield]
+
+[CWeaponMedigun]
+CWeaponMedigun->m_hHealingTarget = 0x1098
+CWeaponMedigun->m_bHealing = 0x10a1
+CWeaponMedigun->m_bAttacking = 0x10a2
+CWeaponMedigun->m_bChargeRelease = 0x10b9
+CWeaponMedigun->m_bHolstered = 0x10b8
+CWeaponMedigun->m_nChargeResistType = 0x10c0
+CWeaponMedigun->m_hLastHealingTarget = 0x109c
+CWeaponMedigun->m_flChargeLevel = 0x10bc
+CWeaponMedigun->LocalTFWeaponMedigunData = 0x0
+CWeaponMedigun->m_flChargeLevel = 0x10bc
+CWeaponMedigun->NonLocalTFWeaponMedigunData = 0x0
+
+[CTFLunchBox_Drink]
+
+[CTFLunchBox]
+CTFLunchBox->m_bBroken = 0x109c
+
+[CLaserDot]
+
+[CTFLaserPointer]
+
+[CTFKnife]
+CTFKnife->m_bReadyToBackstab = 0x10b4
+CTFKnife->m_bKnifeExists = 0x10b5
+CTFKnife->m_flKnifeRegenerateDuration = 0x10b8
+CTFKnife->m_flKnifeMeltTimestamp = 0x10bc
+
+[CTFGasManager]
+
+[CTFProjectile_JarGas]
+
+[CTFJarGas]
+
+[CTFProjectile_Cleaver]
+
+[CTFProjectile_JarMilk]
+
+[CTFProjectile_Jar]
+
+[CTFCleaver]
+
+[CTFJarMilk]
+
+[CTFJar]
+
+[CTFWeaponInvis]
+
+[CTFCannon]
+
+[CTFGrenadeLauncher]
+CTFGrenadeLauncher->m_flDetonateTime = 0x10a4
+CTFGrenadeLauncher->m_iCurrentTube = 0x10a8
+CTFGrenadeLauncher->m_iGoalTube = 0x10ac
+
+[CTFGrenadePipebombProjectile]
+CTFGrenadePipebombProjectile->m_bTouched = 0xc55
+CTFGrenadePipebombProjectile->m_iType = 0xc58
+CTFGrenadePipebombProjectile->m_hLauncher = 0xc44
+CTFGrenadePipebombProjectile->m_bDefensiveBomb = 0xc6c
+
+[CTFGrapplingHook]
+CTFGrapplingHook->m_hProjectile = 0x10b0
+
+[CTFFlameRocket]
+
+[CTFFlameThrower]
+CTFFlameThrower->m_iWeaponState = 0x1098
+CTFFlameThrower->m_bCritFire = 0x109c
+CTFFlameThrower->m_bHitTarget = 0x109d
+CTFFlameThrower->m_flChargeBeginTime = 0x10a8
+CTFFlameThrower->m_iActiveFlames = 0x10a0
+CTFFlameThrower->m_iDamagingFlames = 0x10a4
+CTFFlameThrower->m_hFlameManager = 0x10b0
+CTFFlameThrower->m_bHasHalloweenSpell = 0x10b4
+CTFFlameThrower->LocalFlameThrowerData = 0x0
+
+[CTFFists]
+
+[CTFFireAxe]
+
+[CTFWeaponFlameBall]
+CTFWeaponFlameBall->m_flRechargeScale = 0x1368
+
+[CTFCompoundBow]
+CTFCompoundBow->m_bArrowAlight = 0x10e1
+CTFCompoundBow->m_bNoFire = 0x10e0
+
+[CTFClub]
+
+[CTFBuffItem]
+
+[CTFStickBomb]
+CTFStickBomb->m_iDetonated = 0x10a8
+
+[CTFBreakableSign]
+
+[CTFBottle]
+
+[CTFBreakableMelee]
+CTFBreakableMelee->m_bBroken = 0x10a6
+
+[CTFBonesaw]
+
+[CTFBall_Ornament]
+
+[CTFStunBall]
+
+[CTFBat_Giftwrap]
+
+[CTFBat_Wood]
+
+[CTFBat_Fish]
+
+[CTFBat]
+
+[CTFDroppedWeapon]
+CTFDroppedWeapon->m_iItemDefinitionIndex = 0xc5c
+CTFDroppedWeapon->m_iEntityLevel = 0xc64
+CTFDroppedWeapon->m_iItemIDHigh = 0xc70
+CTFDroppedWeapon->m_iItemIDLow = 0xc74
+CTFDroppedWeapon->m_iAccountID = 0xc78
+CTFDroppedWeapon->m_iEntityQuality = 0xc60
+CTFDroppedWeapon->m_bInitialized = 0xce4
+CTFDroppedWeapon->m_bOnlyIterateItemViewAttributes = 0xd60
+CTFDroppedWeapon->m_Attributes = 0xd00
+CTFDroppedWeapon->m_AttributeList = 0xd00
+CTFDroppedWeapon->m_iTeamNumber = 0xce0
+CTFDroppedWeapon->m_Attributes = 0xd30
+CTFDroppedWeapon->m_NetworkedDynamicAttributesForDemos = 0xd30
+CTFDroppedWeapon->m_Item = 0xc18
+CTFDroppedWeapon->m_flChargeLevel = 0xd68
+
+[CTFWeaponSapper]
+CTFWeaponSapper->m_flChargeBeginTime = 0x10d8
+
+[CTFWeaponBuilder]
+CTFWeaponBuilder->m_iBuildState = 0x1098
+CTFWeaponBuilder->m_iObjectType = 0x109c
+CTFWeaponBuilder->m_hObjectBeingBuilt = 0x10c0
+CTFWeaponBuilder->m_aBuildableObjectTypes = 0x10cc
+CTFWeaponBuilder->BuilderLocalData = 0x0
+CTFWeaponBuilder->m_iObjectMode = 0x10a0
+CTFWeaponBuilder->m_flWheatleyTalkingUntil = 0x10c8
+
+[C_TFWeaponBuilder]
+C_TFWeaponBuilder->m_iBuildState = 0x1098
+C_TFWeaponBuilder->m_iObjectType = 0x109c
+C_TFWeaponBuilder->m_hObjectBeingBuilt = 0x10c0
+C_TFWeaponBuilder->m_aBuildableObjectTypes = 0x10cc
+C_TFWeaponBuilder->BuilderLocalData = 0x0
+C_TFWeaponBuilder->m_iObjectMode = 0x10a0
+C_TFWeaponBuilder->m_flWheatleyTalkingUntil = 0x10c8
+
+[CTFProjectile_Rocket]
+CTFProjectile_Rocket->m_bCritical = 0xc2c
+
+[CTFProjectile_Flare]
+CTFProjectile_Flare->m_bCritical = 0xc2c
+
+[CTFProjectile_EnergyRing]
+
+[CTFProjectile_EnergyBall]
+CTFProjectile_EnergyBall->m_bChargedShot = 0xc38
+CTFProjectile_EnergyBall->m_vColor1 = 0xc3c
+CTFProjectile_EnergyBall->m_vColor2 = 0xc48
+
+[CTFProjectile_GrapplingHook]
+
+[CTFProjectile_HealingBolt]
+
+[CTFProjectile_Arrow]
+CTFProjectile_Arrow->m_bArrowAlight = 0xc35
+CTFProjectile_Arrow->m_bCritical = 0xc36
+CTFProjectile_Arrow->m_iProjectileType = 0xc48
+
+[CTFPlayerDestructionLogic]
+CTFPlayerDestructionLogic->m_hRedTeamLeader = 0x8f4
+CTFPlayerDestructionLogic->m_hBlueTeamLeader = 0x8f8
+CTFPlayerDestructionLogic->m_iszCountdownImage = 0x8fd
+CTFPlayerDestructionLogic->m_bUsingCountdownImage = 0x8fc
+
+[CPlayerDestructionDispenser]
+
+[CRobotDispenser]
+
+[CTFRobotDestruction_Robot]
+CTFRobotDestruction_Robot->m_iHealth = 0x11ec
+CTFRobotDestruction_Robot->m_iMaxHealth = 0x11f0
+CTFRobotDestruction_Robot->m_eType = 0x1274
+
+[CTFRobotDestructionLogic]
+CTFRobotDestructionLogic->m_nMaxPoints = 0x7b4
+CTFRobotDestructionLogic->m_nBlueScore = 0x7c4
+CTFRobotDestructionLogic->m_nRedScore = 0x7c8
+CTFRobotDestructionLogic->m_nBlueTargetPoints = 0x7cc
+CTFRobotDestructionLogic->m_nRedTargetPoints = 0x7d0
+CTFRobotDestructionLogic->m_flBlueTeamRespawnScale = 0x7d4
+CTFRobotDestructionLogic->m_flRedTeamRespawnScale = 0x7d8
+CTFRobotDestructionLogic->m_flBlueFinaleEndTime = 0x7bc
+CTFRobotDestructionLogic->m_flRedFinaleEndTime = 0x7c0
+CTFRobotDestructionLogic->m_flFinaleLength = 0x7b8
+CTFRobotDestructionLogic->m_szResFile = 0x7dc
+CTFRobotDestructionLogic->m_eWinningMethod = 0x8e0
+CTFRobotDestructionLogic->m_flCountdownEndTime = 0x8f0
+
+[CTFRobotDestruction_RobotGroup]
+CTFRobotDestruction_RobotGroup->m_pszHudIcon = 0x7bc
+CTFRobotDestruction_RobotGroup->m_iTeamNum = 0x7b8
+CTFRobotDestruction_RobotGroup->m_nGroupNumber = 0x8c0
+CTFRobotDestruction_RobotGroup->m_nState = 0x8c4
+CTFRobotDestruction_RobotGroup->m_flRespawnStartTime = 0x8c8
+CTFRobotDestruction_RobotGroup->m_flRespawnEndTime = 0x8cc
+CTFRobotDestruction_RobotGroup->m_flLastAttackedTime = 0x8d0
+
+[CTFRobotDestruction_RobotSpawn]
+
+[CTFMinigameLogic]
+CTFMinigameLogic->m_hActiveMinigame = 0x7b0
+
+[CTFHalloweenMinigame_FallingPlatforms]
+
+[CTFHalloweenMinigame]
+
+[CTFMiniGame]
+CTFMiniGame->m_nMinigameTeamScore = 0x8c0
+CTFMiniGame->m_nMaxScoreForMiniGame = 0x8bc
+CTFMiniGame->m_pszHudResFile = 0x7b8
+CTFMiniGame->m_eScoringType = 0x8d0
+
+[CTFPumpkinBomb]
+
+[CTFGenericBomb]
+
+[CTFViewModel]
+
+[CTFProjectile_BallOfFire]
+CTFProjectile_BallOfFire->m_vecInitialVelocity = 0xc5c
+CTFProjectile_BallOfFire->m_vecSpawnOrigin = 0xc50
+
+[CTFBaseProjectile]
+CTFBaseProjectile->m_vInitialVelocity = 0xc18
+CTFBaseProjectile->m_hLauncher = 0xc28
+
+[CTFPointManager]
+CTFPointManager->m_nRandomSeed = 0x850
+CTFPointManager->m_unNextPointIndex = 0x8cc
+CTFPointManager->m_nSpawnTime = 0x854
+
+[CTFPowerupBottle]
+CTFPowerupBottle->m_bActive = 0xece
+CTFPowerupBottle->m_usNumCharges = 0xecf
+
+[CBaseObjectUpgrade]
+
+[CTFItem]
+
+[CHalloweenSoulPack]
+CHalloweenSoulPack->m_hTarget = 0x7b0
+CHalloweenSoulPack->m_vecPreCurvePos = 0x7b8
+CHalloweenSoulPack->m_vecStartCurvePos = 0x7c4
+CHalloweenSoulPack->m_flDuration = 0x7d0
+
+[CTFTauntProp]
+
+[CMonsterResource]
+CMonsterResource->m_iBossHealthPercentageByte = 0x7b0
+CMonsterResource->m_iBossStunPercentageByte = 0x7b4
+CMonsterResource->m_iSkillShotCompleteCount = 0x7b8
+CMonsterResource->m_fSkillShotComboEndTime = 0x7bc
+CMonsterResource->m_iBossState = 0x7c0
+
+[CTFReviveMarker]
+CTFReviveMarker->m_hOwner = 0xc0c
+CTFReviveMarker->m_iHealth = 0xc1c
+CTFReviveMarker->m_iMaxHealth = 0xc20
+CTFReviveMarker->m_nRevives = 0xc18
+
+[CHalloweenGiftPickup]
+CHalloweenGiftPickup->m_hTargetPlayer = 0xc28
+
+[CBonusDuckPickup]
+CBonusDuckPickup->m_bSpecial = 0xc38
+
+[CHalloweenPickup]
+
+[CBonusPack]
+
+[CBonusRoundLogic]
+CBonusRoundLogic->m_aBonusPlayerRoll = 0x0
+CBonusRoundLogic->m_hBonusWinner = 0x800
+CBonusRoundLogic->m_iItemDefinitionIndex = 0x854
+CBonusRoundLogic->m_iEntityLevel = 0x85c
+CBonusRoundLogic->m_iItemIDHigh = 0x868
+CBonusRoundLogic->m_iItemIDLow = 0x86c
+CBonusRoundLogic->m_iAccountID = 0x870
+CBonusRoundLogic->m_iEntityQuality = 0x858
+CBonusRoundLogic->m_bInitialized = 0x8dc
+CBonusRoundLogic->m_bOnlyIterateItemViewAttributes = 0x958
+CBonusRoundLogic->m_Attributes = 0x8f8
+CBonusRoundLogic->m_AttributeList = 0x8f8
+CBonusRoundLogic->m_iTeamNumber = 0x8d8
+CBonusRoundLogic->m_Attributes = 0x928
+CBonusRoundLogic->m_NetworkedDynamicAttributesForDemos = 0x928
+CBonusRoundLogic->m_Item = 0x810
+
+[CTFGameRulesProxy]
+CTFGameRulesProxy->m_nGameType = 0x264
+CTFGameRulesProxy->m_nStopWatchState = 0x268
+CTFGameRulesProxy->m_pszTeamGoalStringRed = 0x26c
+CTFGameRulesProxy->m_pszTeamGoalStringBlue = 0x36c
+CTFGameRulesProxy->m_flCapturePointEnableTime = 0x46c
+CTFGameRulesProxy->m_nHudType = 0x474
+CTFGameRulesProxy->m_bIsInTraining = 0x478
+CTFGameRulesProxy->m_bAllowTrainingAchievements = 0x479
+CTFGameRulesProxy->m_bIsWaitingForTrainingContinue = 0x47a
+CTFGameRulesProxy->m_bIsTrainingHUDVisible = 0x47b
+CTFGameRulesProxy->m_bIsInItemTestingMode = 0x47c
+CTFGameRulesProxy->m_hBonusLogic = 0x48c
+CTFGameRulesProxy->m_bPlayingKoth = 0x490
+CTFGameRulesProxy->m_bPlayingMedieval = 0x493
+CTFGameRulesProxy->m_bPlayingHybrid_CTF_CP = 0x494
+CTFGameRulesProxy->m_bPlayingSpecialDeliveryMode = 0x495
+CTFGameRulesProxy->m_bPlayingRobotDestructionMode = 0x492
+CTFGameRulesProxy->m_hRedKothTimer = 0x4ac
+CTFGameRulesProxy->m_hBlueKothTimer = 0x4b0
+CTFGameRulesProxy->m_nMapHolidayType = 0x4b4
+CTFGameRulesProxy->m_itHandle = 0x8e0
+CTFGameRulesProxy->m_bPlayingMannVsMachine = 0x496
+CTFGameRulesProxy->m_hBirthdayPlayer = 0x8e4
+CTFGameRulesProxy->m_nBossHealth = 0x8d4
+CTFGameRulesProxy->m_nMaxBossHealth = 0x8d8
+CTFGameRulesProxy->m_fBossNormalizedTravelDistance = 0x8dc
+CTFGameRulesProxy->m_bMannVsMachineAlarmStatus = 0x497
+CTFGameRulesProxy->m_bHaveMinPlayersToEnableReady = 0x498
+CTFGameRulesProxy->m_bBountyModeEnabled = 0x499
+CTFGameRulesProxy->m_nHalloweenEffect = 0x8e8
+CTFGameRulesProxy->m_fHalloweenEffectStartTime = 0x8ec
+CTFGameRulesProxy->m_fHalloweenEffectDuration = 0x8f0
+CTFGameRulesProxy->m_halloweenScenario = 0x8f4
+CTFGameRulesProxy->m_bHelltowerPlayersInHell = 0x4a5
+CTFGameRulesProxy->m_bIsUsingSpells = 0x4a6
+CTFGameRulesProxy->m_bCompetitiveMode = 0x49a
+CTFGameRulesProxy->m_nMatchGroupType = 0x4a0
+CTFGameRulesProxy->m_bMatchEnded = 0x4a4
+CTFGameRulesProxy->m_bPowerupMode = 0x491
+CTFGameRulesProxy->m_pszCustomUpgradesFile = 0x4b8
+CTFGameRulesProxy->m_bTruceActive = 0x4a7
+CTFGameRulesProxy->m_bShowMatchSummary = 0x5bc
+CTFGameRulesProxy->"m_bShowCompetitiveMatchSummary" = 0x5bc
+CTFGameRulesProxy->m_bTeamsSwitched = 0x4a8
+CTFGameRulesProxy->m_bMapHasMatchSummaryStage = 0x5bd
+CTFGameRulesProxy->m_bPlayersAreOnMatchSummaryStage = 0x5be
+CTFGameRulesProxy->m_bStopWatchWinner = 0x5bf
+CTFGameRulesProxy->m_ePlayerWantsRematch = 0x5c0
+CTFGameRulesProxy->m_eRematchState = 0x758
+CTFGameRulesProxy->m_nNextMapVoteOptions = 0x75c
+CTFGameRulesProxy->m_nForceUpgrades = 0x8f8
+CTFGameRulesProxy->m_nForceEscortPushLogic = 0x8fc
+CTFGameRulesProxy->m_bRopesHolidayLightsAllowed = 0x4a9
+CTFGameRulesProxy->tf_gamerules_data = 0x0
+
+[CTETFParticleEffect]
+CTETFParticleEffect->m_vecOrigin[0] = 0x20
+CTETFParticleEffect->m_vecOrigin[1] = 0x24
+CTETFParticleEffect->m_vecOrigin[2] = 0x28
+CTETFParticleEffect->m_vecStart[0] = 0x2c
+CTETFParticleEffect->m_vecStart[1] = 0x30
+CTETFParticleEffect->m_vecStart[2] = 0x34
+CTETFParticleEffect->m_vecAngles = 0x38
+CTETFParticleEffect->m_iParticleSystemIndex = 0x44
+CTETFParticleEffect->entindex = 0x0
+CTETFParticleEffect->m_iAttachType = 0x4c
+CTETFParticleEffect->m_iAttachmentPointIndex = 0x50
+CTETFParticleEffect->m_bResetParticles = 0x54
+CTETFParticleEffect->m_bCustomColors = 0x55
+CTETFParticleEffect->m_CustomColors.m_vecColor1 = 0x58
+CTETFParticleEffect->m_CustomColors.m_vecColor2 = 0x64
+CTETFParticleEffect->m_bControlPoint1 = 0x70
+CTETFParticleEffect->m_ControlPoint1.m_eParticleAttachment = 0x74
+CTETFParticleEffect->m_ControlPoint1.m_vecOffset[0] = 0x78
+CTETFParticleEffect->m_ControlPoint1.m_vecOffset[1] = 0x7c
+CTETFParticleEffect->m_ControlPoint1.m_vecOffset[2] = 0x80
+
+[CTETFExplosion]
+CTETFExplosion->m_vecOrigin[0] = 0x20
+CTETFExplosion->m_vecOrigin[1] = 0x24
+CTETFExplosion->m_vecOrigin[2] = 0x28
+CTETFExplosion->m_vecNormal = 0x2c
+CTETFExplosion->m_iWeaponID = 0x38
+CTETFExplosion->entindex = 0x0
+CTETFExplosion->m_nDefID = 0x40
+CTETFExplosion->m_nSound = 0x44
+CTETFExplosion->m_iCustomParticleIndex = 0x48
+
+[CTETFBlood]
+CTETFBlood->m_vecOrigin[0] = 0x20
+CTETFBlood->m_vecOrigin[1] = 0x24
+CTETFBlood->m_vecOrigin[2] = 0x28
+CTETFBlood->m_vecNormal = 0x2c
+CTETFBlood->entindex = 0x0
+
+[CTFFlameManager]
+CTFFlameManager->m_hWeapon = 0x940
+CTFFlameManager->m_hAttacker = 0x944
+CTFFlameManager->m_flSpreadDegree = 0x948
+CTFFlameManager->m_flRedirectedFlameSizeMult = 0x94c
+CTFFlameManager->m_flFlameStartSizeMult = 0x950
+CTFFlameManager->m_flFlameEndSizeMult = 0x954
+CTFFlameManager->m_flFlameIgnorePlayerVelocity = 0x958
+CTFFlameManager->m_flFlameReflectionAdditionalLifeTime = 0x95c
+CTFFlameManager->m_flFlameReflectionDamageReduction = 0x960
+CTFFlameManager->m_iMaxFlameReflectionCount = 0x964
+CTFFlameManager->m_nShouldReflect = 0x968
+CTFFlameManager->m_flFlameSpeed = 0x96c
+CTFFlameManager->m_flFlameLifeTime = 0x970
+CTFFlameManager->m_flRandomLifeTimeOffset = 0x974
+CTFFlameManager->m_flFlameGravity = 0x978
+CTFFlameManager->m_flFlameDrag = 0x97c
+CTFFlameManager->m_flFlameUp = 0x980
+CTFFlameManager->m_bIsFiring = 0x984
+
+[CCaptureFlagReturnIcon]
+
+[CCaptureFlag]
+CCaptureFlag->m_bDisabled = 0xc40
+CCaptureFlag->m_bVisibleWhenDisabled = 0xc41
+CCaptureFlag->m_nType = 0xc44
+CCaptureFlag->m_nFlagStatus = 0xc48
+CCaptureFlag->m_flResetTime = 0xc4c
+CCaptureFlag->m_flNeutralTime = 0xc54
+CCaptureFlag->m_flMaxResetTime = 0xc50
+CCaptureFlag->m_hPrevOwner = 0xc58
+CCaptureFlag->m_szModel = 0xc65
+CCaptureFlag->m_szHudIcon = 0xd69
+CCaptureFlag->m_szPaperEffect = 0xe6d
+CCaptureFlag->m_szTrailEffect = 0xf71
+CCaptureFlag->m_nUseTrailEffect = 0x1078
+CCaptureFlag->m_nPointValue = 0xc5c
+CCaptureFlag->m_flAutoCapTime = 0xc60
+CCaptureFlag->m_bGlowEnabled = 0xc64
+CCaptureFlag->m_flTimeToSetPoisonous = 0x109c
+
+[CTFTeam]
+CTFTeam->m_nFlagCaptures = 0x828
+CTFTeam->m_iRole = 0x82c
+CTFTeam->team_object_array_element = 0x0
+CTFTeam->"team_object_array" = 0x0
+CTFTeam->m_hLeader = 0x830
+
+[CTFPlayerResource]
+CTFPlayerResource->m_iTotalScore = 0x17d0
+CTFPlayerResource->m_iMaxHealth = 0x1968
+CTFPlayerResource->m_iMaxBuffedHealth = 0x1b00
+CTFPlayerResource->m_iPlayerClass = 0x1c98
+CTFPlayerResource->m_bArenaSpectator = 0x1e30
+CTFPlayerResource->m_iActiveDominations = 0x1e98
+CTFPlayerResource->m_flNextRespawnTime = 0x2030
+CTFPlayerResource->m_iChargeLevel = 0x21c8
+CTFPlayerResource->m_iDamage = 0x2360
+CTFPlayerResource->m_iDamageAssist = 0x24f8
+CTFPlayerResource->m_iDamageBoss = 0x2690
+CTFPlayerResource->m_iHealing = 0x2828
+CTFPlayerResource->m_iHealingAssist = 0x29c0
+CTFPlayerResource->m_iDamageBlocked = 0x2b58
+CTFPlayerResource->m_iCurrencyCollected = 0x2cf0
+CTFPlayerResource->m_iBonusPoints = 0x2e88
+CTFPlayerResource->m_iPlayerLevel = 0x3020
+CTFPlayerResource->m_iStreaks = 0x31b8
+CTFPlayerResource->m_iUpgradeRefundCredits = 0x3818
+CTFPlayerResource->m_iBuybackCredits = 0x39b0
+CTFPlayerResource->m_iPartyLeaderRedTeamIndex = 0x3b4c
+CTFPlayerResource->m_iPartyLeaderBlueTeamIndex = 0x3b48
+CTFPlayerResource->m_iEventTeamStatus = 0x3b50
+CTFPlayerResource->m_iPlayerClassWhenKilled = 0x3b54
+CTFPlayerResource->m_iConnectionState = 0x3cec
+CTFPlayerResource->m_flConnectTime = 0x3e84
+
+[CTFPlayer]
+CTFPlayer->m_bSaveMeParity = 0x23e8
+CTFPlayer->m_bIsMiniBoss = 0x23de
+CTFPlayer->m_bIsABot = 0x23df
+CTFPlayer->m_nBotSkill = 0x23e0
+CTFPlayer->m_nWaterLevel = 0x218
+CTFPlayer->m_hRagdoll = 0x1b08
+CTFPlayer->m_iClass = 0x1ba0
+CTFPlayer->m_iszClassIcon = 0x1ba4
+CTFPlayer->m_iszCustomModel = 0x1ca8
+CTFPlayer->m_vecCustomModelOffset = 0x1dac
+CTFPlayer->m_angCustomModelRotation = 0x1db8
+CTFPlayer->m_bCustomModelRotates = 0x1dc4
+CTFPlayer->m_bCustomModelRotationSet = 0x1dc5
+CTFPlayer->m_bCustomModelVisibleToSelf = 0x1dc6
+CTFPlayer->m_bUseClassAnimations = 0x1dc7
+CTFPlayer->m_iClassModelParity = 0x1dc8
+CTFPlayer->m_PlayerClass = 0x1b98
+CTFPlayer->m_nPlayerCond = 0x1f64
+CTFPlayer->m_bJumping = 0x20d8
+CTFPlayer->m_nNumHealers = 0x2028
+CTFPlayer->m_iCritMult = 0x214c
+CTFPlayer->m_iAirDash = 0x20dc
+CTFPlayer->m_nAirDucked = 0x20e0
+CTFPlayer->m_flDuckTimer = 0x20e4
+CTFPlayer->m_nPlayerState = 0x1f60
+CTFPlayer->m_iDesiredPlayerClass = 0x2098
+CTFPlayer->m_flMovementStunTime = 0x221c
+CTFPlayer->m_iMovementStunAmount = 0x2220
+CTFPlayer->m_iMovementStunParity = 0x2224
+CTFPlayer->m_hStunner = 0x2228
+CTFPlayer->m_iStunFlags = 0x222c
+CTFPlayer->m_nArenaNumChanges = 0x2240
+CTFPlayer->m_bArenaFirstBloodBoost = 0x2320
+CTFPlayer->m_iWeaponKnockbackID = 0x2244
+CTFPlayer->m_bLoadoutUnavailable = 0x2248
+CTFPlayer->m_iItemFindBonus = 0x224c
+CTFPlayer->m_bShieldEquipped = 0x2250
+CTFPlayer->m_bParachuteEquipped = 0x2251
+CTFPlayer->m_iNextMeleeCrit = 0x227c
+CTFPlayer->m_iDecapitations = 0x2254
+CTFPlayer->m_iRevengeCrits = 0x2278
+CTFPlayer->m_iDisguiseBody = 0x2288
+CTFPlayer->m_hCarriedObject = 0x2234
+CTFPlayer->m_bCarryingObject = 0x2238
+CTFPlayer->m_flNextNoiseMakerTime = 0x2290
+CTFPlayer->m_iSpawnRoomTouchCount = 0x228c
+CTFPlayer->m_iKillCountSinceLastDeploy = 0x22b4
+CTFPlayer->m_flFirstPrimaryAttack = 0x22b8
+CTFPlayer->m_flEnergyDrinkMeter = 0x20a8
+CTFPlayer->m_flHypeMeter = 0x20ac
+CTFPlayer->m_flChargeMeter = 0x20b0
+CTFPlayer->m_flInvisChangeCompleteTime = 0x1ff0
+CTFPlayer->m_nDisguiseTeam = 0x1fa8
+CTFPlayer->m_nDisguiseClass = 0x1fac
+CTFPlayer->m_nDisguiseSkinOverride = 0x1fb0
+CTFPlayer->m_nMaskClass = 0x1fb4
+CTFPlayer->m_hDisguiseTarget = 0x1fb8
+CTFPlayer->m_iDisguiseHealth = 0x1fbc
+CTFPlayer->m_bFeignDeathReady = 0x2094
+CTFPlayer->m_hDisguiseWeapon = 0x1fc8
+CTFPlayer->m_nTeamTeleporterUsed = 0x1fcc
+CTFPlayer->m_flCloakMeter = 0x20a0
+CTFPlayer->m_flSpyTranqBuffDuration = 0x22bc
+CTFPlayer->m_nDesiredDisguiseTeam = 0x1fc4
+CTFPlayer->m_nDesiredDisguiseClass = 0x1fc0
+CTFPlayer->m_flStealthNoAttackExpire = 0x20e8
+CTFPlayer->m_flStealthNextChangeTime = 0x20ec
+CTFPlayer->m_bLastDisguisedAsOwnTeam = 0x203e
+CTFPlayer->m_flRageMeter = 0x20b4
+CTFPlayer->m_bRageDraining = 0x20b8
+CTFPlayer->m_flNextRageEarnTime = 0x20bc
+CTFPlayer->m_bInUpgradeZone = 0x20a4
+CTFPlayer->m_flItemChargeMeter = 0x20f4
+CTFPlayer->m_bPlayerDominated = 0x2150
+CTFPlayer->m_bPlayerDominatingMe = 0x21b6
+CTFPlayer->m_iCaptures = 0x1eb8
+CTFPlayer->m_iDefenses = 0x1ebc
+CTFPlayer->m_iKills = 0x1ec0
+CTFPlayer->m_iDeaths = 0x1ec4
+CTFPlayer->m_iSuicides = 0x1ec8
+CTFPlayer->m_iDominations = 0x1ecc
+CTFPlayer->m_iRevenge = 0x1ed0
+CTFPlayer->m_iBuildingsBuilt = 0x1ed4
+CTFPlayer->m_iBuildingsDestroyed = 0x1ed8
+CTFPlayer->m_iHeadshots = 0x1edc
+CTFPlayer->m_iBackstabs = 0x1ee0
+CTFPlayer->m_iHealPoints = 0x1ee4
+CTFPlayer->m_iInvulns = 0x1ee8
+CTFPlayer->m_iTeleports = 0x1eec
+CTFPlayer->m_iResupplyPoints = 0x1ef8
+CTFPlayer->m_iKillAssists = 0x1efc
+CTFPlayer->m_iPoints = 0x1f04
+CTFPlayer->m_iBonusPoints = 0x1f00
+CTFPlayer->m_iDamageDone = 0x1ef0
+CTFPlayer->m_iCrits = 0x1ef4
+CTFPlayer->m_ScoreData = 0x1eb0
+CTFPlayer->m_iCaptures = 0x1f10
+CTFPlayer->m_iDefenses = 0x1f14
+CTFPlayer->m_iKills = 0x1f18
+CTFPlayer->m_iDeaths = 0x1f1c
+CTFPlayer->m_iSuicides = 0x1f20
+CTFPlayer->m_iDominations = 0x1f24
+CTFPlayer->m_iRevenge = 0x1f28
+CTFPlayer->m_iBuildingsBuilt = 0x1f2c
+CTFPlayer->m_iBuildingsDestroyed = 0x1f30
+CTFPlayer->m_iHeadshots = 0x1f34
+CTFPlayer->m_iBackstabs = 0x1f38
+CTFPlayer->m_iHealPoints = 0x1f3c
+CTFPlayer->m_iInvulns = 0x1f40
+CTFPlayer->m_iTeleports = 0x1f44
+CTFPlayer->m_iResupplyPoints = 0x1f50
+CTFPlayer->m_iKillAssists = 0x1f54
+CTFPlayer->m_iPoints = 0x1f5c
+CTFPlayer->m_iBonusPoints = 0x1f58
+CTFPlayer->m_iDamageDone = 0x1f48
+CTFPlayer->m_iCrits = 0x1f4c
+CTFPlayer->m_RoundScoreData = 0x1f08
+CTFPlayer->tfsharedlocaldata = 0x1e78
+CTFPlayer->_condition_bits = 0x1fa0
+CTFPlayer->m_ConditionList = 0x1f78
+CTFPlayer->m_iTauntIndex = 0x2040
+CTFPlayer->m_iTauntConcept = 0x2044
+CTFPlayer->m_nPlayerCondEx = 0x1f68
+CTFPlayer->m_iStunIndex = 0x2230
+CTFPlayer->m_nHalloweenBombHeadStage = 0x202c
+CTFPlayer->m_nPlayerCondEx2 = 0x1f6c
+CTFPlayer->m_nPlayerCondEx3 = 0x1f70
+CTFPlayer->m_nStreaks = 0x225c
+CTFPlayer->m_unTauntSourceItemID_Low = 0x2048
+CTFPlayer->m_unTauntSourceItemID_High = 0x204c
+CTFPlayer->m_flRuneCharge = 0x20f0
+CTFPlayer->m_bHasPasstimeBall = 0x2334
+CTFPlayer->m_bIsTargetedForPasstimePass = 0x2335
+CTFPlayer->m_hPasstimePassTarget = 0x2338
+CTFPlayer->m_askForBallTime = 0x233c
+CTFPlayer->m_bKingRuneBuffActive = 0x203c
+CTFPlayer->m_ConditionData = 0x1e78
+CTFPlayer->m_nPlayerCondEx4 = 0x1f74
+CTFPlayer->m_flHolsterAnimTime = 0x2340
+CTFPlayer->m_hSwitchTo = 0x2344
+CTFPlayer->m_Shared = 0x1e78
+CTFPlayer->m_hItem = 0x23a0
+CTFPlayer->m_vecOrigin = 0x448
+CTFPlayer->m_vecOrigin[2] = 0x450
+CTFPlayer->player_object_array_element = 0x0
+CTFPlayer->"player_object_array" = 0x0
+CTFPlayer->m_angEyeAngles[0] = 0x23ec
+CTFPlayer->m_angEyeAngles[1] = 0x23f0
+CTFPlayer->m_bIsCoaching = 0x23ea
+CTFPlayer->m_hCoach = 0x23a8
+CTFPlayer->m_hStudent = 0x23ac
+CTFPlayer->m_nCurrency = 0x39a4
+CTFPlayer->m_nExperienceLevel = 0x39ac
+CTFPlayer->m_nExperienceLevelProgress = 0x39b0
+CTFPlayer->m_bMatchSafeToLeave = 0x39b8
+CTFPlayer->tflocaldata = 0x0
+CTFPlayer->m_vecOrigin = 0x448
+CTFPlayer->m_vecOrigin[2] = 0x450
+CTFPlayer->m_angEyeAngles[0] = 0x23ec
+CTFPlayer->m_angEyeAngles[1] = 0x23f0
+CTFPlayer->tfnonlocaldata = 0x0
+CTFPlayer->m_bAllowMoveDuringTaunt = 0x23f8
+CTFPlayer->m_bIsReadyToHighFive = 0x240c
+CTFPlayer->m_hHighFivePartner = 0x2410
+CTFPlayer->m_nForceTauntCam = 0x2414
+CTFPlayer->m_flTauntYaw = 0x2418
+CTFPlayer->m_nActiveTauntSlot = 0x2420
+CTFPlayer->m_iTauntItemDefIndex = 0x2428
+CTFPlayer->m_flCurrentTauntMoveSpeed = 0x242c
+CTFPlayer->m_flVehicleReverseTime = 0x2430
+CTFPlayer->m_flMvMLastDamageTime = 0x23d0
+CTFPlayer->"m_flLastDamageTime" = 0x23d0
+CTFPlayer->m_bInPowerPlay = 0x23d4
+CTFPlayer->m_iSpawnCounter = 0x23d8
+CTFPlayer->m_bFlipViewModels = 0x23dd
+CTFPlayer->m_bArenaSpectator = 0x23dc
+CTFPlayer->m_hOuter = 0x1acc
+CTFPlayer->m_ProviderType = 0x1ad4
+CTFPlayer->m_iReapplyProvisionParity = 0x1ac8
+CTFPlayer->m_AttributeManager = 0x1a78
+CTFPlayer->m_flHeadScale = 0x39d8
+CTFPlayer->m_flTorsoScale = 0x39dc
+CTFPlayer->m_flHandScale = 0x39e0
+CTFPlayer->m_bUseBossHealthBar = 0x3a00
+CTFPlayer->m_bUsingVRHeadset = 0x3a01
+CTFPlayer->m_bForcedSkin = 0x3a02
+CTFPlayer->m_nForcedSkin = 0x3a04
+CTFPlayer->m_bGlowEnabled = 0x11d5
+CTFPlayer->m_nActiveWpnClip = 0x39ba
+CTFPlayer->TFSendHealersDataTable = 0x0
+CTFPlayer->m_flKartNextAvailableBoost = 0x1e60
+CTFPlayer->m_iKartHealth = 0x1e64
+CTFPlayer->m_iKartState = 0x1a70
+CTFPlayer->m_hGrapplingHookTarget = 0x3a14
+CTFPlayer->m_hSecondaryLastWeapon = 0x3a18
+CTFPlayer->m_bUsingActionSlot = 0x3a1c
+CTFPlayer->m_flInspectTime = 0x3a24
+CTFPlayer->m_flHelpmeButtonPressTime = 0x3a28
+CTFPlayer->m_iCampaignMedals = 0x3a20
+CTFPlayer->m_iPlayerSkinOverride = 0x3a78
+CTFPlayer->m_bViewingCYOAPDA = 0x3a2c
+CTFPlayer->m_bRegenerating = 0x3a2d
+
+[CTFRagdoll]
+CTFRagdoll->m_vecRagdollOrigin = 0x1094
+CTFRagdoll->m_hPlayer = 0x10a0
+CTFRagdoll->m_vecForce = 0x810
+CTFRagdoll->m_vecRagdollVelocity = 0x1088
+CTFRagdoll->m_nForceBone = 0x81c
+CTFRagdoll->m_bGib = 0x10a9
+CTFRagdoll->m_bBurning = 0x10aa
+CTFRagdoll->m_bElectrocuted = 0x10ab
+CTFRagdoll->m_bFeignDeath = 0x10ae
+CTFRagdoll->m_bWasDisguised = 0x10af
+CTFRagdoll->m_bOnGround = 0x10ee
+CTFRagdoll->m_bCloaked = 0x10b0
+CTFRagdoll->m_bBecomeAsh = 0x10b1
+CTFRagdoll->m_iDamageCustom = 0x10b4
+CTFRagdoll->m_iTeam = 0x10e0
+CTFRagdoll->m_iClass = 0x10e4
+CTFRagdoll->m_hRagWearables = 0x0
+CTFRagdoll->m_bGoldRagdoll = 0x10b8
+CTFRagdoll->m_bIceRagdoll = 0x10b9
+CTFRagdoll->m_bCritOnHardHit = 0x112c
+CTFRagdoll->m_flHeadScale = 0x1130
+CTFRagdoll->m_flTorsoScale = 0x1134
+CTFRagdoll->m_flHandScale = 0x1138
+
+[CTEPlayerAnimEvent]
+CTEPlayerAnimEvent->m_hPlayer = 0x20
+CTEPlayerAnimEvent->m_iEvent = 0x24
+CTEPlayerAnimEvent->m_nData = 0x28
+
+[CTFObjectiveResource]
+CTFObjectiveResource->m_nMannVsMachineMaxWaveCount = 0x1c80
+CTFObjectiveResource->m_nMannVsMachineWaveCount = 0x1c84
+CTFObjectiveResource->m_nMannVsMachineWaveEnemyCount = 0x1c88
+CTFObjectiveResource->m_nMvMWorldMoney = 0x1c8c
+CTFObjectiveResource->m_flMannVsMachineNextWaveTime = 0x1c90
+CTFObjectiveResource->m_bMannVsMachineBetweenWaves = 0x1c94
+CTFObjectiveResource->m_nFlagCarrierUpgradeLevel = 0x1c98
+CTFObjectiveResource->m_flMvMBaseBombUpgradeTime = 0x1c9c
+CTFObjectiveResource->m_flMvMNextBombUpgradeTime = 0x1ca0
+CTFObjectiveResource->m_iszMvMPopfileName = 0x230c
+CTFObjectiveResource->m_iChallengeIndex = 0x2308
+CTFObjectiveResource->m_nMvMEventPopfileType = 0x1ca4
+CTFObjectiveResource->m_nMannVsMachineWaveClassCounts = 0x1ca8
+CTFObjectiveResource->m_iszMannVsMachineWaveClassNames[0] = 0x1d08
+CTFObjectiveResource->m_iszMannVsMachineWaveClassNames = 0x0
+CTFObjectiveResource->m_nMannVsMachineWaveClassFlags = 0x2410
+CTFObjectiveResource->m_nMannVsMachineWaveClassCounts2 = 0x1cd8
+CTFObjectiveResource->m_iszMannVsMachineWaveClassNames2[0] = 0x2008
+CTFObjectiveResource->m_iszMannVsMachineWaveClassNames2 = 0x0
+CTFObjectiveResource->m_nMannVsMachineWaveClassFlags2 = 0x2440
+CTFObjectiveResource->m_bMannVsMachineWaveClassActive = 0x2470
+CTFObjectiveResource->m_bMannVsMachineWaveClassActive2 = 0x247c
+
+[CTEFireBullets]
+CTEFireBullets->m_vecOrigin = 0x24
+CTEFireBullets->m_vecAngles[0] = 0x30
+CTEFireBullets->m_vecAngles[1] = 0x34
+CTEFireBullets->m_iWeaponID = 0x3c
+CTEFireBullets->m_iMode = 0x40
+CTEFireBullets->m_iSeed = 0x44
+CTEFireBullets->m_iPlayer = 0x20
+CTEFireBullets->m_flSpread = 0x48
+CTEFireBullets->m_bCritical = 0x4c
+
+[CTFBuffBanner]
+
+[CTFAmmoPack]
+CTFAmmoPack->m_vecInitialVelocity = 0xc18
+CTFAmmoPack->m_angRotation[0] = 0x454
+CTFAmmoPack->m_angRotation[1] = 0x458
+CTFAmmoPack->m_angRotation[2] = 0x45c
+
+[CObjectTeleporter]
+CObjectTeleporter->m_iState = 0x13f4
+CObjectTeleporter->m_flRechargeTime = 0x13fc
+CObjectTeleporter->m_flCurrentRechargeDuration = 0x1400
+CObjectTeleporter->m_iTimesUsed = 0x1404
+CObjectTeleporter->m_flYawToExit = 0x1408
+CObjectTeleporter->m_bMatchBuilding = 0x140c
+
+[CObjectSentrygun]
+CObjectSentrygun->m_iAmmoShells = 0x13f8
+CObjectSentrygun->m_iAmmoRockets = 0x1400
+CObjectSentrygun->m_iState = 0x13f4
+CObjectSentrygun->m_bPlayerControlled = 0x1418
+CObjectSentrygun->m_nShieldLevel = 0x141c
+CObjectSentrygun->m_bShielded = 0x141c
+CObjectSentrygun->m_hEnemy = 0x1480
+CObjectSentrygun->m_hAutoAimTarget = 0x1484
+CObjectSentrygun->m_iKills = 0x1404
+CObjectSentrygun->m_iAssists = 0x1408
+CObjectSentrygun->SentrygunLocalData = 0x0
+
+[CTFProjectile_SentryRocket]
+
+[CObjectSapper]
+
+[CObjectCartDispenser]
+
+[CObjectDispenser]
+CObjectDispenser->m_iState = 0x141c
+CObjectDispenser->m_iAmmoMetal = 0x1420
+CObjectDispenser->m_iMiniBombCounter = 0x1424
+CObjectDispenser->healing_array_element = 0x0
+CObjectDispenser->"healing_array" = 0x0
+
+[CCaptureZone]
+CCaptureZone->m_bDisabled = 0x7b8
+
+[CFuncRespawnRoomVisualizer]
+
+[CFuncRespawnRoom]
+
+[CFuncForceField]
+
+[CCurrencyPack]
+CCurrencyPack->m_bDistributed = 0xc19
+
+[CBaseObject]
+CBaseObject->m_iHealth = 0x1388
+CBaseObject->m_iMaxHealth = 0x138c
+CBaseObject->m_bHasSapper = 0x1380
+CBaseObject->m_iObjectType = 0x1384
+CBaseObject->m_bBuilding = 0x1391
+CBaseObject->m_bPlacing = 0x1393
+CBaseObject->m_bCarried = 0x1396
+CBaseObject->m_bCarryDeploy = 0x1397
+CBaseObject->m_bMiniBuilding = 0x1399
+CBaseObject->m_flPercentageConstructed = 0x139c
+CBaseObject->m_fObjectFlags = 0x1364
+CBaseObject->m_hBuiltOnEntity = 0x13a0
+CBaseObject->m_bDisabled = 0x1394
+CBaseObject->m_hBuilder = 0x1374
+CBaseObject->m_vecBuildMaxs = 0x13ac
+CBaseObject->m_vecBuildMins = 0x13b8
+CBaseObject->m_iDesiredBuildRotations = 0x13c4
+CBaseObject->m_bServerOverridePlacement = 0x13d0
+CBaseObject->m_iUpgradeLevel = 0x1334
+CBaseObject->m_iUpgradeMetal = 0x133c
+CBaseObject->m_iUpgradeMetalRequired = 0x1344
+CBaseObject->m_iHighestUpgradeLevel = 0x1340
+CBaseObject->m_iObjectMode = 0x13a4
+CBaseObject->m_bDisposableBuilding = 0x139a
+CBaseObject->m_bWasMapPlaced = 0x13f0
+CBaseObject->m_bPlasmaDisable = 0x13a8
+
+[CTFGlow]
+CTFGlow->m_iMode = 0x7b8
+CTFGlow->m_glowColor = 0x7bc
+CTFGlow->m_bDisabled = 0x7c0
+CTFGlow->m_hTarget = 0x7c4
+
+[CTFPasstimeLogic]
+CTFPasstimeLogic->m_hBall = 0xb78
+CTFPasstimeLogic->m_trackPoints[0] = 0xb7c
+CTFPasstimeLogic->m_trackPoints = 0x0
+CTFPasstimeLogic->m_iNumSections = 0xc3c
+CTFPasstimeLogic->m_iCurrentSection = 0xc40
+CTFPasstimeLogic->m_flMaxPassRange = 0xc44
+CTFPasstimeLogic->m_iBallPower = 0xc48
+CTFPasstimeLogic->m_flPackSpeed = 0xc4c
+CTFPasstimeLogic->m_bPlayerIsPackMember = 0xb10
+
+[CPasstimeBall]
+CPasstimeBall->m_iCollisionCount = 0xc10
+CPasstimeBall->m_hHomingTarget = 0xc14
+CPasstimeBall->m_hCarrier = 0xc18
+CPasstimeBall->m_hPrevCarrier = 0xc1c
+
+[CFuncPasstimeGoal]
+CFuncPasstimeGoal->m_bTriggerDisabled = 0x7b8
+CFuncPasstimeGoal->m_iGoalType = 0x7bc
+
+[CPasstimeGun]
+CPasstimeGun->m_eThrowState = 0x10d0
+CPasstimeGun->m_fChargeBeginTime = 0x10d4
+
+[CTFWearableVM]
+
+[CTFWearable]
+CTFWearable->m_bDisguiseWearable = 0xea0
+CTFWearable->m_hWeaponAssociatedWith = 0xea4
+
+[CTeamRoundTimer]
+CTeamRoundTimer->m_bTimerPaused = 0x7ad
+CTeamRoundTimer->m_flTimeRemaining = 0x7b0
+CTeamRoundTimer->m_flTimerEndTime = 0x7b4
+CTeamRoundTimer->m_nTimerMaxLength = 0x7c4
+CTeamRoundTimer->m_bIsDisabled = 0x7b8
+CTeamRoundTimer->m_bShowInHUD = 0x7b9
+CTeamRoundTimer->m_nTimerLength = 0x7bc
+CTeamRoundTimer->m_nTimerInitialLength = 0x7c0
+CTeamRoundTimer->m_bAutoCountdown = 0x7c8
+CTeamRoundTimer->m_nSetupTimeLength = 0x7cc
+CTeamRoundTimer->m_nState = 0x7d0
+CTeamRoundTimer->m_bStartPaused = 0x7d4
+CTeamRoundTimer->m_bShowTimeRemaining = 0x7d5
+CTeamRoundTimer->m_bInCaptureWatchState = 0x7d6
+CTeamRoundTimer->m_bStopWatchTimer = 0x7dc
+CTeamRoundTimer->m_flTotalTime = 0x7d8
+
+[CTeamTrainWatcher]
+CTeamTrainWatcher->m_flTotalProgress = 0x7b0
+CTeamTrainWatcher->m_iTrainSpeedLevel = 0x7b8
+CTeamTrainWatcher->m_flRecedeTime = 0x7c0
+CTeamTrainWatcher->m_nNumCappers = 0x7c8
+CTeamTrainWatcher->m_hGlowEnt = 0x7d0
+
+[CBaseTeamObjectiveResource]
+CBaseTeamObjectiveResource->m_iTimerToShowInHUD = 0x7b0
+CBaseTeamObjectiveResource->m_iStopWatchTimer = 0x7b4
+CBaseTeamObjectiveResource->m_iNumControlPoints = 0x7b8
+CBaseTeamObjectiveResource->m_bPlayingMiniRounds = 0x7c0
+CBaseTeamObjectiveResource->m_bControlPointsReset = 0x7c1
+CBaseTeamObjectiveResource->m_iUpdateCapHudParity = 0x7c4
+CBaseTeamObjectiveResource->m_vCPPositions[0] = 0x7cc
+CBaseTeamObjectiveResource->m_vCPPositions = 0x0
+CBaseTeamObjectiveResource->m_bCPIsVisible = 0x82c
+CBaseTeamObjectiveResource->m_flLazyCapPerc = 0x834
+CBaseTeamObjectiveResource->m_iTeamIcons = 0x874
+CBaseTeamObjectiveResource->m_iTeamOverlays = 0x974
+CBaseTeamObjectiveResource->m_iTeamReqCappers = 0xa74
+CBaseTeamObjectiveResource->m_flTeamCapTime = 0xb74
+CBaseTeamObjectiveResource->m_iPreviousPoints = 0xc74
+CBaseTeamObjectiveResource->m_bTeamCanCap = 0xf74
+CBaseTeamObjectiveResource->m_iTeamBaseIcons = 0xfb4
+CBaseTeamObjectiveResource->m_iBaseControlPoints = 0x1034
+CBaseTeamObjectiveResource->m_bInMiniRound = 0x10b4
+CBaseTeamObjectiveResource->m_iWarnOnCap = 0x10bc
+CBaseTeamObjectiveResource->m_iszWarnSound[0] = 0x10dc
+CBaseTeamObjectiveResource->m_iszWarnSound = 0x0
+CBaseTeamObjectiveResource->m_flPathDistance = 0x18d4
+CBaseTeamObjectiveResource->m_iCPGroup = 0x18f4
+CBaseTeamObjectiveResource->m_bCPLocked = 0x1914
+CBaseTeamObjectiveResource->m_nNumNodeHillData = 0x1ba4
+CBaseTeamObjectiveResource->m_flNodeHillData = 0x1bb4
+CBaseTeamObjectiveResource->m_bTrackAlarm = 0x1c68
+CBaseTeamObjectiveResource->m_flUnlockTimes = 0x191c
+CBaseTeamObjectiveResource->m_bHillIsDownhill = 0x1c6c
+CBaseTeamObjectiveResource->m_flCPTimerTimes = 0x195c
+CBaseTeamObjectiveResource->m_iNumTeamMembers = 0x199c
+CBaseTeamObjectiveResource->m_iCappingTeam = 0x1a9c
+CBaseTeamObjectiveResource->m_iTeamInZone = 0x1abc
+CBaseTeamObjectiveResource->m_bBlocked = 0x1adc
+CBaseTeamObjectiveResource->m_iOwner = 0x1ae4
+CBaseTeamObjectiveResource->m_bCPCapRateScalesWithPlayers = 0x1b04
+CBaseTeamObjectiveResource->m_pszCapLayoutInHUD = 0x1b74
+CBaseTeamObjectiveResource->m_flCustomPositionX = 0x1b9c
+CBaseTeamObjectiveResource->m_flCustomPositionY = 0x1ba0
+
+[CTFWearableItem]
+
+[CEconWearable]
+
+[CBaseAttributableItem]
+CBaseAttributableItem->m_hOuter = 0xc84
+CBaseAttributableItem->m_ProviderType = 0xc8c
+CBaseAttributableItem->m_iReapplyProvisionParity = 0xc80
+CBaseAttributableItem->m_iItemDefinitionIndex = 0xd04
+CBaseAttributableItem->m_iEntityLevel = 0xd0c
+CBaseAttributableItem->m_iItemIDHigh = 0xd18
+CBaseAttributableItem->m_iItemIDLow = 0xd1c
+CBaseAttributableItem->m_iAccountID = 0xd20
+CBaseAttributableItem->m_iEntityQuality = 0xd08
+CBaseAttributableItem->m_bInitialized = 0xd8c
+CBaseAttributableItem->m_bOnlyIterateItemViewAttributes = 0xe08
+CBaseAttributableItem->m_Attributes = 0xda8
+CBaseAttributableItem->m_AttributeList = 0xda8
+CBaseAttributableItem->m_iTeamNumber = 0xd88
+CBaseAttributableItem->m_Attributes = 0xdd8
+CBaseAttributableItem->m_NetworkedDynamicAttributesForDemos = 0xdd8
+CBaseAttributableItem->m_Item = 0xcc0
+CBaseAttributableItem->m_AttributeManager = 0xc30
+
+[CEconEntity]
+CEconEntity->m_hOuter = 0xc84
+CEconEntity->m_ProviderType = 0xc8c
+CEconEntity->m_iReapplyProvisionParity = 0xc80
+CEconEntity->m_iItemDefinitionIndex = 0xd04
+CEconEntity->m_iEntityLevel = 0xd0c
+CEconEntity->m_iItemIDHigh = 0xd18
+CEconEntity->m_iItemIDLow = 0xd1c
+CEconEntity->m_iAccountID = 0xd20
+CEconEntity->m_iEntityQuality = 0xd08
+CEconEntity->m_bInitialized = 0xd8c
+CEconEntity->m_bOnlyIterateItemViewAttributes = 0xe08
+CEconEntity->m_Attributes = 0xda8
+CEconEntity->m_AttributeList = 0xda8
+CEconEntity->m_iTeamNumber = 0xd88
+CEconEntity->m_Attributes = 0xdd8
+CEconEntity->m_NetworkedDynamicAttributesForDemos = 0xdd8
+CEconEntity->m_Item = 0xcc0
+CEconEntity->m_AttributeManager = 0xc30
+CEconEntity->m_bValidatedAttachedEntity = 0xe10
+
+[CTestTraceline]
+CTestTraceline->m_clrRender = 0x80
+CTestTraceline->m_vecOrigin = 0x448
+CTestTraceline->m_angRotation[0] = 0x454
+CTestTraceline->m_angRotation[1] = 0x458
+CTestTraceline->m_angRotation[2] = 0x45c
+CTestTraceline->moveparent = 0x22c
+
+[CTEWorldDecal]
+CTEWorldDecal->m_vecOrigin = 0x20
+CTEWorldDecal->m_nIndex = 0x2c
+
+[CTESpriteSpray]
+CTESpriteSpray->m_vecOrigin = 0x20
+CTESpriteSpray->m_vecDirection = 0x2c
+CTESpriteSpray->m_nModelIndex = 0x38
+CTESpriteSpray->m_fNoise = 0x40
+CTESpriteSpray->m_nCount = 0x44
+CTESpriteSpray->m_nSpeed = 0x3c
+
+[CTESprite]
+CTESprite->m_vecOrigin = 0x20
+CTESprite->m_nModelIndex = 0x2c
+CTESprite->m_fScale = 0x30
+CTESprite->m_nBrightness = 0x34
+
+[CTESparks]
+CTESparks->m_nMagnitude = 0x2c
+CTESparks->m_nTrailLength = 0x30
+CTESparks->m_vecDir = 0x34
+
+[CTESmoke]
+CTESmoke->m_vecOrigin = 0x20
+CTESmoke->m_nModelIndex = 0x2c
+CTESmoke->m_fScale = 0x30
+CTESmoke->m_nFrameRate = 0x34
+
+[CTEShowLine]
+CTEShowLine->m_vecEnd = 0x2c
+
+[CTEProjectedDecal]
+CTEProjectedDecal->m_vecOrigin = 0x20
+CTEProjectedDecal->m_angRotation = 0x2c
+CTEProjectedDecal->m_flDistance = 0x38
+CTEProjectedDecal->m_nIndex = 0x3c
+
+[CTEPlayerDecal]
+CTEPlayerDecal->m_vecOrigin = 0x24
+CTEPlayerDecal->m_nEntity = 0x30
+CTEPlayerDecal->m_nPlayer = 0x20
+
+[CTEPhysicsProp]
+CTEPhysicsProp->m_vecOrigin = 0x20
+CTEPhysicsProp->m_angRotation[0] = 0x2c
+CTEPhysicsProp->m_angRotation[1] = 0x30
+CTEPhysicsProp->m_angRotation[2] = 0x34
+CTEPhysicsProp->m_vecVelocity = 0x38
+CTEPhysicsProp->m_nModelIndex = 0x44
+CTEPhysicsProp->m_nFlags = 0x4c
+CTEPhysicsProp->m_nSkin = 0x48
+CTEPhysicsProp->m_nEffects = 0x50
+
+[CTEParticleSystem]
+CTEParticleSystem->m_vecOrigin[0] = 0x20
+CTEParticleSystem->m_vecOrigin[1] = 0x24
+CTEParticleSystem->m_vecOrigin[2] = 0x28
+
+[CTEMuzzleFlash]
+CTEMuzzleFlash->m_vecOrigin = 0x20
+CTEMuzzleFlash->m_vecAngles = 0x2c
+CTEMuzzleFlash->m_flScale = 0x38
+CTEMuzzleFlash->m_nType = 0x3c
+
+[CTELargeFunnel]
+CTELargeFunnel->m_nModelIndex = 0x2c
+CTELargeFunnel->m_nReversed = 0x30
+
+[CTEKillPlayerAttachments]
+CTEKillPlayerAttachments->m_nPlayer = 0x20
+
+[CTEImpact]
+CTEImpact->m_vecOrigin = 0x20
+CTEImpact->m_vecNormal = 0x2c
+CTEImpact->m_iType = 0x38
+CTEImpact->m_ucFlags = 0x3c
+
+[CTEGlowSprite]
+CTEGlowSprite->m_vecOrigin = 0x20
+CTEGlowSprite->m_nModelIndex = 0x2c
+CTEGlowSprite->m_fScale = 0x30
+CTEGlowSprite->m_fLife = 0x34
+CTEGlowSprite->m_nBrightness = 0x38
+
+[CTEShatterSurface]
+CTEShatterSurface->m_vecOrigin = 0x20
+CTEShatterSurface->m_vecAngles = 0x2c
+CTEShatterSurface->m_vecForce = 0x38
+CTEShatterSurface->m_vecForcePos = 0x44
+CTEShatterSurface->m_flWidth = 0x50
+CTEShatterSurface->m_flHeight = 0x54
+CTEShatterSurface->m_flShardSize = 0x58
+CTEShatterSurface->m_nSurfaceType = 0x68
+CTEShatterSurface->m_uchFrontColor[0] = 0x6c
+CTEShatterSurface->m_uchFrontColor[1] = 0x6d
+CTEShatterSurface->m_uchFrontColor[2] = 0x6e
+CTEShatterSurface->m_uchBackColor[0] = 0x6f
+CTEShatterSurface->m_uchBackColor[1] = 0x70
+CTEShatterSurface->m_uchBackColor[2] = 0x71
+
+[CTEFootprintDecal]
+CTEFootprintDecal->m_vecOrigin = 0x20
+CTEFootprintDecal->m_vecDirection = 0x2c
+CTEFootprintDecal->m_nEntity = 0x44
+CTEFootprintDecal->m_nIndex = 0x48
+CTEFootprintDecal->m_chMaterialType = 0x4c
+
+[CTEFizz]
+CTEFizz->m_nEntity = 0x20
+CTEFizz->m_nModelIndex = 0x24
+CTEFizz->m_nDensity = 0x28
+CTEFizz->m_nCurrent = 0x2c
+
+[CTEExplosion]
+CTEExplosion->m_nModelIndex = 0x2c
+CTEExplosion->m_fScale = 0x30
+CTEExplosion->m_nFrameRate = 0x34
+CTEExplosion->m_nFlags = 0x38
+CTEExplosion->m_vecNormal = 0x3c
+CTEExplosion->m_chMaterialType = 0x48
+CTEExplosion->m_nRadius = 0x4c
+CTEExplosion->m_nMagnitude = 0x50
+
+[CTEEnergySplash]
+CTEEnergySplash->m_vecPos = 0x20
+CTEEnergySplash->m_vecDir = 0x2c
+CTEEnergySplash->m_bExplosive = 0x38
+
+[CTEEffectDispatch]
+CTEEffectDispatch->m_vOrigin[0] = 0x20
+CTEEffectDispatch->m_vOrigin[1] = 0x24
+CTEEffectDispatch->m_vOrigin[2] = 0x28
+CTEEffectDispatch->m_vStart[0] = 0x2c
+CTEEffectDispatch->m_vStart[1] = 0x30
+CTEEffectDispatch->m_vStart[2] = 0x34
+CTEEffectDispatch->m_vAngles = 0x44
+CTEEffectDispatch->m_vNormal = 0x38
+CTEEffectDispatch->m_fFlags = 0x50
+CTEEffectDispatch->m_flMagnitude = 0x5c
+CTEEffectDispatch->m_flScale = 0x58
+CTEEffectDispatch->m_nAttachmentIndex = 0x64
+CTEEffectDispatch->m_nSurfaceProp = 0x68
+CTEEffectDispatch->m_iEffectName = 0xa8
+CTEEffectDispatch->m_nMaterial = 0x6c
+CTEEffectDispatch->m_nDamageType = 0x70
+CTEEffectDispatch->m_nHitBox = 0x74
+CTEEffectDispatch->entindex = 0x20
+CTEEffectDispatch->m_nColor = 0x78
+CTEEffectDispatch->m_flRadius = 0x60
+CTEEffectDispatch->m_bCustomColors = 0x79
+CTEEffectDispatch->m_CustomColors.m_vecColor1 = 0x7c
+CTEEffectDispatch->m_CustomColors.m_vecColor2 = 0x88
+CTEEffectDispatch->m_bControlPoint1 = 0x94
+CTEEffectDispatch->m_ControlPoint1.m_eParticleAttachment = 0x98
+CTEEffectDispatch->m_ControlPoint1.m_vecOffset[0] = 0x9c
+CTEEffectDispatch->m_ControlPoint1.m_vecOffset[1] = 0xa0
+CTEEffectDispatch->m_ControlPoint1.m_vecOffset[2] = 0xa4
+CTEEffectDispatch->m_EffectData = 0x20
+
+[CTEDynamicLight]
+CTEDynamicLight->m_vecOrigin = 0x20
+CTEDynamicLight->r = 0x30
+CTEDynamicLight->g = 0x34
+CTEDynamicLight->b = 0x38
+CTEDynamicLight->exponent = 0x3c
+CTEDynamicLight->m_fRadius = 0x2c
+CTEDynamicLight->m_fTime = 0x40
+CTEDynamicLight->m_fDecay = 0x44
+
+[CTEDecal]
+CTEDecal->m_vecOrigin = 0x20
+CTEDecal->m_vecStart = 0x2c
+CTEDecal->m_nEntity = 0x38
+CTEDecal->m_nHitbox = 0x3c
+CTEDecal->m_nIndex = 0x40
+
+[CTEClientProjectile]
+CTEClientProjectile->m_vecOrigin = 0x20
+CTEClientProjectile->m_vecVelocity = 0x2c
+CTEClientProjectile->m_nModelIndex = 0x38
+CTEClientProjectile->m_nLifeTime = 0x3c
+CTEClientProjectile->m_hOwner = 0x40
+
+[CTEBubbleTrail]
+CTEBubbleTrail->m_vecMins = 0x20
+CTEBubbleTrail->m_vecMaxs = 0x2c
+CTEBubbleTrail->m_nModelIndex = 0x3c
+CTEBubbleTrail->m_flWaterZ = 0x38
+CTEBubbleTrail->m_nCount = 0x40
+CTEBubbleTrail->m_fSpeed = 0x44
+
+[CTEBubbles]
+CTEBubbles->m_vecMins = 0x20
+CTEBubbles->m_vecMaxs = 0x2c
+CTEBubbles->m_nModelIndex = 0x3c
+CTEBubbles->m_fHeight = 0x38
+CTEBubbles->m_nCount = 0x40
+CTEBubbles->m_fSpeed = 0x44
+
+[CTEBSPDecal]
+CTEBSPDecal->m_vecOrigin = 0x20
+CTEBSPDecal->m_nEntity = 0x2c
+CTEBSPDecal->m_nIndex = 0x30
+
+[CTEBreakModel]
+CTEBreakModel->m_vecOrigin = 0x20
+CTEBreakModel->m_angRotation[0] = 0x2c
+CTEBreakModel->m_angRotation[1] = 0x30
+CTEBreakModel->m_angRotation[2] = 0x34
+CTEBreakModel->m_vecSize = 0x38
+CTEBreakModel->m_vecVelocity = 0x44
+CTEBreakModel->m_nModelIndex = 0x54
+CTEBreakModel->m_nRandomization = 0x50
+CTEBreakModel->m_nCount = 0x58
+CTEBreakModel->m_fTime = 0x5c
+CTEBreakModel->m_nFlags = 0x60
+
+[CTEBloodStream]
+CTEBloodStream->m_vecDirection = 0x2c
+CTEBloodStream->r = 0x38
+CTEBloodStream->g = 0x3c
+CTEBloodStream->b = 0x40
+CTEBloodStream->a = 0x44
+CTEBloodStream->m_nAmount = 0x48
+
+[CTEBloodSprite]
+CTEBloodSprite->m_vecOrigin = 0x20
+CTEBloodSprite->m_vecDirection = 0x2c
+CTEBloodSprite->r = 0x38
+CTEBloodSprite->g = 0x3c
+CTEBloodSprite->b = 0x40
+CTEBloodSprite->a = 0x44
+CTEBloodSprite->m_nSprayModel = 0x4c
+CTEBloodSprite->m_nDropModel = 0x48
+CTEBloodSprite->m_nSize = 0x50
+
+[CTEBeamSpline]
+CTEBeamSpline->m_nPoints = 0xe0
+CTEBeamSpline->m_vecPoints[0] = 0x20
+CTEBeamSpline->m_vecPoints = 0x0
+
+[CTEBeamRingPoint]
+CTEBeamRingPoint->m_vecCenter = 0x5c
+CTEBeamRingPoint->m_flStartRadius = 0x68
+CTEBeamRingPoint->m_flEndRadius = 0x6c
+
+[CTEBeamRing]
+CTEBeamRing->m_nStartEntity = 0x5c
+CTEBeamRing->m_nEndEntity = 0x60
+
+[CTEBeamPoints]
+CTEBeamPoints->m_vecStartPoint = 0x5c
+CTEBeamPoints->m_vecEndPoint = 0x68
+
+[CTEBeamLaser]
+CTEBeamLaser->m_nStartEntity = 0x5c
+CTEBeamLaser->m_nEndEntity = 0x60
+
+[CTEBeamFollow]
+CTEBeamFollow->m_iEntIndex = 0x5c
+
+[CTEBeamEnts]
+CTEBeamEnts->m_nStartEntity = 0x5c
+CTEBeamEnts->m_nEndEntity = 0x60
+
+[CTEBeamEntPoint]
+CTEBeamEntPoint->m_nStartEntity = 0x5c
+CTEBeamEntPoint->m_nEndEntity = 0x60
+CTEBeamEntPoint->m_vecStartPoint = 0x64
+CTEBeamEntPoint->m_vecEndPoint = 0x70
+
+[CTEBaseBeam]
+CTEBaseBeam->m_nModelIndex = 0x20
+CTEBaseBeam->m_nHaloIndex = 0x24
+CTEBaseBeam->m_nStartFrame = 0x28
+CTEBaseBeam->m_nFrameRate = 0x2c
+CTEBaseBeam->m_fLife = 0x30
+CTEBaseBeam->m_fWidth = 0x34
+CTEBaseBeam->m_fEndWidth = 0x38
+CTEBaseBeam->m_nFadeLength = 0x3c
+CTEBaseBeam->m_fAmplitude = 0x40
+CTEBaseBeam->m_nSpeed = 0x54
+CTEBaseBeam->r = 0x44
+CTEBaseBeam->g = 0x48
+CTEBaseBeam->b = 0x4c
+CTEBaseBeam->a = 0x50
+CTEBaseBeam->m_nFlags = 0x58
+
+[CTEArmorRicochet]
+
+[CTEMetalSparks]
+CTEMetalSparks->m_vecPos = 0x20
+CTEMetalSparks->m_vecDir = 0x2c
+
+[CSteamJet]
+CSteamJet->m_SpreadSpeed = 0x8e8
+CSteamJet->m_Speed = 0x8ec
+CSteamJet->m_StartSize = 0x8f0
+CSteamJet->m_EndSize = 0x8f4
+CSteamJet->m_Rate = 0x8f8
+CSteamJet->m_JetLength = 0x8fc
+CSteamJet->m_bEmit = 0x900
+CSteamJet->m_bFaceLeft = 0x908
+CSteamJet->m_nType = 0x904
+CSteamJet->m_spawnflags = 0x90c
+CSteamJet->m_flRollSpeed = 0x910
+
+[CSmokeStack]
+CSmokeStack->m_SpreadSpeed = 0x940
+CSmokeStack->m_Speed = 0x944
+CSmokeStack->m_StartSize = 0x948
+CSmokeStack->m_EndSize = 0x94c
+CSmokeStack->m_Rate = 0x950
+CSmokeStack->m_JetLength = 0x954
+CSmokeStack->m_bEmit = 0x958
+CSmokeStack->m_flBaseSpread = 0x95c
+CSmokeStack->m_flTwist = 0x9b0
+CSmokeStack->m_flRollSpeed = 0x9f8
+CSmokeStack->m_iMaterialModel = 0x9b4
+CSmokeStack->m_AmbientLight.m_vPos = 0x960
+CSmokeStack->m_AmbientLight.m_vColor = 0x96c
+CSmokeStack->m_AmbientLight.m_flIntensity = 0x978
+CSmokeStack->m_DirLight.m_vPos = 0x97c
+CSmokeStack->m_DirLight.m_vColor = 0x988
+CSmokeStack->m_DirLight.m_flIntensity = 0x994
+CSmokeStack->m_vWind = 0x9a4
+
+[DustTrail]
+DustTrail->m_SpawnRate = 0x8e8
+DustTrail->m_Color = 0x8ec
+DustTrail->m_ParticleLifetime = 0x8fc
+DustTrail->m_StopEmitTime = 0x904
+DustTrail->m_MinSpeed = 0x908
+DustTrail->m_MaxSpeed = 0x90c
+DustTrail->m_MinDirectedSpeed = 0x910
+DustTrail->m_MaxDirectedSpeed = 0x914
+DustTrail->m_StartSize = 0x918
+DustTrail->m_EndSize = 0x91c
+DustTrail->m_SpawnRadius = 0x920
+DustTrail->m_bEmit = 0x930
+DustTrail->m_Opacity = 0x8f8
+
+[CFireTrail]
+CFireTrail->m_nAttachment = 0x8e8
+CFireTrail->m_flLifetime = 0x8ec
+
+[SporeTrail]
+SporeTrail->m_flSpawnRate = 0x8ec
+SporeTrail->m_vecEndColor = 0x8e0
+SporeTrail->m_flParticleLifetime = 0x8f0
+SporeTrail->m_flStartSize = 0x8f4
+SporeTrail->m_flEndSize = 0x8f8
+SporeTrail->m_flSpawnRadius = 0x8fc
+SporeTrail->m_bEmit = 0x90c
+
+[SporeExplosion]
+SporeExplosion->m_flSpawnRate = 0x8e8
+SporeExplosion->m_flParticleLifetime = 0x8ec
+SporeExplosion->m_flStartSize = 0x8f0
+SporeExplosion->m_flEndSize = 0x8f4
+SporeExplosion->m_flSpawnRadius = 0x8f8
+SporeExplosion->m_bEmit = 0x900
+SporeExplosion->m_bDontRemove = 0x901
+
+[RocketTrail]
+RocketTrail->m_SpawnRate = 0x8e8
+RocketTrail->m_StartColor = 0x8ec
+RocketTrail->m_EndColor = 0x8f8
+RocketTrail->m_ParticleLifetime = 0x908
+RocketTrail->m_StopEmitTime = 0x90c
+RocketTrail->m_MinSpeed = 0x910
+RocketTrail->m_MaxSpeed = 0x914
+RocketTrail->m_StartSize = 0x918
+RocketTrail->m_EndSize = 0x91c
+RocketTrail->m_SpawnRadius = 0x920
+RocketTrail->m_bEmit = 0x930
+RocketTrail->m_nAttachment = 0x934
+RocketTrail->m_Opacity = 0x904
+RocketTrail->m_bDamaged = 0x931
+RocketTrail->m_flFlareScale = 0x944
+
+[SmokeTrail]
+SmokeTrail->m_SpawnRate = 0x8e8
+SmokeTrail->m_StartColor = 0x8ec
+SmokeTrail->m_EndColor = 0x8f8
+SmokeTrail->m_ParticleLifetime = 0x908
+SmokeTrail->m_StopEmitTime = 0x90c
+SmokeTrail->m_MinSpeed = 0x910
+SmokeTrail->m_MaxSpeed = 0x914
+SmokeTrail->m_MinDirectedSpeed = 0x918
+SmokeTrail->m_MaxDirectedSpeed = 0x91c
+SmokeTrail->m_StartSize = 0x920
+SmokeTrail->m_EndSize = 0x924
+SmokeTrail->m_SpawnRadius = 0x928
+SmokeTrail->m_bEmit = 0x938
+SmokeTrail->m_nAttachment = 0x93c
+SmokeTrail->m_Opacity = 0x904
+
+[CPropVehicleDriveable]
+CPropVehicleDriveable->m_hPlayer = 0xc18
+CPropVehicleDriveable->m_nSpeed = 0xc1c
+CPropVehicleDriveable->m_nRPM = 0xc20
+CPropVehicleDriveable->m_flThrottle = 0xc24
+CPropVehicleDriveable->m_nBoostTimeLeft = 0xc28
+CPropVehicleDriveable->m_nHasBoost = 0xc2c
+CPropVehicleDriveable->m_nScannerDisabledWeapons = 0xc30
+CPropVehicleDriveable->m_nScannerDisabledVehicle = 0xc34
+CPropVehicleDriveable->m_bEnterAnimOn = 0xc54
+CPropVehicleDriveable->m_bExitAnimOn = 0xc55
+CPropVehicleDriveable->m_bUnableToFire = 0xcc5
+CPropVehicleDriveable->m_vecEyeExitEndpoint = 0xcb8
+CPropVehicleDriveable->m_bHasGun = 0xcc4
+CPropVehicleDriveable->m_vecGunCrosshair = 0xc5c
+
+[ParticleSmokeGrenade]
+ParticleSmokeGrenade->m_flSpawnTime = 0x8f8
+ParticleSmokeGrenade->m_FadeStartTime = 0x8fc
+ParticleSmokeGrenade->m_FadeEndTime = 0x900
+ParticleSmokeGrenade->m_CurrentStage = 0x8e8
+
+[CParticleFire]
+CParticleFire->m_vOrigin = 0x8f8
+CParticleFire->m_vDirection = 0x904
+
+[MovieExplosion]
+
+[CTEGaussExplosion]
+CTEGaussExplosion->m_nType = 0x2c
+CTEGaussExplosion->m_vecDirection = 0x30
+
+[CEnvQuadraticBeam]
+CEnvQuadraticBeam->m_targetPosition = 0x7b0
+CEnvQuadraticBeam->m_controlPosition = 0x7bc
+CEnvQuadraticBeam->m_scrollRate = 0x7c8
+CEnvQuadraticBeam->m_flWidth = 0x7cc
+
+[CEmbers]
+CEmbers->m_nDensity = 0x7b0
+CEmbers->m_nLifetime = 0x7b4
+CEmbers->m_nSpeed = 0x7b8
+CEmbers->m_bEmit = 0x7bc
+
+[CEnvWind]
+CEnvWind->m_iMinWind = 0x7c0
+CEnvWind->m_iMaxWind = 0x7c4
+CEnvWind->m_iMinGust = 0x7cc
+CEnvWind->m_iMaxGust = 0x7d0
+CEnvWind->m_flMinGustDelay = 0x7d4
+CEnvWind->m_flMaxGustDelay = 0x7d8
+CEnvWind->m_iGustDirChange = 0x7e0
+CEnvWind->m_iWindSeed = 0x7bc
+CEnvWind->m_iInitialWindDir = 0x820
+CEnvWind->m_flInitialWindSpeed = 0x824
+CEnvWind->m_flStartTime = 0x7b8
+CEnvWind->m_flGustDuration = 0x7dc
+CEnvWind->m_EnvWindShared = 0x7b0
+
+[CPrecipitation]
+CPrecipitation->m_nPrecipType = 0x7dc
+
+[CBaseTempEntity]
+
+[CVoteController]
+CVoteController->m_iActiveIssueIndex = 0x7bc
+CVoteController->m_nVoteIdx = 0x7e4
+CVoteController->m_iOnlyTeamToVote = 0x7c0
+CVoteController->m_nVoteOptionCount = 0x7c4
+CVoteController->m_nPotentialVotes = 0x7dc
+CVoteController->m_bIsYesNoVote = 0x7e2
+
+[CHandleTest]
+CHandleTest->m_Handle = 0x7b0
+CHandleTest->m_bSendHandle = 0x7b4
+
+[CTeamplayRoundBasedRulesProxy]
+CTeamplayRoundBasedRulesProxy->m_iRoundState = 0x6c
+CTeamplayRoundBasedRulesProxy->m_bInWaitingForPlayers = 0x7c
+CTeamplayRoundBasedRulesProxy->m_iWinningTeam = 0x74
+CTeamplayRoundBasedRulesProxy->m_bInOvertime = 0x70
+CTeamplayRoundBasedRulesProxy->m_bInSetup = 0x71
+CTeamplayRoundBasedRulesProxy->m_bSwitchedTeamsThisRound = 0x72
+CTeamplayRoundBasedRulesProxy->m_bAwaitingReadyRestart = 0x7d
+CTeamplayRoundBasedRulesProxy->m_flRestartRoundTime = 0x80
+CTeamplayRoundBasedRulesProxy->m_flMapResetTime = 0x84
+CTeamplayRoundBasedRulesProxy->m_nRoundsPlayed = 0x194
+CTeamplayRoundBasedRulesProxy->m_flNextRespawnWave = 0x88
+CTeamplayRoundBasedRulesProxy->m_TeamRespawnWaveTimes = 0x1a0
+CTeamplayRoundBasedRulesProxy->m_bTeamReady = 0x108
+CTeamplayRoundBasedRulesProxy->m_bStopWatch = 0x128
+CTeamplayRoundBasedRulesProxy->m_bMultipleTrains = 0x129
+CTeamplayRoundBasedRulesProxy->m_bPlayerReady = 0x12a
+CTeamplayRoundBasedRulesProxy->m_bCheatsEnabledDuringLevel = 0x190
+CTeamplayRoundBasedRulesProxy->m_flCountdownTime = 0x198
+CTeamplayRoundBasedRulesProxy->m_flStateTransitionTime = 0x19c
+CTeamplayRoundBasedRulesProxy->teamplayroundbased_gamerules_data = 0x0
+
+[CSpriteTrail]
+CSpriteTrail->m_flLifeTime = 0x2048
+CSpriteTrail->m_flStartWidth = 0x204c
+CSpriteTrail->m_flEndWidth = 0x2050
+CSpriteTrail->m_flStartWidthVariance = 0x2054
+CSpriteTrail->m_flTextureRes = 0x2058
+CSpriteTrail->m_flMinFadeLength = 0x205c
+CSpriteTrail->m_vecSkyboxOrigin = 0x2060
+CSpriteTrail->m_flSkyboxScale = 0x206c
+
+[CSpriteOriented]
+
+[CSprite]
+CSprite->m_hAttachedToEntity = 0x7c4
+CSprite->m_nAttachment = 0x7c8
+CSprite->m_flScaleTime = 0x7e4
+CSprite->m_flSpriteScale = 0x7e0
+CSprite->m_flSpriteFramerate = 0x7cc
+CSprite->m_flGlowProxySize = 0x7ec
+CSprite->m_flHDRColorScale = 0x7f0
+CSprite->m_flFrame = 0x7d0
+CSprite->m_flBrightnessTime = 0x7dc
+CSprite->m_nBrightness = 0x7d8
+CSprite->m_bWorldSpaceScale = 0x7e8
+
+[CRagdollPropAttached]
+CRagdollPropAttached->m_boneIndexAttached = 0xf90
+CRagdollPropAttached->m_ragdollAttachedObjectIndex = 0xf8c
+CRagdollPropAttached->m_attachmentPointBoneSpace = 0xf68
+CRagdollPropAttached->m_attachmentPointRagdollSpace = 0xf80
+
+[CRagdollProp]
+CRagdollProp->m_ragAngles[0] = 0xd2c
+CRagdollProp->m_ragAngles = 0x0
+CRagdollProp->m_ragPos[0] = 0xc0c
+CRagdollProp->m_ragPos = 0x0
+CRagdollProp->m_hUnragdoll = 0xf54
+CRagdollProp->m_flBlendWeight = 0xf58
+CRagdollProp->m_nOverlaySequence = 0xf60
+
+[CPoseController]
+CPoseController->m_hProps = 0x7b0
+CPoseController->m_chPoseIndex = 0x7c0
+CPoseController->m_bPoseValueParity = 0x7c4
+CPoseController->m_fPoseValue = 0x7c8
+CPoseController->m_fInterpolationTime = 0x7cc
+CPoseController->m_bInterpolationWrap = 0x7d0
+CPoseController->m_fCycleFrequency = 0x7d4
+CPoseController->m_nFModType = 0x7d8
+CPoseController->m_fFModTimeOffset = 0x7dc
+CPoseController->m_fFModRate = 0x7e0
+CPoseController->m_fFModAmplitude = 0x7e4
+
+[CGameRulesProxy]
+
+[CInfoLadderDismount]
+
+[CFuncLadder]
+CFuncLadder->m_vecPlayerMountPositionTop = 0x7e0
+CFuncLadder->m_vecPlayerMountPositionBottom = 0x7ec
+CFuncLadder->m_vecLadderDir = 0x7b0
+CFuncLadder->m_bFakeLadder = 0x7f9
+
+[CEnvDetailController]
+CEnvDetailController->m_flFadeStartDist = 0x7b0
+CEnvDetailController->m_flFadeEndDist = 0x7b4
+
+[CWorld]
+CWorld->m_flWaveHeight = 0x7b0
+CWorld->m_WorldMins = 0x7b4
+CWorld->m_WorldMaxs = 0x7c0
+CWorld->m_bStartDark = 0x7cc
+CWorld->m_flMaxOccludeeArea = 0x7d0
+CWorld->m_flMinOccluderArea = 0x7d4
+CWorld->m_flMaxPropScreenSpaceWidth = 0x7dc
+CWorld->m_flMinPropScreenSpaceWidth = 0x7d8
+CWorld->m_iszDetailSpriteMaterial = 0x7e1
+CWorld->m_bColdWorld = 0x7e0
+
+[CWaterLODControl]
+CWaterLODControl->m_flCheapWaterStartDistance = 0x7b0
+CWaterLODControl->m_flCheapWaterEndDistance = 0x7b4
+
+[CWaterBullet]
+
+[CVGuiScreen]
+CVGuiScreen->m_flWidth = 0x7b8
+CVGuiScreen->m_flHeight = 0x7bc
+CVGuiScreen->m_fScreenFlags = 0x7e4
+CVGuiScreen->m_nPanelName = 0x7c0
+CVGuiScreen->m_nAttachmentIndex = 0x7dc
+CVGuiScreen->m_nOverlayMaterial = 0x7e0
+CVGuiScreen->m_hPlayerOwner = 0x850
+
+[CPropJeep]
+CPropJeep->m_bHeadlightIsOn = 0xd90
+
+[CPropVehicleChoreoGeneric]
+CPropVehicleChoreoGeneric->m_hPlayer = 0xc30
+CPropVehicleChoreoGeneric->m_bEnterAnimOn = 0xc38
+CPropVehicleChoreoGeneric->m_bExitAnimOn = 0xc39
+CPropVehicleChoreoGeneric->m_vecEyeExitEndpoint = 0xc3c
+CPropVehicleChoreoGeneric->m_vehicleView.bClampEyeAngles = 0xcd8
+CPropVehicleChoreoGeneric->m_vehicleView.flPitchCurveZero = 0xcdc
+CPropVehicleChoreoGeneric->m_vehicleView.flPitchCurveLinear = 0xce0
+CPropVehicleChoreoGeneric->m_vehicleView.flRollCurveZero = 0xce4
+CPropVehicleChoreoGeneric->m_vehicleView.flRollCurveLinear = 0xce8
+CPropVehicleChoreoGeneric->m_vehicleView.flFOV = 0xcec
+CPropVehicleChoreoGeneric->m_vehicleView.flYawMin = 0xcf0
+CPropVehicleChoreoGeneric->m_vehicleView.flYawMax = 0xcf4
+CPropVehicleChoreoGeneric->m_vehicleView.flPitchMin = 0xcf8
+CPropVehicleChoreoGeneric->m_vehicleView.flPitchMax = 0xcfc
+
+[CTest_ProxyToggle_Networkable]
+CTest_ProxyToggle_Networkable->m_WithProxy = 0x7b0
+CTest_ProxyToggle_Networkable->blah = 0x0
+
+[CTesla]
+CTesla->m_SoundName = 0x7e0
+CTesla->m_iszSpriteName = 0x820
+
+[CTeam]
+CTeam->m_iTeamNum = 0x804
+CTeam->m_iScore = 0x7f0
+CTeam->m_iRoundsWon = 0x7f4
+CTeam->m_szTeamname = 0x7d0
+CTeam->player_array_element = 0x0
+CTeam->"player_array" = 0x0
+
+[CSun]
+CSun->m_clrRender = 0x80
+CSun->m_clrOverlay = 0x950
+CSun->m_vDirection = 0x95c
+CSun->m_bOn = 0x968
+CSun->m_nSize = 0x954
+CSun->m_nOverlaySize = 0x958
+CSun->m_nMaterial = 0x96c
+CSun->m_nOverlayMaterial = 0x970
+CSun->HDRColorScale = 0x0
+
+[CParticlePerformanceMonitor]
+CParticlePerformanceMonitor->m_bMeasurePerf = 0x7ae
+CParticlePerformanceMonitor->m_bDisplayPerf = 0x7ad
+
+[CSpotlightEnd]
+CSpotlightEnd->m_flLightScale = 0x7b0
+CSpotlightEnd->m_Radius = 0x7b4
+
+[CSlideshowDisplay]
+CSlideshowDisplay->m_bEnabled = 0x7ad
+CSlideshowDisplay->m_szDisplayText = 0x7ae
+CSlideshowDisplay->m_szSlideshowDirectory = 0x82e
+CSlideshowDisplay->m_chCurrentSlideLists = 0x8d0
+CSlideshowDisplay->m_fMinSlideTime = 0x8e8
+CSlideshowDisplay->m_fMaxSlideTime = 0x8ec
+CSlideshowDisplay->m_iCycleType = 0x8f4
+CSlideshowDisplay->m_bNoListRepeats = 0x8f8
+
+[CShadowControl]
+CShadowControl->m_shadowDirection = 0x7b0
+CShadowControl->m_shadowColor = 0x7bc
+CShadowControl->m_flShadowMaxDist = 0x7c0
+CShadowControl->m_bDisableShadows = 0x7c4
+
+[CSceneEntity]
+CSceneEntity->m_nSceneStringIndex = 0x7c4
+CSceneEntity->m_bIsPlayingBack = 0x7b8
+CSceneEntity->m_bPaused = 0x7b9
+CSceneEntity->m_bMultiplayer = 0x7ba
+CSceneEntity->m_flForceClientTime = 0x7c0
+CSceneEntity->m_hActorList = 0x0
+
+[CRopeKeyframe]
+CRopeKeyframe->m_iRopeMaterialModelIndex = 0x7ec
+CRopeKeyframe->m_hStartPoint = 0xadc
+CRopeKeyframe->m_hEndPoint = 0xae0
+CRopeKeyframe->m_iStartAttachment = 0xae4
+CRopeKeyframe->m_iEndAttachment = 0xae6
+CRopeKeyframe->m_fLockedPoints = 0xaf8
+CRopeKeyframe->m_Slack = 0xaf0
+CRopeKeyframe->m_RopeLength = 0xaec
+CRopeKeyframe->m_RopeFlags = 0x7e8
+CRopeKeyframe->m_TextureScale = 0xaf4
+CRopeKeyframe->m_nSegments = 0xad8
+CRopeKeyframe->m_bConstrainBetweenEndpoints = 0xb90
+CRopeKeyframe->m_Subdiv = 0xae8
+CRopeKeyframe->m_Width = 0xafc
+CRopeKeyframe->m_flScrollSpeed = 0x7e4
+CRopeKeyframe->m_vecOrigin = 0x448
+CRopeKeyframe->moveparent = 0x22c
+CRopeKeyframe->m_iParentAttachment = 0x216
+
+[CRagdollManager]
+CRagdollManager->m_iCurrentMaxRagdollCount = 0x7b0
+
+[CPhysicsPropMultiplayer]
+CPhysicsPropMultiplayer->m_iPhysicsMode = 0xc18
+CPhysicsPropMultiplayer->m_fMass = 0xc1c
+CPhysicsPropMultiplayer->m_collisionMins = 0xc20
+CPhysicsPropMultiplayer->m_collisionMaxs = 0xc2c
+
+[CPhysBoxMultiplayer]
+CPhysBoxMultiplayer->m_iPhysicsMode = 0x7c0
+CPhysBoxMultiplayer->m_fMass = 0x7c4
+
+[CBasePropDoor]
+
+[CDynamicProp]
+CDynamicProp->m_bUseHitboxesForRenderBox = 0xc09
+
+[CPointWorldText]
+CPointWorldText->m_szText = 0x7c8
+CPointWorldText->m_flTextSize = 0x8cc
+CPointWorldText->m_flTextSpacingX = 0x8d0
+CPointWorldText->m_flTextSpacingY = 0x8d4
+CPointWorldText->m_colTextColor = 0x8d8
+CPointWorldText->m_nOrientation = 0x8dc
+CPointWorldText->m_nFont = 0x8e4
+CPointWorldText->m_bRainbow = 0x8e8
+
+[CPointCommentaryNode]
+CPointCommentaryNode->m_bActive = 0xc09
+CPointCommentaryNode->m_flStartTime = 0xc0c
+CPointCommentaryNode->m_iszCommentaryFile = 0xc10
+CPointCommentaryNode->m_iszCommentaryFileNoHDR = 0xd14
+CPointCommentaryNode->m_iszSpeakers = 0xe18
+CPointCommentaryNode->m_iNodeNumber = 0xf18
+CPointCommentaryNode->m_iNodeNumberMax = 0xf1c
+CPointCommentaryNode->m_hViewPosition = 0xf28
+
+[CPointCamera]
+CPointCamera->m_FOV = 0x7b0
+CPointCamera->m_Resolution = 0x7b4
+CPointCamera->m_bFogEnable = 0x7b8
+CPointCamera->m_FogColor = 0x7b9
+CPointCamera->m_flFogStart = 0x7c0
+CPointCamera->m_flFogEnd = 0x7c4
+CPointCamera->m_flFogMaxDensity = 0x7c8
+CPointCamera->m_bFogRadial = 0x7cc
+CPointCamera->m_bActive = 0x7cd
+CPointCamera->m_bUseScreenAspectRatio = 0x7ce
+
+[CPlayerResource]
+CPlayerResource->m_iPing = 0xae8
+CPlayerResource->m_iScore = 0xc80
+CPlayerResource->m_iDeaths = 0xe18
+CPlayerResource->m_bConnected = 0xfb0
+CPlayerResource->m_iTeam = 0x1018
+CPlayerResource->m_bAlive = 0x11b0
+CPlayerResource->m_iHealth = 0x1218
+CPlayerResource->m_iAccountID = 0x1430
+CPlayerResource->m_bValid = 0x15c8
+CPlayerResource->m_iUserID = 0x1630
+
+[CPlasma]
+CPlasma->m_flStartScale = 0x7b0
+CPlasma->m_flScale = 0x7b4
+CPlasma->m_flScaleTime = 0x7b8
+CPlasma->m_nFlags = 0x7bc
+CPlasma->m_nPlasmaModelIndex = 0x7c0
+CPlasma->m_nPlasmaModelIndex2 = 0x7c4
+CPlasma->m_nGlowModelIndex = 0x7c8
+
+[CPhysMagnet]
+
+[CPhysicsProp]
+CPhysicsProp->m_bAwake = 0xc09
+
+[CPhysBox]
+CPhysBox->m_mass = 0x7b0
+
+[CParticleSystem]
+CParticleSystem->m_vecOrigin = 0x448
+CParticleSystem->m_hOwnerEntity = 0x754
+CParticleSystem->moveparent = 0x22c
+CParticleSystem->m_iParentAttachment = 0x216
+CParticleSystem->m_angRotation = 0x454
+CParticleSystem->m_iEffectIndex = 0x7b0
+CParticleSystem->m_bActive = 0x7b4
+CParticleSystem->m_flStartTime = 0x7b8
+CParticleSystem->m_hControlPointEnts = 0x7bc
+CParticleSystem->m_iControlPointParents = 0x8b8
+CParticleSystem->m_bWeatherEffect = 0x8f7
+
+[CMaterialModifyControl]
+CMaterialModifyControl->m_szMaterialName = 0x7ad
+CMaterialModifyControl->m_szMaterialVar = 0x8ac
+CMaterialModifyControl->m_szMaterialVarValue = 0x9ab
+CMaterialModifyControl->m_iFrameStart = 0xabc
+CMaterialModifyControl->m_iFrameEnd = 0xac0
+CMaterialModifyControl->m_bWrap = 0xac4
+CMaterialModifyControl->m_flFramerate = 0xac8
+CMaterialModifyControl->m_bNewAnimCommandsSemaphore = 0xacc
+CMaterialModifyControl->m_flFloatLerpStartValue = 0xad0
+CMaterialModifyControl->m_flFloatLerpEndValue = 0xad4
+CMaterialModifyControl->m_flFloatLerpTransitionTime = 0xad8
+CMaterialModifyControl->m_bFloatLerpWrap = 0xadc
+CMaterialModifyControl->m_nModifyMode = 0xae4
+
+[CLightGlow]
+CLightGlow->m_clrRender = 0x80
+CLightGlow->m_nHorizontalSize = 0x7b0
+CLightGlow->m_nVerticalSize = 0x7b4
+CLightGlow->m_nMinDist = 0x7b8
+CLightGlow->m_nMaxDist = 0x7bc
+CLightGlow->m_nOuterMaxDist = 0x7c0
+CLightGlow->m_spawnflags = 0x7c4
+CLightGlow->m_vecOrigin = 0x448
+CLightGlow->m_angRotation = 0x454
+CLightGlow->moveparent = 0x22c
+CLightGlow->m_flGlowProxySize = 0x8c0
+CLightGlow->HDRColorScale = 0x0
+
+[CInfoOverlayAccessor]
+CInfoOverlayAccessor->m_iTextureFrameIndex = 0x748
+CInfoOverlayAccessor->m_iOverlayID = 0x7b0
+
+[CFuncTrackTrain]
+
+[CFuncSmokeVolume]
+CFuncSmokeVolume->m_Color1 = 0x8e8
+CFuncSmokeVolume->m_Color2 = 0x8ec
+CFuncSmokeVolume->m_MaterialName = 0x8f0
+CFuncSmokeVolume->m_ParticleDrawWidth = 0x9f0
+CFuncSmokeVolume->m_ParticleSpacingDistance = 0x9f4
+CFuncSmokeVolume->m_DensityRampSpeed = 0x9f8
+CFuncSmokeVolume->m_RotationSpeed = 0x9fc
+CFuncSmokeVolume->m_MovementSpeed = 0xa00
+CFuncSmokeVolume->m_Density = 0xa04
+CFuncSmokeVolume->m_spawnflags = 0xa08
+CFuncSmokeVolume->m_vecMinsPreScaled = 0x250
+CFuncSmokeVolume->m_vecMaxsPreScaled = 0x25c
+CFuncSmokeVolume->m_vecMins = 0x268
+CFuncSmokeVolume->m_vecMaxs = 0x274
+CFuncSmokeVolume->m_nSolidType = 0x289
+CFuncSmokeVolume->m_usSolidFlags = 0x284
+CFuncSmokeVolume->m_nSurroundType = 0x288
+CFuncSmokeVolume->m_triggerBloat = 0x28a
+CFuncSmokeVolume->m_bUniformTriggerBloat = 0x28b
+CFuncSmokeVolume->m_vecSpecifiedSurroundingMinsPreScaled = 0x28c
+CFuncSmokeVolume->m_vecSpecifiedSurroundingMaxsPreScaled = 0x298
+CFuncSmokeVolume->m_vecSpecifiedSurroundingMins = 0x2a4
+CFuncSmokeVolume->m_vecSpecifiedSurroundingMaxs = 0x2b0
+CFuncSmokeVolume->m_Collision = 0x240
+
+[CFuncRotating]
+CFuncRotating->m_vecOrigin = 0x448
+CFuncRotating->m_angRotation[0] = 0x454
+CFuncRotating->m_angRotation[1] = 0x458
+CFuncRotating->m_angRotation[2] = 0x45c
+CFuncRotating->m_flSimulationTime = 0x98
+
+[CFuncReflectiveGlass]
+
+[CFuncOccluder]
+CFuncOccluder->m_bActive = 0x7b4
+CFuncOccluder->m_nOccluderIndex = 0x7b0
+
+[CFunc_LOD]
+CFunc_LOD->m_fDisappearDist = 0x7b0
+
+[CTEDust]
+CTEDust->m_flSize = 0x2c
+CTEDust->m_flSpeed = 0x30
+CTEDust->m_vecDirection = 0x34
+
+[CFunc_Dust]
+CFunc_Dust->m_Color = 0x7ad
+CFunc_Dust->m_SpawnRate = 0x7b4
+CFunc_Dust->m_flSizeMin = 0x7b8
+CFunc_Dust->m_flSizeMax = 0x7bc
+CFunc_Dust->m_LifetimeMin = 0x7c4
+CFunc_Dust->m_LifetimeMax = 0x7c8
+CFunc_Dust->m_DustFlags = 0x7d4
+CFunc_Dust->m_SpeedMax = 0x7c0
+CFunc_Dust->m_DistMax = 0x7cc
+CFunc_Dust->m_nModelIndex = 0xbc
+CFunc_Dust->m_FallSpeed = 0x7d0
+CFunc_Dust->m_vecMinsPreScaled = 0x250
+CFunc_Dust->m_vecMaxsPreScaled = 0x25c
+CFunc_Dust->m_vecMins = 0x268
+CFunc_Dust->m_vecMaxs = 0x274
+CFunc_Dust->m_nSolidType = 0x289
+CFunc_Dust->m_usSolidFlags = 0x284
+CFunc_Dust->m_nSurroundType = 0x288
+CFunc_Dust->m_triggerBloat = 0x28a
+CFunc_Dust->m_bUniformTriggerBloat = 0x28b
+CFunc_Dust->m_vecSpecifiedSurroundingMinsPreScaled = 0x28c
+CFunc_Dust->m_vecSpecifiedSurroundingMaxsPreScaled = 0x298
+CFunc_Dust->m_vecSpecifiedSurroundingMins = 0x2a4
+CFunc_Dust->m_vecSpecifiedSurroundingMaxs = 0x2b0
+CFunc_Dust->m_Collision = 0x240
+
+[CFuncConveyor]
+CFuncConveyor->m_flConveyorSpeed = 0x7b0
+
+[CBreakableSurface]
+CBreakableSurface->m_nNumWide = 0x7b8
+CBreakableSurface->m_nNumHigh = 0x7bc
+CBreakableSurface->m_flPanelWidth = 0x7c0
+CBreakableSurface->m_flPanelHeight = 0x7c4
+CBreakableSurface->m_vNormal = 0x7c8
+CBreakableSurface->m_vCorner = 0x7d4
+CBreakableSurface->m_bIsBroken = 0x7e0
+CBreakableSurface->m_nSurfaceType = 0x7e4
+CBreakableSurface->m_RawPanelBitVec = 0x818
+
+[CFuncAreaPortalWindow]
+CFuncAreaPortalWindow->m_flFadeStartDist = 0x7b0
+CFuncAreaPortalWindow->m_flFadeDist = 0x7b4
+CFuncAreaPortalWindow->m_flTranslucencyLimit = 0x7b8
+CFuncAreaPortalWindow->m_iBackgroundModelIndex = 0x7bc
+
+[CFish]
+CFish->m_poolOrigin = 0xc70
+CFish->m_x = 0xc58
+CFish->m_y = 0xc5c
+CFish->m_z = 0xc60
+CFish->m_angle = 0xc68
+CFish->m_nModelIndex = 0xbc
+CFish->m_lifeState = 0xd1
+CFish->m_waterLevel = 0xc7c
+
+[CEntityFlame]
+CEntityFlame->m_hEntAttached = 0x7b8
+
+[CFireSmoke]
+CFireSmoke->m_flStartScale = 0x7b0
+CFireSmoke->m_flScale = 0x7b4
+CFireSmoke->m_flScaleTime = 0x7b8
+CFireSmoke->m_nFlags = 0x7bc
+CFireSmoke->m_nFlameModelIndex = 0x7c0
+CFireSmoke->m_nFlameFromAboveModelIndex = 0x7c4
+
+[CEnvTonemapController]
+CEnvTonemapController->m_bUseCustomAutoExposureMin = 0x7ad
+CEnvTonemapController->m_bUseCustomAutoExposureMax = 0x7ae
+CEnvTonemapController->m_bUseCustomBloomScale = 0x7af
+CEnvTonemapController->m_flCustomAutoExposureMin = 0x7b0
+CEnvTonemapController->m_flCustomAutoExposureMax = 0x7b4
+CEnvTonemapController->m_flCustomBloomScale = 0x7b8
+CEnvTonemapController->m_flCustomBloomScaleMinimum = 0x7bc
+
+[CEnvScreenEffect]
+CEnvScreenEffect->m_flDuration = 0x7b0
+CEnvScreenEffect->m_nType = 0x7b4
+
+[CEnvScreenOverlay]
+CEnvScreenOverlay->m_iszOverlayNames[0] = 0x7ad
+CEnvScreenOverlay->m_iszOverlayNames = 0x0
+CEnvScreenOverlay->m_flOverlayTimes[0] = 0x11a4
+CEnvScreenOverlay->m_flOverlayTimes = 0x0
+CEnvScreenOverlay->m_flStartTime = 0x11cc
+CEnvScreenOverlay->m_iDesiredOverlay = 0x11d0
+CEnvScreenOverlay->m_bIsActive = 0x11d4
+
+[CEnvProjectedTexture]
+CEnvProjectedTexture->m_hTargetEntity = 0x7b0
+CEnvProjectedTexture->m_bState = 0x7b4
+CEnvProjectedTexture->m_flLightFOV = 0x7b8
+CEnvProjectedTexture->m_bEnableShadows = 0x7bc
+CEnvProjectedTexture->m_bLightOnlyTarget = 0x7bd
+CEnvProjectedTexture->m_bLightWorld = 0x7be
+CEnvProjectedTexture->m_bCameraSpace = 0x7bf
+CEnvProjectedTexture->m_LinearFloatLightColor = 0x7c0
+CEnvProjectedTexture->m_flAmbient = 0x7cc
+CEnvProjectedTexture->m_SpotlightTextureName = 0x7d8
+CEnvProjectedTexture->m_nSpotlightTextureFrame = 0x8dc
+CEnvProjectedTexture->m_flNearZ = 0x7d0
+CEnvProjectedTexture->m_flFarZ = 0x7d4
+CEnvProjectedTexture->m_nShadowQuality = 0x8e0
+
+[CEnvParticleScript]
+CEnvParticleScript->m_flSequenceScale = 0xd40
+
+[CFogController]
+CFogController->m_fog.enable = 0x7f4
+CFogController->m_fog.blend = 0x7f5
+CFogController->m_fog.radial = 0x7f6
+CFogController->m_fog.dirPrimary = 0x7b8
+CFogController->m_fog.colorPrimary = 0x7c4
+CFogController->m_fog.colorSecondary = 0x7c8
+CFogController->m_fog.start = 0x7d4
+CFogController->m_fog.end = 0x7d8
+CFogController->m_fog.farz = 0x7dc
+CFogController->m_fog.maxdensity = 0x7e0
+CFogController->m_fog.colorPrimaryLerpTo = 0x7cc
+CFogController->m_fog.colorSecondaryLerpTo = 0x7d0
+CFogController->m_fog.startLerpTo = 0x7e4
+CFogController->m_fog.endLerpTo = 0x7e8
+CFogController->m_fog.lerptime = 0x7ec
+CFogController->m_fog.duration = 0x7f0
+
+[CEntityParticleTrail]
+CEntityParticleTrail->m_iMaterialName = 0x8e0
+CEntityParticleTrail->m_flLifetime = 0x8f8
+CEntityParticleTrail->m_flStartSize = 0x8fc
+CEntityParticleTrail->m_flEndSize = 0x900
+CEntityParticleTrail->m_Info = 0x8e8
+CEntityParticleTrail->m_hConstraintEntity = 0x908
+
+[CEntityDissolve]
+CEntityDissolve->m_flStartTime = 0x7b8
+CEntityDissolve->m_flFadeOutStart = 0x7bc
+CEntityDissolve->m_flFadeOutLength = 0x7c0
+CEntityDissolve->m_flFadeOutModelStart = 0x7c4
+CEntityDissolve->m_flFadeOutModelLength = 0x7c8
+CEntityDissolve->m_flFadeInStart = 0x7cc
+CEntityDissolve->m_flFadeInLength = 0x7d0
+CEntityDissolve->m_nDissolveType = 0x7d4
+CEntityDissolve->m_vDissolverOrigin = 0x7e8
+CEntityDissolve->m_nMagnitude = 0x7f4
+
+[CDynamicLight]
+CDynamicLight->m_Flags = 0x7ad
+CDynamicLight->m_LightStyle = 0x7ae
+CDynamicLight->m_Radius = 0x7b0
+CDynamicLight->m_Exponent = 0x7b4
+CDynamicLight->m_InnerAngle = 0x7b8
+CDynamicLight->m_OuterAngle = 0x7bc
+CDynamicLight->m_SpotRadius = 0x7c0
+
+[CColorCorrectionVolume]
+CColorCorrectionVolume->m_Weight = 0x7b0
+CColorCorrectionVolume->m_lookupFilename = 0x7b4
+
+[CColorCorrection]
+CColorCorrection->m_vecOrigin = 0x7b0
+CColorCorrection->m_minFalloff = 0x7bc
+CColorCorrection->m_maxFalloff = 0x7c0
+CColorCorrection->m_flCurWeight = 0x7c4
+CColorCorrection->m_netLookupFilename = 0x7c8
+CColorCorrection->m_bEnabled = 0x8cc
+
+[CBreakableProp]
+
+[CBasePlayer]
+CBasePlayer->m_chAreaBits = 0x1248
+CBasePlayer->m_chAreaPortalBits = 0x1268
+CBasePlayer->m_iHideHUD = 0x1280
+CBasePlayer->m_flFOVRate = 0x1284
+CBasePlayer->m_bDucked = 0x1288
+CBasePlayer->m_bDucking = 0x1289
+CBasePlayer->m_bInDuckJump = 0x128a
+CBasePlayer->m_flDucktime = 0x128c
+CBasePlayer->m_flDuckJumpTime = 0x1290
+CBasePlayer->m_flJumpTime = 0x1294
+CBasePlayer->m_flFallVelocity = 0x129c
+CBasePlayer->m_vecPunchAngle = 0x12b4
+CBasePlayer->m_vecPunchAngleVel = 0x1310
+CBasePlayer->m_bDrawViewmodel = 0x1370
+CBasePlayer->m_bWearingSuit = 0x1371
+CBasePlayer->m_bPoisoned = 0x1372
+CBasePlayer->m_bForceLocalPlayerDraw = 0x1373
+CBasePlayer->m_flStepSize = 0x1378
+CBasePlayer->m_bAllowAutoMovement = 0x137c
+CBasePlayer->m_skybox3d.scale = 0x1388
+CBasePlayer->m_skybox3d.origin = 0x138c
+CBasePlayer->m_skybox3d.area = 0x1398
+CBasePlayer->m_skybox3d.fog.enable = 0x13e4
+CBasePlayer->m_skybox3d.fog.blend = 0x13e5
+CBasePlayer->m_skybox3d.fog.radial = 0x13e6
+CBasePlayer->m_skybox3d.fog.dirPrimary = 0x13a8
+CBasePlayer->m_skybox3d.fog.colorPrimary = 0x13b4
+CBasePlayer->m_skybox3d.fog.colorSecondary = 0x13b8
+CBasePlayer->m_skybox3d.fog.start = 0x13c4
+CBasePlayer->m_skybox3d.fog.end = 0x13c8
+CBasePlayer->m_skybox3d.fog.maxdensity = 0x13d0
+CBasePlayer->m_PlayerFog.m_hCtrl = 0x13f0
+CBasePlayer->m_audio.localSound[0] = 0x1418
+CBasePlayer->m_audio.localSound[1] = 0x1424
+CBasePlayer->m_audio.localSound[2] = 0x1430
+CBasePlayer->m_audio.localSound[3] = 0x143c
+CBasePlayer->m_audio.localSound[4] = 0x1448
+CBasePlayer->m_audio.localSound[5] = 0x1454
+CBasePlayer->m_audio.localSound[6] = 0x1460
+CBasePlayer->m_audio.localSound[7] = 0x146c
+CBasePlayer->m_audio.soundscapeIndex = 0x1478
+CBasePlayer->m_audio.localBits = 0x147c
+CBasePlayer->m_audio.entIndex = 0x1480
+CBasePlayer->m_szScriptOverlayMaterial = 0x1489
+CBasePlayer->m_Local = 0x1240
+CBasePlayer->m_vecViewOffset[0] = 0x144
+CBasePlayer->m_vecViewOffset[1] = 0x148
+CBasePlayer->m_vecViewOffset[2] = 0x14c
+CBasePlayer->m_flFriction = 0x324
+CBasePlayer->m_iAmmo = 0x1090
+CBasePlayer->m_fOnTarget = 0x15ec
+CBasePlayer->m_nTickBase = 0x1718
+CBasePlayer->m_nNextThinkTick = 0xb4
+CBasePlayer->m_hLastWeapon = 0x1730
+CBasePlayer->m_hGroundEntity = 0x31c
+CBasePlayer->m_vecVelocity[0] = 0x168
+CBasePlayer->m_vecVelocity[1] = 0x16c
+CBasePlayer->m_vecVelocity[2] = 0x170
+CBasePlayer->m_vecBaseVelocity = 0x1f0
+CBasePlayer->m_hConstraintEntity = 0x1628
+CBasePlayer->m_vecConstraintCenter = 0x162c
+CBasePlayer->m_flConstraintRadius = 0x1638
+CBasePlayer->m_flConstraintWidth = 0x163c
+CBasePlayer->m_flConstraintSpeedFactor = 0x1640
+CBasePlayer->m_flDeathTime = 0x1668
+CBasePlayer->m_nWaterLevel = 0x218
+CBasePlayer->m_flLaggedMovementValue = 0x1890
+CBasePlayer->localdata = 0x0
+CBasePlayer->m_Attributes = 0x1590
+CBasePlayer->m_AttributeList = 0x1590
+CBasePlayer->deadflag = 0x15c8
+CBasePlayer->pl = 0x15c0
+CBasePlayer->m_iFOV = 0x15d8
+CBasePlayer->m_iFOVStart = 0x15dc
+CBasePlayer->m_flFOVTime = 0x15e0
+CBasePlayer->m_iDefaultFOV = 0x15e4
+CBasePlayer->m_hZoomOwner = 0x15e8
+CBasePlayer->m_hVehicle = 0x1674
+CBasePlayer->m_hUseEntity = 0x167c
+CBasePlayer->m_iHealth = 0xd4
+CBasePlayer->m_lifeState = 0xd1
+CBasePlayer->m_iBonusProgress = 0x1684
+CBasePlayer->m_iBonusChallenge = 0x1688
+CBasePlayer->m_flMaxspeed = 0x1680
+CBasePlayer->m_fFlags = 0x460
+CBasePlayer->m_iObserverMode = 0x1644
+CBasePlayer->m_hObserverTarget = 0x1648
+CBasePlayer->m_hViewModel[0] = 0x1758
+CBasePlayer->m_hViewModel = 0x0
+CBasePlayer->m_szLastPlaceName = 0x18b0
+CBasePlayer->m_hMyWearables = 0x0
+
+[CBaseFlex]
+CBaseFlex->m_flexWeight = 0xcf8
+CBaseFlex->m_blinktoggle = 0xec8
+CBaseFlex->m_viewtarget = 0xc98
+
+[CBaseEntity]
+CBaseEntity->m_flAnimTime = 0x90
+CBaseEntity->AnimTimeMustBeFirst = 0x0
+CBaseEntity->m_flSimulationTime = 0x98
+CBaseEntity->m_ubInterpolationFrame = 0xa4
+CBaseEntity->m_vecOrigin = 0x448
+CBaseEntity->m_angRotation = 0x454
+CBaseEntity->m_nModelIndex = 0xbc
+CBaseEntity->m_fEffects = 0xa8
+CBaseEntity->m_nRenderMode = 0xac
+CBaseEntity->m_nRenderFX = 0x7c
+CBaseEntity->m_clrRender = 0x80
+CBaseEntity->m_iTeamNum = 0xdc
+CBaseEntity->m_CollisionGroup = 0x464
+CBaseEntity->m_flGravity = 0x1fc
+CBaseEntity->m_flElasticity = 0x310
+CBaseEntity->m_flShadowCastDistance = 0x314
+CBaseEntity->m_hOwnerEntity = 0x754
+CBaseEntity->m_hEffectEntity = 0x758
+CBaseEntity->moveparent = 0x22c
+CBaseEntity->m_iParentAttachment = 0x216
+CBaseEntity->movetype = 0x0
+CBaseEntity->movecollide = 0x0
+CBaseEntity->m_vecMinsPreScaled = 0x250
+CBaseEntity->m_vecMaxsPreScaled = 0x25c
+CBaseEntity->m_vecMins = 0x268
+CBaseEntity->m_vecMaxs = 0x274
+CBaseEntity->m_nSolidType = 0x289
+CBaseEntity->m_usSolidFlags = 0x284
+CBaseEntity->m_nSurroundType = 0x288
+CBaseEntity->m_triggerBloat = 0x28a
+CBaseEntity->m_bUniformTriggerBloat = 0x28b
+CBaseEntity->m_vecSpecifiedSurroundingMinsPreScaled = 0x28c
+CBaseEntity->m_vecSpecifiedSurroundingMaxsPreScaled = 0x298
+CBaseEntity->m_vecSpecifiedSurroundingMins = 0x2a4
+CBaseEntity->m_vecSpecifiedSurroundingMaxs = 0x2b0
+CBaseEntity->m_Collision = 0x240
+CBaseEntity->m_iTextureFrameIndex = 0x748
+CBaseEntity->m_PredictableID = 0xe0
+CBaseEntity->m_bIsPlayerSimulated = 0x744
+CBaseEntity->predictable_id = 0x0
+CBaseEntity->m_bSimulatedEveryTick = 0x745
+CBaseEntity->m_bAnimatedEveryTick = 0x746
+CBaseEntity->m_bAlternateSorting = 0x747
+CBaseEntity->m_nModelIndexOverrides = 0xc0
+
+[CBaseDoor]
+CBaseDoor->m_flWaveHeight = 0x7b0
+
+[CBaseCombatCharacter]
+CBaseCombatCharacter->m_flNextAttack = 0x1088
+CBaseCombatCharacter->bcc_localdata = 0x0
+CBaseCombatCharacter->m_hActiveWeapon = 0x11d0
+CBaseCombatCharacter->m_hMyWeapons = 0x1110
+CBaseCombatCharacter->m_bGlowEnabled = 0x11d5
+
+[CBaseAnimatingOverlay]
+CBaseAnimatingOverlay->m_AnimOverlay = 0x0
+CBaseAnimatingOverlay->overlay_vars = 0x0
+
+[CBoneFollower]
+CBoneFollower->m_modelIndex = 0x7b0
+CBoneFollower->m_solidIndex = 0x7b4
+
+[CBaseAnimating]
+CBaseAnimating->m_nSequence = 0xb00
+CBaseAnimating->m_nForceBone = 0x81c
+CBaseAnimating->m_vecForce = 0x810
+CBaseAnimating->m_nSkin = 0x7c0
+CBaseAnimating->m_nBody = 0x7c4
+CBaseAnimating->m_nHitboxSet = 0x7c8
+CBaseAnimating->m_flModelScale = 0x914
+CBaseAnimating->m_flModelWidthScale = 0x914
+CBaseAnimating->m_flPoseParameter = 0x918
+CBaseAnimating->m_flPlaybackRate = 0x7fc
+CBaseAnimating->m_flEncodedController = 0xa60
+CBaseAnimating->m_bClientSideAnimation = 0xad0
+CBaseAnimating->m_bClientSideFrameReset = 0x864
+CBaseAnimating->m_nNewSequenceParity = 0xad4
+CBaseAnimating->m_nResetEventsParity = 0xad8
+CBaseAnimating->m_nMuzzleFlashParity = 0xbd8
+CBaseAnimating->m_hLightingOrigin = 0xbd0
+CBaseAnimating->m_hLightingOriginRelative = 0xbd4
+CBaseAnimating->m_flCycle = 0xb08
+CBaseAnimating->serveranimdata = 0x0
+CBaseAnimating->m_fadeMinDist = 0x8a8
+CBaseAnimating->m_fadeMaxDist = 0x8ac
+CBaseAnimating->m_flFadeScale = 0x8b0
+
+[CInfoLightingRelative]
+CInfoLightingRelative->m_hLightingLandmark = 0x7b0
+
+[CAI_BaseNPC]
+CAI_BaseNPC->m_lifeState = 0xd1
+CAI_BaseNPC->m_bPerformAvoidance = 0x11f4
+CAI_BaseNPC->m_bIsMoving = 0x11f5
+CAI_BaseNPC->m_bFadeCorpse = 0x11f6
+CAI_BaseNPC->m_iDeathPose = 0x11e4
+CAI_BaseNPC->m_iDeathFrame = 0x11e8
+CAI_BaseNPC->m_iSpeedModRadius = 0x11ec
+CAI_BaseNPC->m_iSpeedModSpeed = 0x11f0
+CAI_BaseNPC->m_bSpeedModActive = 0x11f7
+CAI_BaseNPC->m_bImportanRagdoll = 0x11f8
+CAI_BaseNPC->m_flTimePingEffect = 0x11e0
+
+[CBeam]
+CBeam->m_nBeamType = 0x7cc
+CBeam->m_nBeamFlags = 0x7d0
+CBeam->m_nNumBeamEnts = 0x7c0
+CBeam->m_hAttachEntity = 0x7d4
+CBeam->m_nAttachIndex = 0x7fc
+CBeam->m_nHaloIndex = 0x7c8
+CBeam->m_fHaloScale = 0x830
+CBeam->m_fWidth = 0x824
+CBeam->m_fEndWidth = 0x828
+CBeam->m_fFadeLength = 0x82c
+CBeam->m_fAmplitude = 0x834
+CBeam->m_fStartFrame = 0x838
+CBeam->m_fSpeed = 0x83c
+CBeam->m_flFrameRate = 0x7b0
+CBeam->m_flHDRColorScale = 0x7b4
+CBeam->m_clrRender = 0x80
+CBeam->m_nRenderFX = 0x7c
+CBeam->m_nRenderMode = 0xac
+CBeam->m_flFrame = 0x844
+CBeam->m_vecEndPos = 0x848
+CBeam->m_nModelIndex = 0xbc
+CBeam->m_nMinDXLevel = 0x840
+CBeam->m_vecOrigin = 0x448
+CBeam->moveparent = 0x22c
+CBeam->m_PredictableID = 0xe0
+CBeam->m_bIsPlayerSimulated = 0x744
+CBeam->beampredictable_id = 0x0
+
+[CBaseViewModel]
+CBaseViewModel->m_nModelIndex = 0xbc
+CBaseViewModel->m_nSkin = 0x7c0
+CBaseViewModel->m_nBody = 0x7c4
+CBaseViewModel->m_nSequence = 0xb00
+CBaseViewModel->m_nViewModelIndex = 0xc24
+CBaseViewModel->m_flPlaybackRate = 0x7fc
+CBaseViewModel->m_fEffects = 0xa8
+CBaseViewModel->m_nAnimationParity = 0xc34
+CBaseViewModel->m_hWeapon = 0xc4c
+CBaseViewModel->m_hOwner = 0xc28
+CBaseViewModel->m_nNewSequenceParity = 0xad4
+CBaseViewModel->m_nResetEventsParity = 0xad8
+CBaseViewModel->m_nMuzzleFlashParity = 0xbd8
+CBaseViewModel->m_flPoseParameter[0] = 0x918
+CBaseViewModel->m_flPoseParameter = 0x0
+
+[CBaseProjectile]
+CBaseProjectile->m_hOriginalLauncher = 0xc0c
+
+[CBaseParticleEntity]
+
+[CBaseGrenade]
+CBaseGrenade->m_flDamage = 0xc24
+CBaseGrenade->m_DmgRadius = 0xc14
+CBaseGrenade->m_bIsLive = 0xc11
+CBaseGrenade->m_hThrower = 0xc30
+CBaseGrenade->m_vecVelocity = 0x168
+CBaseGrenade->m_fFlags = 0x460
+
+[CBaseCombatWeapon]
+CBaseCombatWeapon->m_iClip1 = 0xee0
+CBaseCombatWeapon->m_iClip2 = 0xee4
+CBaseCombatWeapon->m_iPrimaryAmmoType = 0xed8
+CBaseCombatWeapon->m_iSecondaryAmmoType = 0xedc
+CBaseCombatWeapon->m_nViewModelIndex = 0xe90
+CBaseCombatWeapon->m_nCustomViewmodelModelIndex = 0xf34
+CBaseCombatWeapon->m_bFlipViewModel = 0xf10
+CBaseCombatWeapon->LocalWeaponData = 0x0
+CBaseCombatWeapon->m_flNextPrimaryAttack = 0xe94
+CBaseCombatWeapon->m_flNextSecondaryAttack = 0xe98
+CBaseCombatWeapon->m_nNextThinkTick = 0xb4
+CBaseCombatWeapon->m_flTimeWeaponIdle = 0xe9c
+CBaseCombatWeapon->LocalActiveWeaponData = 0x0
+CBaseCombatWeapon->m_iViewModelIndex = 0xea4
+CBaseCombatWeapon->m_iWorldModelIndex = 0xea8
+CBaseCombatWeapon->m_iState = 0xec8
+CBaseCombatWeapon->m_hOwner = 0xe80
+
+[CFuncMonitor]

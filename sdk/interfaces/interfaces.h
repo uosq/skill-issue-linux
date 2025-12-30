@@ -11,6 +11,8 @@
 #include "../definitions/icliententitylist.h"
 #include "../definitions/ienginevgui.h"
 #include "../definitions/enginetool.h"
+#include "../definitions/cglobalvars.h"
+#include "../definitions/ivrenderview.h"
 #include <dlfcn.h>
 
 namespace interfaces
@@ -24,6 +26,7 @@ namespace interfaces
 	inline IClientEntityList* entitylist = nullptr;
 	inline IEngineVGui* enginevgui = nullptr;
 	inline IEngineTool* enginetool = nullptr;
+	inline IVRenderView* renderview = nullptr;
 }
 
 namespace factories
@@ -98,11 +101,22 @@ inline bool InitializeInterfaces()
 	GetInterface(interfaces::surface, factories::surface, "VGUI_Surface030");
 	GetInterface(interfaces::entitylist, factories::client, "VClientEntityList003");
 	GetInterface(interfaces::enginetool, factories::engine, "VENGINETOOL003");
+	GetInterface(interfaces::renderview, factories::engine, "VEngineRenderView014");
 
 	{ // ClientModeShared
 		uintptr_t leaInstr = (uintptr_t)sigscan_module("client.so", "48 8D 05 ? ? ? ? 40 0F B6 F6 48 8B 38");
 		uintptr_t g_pClientMode_addr = vtable::ResolveRIP(leaInstr, 3, 7); // lea rax, [g_pClientMode]
 		interfaces::clientMode = *reinterpret_cast<IClientMode**>(g_pClientMode_addr);;
+	}
+
+	{ // global vars
+		uintptr_t HudUpdateFn = (uintptr_t)vtable::get(interfaces::baseClientDll)[11];
+		unsigned int mov_addr = *(unsigned int*)(HudUpdateFn + 0x16);
+		uintptr_t next_instr = (uintptr_t)(HudUpdateFn + 0x1A);
+		
+		// MOV RAX,qword ptr [gpGlobals]
+		globalvars = (CGlobalVars*)(*(void **)(next_instr + mov_addr));
+		//interfaces::vstdlib->ConsolePrintf("%f\n", globalvars->interval_per_tick);
 	}
 
 	return true;

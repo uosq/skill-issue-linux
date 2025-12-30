@@ -1,4 +1,5 @@
 #include "hooks/clientmodeshared_createmove.h"
+#include "hooks/enginevgui_paint.h"
 #include "sdk/interfaces/interfaces.h"
 #include <pthread.h>
 #include <sys/types.h>
@@ -6,8 +7,6 @@
 #include <dlfcn.h>
 #include "sdk/helpers/fonts.h"
 #include "sdk/netvars/netvar.h"
-
-// lsp is tripping, i am using it "Included header sdk.h is not used directly (fix available)"
 
 #define PrintMsg(text) write(2, text, sizeof(text) - 1)
 
@@ -19,6 +18,7 @@ void *MainThread(void*)
 	fontManager.Init();
 
 	SetupNetVars();
+	//SetupNetVarsToFile();
 
 	HookCreateMove();
 	HookEngineVGuiPaint();
