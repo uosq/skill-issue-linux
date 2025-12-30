@@ -5,6 +5,7 @@
 #include "../sdk/classes/entity.h"
 #include "../sdk/classes/player.h"
 #include "../sdk/helpers/helper.h"
+#include <string>
 
 using CreateMoveFn = bool (*)(IClientMode* thisptr, float sample_frametime, CUserCmd* pCmd);
 inline CreateMoveFn originalCreateMove = nullptr;
@@ -18,6 +19,9 @@ inline bool HookedCreateMove (IClientMode* thisptr, float sample_frametime, CUse
 
 	// populate movement
 	originalCreateMove(thisptr, sample_frametime, pCmd);
+
+	Player* pLocal = helper::engine::GetLocalPlayer();
+	helper::console::Print((std::to_string(pLocal->m_iTeamNum()) + "\n").c_str());
 
 	/*Vector targetAngles = Vector(0, 0, 0);
 	pCmd->viewangles = targetAngles;

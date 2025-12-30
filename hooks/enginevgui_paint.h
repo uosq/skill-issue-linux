@@ -18,8 +18,8 @@ inline void HookedEngineVGuiPaint(IEngineVGui* thisptr, VGuiPanel_t type)
 {
 	originalPaintTraverse(thisptr, type);
 
-	interfaces::surface->DrawSetColor(40, 40, 40, 255);
-	helper::draw::FilledRect(100, 100, 800, 800);
+	//interfaces::surface->DrawSetColor(40, 40, 40, 255);
+	//helper::draw::FilledRect(100, 100, 800, 800);
 
 	HFont font = helper::draw::GetCurrentFont();
 	helper::draw::SetFont(font);

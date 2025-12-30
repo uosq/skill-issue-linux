@@ -9,6 +9,7 @@
 #include "../definitions/types.h"
 #include "../interfaces/interfaces.h"
 #include "../definitions/icliententity.h"
+#include "../netvars/netvar.h"
 
 // https://github.com/rei-2/Amalgam/blob/c1c6bf64d739538b48a301ddc5e1a988cb9b479c/Amalgam/src/SDK/Definitions/Definitions.h#L1032
 enum class_id {
@@ -75,7 +76,9 @@ enum entity_flags {
 };
 
 class Entity {
-public:  
+public:
+	NETVAR(m_iTeamNum, "CBaseEntity->m_iTeamNum", int)
+
 	int get_owner_entity_handle(void) {
 		return *(int*)(this + 0x754);
 	}

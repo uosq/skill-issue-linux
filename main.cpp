@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include <dlfcn.h>
 #include "sdk/helpers/fonts.h"
+#include "sdk/netvars/netvar.h"
 
 // lsp is tripping, i am using it "Included header sdk.h is not used directly (fix available)"
 
@@ -16,6 +17,8 @@ void *MainThread(void*)
 		return nullptr;
 
 	fontManager.Init();
+
+	SetupNetVars();
 
 	HookCreateMove();
 	HookEngineVGuiPaint();

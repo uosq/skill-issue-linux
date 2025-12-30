@@ -5,6 +5,7 @@
 #include "types.h"
 #include "../interfaces/createinterface.h"
 #include "../definitions/cviewsetup.h"
+#include "datatable.h"
 
 class IMaterial;
 class model_t;
@@ -31,7 +32,6 @@ class CGamestatsData;
 class KeyValues;
 
 class CGlobalVarsBase;
-class ClientClass;
 class ScreenFade_t;
 class ClientFrameStage_t;
 class vrect_t;
