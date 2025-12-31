@@ -136,4 +136,4 @@ public:
 	WeaponData_t const& GetWeaponData(int iWeapon) const { return m_WeaponData[iWeapon]; }
 };
 
-using GetTFWeaponInfoFn = CTFWeaponInfo* (*)(int);
+//using GetTFWeaponInfoFn = CTFWeaponInfo* (*)(int);

@@ -11,7 +11,7 @@ struct Aimbot
 {
 	void Run(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd)
 	{
-		//interfaces::vstdlib->ConsolePrintf("slot: %d\n", pWeapon->GetWeaponInfo()->iSlot);
+		interfaces::vstdlib->ConsolePrintf("slot: %d\n", pWeapon->GetWeaponInfo()->iSlot);
 		//interfaces::vstdlib->ConsolePrintf("Type: %d\n", pWeapon->GetWeaponType());
 		//interfaces::vstdlib->ConsolePrintf("Damage type: %d\n", pWeapon->GetProjectileType());
 	}

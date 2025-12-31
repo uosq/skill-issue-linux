@@ -15,6 +15,14 @@ class CTFGrenadePipebombProjectile;
 
 typedef unsigned short WEAPON_FILE_INFO_HANDLE;
 
+inline FileWeaponInfo_t* Rebuild_GetFileWeaponInfoFromhandle(void* handle)
+{
+	// GetFileWeaponInfoFromHandle 66 3B 3D D3 03 77 01 48 8D 05 72 FC 76 01 ? ? 48 8B 15 B1 03 77 01
+	using GetFileWeaponInfoFromHandleFn = FileWeaponInfo_t*(*)(void*);
+	static auto orig = (GetFileWeaponInfoFromHandleFn)sigscan_module("client.so", "66 3B 3D D3 03 77 01 48 8D 05 72 FC 76 01 ? ? 48 8B 15 B1 03 77 01");
+	return orig(handle);
+}
+
 class CTFWeaponBase : public CBaseCombatWeapon
 {
 public:
@@ -47,16 +55,14 @@ public:
 	NETVAR_OFFSET(m_flCritTime, "CTFWeaponBase->m_flLastCritCheckTime", float, -4);
 	NETVAR_OFFSET(m_iCurrentSeed, "CTFWeaponBase->m_flLastCritCheckTime", int, 8);
 	NETVAR_OFFSET(m_flLastRapidFireCritCheckTime, "CTFWeaponBase->m_flLastCritCheckTime", float, 12);
-	inline void* m_pMeter()
-	{
-		static int nOffset = netvars[fnv::Hash("CTFWeaponBase->m_flEffectBarRegenTime")] + -40;
-		return reinterpret_cast<void*>(uintptr_t(this) + nOffset);
-	};
 
-	/*const CTFWeaponInfo* GetWeaponInfo()
+	const FileWeaponInfo_t* GetWeaponInfo()
 	{
-		return GetTFWeaponInfo(GetWeaponID());
-	}*/
+		// offset from EDI,word ptr [RDI + 0xF12] in CCombatWeapon(?)->GetTFWpnData()
+		uintptr_t handleAddress = (uintptr_t)this + 0xf12;
+		void* handleValue = *(void**)handleAddress;
+		return Rebuild_GetFileWeaponInfoFromhandle(handleValue);
+	}
 
 	//int GetSlot() { return GetWeaponInfo()->iSlot; }
 	int GetWeaponID() {

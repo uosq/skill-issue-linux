@@ -17,7 +17,7 @@
 #include "../definitions/weaponinfo.h"
 #include <dlfcn.h>
 
-static GetTFWeaponInfoFn GetTFWeaponInfo;
+//static GetTFWeaponInfoFn GetTFWeaponInfo;
 
 namespace interfaces
 {
@@ -131,7 +131,7 @@ inline bool InitializeInterfaces()
 
 	{ // hook GetTFWeaponInfo(int weaponID)
 		// 83 FF 6D 77 13 48 8D 05 ? ? ? ? 48 63 FF 48 8B 04 F8 C3 works but gives garbage data
-		GetTFWeaponInfo = reinterpret_cast<GetTFWeaponInfoFn>(sigscan_module("client.so", "83 FF 6D 77 13 48 8D 05 ? ? ? ? 48 63 FF 48 8B 04 F8 C3"));
+		//GetTFWeaponInfo = reinterpret_cast<GetTFWeaponInfoFn>(sigscan_module("client.so", "0F B7 BF 12 0F 00 00 E9 54 15 21"));
 	}
 
 	return true;
