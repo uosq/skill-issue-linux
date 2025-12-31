@@ -13,7 +13,6 @@ class CTFGrenadePipebombProjectile;
 // yes, i am pasting a lot of amalgam
 // do i care? no, as im not gonna write all ths shit from scratch
 
-// credits: kgb
 typedef unsigned short WEAPON_FILE_INFO_HANDLE;
 
 class CTFWeaponBase : public CBaseCombatWeapon
@@ -54,24 +53,24 @@ public:
 		return reinterpret_cast<void*>(uintptr_t(this) + nOffset);
 	};
 
-	CTFWeaponInfo* GetWeaponInfo()
+	/*const CTFWeaponInfo* GetWeaponInfo()
 	{
-		return GetTFWeaponInfo(7);
-	}
+		return GetTFWeaponInfo(GetWeaponID());
+	}*/
 
-	int GetSlot() { return GetWeaponInfo()->iSlot; }
+	//int GetSlot() { return GetWeaponInfo()->iSlot; }
 	int GetWeaponID() {
+		// this is stupid
 		using Fn = int(*)(void*);
 		auto vtable = *reinterpret_cast<void***>(this);
 		auto fn = reinterpret_cast<Fn>(vtable[0xE18 / sizeof(void*)]);
 		return fn(this);
-		//return vtable::call<384, int>(this);
 	}
-	int GetMaxClip1() { return vtable::call<390, int>(this); }
-	int GetProjectileType()
+
+	/*int GetProjectileType()
 	{
 		return GetWeaponInfo()->GetWeaponData(GetWeaponID()).m_iProjectile;
-	}
+	}*/
 
 	bool IsEnergyWeapon() { return vtable::call<436, bool>(this); }
 	bool CalcIsAttackCriticalHelper() { return vtable::call<400, bool>(this); }
@@ -98,8 +97,8 @@ public:
 			}
 		}*/
 
-		if (GetSlot() == EWeaponSlot::SLOT_MELEE || GetWeaponID() == TF_WEAPON_BUILDER)
-			return EWeaponType::MELEE;
+		//if (GetSlot() == EWeaponSlot::SLOT_MELEE || GetWeaponID() == TF_WEAPON_BUILDER)
+			//return EWeaponType::MELEE;
 
 		switch (m_iItemDefinitionIndex())
 		{

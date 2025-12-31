@@ -131,7 +131,7 @@ inline bool InitializeInterfaces()
 
 	{ // hook GetTFWeaponInfo(int weaponID)
 		// 83 FF 6D 77 13 48 8D 05 ? ? ? ? 48 63 FF 48 8B 04 F8 C3 works but gives garbage data
-		GetTFWeaponInfo = reinterpret_cast<GetTFWeaponInfoFn>(sigscan_module("client.so", "55 8B EC FF 75 08 E8 ? ? ? ? 83 C4 04 85 C0 75 02"));
+		GetTFWeaponInfo = reinterpret_cast<GetTFWeaponInfoFn>(sigscan_module("client.so", "83 FF 6D 77 13 48 8D 05 ? ? ? ? 48 63 FF 48 8B 04 F8 C3"));
 	}
 
 	return true;
