@@ -22,6 +22,9 @@ namespace AimbotUtils
 		if (entity == pLocal)
 			return false;
 
+		if (entity->m_iTeamNum() == pLocal->m_iTeamNum())
+			return false;
+
 		if (entity->IsDormant())
 			return false;
 

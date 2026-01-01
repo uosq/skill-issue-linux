@@ -61,6 +61,21 @@ namespace helper
 			interfaces::surface->DrawPrintText(wtext.c_str(), wtext.length());
 		}
 
+		inline void TextShadow(int x, int y, Color color, std::string text)
+		{
+			// convert our string to wide string
+			// fuck my life
+			std::wstring wtext(text.begin(), text.end());
+		
+			interfaces::surface->DrawSetTextPos(x + 1, y + 1);
+			interfaces::surface->DrawSetTextColor((Color){0, 0, 0, 255});
+			interfaces::surface->DrawPrintText(wtext.c_str(), wtext.length());
+
+			interfaces::surface->DrawSetTextPos(x, y);
+			interfaces::surface->DrawSetTextColor(color);
+			interfaces::surface->DrawPrintText(wtext.c_str(), wtext.length());
+		}
+
 		inline void GetMousePosition(int &x, int &y)
 		{
 			interfaces::surface->SurfaceGetCursorPos(x, y);

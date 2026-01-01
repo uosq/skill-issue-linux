@@ -15,7 +15,17 @@ namespace Aimbot
 	static inline Vector angle{0, 0, 0};
 	static bool running = true;
 
-	inline void Run(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd)
+	inline Vector GetAngle()
+	{
+		return angle;
+	}
+
+	inline bool IsRunning()
+	{
+		return running;
+	}
+
+	inline void Run(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd, bool* bSendPacket)
 	{
 		running = false;
 
@@ -36,17 +46,20 @@ namespace Aimbot
 			{
 				static AimbotHitscan hitscan;
 				hitscan.Run(pLocal, pWeapon, pCmd, angle, running);
-				return;
+				break;
 			} break;
 			case EWeaponType::PROJECTILE:
 			{
 				static AimbotProjectile projectile;
 				projectile.Run(pLocal, pWeapon, pCmd, targetPath, angle, running);
-				return;
+
+				if (running)
+					*bSendPacket = false;
+				break;
 			} break;
 
 			case EWeaponType::MELEE:
-			default: return;
+			default: break;
 		}
 	}
 
@@ -84,15 +97,5 @@ namespace Aimbot
 			interfaces::surface->DrawLine(prevScreen.x, prevScreen.y, currScreen.x, currScreen.y);
 			prevScreen = currScreen;
 		}
-	}
-
-	inline Vector GetAngle()
-	{
-		return angle;
-	}
-
-	inline bool IsRunning()
-	{
-		return running;
 	}
 };

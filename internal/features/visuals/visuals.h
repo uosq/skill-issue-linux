@@ -5,8 +5,10 @@
 #include "../../settings.h"
 
 #include "thirdperson/thirdperson.h"
+#include "spectatorlist/spectatorlist.h"
 
-struct Visuals
+namespace Visuals
 {
-	Thirdperson thirdperson;
+	inline Thirdperson thirdperson;
+	inline SpectatorList spectatorlist;
 };

@@ -9,8 +9,6 @@
 using FrameStageNotifyFn = void (*)(IBaseClientDLL* thisptr, int stage);
 inline FrameStageNotifyFn originalFrameStage = nullptr;
 
-inline Visuals visuals;
-
 inline void HookedFrameStageNotify(IBaseClientDLL* thisptr, int stage)
 {
 	originalFrameStage(thisptr, stage);
@@ -23,7 +21,7 @@ inline void HookedFrameStageNotify(IBaseClientDLL* thisptr, int stage)
 			if (!pLocal)
 				return;
 
-			visuals.thirdperson.Run(pLocal);
+			Visuals::thirdperson.Run(pLocal);
 			return;
 		}
 

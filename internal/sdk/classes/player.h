@@ -73,6 +73,8 @@ public:
 	NETVAR(m_flMaxspeed, "CBasePlayer->m_flMaxspeed", float)
 	NETVAR(m_flStepSize, "CBasePlayer->m_flStepSize", float)
 	NETVAR(m_iDefaultFOV, "CBasePlayer->m_iDefaultFOV", int)
+	NETVAR(m_hObserverTarget, "CBasePlayer->m_hObserverTarget", EHANDLE)
+	NETVAR(m_iObserverMode, "CBasePlayer->m_iObserverMode", int)
 
 	bool IsAlive()
 	{
@@ -118,5 +120,14 @@ public:
 	bool IsUbercharged()
 	{
 		return InCond(ETFCond::TF_COND_INVULNERABLE);
+	}
+
+	std::string GetName()
+	{
+		player_info_t info{};
+		if (!interfaces::engine->GetPlayerInfo(GetIndex(), &info))
+			return {};
+
+		return info.name;
 	}
 };

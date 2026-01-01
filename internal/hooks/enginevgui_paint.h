@@ -14,6 +14,7 @@
 #include "../httplib.h"
 
 #include "../features/aimbot/aimbot.h"
+#include "../features/visuals/visuals.h"
 
 //#include "../gui/gui.h"
 
@@ -59,15 +60,14 @@ inline void HookedEngineVGuiPaint(IEngineVGui* thisptr, VGuiPanel_t type)
 	}
 	//interfaces::vstdlib->ConsolePrintf("%d\n", weapon->m_iClip1());
 
+	Visuals::spectatorlist.Run(pLocal);
 	ESP::Run(pLocal, pWeapon);
 
 	Color color{255, 255, 255, 255};
 
-	helper::draw::Text(10, 10, color, "vapo linux");
-	helper::draw::Text(10, 30, color, "interval per tick: " + std::to_string(globalvars->interval_per_tick));
-	helper::draw::Text(10, 50, color, "tickcount: " + std::to_string(globalvars->tickcount));
-	helper::draw::Text(10, 70, color, "weapon is in reload:: " + std::to_string(pWeapon->IsInReload()));
-	helper::draw::Text(10, 90, color, std::to_string(pWeapon->GetMaxClip1()));
+	helper::draw::TextShadow(10, 10, color, "Vapo Linux");
+	helper::draw::TextShadow(10, 36, color, "interval per tick: " + std::to_string(globalvars->interval_per_tick));
+	helper::draw::TextShadow(10, 60, color, "tickcount: " + std::to_string(globalvars->tickcount));
 
 	Aimbot::DrawTargetPath();
 	Aimbot::DrawFOVIndicator(pLocal, pWeapon);

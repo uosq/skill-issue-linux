@@ -23,6 +23,7 @@ struct Settings_Misc
 {
 	bool thirdperson = false;
 	float customfov = 90.0f;
+	bool spectatorlist = true;
 };
 
 struct Settings
