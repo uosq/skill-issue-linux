@@ -125,12 +125,12 @@ inline void SetupNetVarsToFile()
 
 inline void SetupNetVars()
 {
-	interfaces::vstdlib->ConsoleColorPrintf(Color_t{0, 255, 255, 255}, "Dumping netvars...\n");
+	//interfaces::vstdlib->ConsoleColorPrintf(Color_t{0, 255, 255, 255}, "Dumping netvars...\n");
 
 	for (auto clientClass = interfaces::baseClientDll->GetAllClasses(); clientClass; clientClass = clientClass->next)
 		// check if table valid
 		if (clientClass->recvTable)
 			Dump(clientClass->networkName, clientClass->recvTable);
 
-	interfaces::vstdlib->ConsoleColorPrintf(Color_t{150, 255, 150, 255}, "Netvars dumped!\n");
+	//interfaces::vstdlib->ConsoleColorPrintf(Color_t{150, 255, 150, 255}, "Netvars dumped!\n");
 }

@@ -24,6 +24,7 @@ inline bool HookedCreateMove (IClientMode* thisptr, float sample_frametime, CUse
 
 	// populate movement
 	int ret = originalCreateMove(thisptr, sample_frametime, pCmd);
+	//bool* bSendPacket = (bool*)((uintptr_t)__builtin_return_address(0) + 0x20); ?? is it really this?
 
 	CTFPlayer* pLocal = helper::engine::GetLocalPlayer();
 	if (!pLocal || !pLocal->IsAlive())
@@ -34,9 +35,7 @@ inline bool HookedCreateMove (IClientMode* thisptr, float sample_frametime, CUse
 		return ret;
 
 	aimbot.Run(pLocal, pWeapon, pCmd);
-	//helper::engine::FixMovement(pCmd, originalAngles, pCmd->viewangles);
-
-	/*Vector targetAngles = Vector(0, 0, 0);
+	helper::engine::FixMovement(pCmd, originalAngles, pCmd->viewangles);
 	
 	// Return false so the engine doesn't apply it to engine->SetViewAngles; (this is stupid)*/
 	return false;

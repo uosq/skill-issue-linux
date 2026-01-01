@@ -9,6 +9,11 @@ enum
 	CRATETYPE_WINTER = 2,
 };
 
+#define TICK_INTERVAL globalvars->interval_per_tick
+#define TIME_TO_TICKS(dt) (static_cast<int>(0.5f + static_cast<float>(dt) / TICK_INTERVAL))
+#define TICKS_TO_TIME(t) (TICK_INTERVAL * (t))
+#define ROUND_TO_TICKS(t) (TICKS_TO_TIME(TIME_TO_TICKS(t)))
+
 #define TF_TEAM_AUTOASSIGN (TF_TEAM_COUNT + 1 )
 
 #define TF_TEAM_HALLOWEEN	TF_TEAM_AUTOASSIGN

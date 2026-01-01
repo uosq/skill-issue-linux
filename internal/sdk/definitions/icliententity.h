@@ -5,7 +5,6 @@
 #include "types.h"
 #include "eclassid.h"
 
-struct Ray_t;
 class CGameTrace;
 typedef CGameTrace trace_t;
 class CMouthInfo;

@@ -5,6 +5,8 @@
 #include "entity.h"
 #include "basecombatcharacter.h"
 #include "../defs.h"
+#include "../handle_utils.h"
+#include "player.h"
 
 class CTFPlayer;
 class CTFGrenadePipebombProjectile;
@@ -14,6 +16,18 @@ class CTFGrenadePipebombProjectile;
 // do i care? no, as im not gonna write all ths shit from scratch
 
 typedef unsigned short WEAPON_FILE_INFO_HANDLE;
+
+struct ProjectileInfo_t
+{
+	float speed = 0;
+	float gravity = 0;
+	float primetime = 0;
+	float damage_radius = 0;
+	float lifetime = 60.0f;
+	bool simple_trace = false;
+	Vector offset{};
+	Vector hull{6, 6, 6};
+};
 
 inline FileWeaponInfo_t* Rebuild_GetFileWeaponInfoFromHandle(void* handle)
 {
@@ -92,66 +106,55 @@ public:
 
 	EWeaponType GetWeaponType()
 	{
-
-		/*if (pSecondaryType)
-		{
-			switch (GetWeaponID())
-			{
-			case TF_WEAPON_BAT_WOOD:
-			case TF_WEAPON_BAT_GIFTWRAP:
-				if (HasPrimaryAmmoForShot())
-					*pSecondaryType = EWeaponType::PROJECTILE;
-			}
-		}*/
-
 		if (GetSlot() == EWeaponSlot::SLOT_MELEE || GetWeaponID() == TF_WEAPON_BUILDER)
 			return EWeaponType::MELEE;
 
 		switch (m_iItemDefinitionIndex())
 		{
-		case Soldier_s_TheBuffBanner:
-		case Soldier_s_FestiveBuffBanner:
-		case Soldier_s_TheBattalionsBackup:
-		case Soldier_s_TheConcheror:
-		case Scout_s_BonkAtomicPunch:
-		case Scout_s_CritaCola:
-			return EWeaponType::UNKNOWN;
+			case Soldier_s_TheBuffBanner:
+			case Soldier_s_FestiveBuffBanner:
+			case Soldier_s_TheBattalionsBackup:
+			case Soldier_s_TheConcheror:
+			case Scout_s_BonkAtomicPunch:
+			case Scout_s_CritaCola:
+				return EWeaponType::UNKNOWN;
 		}
 
 		switch (GetWeaponID())
 		{
-		case TF_WEAPON_PDA:
-		case TF_WEAPON_PDA_ENGINEER_BUILD:
-		case TF_WEAPON_PDA_ENGINEER_DESTROY:
-		case TF_WEAPON_PDA_SPY:
-		case TF_WEAPON_PDA_SPY_BUILD:
-		case TF_WEAPON_INVIS:
-		case TF_WEAPON_BUFF_ITEM:
-		case TF_WEAPON_GRAPPLINGHOOK:
-		case TF_WEAPON_ROCKETPACK:
-			return EWeaponType::UNKNOWN;
-		case TF_WEAPON_CLEAVER:
-		case TF_WEAPON_ROCKETLAUNCHER:
-		case TF_WEAPON_ROCKETLAUNCHER_DIRECTHIT:
-		case TF_WEAPON_PARTICLE_CANNON:
-		case TF_WEAPON_RAYGUN:
-		case TF_WEAPON_FLAMETHROWER:
-		case TF_WEAPON_FLAME_BALL:
-		case TF_WEAPON_FLAREGUN:
-		case TF_WEAPON_FLAREGUN_REVENGE:
-		case TF_WEAPON_GRENADELAUNCHER:
-		case TF_WEAPON_CANNON:
-		case TF_WEAPON_PIPEBOMBLAUNCHER:
-		case TF_WEAPON_SHOTGUN_BUILDING_RESCUE:
-		case TF_WEAPON_DRG_POMSON:
-		case TF_WEAPON_CROSSBOW:
-		case TF_WEAPON_SYRINGEGUN_MEDIC:
-		case TF_WEAPON_COMPOUND_BOW:
-		case TF_WEAPON_JAR:
-		case TF_WEAPON_JAR_MILK:
-		case TF_WEAPON_JAR_GAS:
-		case TF_WEAPON_LUNCHBOX:
-			return EWeaponType::PROJECTILE;
+			case TF_WEAPON_PDA:
+			case TF_WEAPON_PDA_ENGINEER_BUILD:
+			case TF_WEAPON_PDA_ENGINEER_DESTROY:
+			case TF_WEAPON_PDA_SPY:
+			case TF_WEAPON_PDA_SPY_BUILD:
+			case TF_WEAPON_INVIS:
+			case TF_WEAPON_BUFF_ITEM:
+			case TF_WEAPON_GRAPPLINGHOOK:
+			case TF_WEAPON_ROCKETPACK:
+				return EWeaponType::UNKNOWN;
+
+			case TF_WEAPON_CLEAVER:
+			case TF_WEAPON_ROCKETLAUNCHER:
+			case TF_WEAPON_ROCKETLAUNCHER_DIRECTHIT:
+			case TF_WEAPON_PARTICLE_CANNON:
+			case TF_WEAPON_RAYGUN:
+			case TF_WEAPON_FLAMETHROWER:
+			case TF_WEAPON_FLAME_BALL:
+			case TF_WEAPON_FLAREGUN:
+			case TF_WEAPON_FLAREGUN_REVENGE:
+			case TF_WEAPON_GRENADELAUNCHER:
+			case TF_WEAPON_CANNON:
+			case TF_WEAPON_PIPEBOMBLAUNCHER:
+			case TF_WEAPON_SHOTGUN_BUILDING_RESCUE:
+			case TF_WEAPON_DRG_POMSON:
+			case TF_WEAPON_CROSSBOW:
+			case TF_WEAPON_SYRINGEGUN_MEDIC:
+			case TF_WEAPON_COMPOUND_BOW:
+			case TF_WEAPON_JAR:
+			case TF_WEAPON_JAR_MILK:
+			case TF_WEAPON_JAR_GAS:
+			case TF_WEAPON_LUNCHBOX:
+				return EWeaponType::PROJECTILE;
 		}
 
 		return EWeaponType::HITSCAN;
@@ -160,6 +163,15 @@ public:
 	bool IsHitscan()
 	{
 		return GetWeaponType() == EWeaponType::HITSCAN;
+	}
+
+	bool CanShoot()
+	{
+		if (m_iClip1() == 0)
+			return false;
+
+		CTFPlayer* owner = HandleAs<CTFPlayer>(m_hOwnerEntity());
+		return m_flNextPrimaryAttack() <= ((float)(owner->GetTickBase() * globalvars->interval_per_tick)) || m_bInReload();
 	}
 };
 
@@ -191,7 +203,7 @@ public:
 	NETVAR(m_hLastHealingTarget, "CWeaponMedigun->m_hLastHealingTarget", EHANDLE);
 	NETVAR(m_flChargeLevel, "CWeaponMedigun->m_flChargeLevel", float);
 
-	int GetMedigunType();
+	//int GetMedigunType();
 	//MedigunChargeTypes GetChargeType();
 	//medigun_resist_types_t GetResistType();
 };
@@ -201,7 +213,7 @@ class CTFPipebombLauncher : public CTFWeaponBase
 public:
 	NETVAR(m_iPipebombCount, "CTFPipebombLauncher->m_iPipebombCount", int);
 	NETVAR(m_flChargeBeginTime, "CTFPipebombLauncher->m_flChargeBeginTime", float);
-	int GetDetonateType();
+	//int GetDetonateType();
 };
 
 class CTFSniperRifle : public CTFWeaponBase
@@ -209,9 +221,9 @@ class CTFSniperRifle : public CTFWeaponBase
 public:
 	NETVAR(m_flChargedDamage, "CTFSniperRifle->m_flChargedDamage", float);
 
-	int GetRifleType();
-	float GetHeadshotMult(CTFPlayer* pTarget = nullptr);
-	float GetBodyshotMult(CTFPlayer* pTarget = nullptr);
+	//int GetRifleType();
+	//float GetHeadshotMult(CTFPlayer* pTarget = nullptr);
+	//float GetBodyshotMult(CTFPlayer* pTarget = nullptr);
 };
 
 class CTFGrenadeLauncher : public CTFWeaponBase
@@ -221,7 +233,7 @@ public:
 	NETVAR(m_iCurrentTube, "CTFGrenadeLauncher->m_iCurrentTube", int);
 	NETVAR(m_iGoalTube, "CTFGrenadeLauncher->m_iGoalTube", int);
 
-	int GetDetonateType();
+	//int GetDetonateType();
 };
 
 class CTFSniperRifleClassic : public CTFSniperRifle
@@ -240,7 +252,7 @@ public:
 class CTFFlareGun : public CTFWeaponBase
 {
 public:
-	int GetFlareGunType();
+	//int GetFlareGunType();
 };
 
 class CTFThrowable : public CTFWeaponBase
@@ -263,3 +275,187 @@ public:
 	NETVAR(m_iSpellCharges, "CTFSpellBook->m_iSpellCharges", int);
 	NETVAR(m_bFiredAttack, "CTFSpellBook->m_bFiredAttack", bool);
 };
+
+inline bool GetProjectileInfo(ProjectileInfo_t& info, CTFPlayer* owner, CTFWeaponBase* pWeapon)
+{
+	bool bDucking = owner->GetFlags() & FL_DUCKING;
+	float gravity = interfaces::vstdlib->FindVar("sv_gravity")->GetFloat()/800;
+
+	int id = pWeapon->GetWeaponID();
+	//interfaces::vstdlib->ConsolePrintf("Weapon ID: %d\n", id);
+
+	int iTickBase = owner->GetTickBase();
+	float flTickBase = TIME_TO_TICKS(iTickBase);
+
+	switch(id)
+	{
+		case TF_WEAPON_ROCKETLAUNCHER:
+		case TF_WEAPON_ROCKETLAUNCHER_DIRECTHIT:
+		{
+			info.hull.Set();
+			info.speed = owner->InCond(TF_COND_RUNE_PRECISION) ? 3000 : interfaces::attributeManager.AttributeHookValue(1100, "mult_projectile_speed", pWeapon);
+			info.offset.x = 23.5f;
+			info.offset.y = interfaces::attributeManager.AttributeHookValue(0, "centerfire_projectile", pWeapon) == 1 ? 0 : 12;
+			info.offset.z = bDucking ? 8 : -3;
+			info.damage_radius = id == TF_WEAPON_ROCKETLAUNCHER ? 146 : 44;
+			info.simple_trace = true;
+			return true;
+		}
+
+		case TF_WEAPON_PARTICLE_CANNON:
+		case TF_WEAPON_RAYGUN:
+		case TF_WEAPON_DRG_POMSON:
+		{
+			bool bIsCowMangler = id == TF_WEAPON_PARTICLE_CANNON;
+			info.offset.Set(23.5, 8, bDucking ? 8 : -3);
+			info.speed = bIsCowMangler ? 1100 : 1200;
+			info.hull = bIsCowMangler ? Vector(0, 0, 0) : Vector(1, 1, 1);
+			info.simple_trace = true;
+			return true;
+		}
+
+		case TF_WEAPON_GRENADELAUNCHER:
+		case TF_WEAPON_CANNON:
+		{
+			bool bIsCannon = id == TF_WEAPON_CANNON;
+			float mortar = bIsCannon ? interfaces::attributeManager.AttributeHookValue(0.f, "grenade_launcher_mortar_mode", pWeapon) : 0;
+			info.speed = interfaces::attributeManager.AttributeHookValue(owner->InCond(TF_COND_RUNE_PRECISION) ? 3000 : interfaces::attributeManager.AttributeHookValue(1200, "mult_projectile_range", pWeapon), "mult_projectile_range", pWeapon);
+			info.gravity = gravity;
+			return true;
+		}
+
+		case TF_WEAPON_PIPEBOMBLAUNCHER:
+		{
+			info.offset.Set(16, 8, -6);
+			info.gravity = gravity;
+			
+			float charge = 0.0f;
+			float m_flChargeBeginTime = ((CTFPipebombLauncher*)pWeapon)->m_flChargeBeginTime();
+			if (m_flChargeBeginTime > flTickBase)
+				charge = 0.0f;
+			else
+				charge = flTickBase - m_flChargeBeginTime;
+
+			info.speed = interfaces::attributeManager.AttributeHookValue(Math::RemapVal(0, 0, interfaces::attributeManager.AttributeHookValue(4.0f, "stickybomb_charge_rate", pWeapon), 900, 2400, true), "mult_projectile_range", pWeapon);
+			return true;
+		}
+
+		case TF_WEAPON_FLAREGUN:
+		{
+			info.offset.Set(23.5, 12, bDucking ? 8 : -3);
+			info.hull.Set(0, 0, 0);
+			info.speed = interfaces::attributeManager.AttributeHookValue(2000, "mult_projectile_speed", pWeapon);
+			info.gravity = 0;
+			info.lifetime = 0.3 * gravity;
+			return true;
+		}
+
+		case TF_WEAPON_FLAREGUN_REVENGE:
+		{
+			info.offset.Set(23.5, 12, bDucking ? 8 : -3);
+			info.hull.Set(0, 0, 0);
+			info.speed = 3000;
+			return true;
+		}
+
+		case TF_WEAPON_CROSSBOW:
+		case TF_WEAPON_SHOTGUN_BUILDING_RESCUE:
+		{
+			bool isCrossbow = id == TF_WEAPON_CROSSBOW;
+			info.offset.Set(23.5, 12, -3);
+			info.hull = isCrossbow ? Vector(3, 3, 3) : Vector(1, 1, 1);
+			info.speed = 2400;
+			info.gravity = gravity * 0.2;
+			info.lifetime = 10;
+			return true;
+		}
+
+		case TF_WEAPON_SYRINGEGUN_MEDIC:
+		{
+			info.offset.Set(16, 6, -8);
+			info.hull.Set(1, 1, 1);
+			info.speed = 1000;
+			info.gravity = 0.3 * gravity;
+			return true;
+		}
+
+		case TF_WEAPON_FLAMETHROWER:
+		{
+			static ConVar* tf_flamethrower_size = interfaces::vstdlib->FindVar("tf_flamethrower_boxsize");
+			if (!tf_flamethrower_size)
+				return false;
+			
+			float flhull = tf_flamethrower_size->GetFloat();
+			info.offset.Set(40, 5, 0);
+			info.hull.Set(flhull, flhull, flhull);
+			info.speed = 1000;
+			info.lifetime = 0.285;
+			return true;
+		}
+
+		case TF_WEAPON_FLAME_BALL:
+		{
+			info.offset.Set(3, 7, -9);
+			info.hull.Set(1, 1, 1);
+			info.speed = 3000;
+			info.lifetime = 0.18;
+			info.gravity = 0;
+			return true;
+		}
+
+		case TF_WEAPON_CLEAVER:
+		{
+			info.offset.Set(16, 8, -6);
+			info.hull.Set(1, 1, 10); // wtf is this 10?
+			info.gravity = 1;
+			info.lifetime = 2.2;
+			return true;
+		}
+
+		case TF_WEAPON_BAT_WOOD:
+		case TF_WEAPON_BAT_GIFTWRAP:
+		{
+			ConVar* tf_scout_stunball_base_speed = interfaces::vstdlib->FindVar("tf_scout_stunball_base_speed");
+			if (!tf_scout_stunball_base_speed)
+				return false;
+
+			info.speed = tf_scout_stunball_base_speed->GetFloat();
+			info.gravity = 1;
+			info.lifetime = gravity;
+			return true;
+		}
+
+		case TF_WEAPON_JAR:
+		case TF_WEAPON_JAR_MILK:
+		{
+			info.offset.Set(16, 8, -6);
+			info.speed = 1000;
+			info.gravity = 1;
+			info.lifetime = 2.2;
+			info.hull.Set(3, 3, 3);
+			return true;
+		}
+
+		case TF_WEAPON_JAR_GAS:
+		{
+			info.offset.Set(16, 8, -6);
+			info.speed = 2000;
+			info.gravity = 1;
+			info.lifetime = 2.2;
+			info.hull.Set(3, 3, 3);
+			return true;
+		}
+
+		case TF_WEAPON_LUNCHBOX:
+		{
+			info.offset.z = -8;
+			info.hull.Set(17, 17, 7);
+			info.speed = 500;
+			info.gravity = 1 * gravity;
+			return true;
+		}
+		default: return false;
+	}
+
+	return false;
+}

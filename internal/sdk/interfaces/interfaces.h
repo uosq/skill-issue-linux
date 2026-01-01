@@ -1,5 +1,7 @@
 #pragma once
 
+#include <dlfcn.h>
+
 #include "../definitions/ivengineclient.h"
 #include "../definitions/iinput.h"
 #include "../definitions/iclientmode.h"
@@ -16,7 +18,8 @@
 #include "../definitions/attributemanager.h"
 #include "../definitions/weaponinfo.h"
 #include "../definitions/iinputsystem.h"
-#include <dlfcn.h>
+#include "../definitions/ienginetrace.h"
+#include "../definitions/cvar.h"
 
 //static GetTFWeaponInfoFn GetTFWeaponInfo;
 
@@ -33,6 +36,8 @@ namespace interfaces
 	inline IEngineTool* enginetool = nullptr;
 	inline IVRenderView* renderview = nullptr;
 	inline IInputSystem* inputsystem = nullptr;
+	inline IEngineTrace* enginetrace = nullptr;
+	inline ICvar* convar = nullptr;
 	inline AttributeManager attributeManager;
 }
 
@@ -119,6 +124,7 @@ inline bool InitializeInterfaces()
 	GetInterface(interfaces::enginetool, factories::engine, "VENGINETOOL003");
 	GetInterface(interfaces::renderview, factories::engine, "VEngineRenderView014");
 	GetInterface(interfaces::inputsystem, factories::inputsystem, "InputSystemVersion001");
+	GetInterface(interfaces::enginetrace, factories::engine, "EngineTraceClient003");
 
 	{ // ClientModeShared
 		uintptr_t leaInstr = (uintptr_t)sigscan_module("client.so", "48 8D 05 ? ? ? ? 40 0F B6 F6 48 8B 38");
@@ -145,6 +151,15 @@ inline bool InitializeInterfaces()
 		// 83 FF 6D 77 13 48 8D 05 ? ? ? ? 48 63 FF 48 8B 04 F8 C3 works but gives garbage data
 		//GetTFWeaponInfo = reinterpret_cast<GetTFWeaponInfoFn>(sigscan_module("client.so", "0F B7 BF 12 0F 00 00 E9 54 15 21"));
 	}
+
+	/*
+	{ // CInput
+	fuck my life, why does this not work??
+		uintptr_t addr = (uintptr_t)(sigscan_module("client.so", "4C 89 E7 4C 8B 65 F8 C9 48 8D 35 E0 12 C1 00"));
+		unsigned int input_addr = *(unsigned int*)(addr + 0x3);
+		uintptr_t instr = (uintptr_t)(addr + 0x7);
+		interfaces::input = (CInput*)(*(void**)(instr + input_addr));
+	}*/
 
 	return true;
 }

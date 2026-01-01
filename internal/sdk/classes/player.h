@@ -70,6 +70,8 @@ public:
 	// !!! Only has 2 fields ([0], [1])
 	NETVAR(GetEyeAngles, "CTFPlayer->m_angEyeAngles[0]", Vector)
 	NETVAR(m_vecViewOffset, "CBasePlayer->m_vecViewOffset[0]", Vector)
+	NETVAR(m_flMaxspeed, "CBasePlayer->m_flMaxspeed", float)
+	NETVAR(m_flStepSize, "CBasePlayer->m_flStepSize", float)
 
 	bool IsAlive()
 	{
@@ -100,5 +102,20 @@ public:
 	Vector GetEyePos()
 	{
 		return GetAbsOrigin() + m_vecViewOffset();
+	}
+
+	bool IsGhost()
+	{
+		return InCond(ETFCond::TF_COND_HALLOWEEN_GHOST_MODE);
+	}
+
+	bool IsTaunting()
+	{
+		return InCond(ETFCond::TF_COND_TAUNTING);
+	}
+
+	bool IsUbercharged()
+	{
+		return InCond(ETFCond::TF_COND_INVULNERABLE);
 	}
 };

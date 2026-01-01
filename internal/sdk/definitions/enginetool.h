@@ -3,6 +3,7 @@
 #include "ibaseinterface.h"
 #include "../interfaces/createinterface.h"
 #include "types.h"
+#include "ienginetrace.h"
 
 class CViewSetup;
 class IToolSystem;
@@ -10,7 +11,6 @@ class KeyValues;
 class ITraceFilter;
 class CBaseTrace;
 struct dlight_t;
-struct Ray_t;
 struct AudioState_t;
 class SpatialPartitionHandle_t;
 class soundlevel_t;

@@ -13,15 +13,22 @@
 #include "../features/esp/esp.h"
 #include "../httplib.h"
 
+//#include "../gui/gui.h"
+
 //using PaintTraverseFn = void (*)(IPanel* thisptr, VPANEL vguiPanel, bool forceRepaint, bool allowForce);
 using PaintTraverseFn = void (*)(IEngineVGui* thisptr, VGuiPanel_t type);
 inline PaintTraverseFn originalPaintTraverse = nullptr;
+
+//inline GUI gui;
 
 static inline httplib::Client cli("http://127.0.0.1:6969");
 
 inline void HookedEngineVGuiPaint(IEngineVGui* thisptr, VGuiPanel_t type)
 {
 	originalPaintTraverse(thisptr, type);
+
+	if (helper::engine::IsTakingScreenshot())
+		return;
 
 	//interfaces::surface->DrawSetColor(40, 40, 40, 255);
 	//helper::draw::FilledRect(100, 100, 800, 800);
@@ -30,6 +37,8 @@ inline void HookedEngineVGuiPaint(IEngineVGui* thisptr, VGuiPanel_t type)
 	helper::draw::SetFont(font);
 	//helper::draw::SetColor(255, 255, 255, 255);
 	//helper::draw::FilledRect(0, 0, 100, 100);
+
+	//gui.Paint();
 
 	CTFPlayer* pLocal = helper::engine::GetLocalPlayer();
 	if (!pLocal)
@@ -50,6 +59,9 @@ inline void HookedEngineVGuiPaint(IEngineVGui* thisptr, VGuiPanel_t type)
 
 	ESP::Run(pLocal, pWeapon);
 
+	helper::draw::Text(10, 10, (Color){255, 255, 255, 255}, "interval per tick: " + std::to_string(globalvars->interval_per_tick));
+	helper::draw::Text(10, 30, (Color){255, 255, 255, 255}, "tickcount: " + std::to_string(globalvars->tickcount));
+
 	/*int width, height;
 	std::wstring text = helper::draw::ConvertStringToWChar("Hello, world!");
 	interfaces::surface->GetTextSize(font, text.c_str(), width, height);
@@ -59,6 +71,9 @@ inline void HookedEngineVGuiPaint(IEngineVGui* thisptr, VGuiPanel_t type)
 
 inline void HookEngineVGuiPaint()
 {
+	// init our gui before hooking
+	//gui.Init();
+
 	auto vt = vtable::get(interfaces::enginevgui);
 	originalPaintTraverse = vtable::hook(vt, 15, HookedEngineVGuiPaint);
 	

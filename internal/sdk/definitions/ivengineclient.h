@@ -8,6 +8,7 @@
 #include "../definitions/cviewsetup.h"
 #include "datatable.h"
 #include "inputenums.h"
+#include "clientframestage_t.h"
 
 class IMaterial;
 class model_t;
@@ -34,7 +35,6 @@ class KeyValues;
 
 class CGlobalVarsBase;
 class ScreenFade_t;
-class ClientFrameStage_t;
 class vrect_t;
 class bf_read;
 class bf_write;

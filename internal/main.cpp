@@ -1,5 +1,6 @@
 #include "hooks/clientmodeshared_createmove.h"
 #include "hooks/enginevgui_paint.h"
+#include "hooks/framestagenotify.h"
 #include "sdk/interfaces/interfaces.h"
 #include <pthread.h>
 #include <sys/types.h>
@@ -22,6 +23,7 @@ void *MainThread(void*)
 
 	HookCreateMove();
 	HookEngineVGuiPaint();
+	HookFrameStageNotify();
 
 	return nullptr;
 }

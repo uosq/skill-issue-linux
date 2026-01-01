@@ -170,6 +170,20 @@ namespace helper
 		{
 			return interfaces::attributeManager.AttributeHookValue(defaultValue, attrib_name, entity);
 		}
+
+		inline void Trace(Vector start, Vector end, unsigned int mask, ITraceFilter* pFilter, CGameTrace* pTrace)
+		{
+			Ray_t ray;
+			ray.Init(start, end);
+			interfaces::enginetrace->TraceRay(ray, mask, pFilter, pTrace);
+		}
+
+		inline void TraceHull(Vector start, Vector end, Vector hullmin, Vector hullmax, unsigned mask, ITraceFilter* pFilter, CGameTrace* pTrace)
+		{
+			Ray_t ray;
+			ray.Init(start, end, hullmin, hullmax);
+			interfaces::enginetrace->TraceRay(ray, mask, pFilter, pTrace);
+		}
 	};
 
 	namespace console

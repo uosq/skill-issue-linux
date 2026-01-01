@@ -5,7 +5,9 @@
 #include "../../sdk/classes/weaponbase.h"
 #include "../../sdk/helpers/helper.h"
 #include "../../sdk/handle_utils.h"
+
 #include "hitscan/aimbot_hitscan.h"
+#include "projectile/aimbot_projectile.h"
 
 struct Aimbot
 {
@@ -14,7 +16,9 @@ struct Aimbot
 		if (!settings.aimbot.enabled)
 			return;
 
-		if (!interfaces::inputsystem->IsButtonDown(KEY_LSHIFT))
+		ButtonCode_t key = interfaces::inputsystem->StringToButtonCode(settings.aimbot.key.c_str());
+
+		if (key && !interfaces::inputsystem->IsButtonDown(key))
 			return;
 
 		//interfaces::vstdlib->ConsolePrintf("slot: %d\n", pWeapon->GetWeaponInfo()->iSlot);
@@ -28,10 +32,13 @@ struct Aimbot
 					static AimbotHitscan hitscan;
 					hitscan.Run(pLocal, pWeapon, pCmd);
 					return;
-				}
-				break;
-			case EWeaponType::MELEE:
+				} break;
 			case EWeaponType::PROJECTILE:
+			{
+				static AimbotProjectile projectile;
+				projectile.Run(pLocal, pWeapon, pCmd);
+			} break;
+			case EWeaponType::MELEE:
 			default: return;
 		}
 	}

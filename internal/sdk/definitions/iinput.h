@@ -15,24 +15,6 @@ public:
 	CRC32_t   m_crc;
 };
 
-class CInput
-{
-public:
-	char pad_0x0000[0xEC]; //0x0000
-	CUserCmd* m_pCommands; //0x00EC 
-	CVerifiedUserCmd* m_pVerifiedCommands; //0x00F0 
- 
-	CUserCmd* GetUserCmd(int sequence_number)
-	{
-		return &m_pCommands[sequence_number % 150];
-	}
- 
-	CVerifiedUserCmd* GetVerifiedCmd(int sequence_number)
-	{
-		return &m_pVerifiedCommands[sequence_number % 150];
-	}
-}; //Size=0x00F4
-
 class IInput
 {
 public:
@@ -95,3 +77,21 @@ public:
 	CUserCmd* m_pCommands;
 	CVerifiedUserCmd* m_pVerifiedCommands;
 };
+
+class CInput: public IInput
+{
+public:
+	char pad_0x0000[0xEC]; //0x0000
+	CUserCmd* m_pCommands; //0x00EC 
+	CVerifiedUserCmd* m_pVerifiedCommands; //0x00F0 
+ 
+	CUserCmd* GetUserCmd(int sequence_number)
+	{
+		return &m_pCommands[sequence_number % 90];
+	}
+ 
+	CVerifiedUserCmd* GetVerifiedCmd(int sequence_number)
+	{
+		return &m_pVerifiedCommands[sequence_number % 90];
+	}
+}; //Size=0x00F4

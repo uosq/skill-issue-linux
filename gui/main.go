@@ -17,10 +17,15 @@ var settings struct {
 	} `json:"esp"`
 
 	Aimbot struct {
-		Enabled bool    `json:"enabled"`
-		Key     string  `json:"key"`
-		Fov     float64 `json:"fov"`
+		Enabled   bool    `json:"enabled"`
+		Key       string  `json:"key"`
+		Fov       float64 `json:"fov"`
+		Autoshoot bool    `json:"autoshoot"`
 	} `json:"aimbot"`
+
+	Misc struct {
+		Thirdperson bool `json:"thirdperson"`
+	} `json:"misc"`
 }
 
 func main() {
@@ -52,11 +57,16 @@ func main() {
 			CreateToggle("Enabled", &settings.Aimbot.Enabled),
 			CreateEntry("Key", &settings.Aimbot.Key),
 			CreateSlider("Fov", &settings.Aimbot.Fov, 0, 180),
+			CreateToggle("Autoshoot", &settings.Aimbot.Autoshoot),
 		),
 
 		GroupV("ESP",
 			CreateToggle("Enabled", &settings.ESP.Enabled),
 			CreateToggle("Ignore Cloaked Spies", &settings.ESP.IgnoreCloaked),
+		),
+
+		GroupV("Misc",
+			CreateToggle("ThirdPerson", &settings.Misc.Thirdperson),
 		),
 	))
 	w.ShowAndRun()
