@@ -46,7 +46,7 @@ namespace ESP
 			if (!entity)
 				continue;
 
-			if (entity == pLocal)
+			if (entity->GetIndex() == pLocal->GetIndex())
 				continue;
 
 			if (entity->IsDormant() || !entity->IsAlive())

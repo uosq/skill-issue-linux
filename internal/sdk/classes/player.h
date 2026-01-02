@@ -75,10 +75,10 @@ public:
 	NETVAR(m_iDefaultFOV, "CBasePlayer->m_iDefaultFOV", int)
 	NETVAR(m_hObserverTarget, "CBasePlayer->m_hObserverTarget", EHANDLE)
 	NETVAR(m_iObserverMode, "CBasePlayer->m_iObserverMode", int)
+	NETVAR(m_iClass, "CTFPlayer->m_iClass", int)
 
 	bool IsAlive()
 	{
-		//interfaces::vstdlib->ConsolePrintf("%d\n", m_lifeState());
 		return m_lifeState() == LIFE_ALIVE;
 	}
 
