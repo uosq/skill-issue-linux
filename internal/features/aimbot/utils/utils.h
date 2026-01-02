@@ -57,10 +57,10 @@ namespace AimbotUtils
 
 		while (start <= end)
 		{
-			while (targets[start].dot < pivot)
+			while (targets[start].dot > pivot)
 				start++;
 
-			while (targets[end].dot > pivot)
+			while (targets[end].dot < pivot)
 				end--;
 
 			if (start <= end)

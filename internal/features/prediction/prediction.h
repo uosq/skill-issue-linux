@@ -22,7 +22,7 @@ namespace PlayerPrediction
 		if (speed < 0.01f)
 			return;
 
-		ConVar* sv_stopspeed_cvar = interfaces::vstdlib->FindVar("sv_stopspeed");
+		ConVar* sv_stopspeed_cvar = interfaces::cvar->FindVar("sv_stopspeed");
 		if (!sv_stopspeed_cvar)
 			return;
 			
@@ -31,7 +31,7 @@ namespace PlayerPrediction
 
 		if (isOnGround)
 		{
-			ConVar* sv_friction_cvar = interfaces::vstdlib->FindVar("sv_friction");
+			ConVar* sv_friction_cvar = interfaces::cvar->FindVar("sv_friction");
 			if (!sv_friction_cvar)
 				return;
 			
@@ -257,11 +257,11 @@ namespace PlayerPrediction
 		Vector mins = player->m_vecMins();
 		Vector maxs = player->m_vecMaxs();
 
-		ConVar* sv_airaccelerate = interfaces::vstdlib->FindVar("sv_airaccelerate");
+		ConVar* sv_airaccelerate = interfaces::cvar->FindVar("sv_airaccelerate");
 		if (!sv_airaccelerate)
 			return;
 
-		ConVar* sv_accelerate = interfaces::vstdlib->FindVar("sv_accelerate");
+		ConVar* sv_accelerate = interfaces::cvar->FindVar("sv_accelerate");
 		if (!sv_accelerate)
 			return;
 

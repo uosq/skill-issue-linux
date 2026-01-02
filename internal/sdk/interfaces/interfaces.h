@@ -28,8 +28,8 @@ namespace interfaces
 	inline IVEngineClient014* engine = nullptr;
 	inline IBaseClientDLL* baseClientDll = nullptr;
 	inline IClientMode* clientMode = nullptr;
-	inline ICvar* vstdlib = nullptr;
-	inline void* vgui = nullptr;
+	inline ICvar* cvar = nullptr;
+	inline IPanel* vgui = nullptr;
 	inline ISurface* surface = nullptr;
 	inline IClientEntityList* entitylist = nullptr;
 	inline IEngineVGui* enginevgui = nullptr;
@@ -37,7 +37,6 @@ namespace interfaces
 	inline IVRenderView* renderview = nullptr;
 	inline IInputSystem* inputsystem = nullptr;
 	inline IEngineTrace* enginetrace = nullptr;
-	inline ICvar* convar = nullptr;
 	inline AttributeManager attributeManager;
 }
 
@@ -117,7 +116,7 @@ inline bool InitializeInterfaces()
 	GetInterface(interfaces::engine, factories::engine, "VEngineClient014");
 	GetInterface(interfaces::enginevgui, factories::engine, "VEngineVGui002");
 	GetInterface(interfaces::baseClientDll, factories::client, "VClient017");
-	GetInterface(interfaces::vstdlib, factories::vstdlib, "VEngineCvar004");
+	GetInterface(interfaces::cvar, factories::vstdlib, "VEngineCvar004");
 	GetInterface(interfaces::vgui, factories::vgui, "VGUI_Panel009");
 	GetInterface(interfaces::surface, factories::surface, "VGUI_Surface030");
 	GetInterface(interfaces::entitylist, factories::client, "VClientEntityList003");

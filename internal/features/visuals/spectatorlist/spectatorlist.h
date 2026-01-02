@@ -6,9 +6,13 @@
 #include "../../../sdk/handle_utils.h"
 #include <vector>
 
-struct SpectatorList{
+struct SpectatorList
+{
 	void Run(CTFPlayer* pLocal)
 	{
+		if (!settings.misc.spectatorlist || !pLocal->IsAlive())
+			return;
+
 		int ourIndex = pLocal->GetIndex();
 		int ourTeam = pLocal->m_iTeamNum();
 		int count = 0;
@@ -16,10 +20,16 @@ struct SpectatorList{
 		Color normal{255, 255, 255, 255};
 		Color firstperson{255, 100, 100, 255};
 
+		int width, height;
+		helper::draw::GetScreenSize(width, height);
+
+		int halfw;
+		halfw = static_cast<int>(width * 0.5f);
+
 		for (int i = 1; i < helper::engine::GetMaxClients(); i++)
 		{
 			CTFPlayer* player = (CTFPlayer*)interfaces::entitylist->GetClientEntity(i);
-			if (!player || !player->IsPlayer() || player->IsAlive())
+			if (!player || !player->IsPlayer() || player->IsAlive() || player == pLocal)
 				continue;
 
 			if (player->m_iTeamNum() != ourTeam)
@@ -35,7 +45,15 @@ struct SpectatorList{
 
 			int m_iObserverMode = player->m_iObserverMode();
 			bool isfirstperson = m_iObserverMode == OBS_MODE_IN_EYE;
-			helper::draw::TextShadow(10, 100 + (18 * i), isfirstperson ? firstperson : normal, info.name);
+
+			int textw, texth;
+			helper::draw::GetTextSize(info.name, textw, texth);
+
+			int x, y;
+			x = static_cast<int>(halfw - textw*0.5f);
+			y = static_cast<int>((height * 0.2f) + (18 * count));
+
+			helper::draw::TextShadow(x, y, isfirstperson ? firstperson : normal, info.name);
 			count++;
 		}
 	}

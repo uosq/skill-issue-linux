@@ -38,7 +38,11 @@ namespace ESP
 		// start at 1 because 0 is the world
 		for (int i = 1; i < helper::engine::GetMaxClients(); i++)
 		{
-			auto entity = (CTFPlayer*)interfaces::entitylist->GetClientEntity(i);
+			IClientEntity* clientEnt = interfaces::entitylist->GetClientEntity(i);
+			if (!clientEnt)
+				continue;
+
+			auto entity = static_cast<CTFPlayer*>(clientEnt);
 			if (!entity)
 				continue;
 

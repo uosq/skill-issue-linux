@@ -118,7 +118,7 @@ struct AimbotProjectile
 		CTraceFilterHitscan filter;
 		filter.pSkip = pLocal;
 
-		static ConVar* sv_gravity = interfaces::vstdlib->FindVar("sv_gravity");
+		static ConVar* sv_gravity = interfaces::cvar->FindVar("sv_gravity");
 		if (!sv_gravity)
 			return;
 

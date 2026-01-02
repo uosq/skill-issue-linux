@@ -1,7 +1,12 @@
 #pragma once
 
+#include "httplib.h"
 #include "json.hpp"
-#include "sdk/definitions/buttoncode.h"
+#include "sdk/definitions/convar.h"
+#include <atomic>
+#include <pthread.h>
+#include <string>
+#include <unistd.h>
 
 struct Settings_ESP
 {
@@ -22,8 +27,11 @@ struct Settings_Aimbot
 struct Settings_Misc
 {
 	bool thirdperson = false;
-	float customfov = 90.0f;
+	bool customfov_enabled = false;
+	float customfov = 0.0f;
 	bool spectatorlist = true;
+	bool backpack_expander = true;
+	bool sv_pure_bypass = true;
 };
 
 struct Settings
@@ -33,9 +41,10 @@ struct Settings
 	Settings_Misc misc;
 };
 
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Settings_Misc, thirdperson, customfov)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Settings_Misc, thirdperson, customfov_enabled, customfov, spectatorlist, backpack_expander, sv_pure_bypass)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Settings_ESP, enabled, ignorecloaked)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Settings_Aimbot, enabled, fov, key, autoshoot, max_sim_time, viewmodelaim)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Settings, esp, aimbot, misc)
 
 static inline Settings settings;
+static inline httplib::Client cli("http://127.0.0.1:6969");

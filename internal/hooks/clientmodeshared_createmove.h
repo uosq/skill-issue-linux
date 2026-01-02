@@ -15,33 +15,34 @@ inline CreateMoveFn originalCreateMove = nullptr;
 
 inline bool HookedCreateMove (IClientMode* thisptr, float sample_frametime, CUserCmd* pCmd)
 {
-	uintptr_t current_frame_address = reinterpret_cast<uintptr_t>(__builtin_frame_address(0));
-    	uintptr_t current_stack_address = current_frame_address + 0x8;
-    	bool* bSendPacket = (bool*)(current_stack_address + SENDPACKET_STACK_OFFSET);
+	bool ret = originalCreateMove(thisptr, sample_frametime, pCmd);
 
 	if (!pCmd || !pCmd->command_number)
-		return originalCreateMove(thisptr, sample_frametime, pCmd);
+		return ret;
 
 	if (!interfaces::engine->IsInGame() || !interfaces::engine->IsConnected())
-		return originalCreateMove(thisptr, sample_frametime, pCmd);
-
-	Vector originalAngles = pCmd->viewangles;
-
-	// populate movement
-	int ret = originalCreateMove(thisptr, sample_frametime, pCmd);
+		return ret;
 
 	CTFPlayer* pLocal = helper::engine::GetLocalPlayer();
-	if (!pLocal || !pLocal->IsAlive())
+	if (!pLocal || !pLocal->IsAlive() || pLocal->IsTaunting())
 		return ret;
 
 	CTFWeaponBase* pWeapon = HandleAs<CTFWeaponBase>(pLocal->GetActiveWeapon());
 	if (!pWeapon)
 		return ret;
 
-	Aimbot::Run(pLocal, pWeapon, pCmd, bSendPacket);
-	helper::engine::FixMovement(pCmd, originalAngles, pCmd->viewangles);
+	Vector originalAngles = pCmd->viewangles;
 
-	// Return false so the engine doesn't apply it to engine->SetViewAngles; (this is stupid)*/
+	uintptr_t current_frame_address = reinterpret_cast<uintptr_t>(__builtin_frame_address(0));
+    	uintptr_t current_stack_address = current_frame_address + 0x8;
+    	bool* bSendPacket = (bool*)(current_stack_address + SENDPACKET_STACK_OFFSET);
+
+	Aimbot::Run(pLocal, pWeapon, pCmd, bSendPacket);
+
+	if (Aimbot::IsRunning())
+		helper::engine::FixMovement(pCmd, originalAngles, pCmd->viewangles);
+
+	// Return false so the engine doesn't apply it to engine->SetViewAngles; (this is stupid)
 	return false;
 }
 

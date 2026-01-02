@@ -2,8 +2,6 @@
 
 #include "../sdk/interfaces/interfaces.h"
 #include "../sdk/helpers/helper.h"
-#include "../settings.h"
-
 #include "../features/visuals/visuals.h"
 
 using FrameStageNotifyFn = void (*)(IBaseClientDLL* thisptr, int stage);

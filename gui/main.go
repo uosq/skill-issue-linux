@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"log"
 
+	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/container"
 
@@ -26,8 +27,12 @@ var settings struct {
 	} `json:"aimbot"`
 
 	Misc struct {
-		Thirdperson bool    `json:"thirdperson"`
-		CustomFOV   float64 `json:"customfov"`
+		Thirdperson       bool    `json:"thirdperson"`
+		CustomFOV_Enabled bool    `json:"customfov_enabled"`
+		CustomFOV         float64 `json:"customfov"`
+		SpectatorList     bool    `json:"spectatorlist"`
+		BackpackExpander  bool    `json:"backpack_expander"`
+		SVPureBypass      bool    `json:"sv_pure_bypass"`
 	} `json:"misc"`
 }
 
@@ -53,27 +58,41 @@ func main() {
 	}()
 
 	a := app.New()
+	a.Settings().SetTheme(&myTheme{})
 	w := a.NewWindow("Vapo Linux")
+	w.Resize(fyne.NewSize(800, 400))
 
-	w.SetContent(container.NewVBox(
-		GroupV("Aimbot",
-			CreateToggle("Enabled", &settings.Aimbot.Enabled),
-			CreateToggle("Autoshoot", &settings.Aimbot.Autoshoot),
-			CreateEntry("Key", &settings.Aimbot.Key),
-			CreateSlider("Fov", &settings.Aimbot.Fov, 0, 180),
-			CreateSlider("Max Simulation Time", &settings.Aimbot.MaxSimTime, 0, 5),
-			CreateToggle("ViewModel Aim", &settings.Aimbot.ViewModelAim),
-		),
+	w.SetContent(container.NewVScroll(container.NewBorder(
+		nil, nil, nil, nil,
+		container.NewVBox(
+			container.NewGridWithColumns(2,
+				GroupV("Aimbot",
+					CreateToggle("Enabled", &settings.Aimbot.Enabled),
+					CreateToggle("Autoshoot", &settings.Aimbot.Autoshoot),
+					CreateEntry("Key", &settings.Aimbot.Key),
+					CreateSlider("Fov", &settings.Aimbot.Fov, 0, 180),
+					CreateSlider("Max Sim Time", &settings.Aimbot.MaxSimTime, 0, 5),
+					CreateToggle("Viewmodel Aim", &settings.Aimbot.ViewModelAim),
+				),
+				GroupV("ESP",
+					CreateToggle("Enabled", &settings.ESP.Enabled),
+					CreateToggle("Ignore Cloaked Spies", &settings.ESP.IgnoreCloaked),
+				),
+			),
 
-		GroupV("ESP",
-			CreateToggle("Enabled", &settings.ESP.Enabled),
-			CreateToggle("Ignore Cloaked Spies", &settings.ESP.IgnoreCloaked),
-		),
+			GroupH("Misc",
+				CreateToggle("Third person", &settings.Misc.Thirdperson),
+				CreateToggle("Backpack Expander", &settings.Misc.BackpackExpander),
+				CreateToggle("Spectator List", &settings.Misc.SpectatorList),
+				CreateToggle("sv_pure bypass", &settings.Misc.SVPureBypass),
+			),
 
-		GroupV("Misc",
-			CreateToggle("ThirdPerson", &settings.Misc.Thirdperson),
-			CreateSlider("Custom FOV", &settings.Misc.CustomFOV, 70, 140),
+			GroupV("Custom Fov",
+				CreateToggle("Enabled", &settings.Misc.CustomFOV_Enabled),
+				CreateSlider("Fov", &settings.Misc.CustomFOV, 70, 140),
+			),
 		),
-	))
+	)))
+
 	w.ShowAndRun()
 }

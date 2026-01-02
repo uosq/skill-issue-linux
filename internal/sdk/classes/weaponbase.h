@@ -279,10 +279,10 @@ public:
 inline bool GetProjectileInfo(ProjectileInfo_t& info, CTFPlayer* owner, CTFWeaponBase* pWeapon)
 {
 	bool bDucking = owner->GetFlags() & FL_DUCKING;
-	float gravity = interfaces::vstdlib->FindVar("sv_gravity")->GetFloat()/800;
+	float gravity = interfaces::cvar->FindVar("sv_gravity")->GetFloat()/800;
 
 	int id = pWeapon->GetWeaponID();
-	//interfaces::vstdlib->ConsolePrintf("Weapon ID: %d\n", id);
+	//interfaces::cvar->ConsolePrintf("Weapon ID: %d\n", id);
 
 	int iTickBase = owner->GetTickBase();
 	float flTickBase = TIME_TO_TICKS(iTickBase);
@@ -381,7 +381,7 @@ inline bool GetProjectileInfo(ProjectileInfo_t& info, CTFPlayer* owner, CTFWeapo
 
 		case TF_WEAPON_FLAMETHROWER:
 		{
-			static ConVar* tf_flamethrower_size = interfaces::vstdlib->FindVar("tf_flamethrower_boxsize");
+			static ConVar* tf_flamethrower_size = interfaces::cvar->FindVar("tf_flamethrower_boxsize");
 			if (!tf_flamethrower_size)
 				return false;
 			
@@ -417,7 +417,7 @@ inline bool GetProjectileInfo(ProjectileInfo_t& info, CTFPlayer* owner, CTFWeapo
 		case TF_WEAPON_BAT_WOOD:
 		case TF_WEAPON_BAT_GIFTWRAP:
 		{
-			ConVar* tf_scout_stunball_base_speed = interfaces::vstdlib->FindVar("tf_scout_stunball_base_speed");
+			ConVar* tf_scout_stunball_base_speed = interfaces::cvar->FindVar("tf_scout_stunball_base_speed");
 			if (!tf_scout_stunball_base_speed)
 				return false;
 

@@ -89,7 +89,7 @@ inline void DumpToFile(
 // Use this to dump the netvars to netvars.txt in TF2's root folder!
 inline void SetupNetVarsToFile()
 {
-	interfaces::vstdlib->ConsoleColorPrintf(
+	interfaces::cvar->ConsoleColorPrintf(
 		Color_t{0, 255, 255, 255},
 		"Dumping netvars...\n"
 	);
@@ -97,7 +97,7 @@ inline void SetupNetVarsToFile()
 	std::ofstream file("netvars.txt");
 	if (!file.is_open())
 	{
-		interfaces::vstdlib->ConsoleColorPrintf(
+		interfaces::cvar->ConsoleColorPrintf(
 			Color_t{255, 0, 0, 255},
 			"Failed to open netvars.txt\n"
 		);
@@ -117,7 +117,7 @@ inline void SetupNetVarsToFile()
 
 	file.close();
 
-	interfaces::vstdlib->ConsoleColorPrintf(
+	interfaces::cvar->ConsoleColorPrintf(
 		Color_t{150, 255, 150, 255},
 		"Netvars dumped to netvars.txt\n"
 	);
@@ -125,12 +125,12 @@ inline void SetupNetVarsToFile()
 
 inline void SetupNetVars()
 {
-	//interfaces::vstdlib->ConsoleColorPrintf(Color_t{0, 255, 255, 255}, "Dumping netvars...\n");
+	//interfaces::cvar->ConsoleColorPrintf(Color_t{0, 255, 255, 255}, "Dumping netvars...\n");
 
 	for (auto clientClass = interfaces::baseClientDll->GetAllClasses(); clientClass; clientClass = clientClass->next)
 		// check if table valid
 		if (clientClass->recvTable)
 			Dump(clientClass->networkName, clientClass->recvTable);
 
-	//interfaces::vstdlib->ConsoleColorPrintf(Color_t{150, 255, 150, 255}, "Netvars dumped!\n");
+	//interfaces::cvar->ConsoleColorPrintf(Color_t{150, 255, 150, 255}, "Netvars dumped!\n");
 }

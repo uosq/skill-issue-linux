@@ -211,12 +211,12 @@ namespace helper
 	{
 		inline void Print(const char* text)
 		{
-			interfaces::vstdlib->ConsolePrintf(text);
+			interfaces::cvar->ConsolePrintf(text);
 		}
 
 		inline void ColoredPrint(const char* text, Color_t color)
 		{
-			interfaces::vstdlib->ConsoleColorPrintf(color, text);
+			interfaces::cvar->ConsoleColorPrintf(color, text);
 		}
 	};
 };
