@@ -20,6 +20,7 @@
 #include "../definitions/iinputsystem.h"
 #include "../definitions/ienginetrace.h"
 #include "../definitions/cvar.h"
+#include "../definitions/imaterialsystem.h"
 
 //static GetTFWeaponInfoFn GetTFWeaponInfo;
 
@@ -37,6 +38,7 @@ namespace interfaces
 	inline IVRenderView* renderview = nullptr;
 	inline IInputSystem* inputsystem = nullptr;
 	inline IEngineTrace* enginetrace = nullptr;
+	inline IMaterialSystem* materialsystem = nullptr;
 	inline AttributeManager attributeManager;
 }
 
@@ -49,6 +51,7 @@ namespace factories
 	inline CreateInterfaceFn surface = nullptr;
 	inline CreateInterfaceFn enginevgui = nullptr;
 	inline CreateInterfaceFn inputsystem = nullptr;
+	inline CreateInterfaceFn materialsystem = nullptr;
 };
 
 template <typename T>
@@ -68,7 +71,7 @@ inline bool InitializeInterfaces()
 		if (!enginelib)
 			return false;
 	
-		factories::engine = (CreateInterfaceFn)dlsym(enginelib, "CreateInterface");
+		factories::engine = reinterpret_cast<CreateInterfaceFn>(dlsym(enginelib, "CreateInterface"));
 	}
 
 	{ // baseClientDll factory
@@ -76,7 +79,7 @@ inline bool InitializeInterfaces()
 		if (!clientlib)
 			return false;
 	
-		factories::client = (CreateInterfaceFn)dlsym(clientlib, "CreateInterface");
+		factories::client = reinterpret_cast<CreateInterfaceFn>(dlsym(clientlib, "CreateInterface"));
 	}
 
 	{ // vstdlib factory (console commands)
@@ -84,7 +87,7 @@ inline bool InitializeInterfaces()
 		if (!vstdlib)
 			return false;
 	
-		factories::vstdlib = (CreateInterfaceFn)dlsym(vstdlib, "CreateInterface");
+		factories::vstdlib = reinterpret_cast<CreateInterfaceFn>(dlsym(vstdlib, "CreateInterface"));
 	}
 
 	{ // vgui2 factory (paint traverse)
@@ -92,7 +95,7 @@ inline bool InitializeInterfaces()
 		if (!vgui2)
 			return false;
 
-		factories::vgui = (CreateInterfaceFn)dlsym(vgui2, "CreateInterface");
+		factories::vgui = reinterpret_cast<CreateInterfaceFn>(dlsym(vgui2, "CreateInterface"));
 	}
 
 	{ // surface factory (draw library)
@@ -100,7 +103,7 @@ inline bool InitializeInterfaces()
 		if (!surface)
 			return false;
 
-		factories::surface = (CreateInterfaceFn)dlsym(surface, "CreateInterface");
+		factories::surface = reinterpret_cast<CreateInterfaceFn>(dlsym(surface, "CreateInterface"));
 	}
 
 	{ // inputsystem factory
@@ -108,7 +111,15 @@ inline bool InitializeInterfaces()
 		if (!inputsystem)
 			return false;
 
-		factories::inputsystem = (CreateInterfaceFn)(dlsym(inputsystem, "CreateInterface"));
+		factories::inputsystem = reinterpret_cast<CreateInterfaceFn>((dlsym(inputsystem, "CreateInterface")));
+	}
+
+	{	// material system factory
+		void *materialsystem = dlopen("./bin/linux64/materialsystem.so", RTLD_NOLOAD | RTLD_NOW);
+		if (!materialsystem)
+			return false;
+
+		factories::materialsystem = reinterpret_cast<CreateInterfaceFn>(dlsym(materialsystem, "CreateInterface"));
 	}
 
 	// get interfaces
@@ -124,6 +135,7 @@ inline bool InitializeInterfaces()
 	GetInterface(interfaces::renderview, factories::engine, "VEngineRenderView014");
 	GetInterface(interfaces::inputsystem, factories::inputsystem, "InputSystemVersion001");
 	GetInterface(interfaces::enginetrace, factories::engine, "EngineTraceClient003");
+	GetInterface(interfaces::materialsystem, factories::materialsystem, "VMaterialSystem082");
 
 	{ // ClientModeShared
 		uintptr_t leaInstr = (uintptr_t)sigscan_module("client.so", "48 8D 05 ? ? ? ? 40 0F B6 F6 48 8B 38");

@@ -17,10 +17,6 @@ inline void HookedOverrideView(IClientMode *thisptr, CViewSetup *view)
 	if (!view)
 		return;
 
-	CTFPlayer* pLocal = helper::engine::GetLocalPlayer();
-	if (!pLocal || !pLocal->IsAlive())
-		return;
-
 	if (settings.misc.customfov_enabled)
 		view->fov = settings.misc.customfov;
 }

@@ -9,6 +9,7 @@
 #include "datatable.h"
 #include "inputenums.h"
 #include "clientframestage_t.h"
+#include "inetchannelinfo.h"
 
 class IMaterial;
 class model_t;
@@ -21,7 +22,6 @@ class VMatrix;
 class ISpatialQuery;
 class IMaterialSystem;
 class AudioState_t;
-class INetChannelInfo;
 class vmode_s;
 class CPhysCollide;
 class color32;

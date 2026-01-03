@@ -21,6 +21,8 @@ inline VGUIPaintFn originalVGuiPaint = nullptr;
 
 inline void HookedEngineVGuiPaint(IEngineVGui* thisptr, VGuiPanel_t type)
 {
+	originalVGuiPaint(thisptr, type);
+
 	if (type & PAINT_INGAMEPANELS)
 	{
 		HFont font = helper::draw::GetCurrentFont();
@@ -31,17 +33,11 @@ inline void HookedEngineVGuiPaint(IEngineVGui* thisptr, VGuiPanel_t type)
 	
 		CTFPlayer* pLocal = helper::engine::GetLocalPlayer();
 		if (!pLocal)
-		{
-			originalVGuiPaint(thisptr, type);
 			return;
-		}
 	
 		CTFWeaponBase* pWeapon = HandleAs<CTFWeaponBase>(pLocal->GetActiveWeapon());
 		if (!pWeapon)
-		{
-			originalVGuiPaint(thisptr, type);
 			return;
-		}
 	
 		Visuals::spectatorlist.Run(pLocal);
 		ESP::Run(pLocal, pWeapon);
@@ -49,8 +45,6 @@ inline void HookedEngineVGuiPaint(IEngineVGui* thisptr, VGuiPanel_t type)
 		Aimbot::DrawTargetPath();
 		Aimbot::DrawFOVIndicator(pLocal, pWeapon);
 	}
-
-	originalVGuiPaint(thisptr, type);
 }
 
 inline void HookEngineVGuiPaint()

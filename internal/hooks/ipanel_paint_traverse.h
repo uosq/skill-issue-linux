@@ -18,9 +18,9 @@ static inline float lastSettingsUpdate = 0.0f;
 
 inline void HookedPaintTraverse(IPanel* thisptr, VPANEL vguiPanel, bool forceRepaint, bool allowForce)
 {
-	originalPaintTraverse(thisptr, vguiPanel, forceRepaint, allowForce);
-	
-	float currenttime = globalvars->realtime;
+	std::string panelName = interfaces::vgui->GetName(vguiPanel);
+
+	float currenttime = globalvars ? globalvars->realtime : 0.0f;
 	// is this a good way of doing it? absolutely fucking not
 	// but im lazy and dont want to hook sdl and vulkan
 	if (currenttime - lastSettingsUpdate > 1.0f)
@@ -34,15 +34,21 @@ inline void HookedPaintTraverse(IPanel* thisptr, VPANEL vguiPanel, bool forceRep
 		lastSettingsUpdate = currenttime;
 	}
 
-	/*const char* name = interfaces::vgui->GetName(vguiPanel);
-	std::string panelName = name;
+	// https://github.com/rei-2/Amalgam/blob/master/Amalgam/src/Hooks/IPanel_PaintTraverse.cpp
+	if (settings.misc.streamer_mode)
+	{
+		switch (fnv::Hash(panelName.c_str()))
+		{
+			case fnv::HashConst("SteamFriendsList"):
+			case fnv::HashConst("avatar"):
+			case fnv::HashConst("RankPanel"):
+			case fnv::HashConst("ModelContainer"):
+			case fnv::HashConst("ServerLabelNew"):
+			return;
+		}
+	}
 
-	if (panelName != "MatSystemTopPanel")
-		return;
-
-	helper::draw::SetFont(fontManager.GetCurrentFont());
-	GUI_Window(windowContext, style, "Hello, world!");
-	*/
+	originalPaintTraverse(thisptr, vguiPanel, forceRepaint, allowForce);
 }
 
 inline void HookPaintTraverse()

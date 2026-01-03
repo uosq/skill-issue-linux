@@ -16,21 +16,21 @@ inline CalcViewModelViewFn originalCalcViewModelView = nullptr;
 
 inline detour_ctx_t calcViewModel_ctx;
 
-DETOUR_DECL_TYPE(void, originalCalcViewModelView, void* thisptr, CBaseEntity*, const Vector&, const Vector&);
+DETOUR_DECL_TYPE(void, originalCalcViewModelView, void* thisptr, CBaseEntity*, const Vector&, const QAngle&);
 #define VIEWMODELAIM_INTERVAL 0.5f
 inline static float stoptime = 0.0f;
 
-inline void HookedCalcViewModelView(void* thisptr, CBaseEntity* owner, const Vector& eyePosition, const Vector& eyeAngles)
+inline void HookedCalcViewModelView(void* thisptr, CBaseEntity* owner, const Vector& eyePosition, const QAngle& eyeAngles)
 {
 	CTFPlayer* player = static_cast<CTFPlayer*>(owner);
 	Vector angle = eyeAngles;
 
-	if (settings.aimbot.viewmodelaim && player && player->IsAlive() && player->m_iClass())
+	if (thisptr && settings.aimbot.viewmodelaim)
 	{	// viewmodel aim
-		if (Aimbot::IsRunning())
+		if (Aimbot::IsRunning() && globalvars && globalvars->curtime)
 			stoptime = globalvars->curtime + VIEWMODELAIM_INTERVAL;
 	
-		if ((globalvars->curtime < stoptime))
+		if (globalvars && globalvars->curtime && globalvars->curtime < stoptime)
 			angle = Aimbot::GetAngle();
 	}
 

@@ -33,6 +33,7 @@ var settings struct {
 		SpectatorList     bool    `json:"spectatorlist"`
 		BackpackExpander  bool    `json:"backpack_expander"`
 		SVPureBypass      bool    `json:"sv_pure_bypass"`
+		StreamerMode      bool    `json:"streamer_mode"`
 	} `json:"misc"`
 }
 
@@ -81,10 +82,13 @@ func main() {
 			),
 
 			GroupH("Misc",
-				CreateToggle("Third person", &settings.Misc.Thirdperson),
-				CreateToggle("Backpack Expander", &settings.Misc.BackpackExpander),
-				CreateToggle("Spectator List", &settings.Misc.SpectatorList),
-				CreateToggle("sv_pure bypass", &settings.Misc.SVPureBypass),
+				container.NewGridWithColumns(4,
+					CreateToggle("Third person", &settings.Misc.Thirdperson),
+					CreateToggle("Backpack Expander", &settings.Misc.BackpackExpander),
+					CreateToggle("Spectator List", &settings.Misc.SpectatorList),
+					CreateToggle("sv_pure bypass", &settings.Misc.SVPureBypass),
+					CreateToggle("Streamer Mode", &settings.Misc.StreamerMode),
+				),
 			),
 
 			GroupV("Custom Fov",

@@ -32,6 +32,7 @@ struct Settings_Misc
 	bool spectatorlist = true;
 	bool backpack_expander = true;
 	bool sv_pure_bypass = true;
+	bool streamer_mode = true;
 };
 
 struct Settings
@@ -41,7 +42,7 @@ struct Settings
 	Settings_Misc misc;
 };
 
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Settings_Misc, thirdperson, customfov_enabled, customfov, spectatorlist, backpack_expander, sv_pure_bypass)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Settings_Misc, thirdperson, customfov_enabled, customfov, spectatorlist, backpack_expander, sv_pure_bypass, streamer_mode)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Settings_ESP, enabled, ignorecloaked)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Settings_Aimbot, enabled, fov, key, autoshoot, max_sim_time, viewmodelaim)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Settings, esp, aimbot, misc)
