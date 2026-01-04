@@ -72,4 +72,19 @@ public:
 	{
 		return GetClientNetworkable()->entindex();
 	}
+
+	bool IsSentry()
+	{
+		return GetClassID() == ETFClassID::CObjectSentrygun;
+	}
+
+	bool IsDispenser()
+	{
+		return GetClassID() == ETFClassID::CObjectDispenser;
+	}
+
+	bool IsTeleporter()
+	{
+		return GetClassID() == ETFClassID::CObjectTeleporter;
+	}
 };

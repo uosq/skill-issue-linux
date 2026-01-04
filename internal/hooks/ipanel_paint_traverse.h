@@ -5,12 +5,9 @@
 #include "../sdk/helpers/helper.h"
 #include "../settings.h"
 
-using PaintTraverseFn = void (*)(IPanel* thisptr, VPANEL vguiPanel, bool forceRepaint, bool allowForce);
-inline PaintTraverseFn originalPaintTraverse = nullptr;
-
 static inline float lastSettingsUpdate = 0.0f;
 
-inline void HookedPaintTraverse(IPanel* thisptr, VPANEL vguiPanel, bool forceRepaint, bool allowForce)
+DECLARE_VTABLE_HOOK(PaintTraverse, void, (IPanel* thisptr, VPANEL vguiPanel, bool forceRepaint, bool allowForce))
 {
 	float currenttime = interfaces::GlobalVars ? interfaces::GlobalVars->realtime : 0.0f;
 
@@ -48,10 +45,6 @@ inline void HookedPaintTraverse(IPanel* thisptr, VPANEL vguiPanel, bool forceRep
 
 inline void HookPaintTraverse()
 {
-	//GUI_InitWindow(windowContext, 10, 10, 200, 200);
-
-	void** vt = vtable::get(interfaces::VGui);
-	originalPaintTraverse = vtable::hook(vt, 42, &HookedPaintTraverse);
-
+	INSTALL_VTABLE_HOOK(PaintTraverse, interfaces::VGui, 42);
 	helper::console::ColoredPrint("IPanel::PaintTraverse hooked\n", (Color_t){100, 255, 100, 255});
 }

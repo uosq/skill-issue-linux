@@ -236,5 +236,7 @@ namespace helper
 				return false;
 			return pWeapon->CanPrimaryAttack() || (pWeapon->IsInReload() && pWeapon->m_iClip1() > 0);
 		}
+
+		inline Vector LastAngle{};
 	};
 };

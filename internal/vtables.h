@@ -5,6 +5,17 @@
 #include <sys/mman.h>
 #include <unistd.h>
 
+#define DECLARE_VTABLE_HOOK(name, ret, args) \
+using name##Fn = ret (*) args; \
+inline name##Fn original##name = nullptr; \
+inline ret Hooked##name args
+
+#define INSTALL_VTABLE_HOOK(name, iface_expr, index) \
+do { \
+	void** vt = vtable::get(iface_expr); \
+	original##name = vtable::hook(vt,index,&Hooked##name); \
+} while (0);
+
 namespace vtable
 {
 	inline void** get(void* obj)

@@ -5,21 +5,16 @@
 #include <string>
 #include "../sdk/classes/entity.h"
 #include "../sdk/helpers/helper.h"
-#include "../settings.h"
 #include "../sdk/definitions/color.h"
 #include "../sdk/classes/weaponbase.h"
 #include "../sdk/handle_utils.h"
+#include "../settings.h"
 
 #include "../features/esp/esp.h"
-//#include "../httplib.h"
-
 #include "../features/aimbot/aimbot.h"
 #include "../features/visuals/visuals.h"
 
-using VGUIPaintFn = void (*)(IEngineVGui* thisptr, VGuiPanel_t type);
-inline VGUIPaintFn originalVGuiPaint = nullptr;
-
-inline void HookedEngineVGuiPaint(IEngineVGui* thisptr, VGuiPanel_t type)
+DECLARE_VTABLE_HOOK(VGuiPaint, void, (IEngineVGui* thisptr, VGuiPanel_t type))
 {
 	originalVGuiPaint(thisptr, type);
 
@@ -49,14 +44,7 @@ inline void HookedEngineVGuiPaint(IEngineVGui* thisptr, VGuiPanel_t type)
 
 inline void HookEngineVGuiPaint()
 {
-	auto vt = vtable::get(interfaces::EngineVGui);
-	originalVGuiPaint = vtable::hook(vt, 15, HookedEngineVGuiPaint);
-	
-	/*
-		reminder to me:
-		if using windows hooks, always add a +1, as (i think)
-		gcc/clang puts the constructor&destructor at the start of the class
-	*/
+	INSTALL_VTABLE_HOOK(VGuiPaint, interfaces::EngineVGui, 15);
 
 	Color_t color;
 	color.SetRGB(100, 255, 100, 255);

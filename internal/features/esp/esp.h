@@ -3,12 +3,13 @@
 #include "../../sdk/interfaces/interfaces.h"
 #include "../../sdk/helpers/helper.h"
 #include "../../sdk/classes/weaponbase.h"
+#include "../../sdk/classes/cbaseobject.h"
 #include "../../sdk/definitions/eteam.h"
 #include "../../settings.h"
 
 namespace ESP
 {
-	inline Color GetColor(CTFPlayer* player)
+	inline Color GetColor(CBaseEntity* player)
 	{
 		int team = player->m_iTeamNum();
 
@@ -28,6 +29,46 @@ namespace ESP
 		return (Color){255, 255, 255, 255};
 	}
 
+	inline bool IsValidEntity(CTFPlayer* pLocal, CBaseEntity* entity)
+	{
+		if (!entity)
+			return false;
+
+		if (entity->IsDormant())
+			return false;
+
+		if (entity->IsPlayer())
+		{
+			CTFPlayer* player = static_cast<CTFPlayer*>(entity);
+			if (!player)
+				return false;
+
+			if (!player->IsAlive())
+				return false;
+
+			if (player->InCond(TF_COND_CLOAKED) && settings.esp.ignorecloaked)
+				return false;
+
+			if (entity->GetIndex() == pLocal->GetIndex())
+				return false;
+		}
+
+		if (entity->IsSentry() || entity->IsDispenser() || entity->IsTeleporter())
+		{
+			CBaseObject *building = reinterpret_cast<CBaseObject*>(entity);
+			if (!building)
+				return false;
+
+			if (building->m_iHealth() <= 0)
+				return false;
+
+			if (building->m_flPercentageConstructed() < 0.1f)
+				return false;
+		}
+
+		return true;
+	}
+
 	inline void Run(CTFPlayer* pLocal)
 	{
 		if (!settings.esp.enabled)
@@ -45,20 +86,9 @@ namespace ESP
 			if (!clientEnt)
 				continue;
 
-			auto entity = static_cast<CTFPlayer*>(clientEnt);
-			if (!entity || !entity->IsPlayer())
+			auto entity = static_cast<CBaseEntity*>(clientEnt);
+			if (!IsValidEntity(pLocal, entity))
 				continue;
-
-			if (entity->GetIndex() == pLocal->GetIndex())
-				continue;
-
-			if (entity->IsDormant() || !entity->IsAlive())
-				continue;
-
-			if (entity->InCond(ETFCond::TF_COND_CLOAKED) && settings.esp.ignorecloaked)
-				continue;
-
-			//interfaces::vstdlib->ConsolePrintf("Health: %d\n", entity->GetHealth());
 
 			Vector origin = entity->GetAbsOrigin();
 			Vector feet; // fuck i need to sleep

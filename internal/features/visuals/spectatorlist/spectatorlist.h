@@ -13,12 +13,12 @@ struct SpectatorList
 		if (!settings.misc.spectatorlist || !pLocal->IsAlive())
 			return;
 
+		Color normal{255, 255, 255, 255};
+		Color firstperson{255, 100, 100, 255};
+
 		int ourIndex = pLocal->GetIndex();
 		int ourTeam = pLocal->m_iTeamNum();
 		int count = 0;
-
-		Color normal{255, 255, 255, 255};
-		Color firstperson{255, 100, 100, 255};
 
 		int width, height;
 		helper::draw::GetScreenSize(width, height);

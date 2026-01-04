@@ -242,7 +242,7 @@ namespace PlayerPrediction
 			origin.Set(origin_netvar.x, origin_netvar.y, origin_netvar.z);
 		}
 
-		if (velocity.Length() < 10.0f)
+		if (velocity.Length() < 5.0f)
 		{
 			path.emplace_back(origin);
 			return;
@@ -266,11 +266,9 @@ namespace PlayerPrediction
 			return;
 
 		float stepsize = player->m_flStepSize();
-
 		float gravity = 800 * interfaces::GlobalVars->interval_per_tick * 0.5;
 
 		time_seconds = std::min(time_seconds, 5.0f);
-
 		while (clock < time_seconds)
 		{
 			bool isOnGround = CheckIsOnGround(player, origin, mins, maxs);

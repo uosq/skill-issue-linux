@@ -21,6 +21,7 @@
 #include "../definitions/ienginetrace.h"
 #include "../definitions/cvar.h"
 #include "../definitions/imaterialsystem.h"
+#include "../definitions/iprediction.h"
 
 namespace interfaces
 {
@@ -38,6 +39,7 @@ namespace interfaces
 	inline IEngineTrace* EngineTrace = nullptr;
 	inline IMaterialSystem* MaterialSystem = nullptr;
 	inline CGlobalVars* GlobalVars = nullptr;
+	inline IPrediction* Prediction = nullptr;
 	inline AttributeManager attributeManager;
 }
 
@@ -157,11 +159,15 @@ inline bool InitializeInterfaces()
 	if (!GetInterface(interfaces::MaterialSystem, factories::materialsystem, "VMaterialSystem082"))
 		return false;
 
+	if (!GetInterface(interfaces::Prediction, factories::client, "VClientPrediction001"))
+		return false;
+
 	{ // ClientModeShared
 		uintptr_t leaInstr = (uintptr_t)sigscan_module("client.so", "48 8D 05 ? ? ? ? 40 0F B6 F6 48 8B 38");
 		uintptr_t g_pClientMode_addr = vtable::ResolveRIP(leaInstr, 3, 7); // lea rax, [g_pClientMode]
 		interfaces::ClientMode = *reinterpret_cast<IClientMode**>(g_pClientMode_addr);;
-		assert(interfaces::ClientMode);
+		if (!interfaces::ClientMode)
+			return false;
 	}
 
 	{ // global vars
@@ -171,8 +177,8 @@ inline bool InitializeInterfaces()
 		
 		// MOV RAX,qword ptr [gpGlobals]
 		interfaces::GlobalVars = (CGlobalVars*)(*(void **)(next_instr + mov_addr));
-		assert(interfaces::GlobalVars);
-		//interfaces::vstdlib->ConsolePrintf("%f\n", globalvars->interval_per_tick);
+		if (!interfaces::GlobalVars)
+			return false;
 	}
 
 	{ // attribute hook manager

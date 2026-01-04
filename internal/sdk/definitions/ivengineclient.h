@@ -10,6 +10,7 @@
 #include "inputenums.h"
 #include "clientframestage_t.h"
 #include "inetchannelinfo.h"
+#include "keyvalues.h"
 
 class IMaterial;
 class model_t;
@@ -30,7 +31,6 @@ class SurfInfo;
 class SkyboxVisibility_t;
 class IAchievementMgr;
 class CGamestatsData;
-class KeyValues;
 
 class CGlobalVarsBase;
 class ScreenFade_t;
@@ -44,7 +44,6 @@ class datamap_t;
 class typedescription_t;
 class CStandardRecvProxies;
 class XUSER_CONTEXT;
-class CUtlVector;
 class XUSER_PROPERTY;
 class IFileList;
 class CMouthInfo;

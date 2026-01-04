@@ -14,11 +14,11 @@
 using CalcViewModelViewFn = void(*)(void* thisptr, CBaseEntity* owner, const Vector& eyePosition, const QAngle& eyeAngles);
 inline CalcViewModelViewFn originalCalcViewModelView = nullptr;
 
-inline detour_ctx_t calcViewModel_ctx;
-
 DETOUR_DECL_TYPE(void, originalCalcViewModelView, void* thisptr, CBaseEntity*, const Vector&, const QAngle&);
+
 #define VIEWMODELAIM_INTERVAL 0.5f
 inline static float stoptime = 0.0f;
+inline detour_ctx_t calcViewModel_ctx;
 
 inline void HookedCalcViewModelView(void* thisptr, CBaseEntity* owner, const Vector& eyePosition, const QAngle& eyeAngles)
 {

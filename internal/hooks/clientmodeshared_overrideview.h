@@ -7,10 +7,7 @@
 #include "../settings.h"
 #include <string>
 
-using OverrideViewFn = void (*)(IClientMode *thisptr, CViewSetup *view);
-inline OverrideViewFn originalOverrideView = nullptr;
-
-inline void HookedOverrideView(IClientMode *thisptr, CViewSetup *view)
+DECLARE_VTABLE_HOOK(OverrideView, void, (IClientMode *thisptr, CViewSetup *view))
 {
 	originalOverrideView(thisptr, view);
 
@@ -23,8 +20,6 @@ inline void HookedOverrideView(IClientMode *thisptr, CViewSetup *view)
 
 inline void HookOverrideView()
 {
-	void** vt = vtable::get(interfaces::ClientMode);
-	originalOverrideView = vtable::hook(vt, 17, &HookedOverrideView);
-
+	INSTALL_VTABLE_HOOK(OverrideView, interfaces::ClientMode, 17);
 	helper::console::ColoredPrint("ClientModeShared::OverrideView hooked\n", (Color_t){100, 255, 100, 255});
 }

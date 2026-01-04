@@ -10,10 +10,10 @@
 // Source https://8dcc.github.io/reversing/reversing-tf2-bsendpacket.html#introduction
 #define SENDPACKET_STACK_OFFSET 0xF8
 
-using CreateMoveFn = bool (*)(IClientMode* thisptr, float sample_frametime, CUserCmd* pCmd);
-inline CreateMoveFn originalCreateMove = nullptr;
+//using CreateMoveFn = bool (*)(IClientMode* thisptr, float sample_frametime, CUserCmd* pCmd);
+//inline CreateMoveFn originalCreateMove = nullptr;
 
-inline bool HookedCreateMove (IClientMode* thisptr, float sample_frametime, CUserCmd* pCmd)
+DECLARE_VTABLE_HOOK(CreateMove, bool, (IClientMode* thisptr, float sample_frametime, CUserCmd* pCmd))
 {
 	bool ret = originalCreateMove(thisptr, sample_frametime, pCmd);
 
@@ -42,14 +42,15 @@ inline bool HookedCreateMove (IClientMode* thisptr, float sample_frametime, CUse
 	if (Aimbot::IsRunning())
 		helper::engine::FixMovement(pCmd, originalAngles, pCmd->viewangles);
 
+	if (bSendPacket)
+		helper::localplayer::LastAngle = pCmd->viewangles;
+
 	// Return false so the engine doesn't apply it to engine->SetViewAngles; (this is stupid)
 	return false;
 }
 
 inline void HookCreateMove()
 {
-	void** vt = vtable::get(interfaces::ClientMode);
-	originalCreateMove = vtable::hook(vt, 22, &HookedCreateMove);
-
+	INSTALL_VTABLE_HOOK(CreateMove, interfaces::ClientMode, 22);
 	helper::console::ColoredPrint("ClientModeShared::CreateMove hooked\n", (Color_t){100, 255, 100, 255});
 }

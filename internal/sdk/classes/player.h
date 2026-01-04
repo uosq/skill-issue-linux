@@ -49,6 +49,9 @@ struct player_info {
 #define LIFE_RESPAWNABLE 3
 #define LIFE_DISCARDBODY 4
 
+// C_BaseAnimating::UpdateClientSideAnimations()
+// 80 BF D0 0A 00 00 00 75 07 C3 66 0F 1F 44 00 00 55 48 89 E5 41 54 49 89 FC 48 83 EC 08 83 BF 00 0B 00 00 FF
+
 class CTFPlayer : public CBaseEntity {
 public:
 	NETVAR(GetActiveWeapon, "CBaseCombatCharacter->m_hActiveWeapon", EHANDLE)
@@ -67,8 +70,10 @@ public:
 	NETVAR(m_nPlayerCondEx3, "CTFPlayer->m_nPlayerCondEx3", int)
 	NETVAR(m_nPlayerCondEx4, "CTFPlayer->m_nPlayerCondEx4", int)
 	NETVAR(m_condition_bits, "CTFPlayer->_condition_bits", int)
+
 	// !!! Only has 2 fields ([0], [1])
-	NETVAR(GetEyeAngles, "CTFPlayer->m_angEyeAngles[0]", Vector)
+	NETVAR(m_angEyeAngles, "CTFPlayer->m_angEyeAngles[0]", Vector)
+
 	NETVAR(m_vecViewOffset, "CBasePlayer->m_vecViewOffset[0]", Vector)
 	NETVAR(m_flMaxspeed, "CBasePlayer->m_flMaxspeed", float)
 	NETVAR(m_flStepSize, "CBasePlayer->m_flStepSize", float)
@@ -129,5 +134,14 @@ public:
 			return {};
 
 		return info.name;
+	}
+
+	void UpdateClientSideAnimation()
+	{
+		using C_BaseAnimating_UpdateClientSidedAnimationFn = void(*)(void*);
+		static auto orig = (C_BaseAnimating_UpdateClientSidedAnimationFn)sigscan_module("client.so", "80 BF D0 0A 00 00 00 75 07 C3 66 0F 1F 44 00 00 55 48 89 E5 41 54 49 89 FC 48 83 EC 08 83 BF 00 0B 00 00 FF");
+		if (!orig)
+			return;
+		orig((void*)this);
 	}
 };
