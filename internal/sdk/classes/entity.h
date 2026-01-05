@@ -7,6 +7,7 @@
 #include "../interfaces/interfaces.h"
 #include "../definitions/icliententity.h"
 #include "../netvars/netvar.h"
+#include "../handle_utils.h"
 
 #define MULTIPLAYER_BACKUP 90
 
@@ -86,5 +87,40 @@ public:
 	bool IsTeleporter()
 	{
 		return GetClassID() == ETFClassID::CObjectTeleporter;
+	}
+
+	CBaseEntity* GetMoveParent()
+	{
+		static int offset = netvars[fnv::HashConst("CBaseEntity->moveparent")] - 8;
+		auto m_moveparent = *reinterpret_cast<EHANDLE*>(uintptr_t(this) + offset);
+		return m_moveparent ? HandleAs<CBaseEntity>(m_moveparent) : nullptr;
+	}
+
+	inline CBaseEntity* NextMovePeer()
+	{
+		static int nOffset = netvars[fnv::HashConst("CBaseEntity->moveparent")] - 16;
+		auto m_pMovePeer = *reinterpret_cast<EHANDLE*>(uintptr_t(this) + nOffset);
+		return m_pMovePeer ? HandleAs<CBaseEntity>(m_pMovePeer) : nullptr;
+	}
+
+	inline CBaseEntity* FirstMoveChild()
+	{
+		static int nOffset = netvars[fnv::HashConst("CBaseEntity->moveparent")] - 24;
+		auto m_pMoveChild = *reinterpret_cast<EHANDLE*>(uintptr_t(this) + nOffset);
+		return m_pMoveChild ? HandleAs<CBaseEntity>(m_pMoveChild) : nullptr;
+	}
+
+	inline CBaseEntity* const GetRootMoveParent()
+	{
+		CBaseEntity* ent = this;
+		CBaseEntity* parent = GetMoveParent();
+
+		while (parent)
+		{
+			ent = parent;
+			parent = ent->GetMoveParent();
+		}
+
+		return ent;
 	}
 };

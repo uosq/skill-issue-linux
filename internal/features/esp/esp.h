@@ -32,8 +32,7 @@ namespace ESP
 					return (Color){255, 0, 0, 255};
 				case ETeam::TEAM_BLU:
 					return (Color){0, 255, 255, 255};
-				default:
-					break;
+				default: break;
 			}
 		}
 
@@ -94,8 +93,8 @@ namespace ESP
 		if (entity->IsDormant())
 			return false;
 
-		//if (entity->m_iHealth() <= 0)
-			//return false;
+		if (entity->m_iHealth() <= 0)
+			return false;
 
 		return true;
 	}

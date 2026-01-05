@@ -76,6 +76,7 @@ public:
 	NETVAR(m_hObserverTarget, "CBasePlayer->m_hObserverTarget", EHANDLE)
 	NETVAR(m_iObserverMode, "CBasePlayer->m_iObserverMode", int)
 	NETVAR(m_iClass, "CTFPlayer->m_iClass", int)
+	NETVAR(m_hGroundEntity, "CBasePlayer->m_hGroundEntity", EHANDLE)
 
 	bool IsAlive()
 	{

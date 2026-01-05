@@ -4,12 +4,16 @@
 #include "../sdk/interfaces/interfaces.h"
 #include "../sdk/helpers/helper.h"
 #include "../settings.h"
+#include "cbaseviewmodel_calcviewmodelview.h"
 
 DECLARE_VTABLE_HOOK(PaintTraverse, void, (IPanel* thisptr, VPANEL vguiPanel, bool forceRepaint, bool allowForce))
 {
 	static float lastSettingsUpdate = 0.0f;
 
 	float currenttime = interfaces::GlobalVars ? interfaces::GlobalVars->realtime : 0.0f;
+
+	if (!helper::engine::IsInMatch())
+		stoptime = 0.0f;
 
 	// is this a good way of doing it? absolutely fucking not
 	// but im lazy and dont want to hook sdl and vulkan

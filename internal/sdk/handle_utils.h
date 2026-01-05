@@ -1,5 +1,7 @@
 #pragma once
+
 #include "definitions/cbasehandle.h"
+#include "definitions/ihandleentity.h"
 #include "interfaces/interfaces.h"
 
 /*
@@ -8,11 +10,14 @@ but then I would waste a month talking non stop about the fucking header system
 fuck you whoever thought it was a good idea
 */
 
+inline IHandleEntity* CBaseHandle::Get() const
+{
+    return reinterpret_cast<IHandleEntity*>(interfaces::EntityList->GetClientEntity(m_Index));
+}
+
 //Casts to T
 template <typename T>
 inline T* HandleAs(const CBaseHandle& h)
 {
-    return static_cast<T*>(
-        interfaces::EntityList->GetClientEntity(h.GetEntryIndex())
-    );
+    return reinterpret_cast<T*>(interfaces::EntityList->GetClientEntity(h.GetEntryIndex()));
 }

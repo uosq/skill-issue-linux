@@ -11,8 +11,17 @@
 
 DECLARE_VTABLE_HOOK(DrawModelExecute, void, (IVModelRender* thisptr, const DrawModelState_t &state, const ModelRenderInfo_t &pInfo, matrix3x4 *pCustomBoneToWorld))
 {
-	if (settings.esp.chams && !Chams::m_bRunning && Chams::ShouldHide(pInfo.entity_index))
-		return;
+	//if (settings.esp.chams && !Chams::m_bRunning && Chams::ShouldHide(pInfo.entity_index))
+		//return;
+
+	if (settings.esp.chams)
+	{
+		if (Chams::m_bRunning)
+			return originalDrawModelExecute(thisptr, state, pInfo, pCustomBoneToWorld);
+
+		if (Chams::ShouldHide(pInfo.entity_index))
+			return;
+	}
 
 	originalDrawModelExecute(thisptr, state, pInfo, pCustomBoneToWorld);
 }
@@ -20,5 +29,5 @@ DECLARE_VTABLE_HOOK(DrawModelExecute, void, (IVModelRender* thisptr, const DrawM
 inline void HookDrawModelExecute(void)
 {
 	INSTALL_VTABLE_HOOK(DrawModelExecute, interfaces::ModelRender, 19);
-	helper::console::Print("IModelRender::DrawModelExecute hooked\n");
+	helper::console::ColoredPrint("IModelRender::DrawModelExecute hooked\n", (Color_t){100, 255, 100, 255});
 }

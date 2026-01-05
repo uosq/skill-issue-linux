@@ -16,6 +16,7 @@
 #include "engine/engine.h"
 #include "localplayer/localplayer.h"
 #include "console/console.h"
+#include "materials/materials.h"
 
 namespace helper
 {
@@ -23,4 +24,5 @@ namespace helper
 	namespace localplayer {}
 	namespace draw {}
 	namespace engine {}
+	namespace material {}
 };

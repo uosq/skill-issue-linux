@@ -8,6 +8,7 @@
 
 #include "hitscan/aimbot_hitscan.h"
 #include "projectile/aimbot_projectile.h"
+#include <algorithm>
 
 namespace Aimbot
 {
@@ -76,7 +77,11 @@ namespace Aimbot
 			return;
 
 		float aimFov = DEG2RAD(settings.aimbot.fov);
-		float camFov = DEG2RAD(pLocal->m_iDefaultFOV() * 0.5f);
+		float camFov;// = DEG2RAD(pLocal->m_iDefaultFOV() * 0.5f);
+		if (settings.misc.customfov_enabled)
+			camFov = DEG2RAD(std::max(settings.misc.customfov * 0.5f, 1.0f));
+		else
+			camFov = DEG2RAD(pLocal->m_iDefaultFOV() * 0.5f);
 
 		int w, h;
 		helper::draw::GetScreenSize(w, h);

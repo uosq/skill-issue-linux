@@ -5,6 +5,7 @@
 #include "../sdk/classes/player.h"
 #include "../sdk/helpers/helper.h"
 #include "../features/aimbot/aimbot.h"
+#include "../features/bhop/bhop.h"
 #include <string>
 
 // Source https://8dcc.github.io/reversing/reversing-tf2-bsendpacket.html#introduction
@@ -34,6 +35,7 @@ DECLARE_VTABLE_HOOK(CreateMove, bool, (IClientMode* thisptr, float sample_framet
     	uintptr_t current_stack_address = current_frame_address + 0x8;
     	bool* bSendPacket = (bool*)(current_stack_address + SENDPACKET_STACK_OFFSET);
 
+	Bhop::Run(pLocal, pCmd);
 	Aimbot::Run(pLocal, pWeapon, pCmd, bSendPacket);
 
 	if (Aimbot::IsRunning())

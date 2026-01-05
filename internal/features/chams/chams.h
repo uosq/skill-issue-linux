@@ -10,7 +10,7 @@ namespace Chams
 	inline bool m_bMatLoaded = false;
 	inline bool m_bRunning = false;
 	inline IMaterial* m_mFlatMat = nullptr;
-	inline std::vector<int> drawEnts;
+	inline std::unordered_map<int, bool> m_DrawEnts;
 
 	inline bool Init()
 	{
@@ -37,23 +37,17 @@ namespace Chams
 
 	inline bool ShouldHide(int entindex)
 	{
-		for (auto& index : drawEnts)
-		{
-			if (entindex == index)
-				return true;
-		}
-
-		return false;
+		return m_DrawEnts.find(entindex) != m_DrawEnts.end();
 	}
 
 	inline void DrawPlayers()
 	{
-		drawEnts.clear();
+		m_DrawEnts.clear();
 
 		float savedColor[3], savedBlend;
-		interfaces::RenderView->GetColorModulation(savedColor);
 		savedBlend = interfaces::RenderView->GetBlend();
 
+		interfaces::RenderView->GetColorModulation(savedColor);
 		interfaces::RenderView->SetBlend(0.5f);
 		interfaces::ModelRender->ForcedMaterialOverride(m_mFlatMat);
 
@@ -70,7 +64,7 @@ namespace Chams
 			if (!baseEntity->IsPlayer())
 				continue;
 
-			if (baseEntity->IsDormant())
+			if (baseEntity->IsDormant() || !baseEntity->ShouldDraw())
 				continue;
 
 			CTFPlayer* player = static_cast<CTFPlayer*>(baseEntity);
@@ -86,9 +80,24 @@ namespace Chams
 			interfaces::RenderView->SetColorModulation(flColor);
 
 			m_bRunning = true;
-			drawEnts.emplace_back(baseEntity->GetIndex());
-			baseEntity->DrawModel(STUDIO_RENDER | STUDIO_NOSHADOWS);
+
+			m_DrawEnts[baseEntity->GetIndex()] = true;
+			baseEntity->DrawModel(STUDIO_RENDER);
+
 			m_bRunning = false;
+
+			CBaseEntity* moveChild = player->FirstMoveChild();
+			while (moveChild != nullptr)
+			{
+				m_bRunning = true;
+
+				m_DrawEnts[moveChild->GetIndex()] = true;
+				moveChild->DrawModel(STUDIO_RENDER);
+
+				m_bRunning = false;
+
+				moveChild = moveChild->NextMovePeer();
+			}
 		}
 
 		interfaces::ModelRender->ForcedMaterialOverride(nullptr);
