@@ -37,7 +37,7 @@ void *MainThread(void*)
 	HookCheckForPure();
 	HookDrawModelExecute();
 	HookDoPostScreenSpaceEffects();
-
+	//HookLockCursor();
 	return nullptr;
 }
 

@@ -1,10 +1,7 @@
 #pragma once
 
-#include "httplib.h"
-#include "json.hpp"
-#include "sdk/definitions/convar.h"
-#include <atomic>
-#include <pthread.h>
+//#include "httplib.h"
+//#include "json.hpp"
 #include <string>
 #include <unistd.h>
 
@@ -36,7 +33,7 @@ struct Settings_Misc
 	bool spectatorlist = true;
 	bool backpack_expander = true;
 	bool sv_pure_bypass = true;
-	bool streamer_mode = true;
+	bool streamer_mode = false;
 };
 
 struct Settings
@@ -44,12 +41,15 @@ struct Settings
 	Settings_ESP esp;
 	Settings_Aimbot aimbot;
 	Settings_Misc misc;
+
+	bool menu_open = true;
 };
 
+/*
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Settings_Misc, thirdperson, customfov_enabled, customfov, spectatorlist, backpack_expander, sv_pure_bypass, streamer_mode)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Settings_ESP, enabled, ignorecloaked, buildings, name, box, chams)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Settings_Aimbot, enabled, fov, key, autoshoot, max_sim_time, viewmodelaim)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Settings, esp, aimbot, misc)
+*/
 
-static inline Settings settings;
-static inline httplib::Client cli("http://127.0.0.1:6969");
+static Settings settings;

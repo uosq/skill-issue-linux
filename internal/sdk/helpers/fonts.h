@@ -6,7 +6,7 @@
 
 struct FontManager
 {
-	HFont CreateFont(const char* name, int height, int weight, int flags = 0)
+	HFont CreateFont(const char* name, int height, int weight, int flags = EFONTFLAG_ANTIALIAS | EFONTFLAG_CUSTOM)
 	{
 		HFont font = interfaces::Surface->CreateFont();
 		interfaces::Surface->SetFontGlyphSet(font, name, height, weight, 0, 0, flags);

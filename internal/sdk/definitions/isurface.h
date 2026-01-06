@@ -4,6 +4,7 @@
 #include "ipanel.h"
 #include "types.h"
 #include <cstdint>
+#include "../../libsigscan.h"
 
 class Color;
 class ITexture;
@@ -372,4 +373,18 @@ public:
 	// handles support for software cursors
 	virtual void SetSoftwareCursor( bool bUseSoftwareCursor ) = 0;
 	virtual void PaintSoftwareCursor() = 0;
+
+	void StartDrawing(void)
+	{
+		using StartDrawingFn = void(*)(void*);
+		static StartDrawingFn StartDrawingFunc = (StartDrawingFn)sigscan_module("vguimatsurface.so", "55 48 89 E5 41 54 53 48 89 FB 48 83 EC 20");
+		StartDrawingFunc(this);
+	}
+
+	void FinishDrawing(void)
+	{
+		using FinishDrawingFn = void(*)(void*);
+		static FinishDrawingFn FinishDrawingFunc = (FinishDrawingFn)sigscan_module("vguimatsurface.so", "55 31 FF 48 89 E5 41 54");
+		FinishDrawingFunc(this);
+	}
 };

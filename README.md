@@ -8,7 +8,7 @@ This is made for Linux, so trying to build it on Windows or non Unix-like system
 
 8dcc - [libdetour](https://github.com/8dcc/libdetour)
 
-8dcc - [libsigscan](https://github.com/8dcc/libdetour)
+8dcc - [libsigscan](https://github.com/8dcc/libsigscan)
 
 ## How to inject
 

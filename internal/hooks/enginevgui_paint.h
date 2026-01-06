@@ -14,12 +14,16 @@
 #include "../features/aimbot/aimbot.h"
 #include "../features/visuals/visuals.h"
 
-DECLARE_VTABLE_HOOK(VGuiPaint, void, (IEngineVGui* thisptr, VGuiPanel_t type))
-{
-	originalVGuiPaint(thisptr, type);
+#include "../gui/gui.h"
 
-	if (type & PAINT_INGAMEPANELS)
+DECLARE_VTABLE_HOOK(VGuiPaint, void, (IEngineVGui* thisptr, PaintMode_t paint))
+{
+	originalVGuiPaint(thisptr, paint);
+
+	if (paint & PAINT_UIPANELS)
 	{
+		interfaces::Surface->StartDrawing();
+
 		HFont font = helper::draw::GetCurrentFont();
 		helper::draw::SetFont(font);
 	
@@ -27,18 +31,22 @@ DECLARE_VTABLE_HOOK(VGuiPaint, void, (IEngineVGui* thisptr, VGuiPanel_t type))
 		helper::draw::TextShadow(10, 10, color, "Vapo Linux");
 	
 		CTFPlayer* pLocal = helper::engine::GetLocalPlayer();
-		if (!pLocal)
-			return;
+		if (pLocal)
+		{
+			Visuals::spectatorlist.Run(pLocal);
+			ESP::Run(pLocal);
+		
+			CTFWeaponBase* pWeapon = HandleAs<CTFWeaponBase>(pLocal->GetActiveWeapon());
+			if (pWeapon)
+			{
+				Aimbot::DrawTargetPath();
+				Aimbot::DrawFOVIndicator(pLocal, pWeapon);
+			}
+		}
 
-		Visuals::spectatorlist.Run(pLocal);
-		ESP::Run(pLocal);
-	
-		CTFWeaponBase* pWeapon = HandleAs<CTFWeaponBase>(pLocal->GetActiveWeapon());
-		if (!pWeapon)
-			return;
-	
-		Aimbot::DrawTargetPath();
-		Aimbot::DrawFOVIndicator(pLocal, pWeapon);
+		DrawMainWindow();
+
+		interfaces::Surface->FinishDrawing();
 	}
 }
 

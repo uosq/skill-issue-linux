@@ -10,14 +10,14 @@ DECLARE_VTABLE_HOOK(PaintTraverse, void, (IPanel* thisptr, VPANEL vguiPanel, boo
 {
 	static float lastSettingsUpdate = 0.0f;
 
-	float currenttime = interfaces::GlobalVars ? interfaces::GlobalVars->realtime : 0.0f;
+	//float currenttime = interfaces::GlobalVars ? interfaces::GlobalVars->realtime : 0.0f;
 
 	if (!helper::engine::IsInMatch())
 		stoptime = 0.0f;
 
 	// is this a good way of doing it? absolutely fucking not
 	// but im lazy and dont want to hook sdl and vulkan
-	if (currenttime - lastSettingsUpdate > 1.0f)
+	/*if (currenttime - lastSettingsUpdate > 1.0f)
 	{
 		if (auto response = cli.Get("/"))
 		{
@@ -25,7 +25,7 @@ DECLARE_VTABLE_HOOK(PaintTraverse, void, (IPanel* thisptr, VPANEL vguiPanel, boo
 			settings = j.get<Settings>();
 		}
 		lastSettingsUpdate = currenttime;
-	}
+	}*/
 
 	const char* panelName = interfaces::VGui->GetName(vguiPanel);
 
