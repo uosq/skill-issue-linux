@@ -29,14 +29,12 @@ sudo ./attach.sh
 
 ### How to compile
 
-#### GUI
-
-Just run the `build-gui.sh` file and it should compile and open the gui
-
-```bash
-./build-gui.sh
-```
-
 #### "DLL" (Shared Library)
 
 Run `build-so.sh` to build the .so file
+
+```bash
+mkdir build
+cp /usr/lib64/libGLEW.so.2.2 build/
+./build-so.sh
+```
