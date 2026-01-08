@@ -29,7 +29,7 @@ inline int Hooked_GetMaxItemCount(void* thisptr)
 
 inline void HookCTFPlayerInventory_MaxItemCount()
 {
-	originalMaxItemCountFn = (GetMaxItemCountFn)sigscan_module("client.so", "48 8B BF 98 00 00 00 48 85 FF 74 54 55 BE 07 00 00 00 48 89 E5 E8 C6 4E 6F 00 48 85 C0 74 39 83 78 28 01");
+	originalMaxItemCountFn = (GetMaxItemCountFn)sigscan_module("client.so", "48 8B BF 98 00 00 00 48 85 FF 74 ? 55 BE 07 00 00 00 48 89 E5 E8 ? ? ? ? 48 85 C0 74 ? 83 78 28 01 75 ? 48 8B 40 08 48 8B 10");
 	detour_init(&GetMaxItemCount_ctx, (void*)originalMaxItemCountFn, (void*)&Hooked_GetMaxItemCount);
 	detour_enable(&GetMaxItemCount_ctx);
 

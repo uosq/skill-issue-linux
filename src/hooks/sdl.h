@@ -59,7 +59,7 @@ inline void Hooked_SwapWindow(SDL_Window* window)
 
 	SDL_GL_MakeCurrent(window, ourcontext);
 
-	if (ImGui::IsKeyPressed(ImGuiKey_Home, false))
+	if (ImGui::IsKeyPressed(ImGuiKey_Insert, false) || ImGui::IsKeyPressed(ImGuiKey_F11, false))
 	{
 		settings.menu_open = !settings.menu_open;
 		interfaces::Surface->SetCursorAlwaysVisible(settings.menu_open);

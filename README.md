@@ -26,15 +26,12 @@ sudo ./attach.sh
   * Go (at least 1.25.5)
   * Linux
   * GCC/G++ (compiled with atleast standard C++17)
+  * Glew
 
-### How to compile
-
-#### "DLL" (Shared Library)
-
-Run `build-so.sh` to build the .so file
+Run `build.sh` to build the .so file
 
 ```bash
 mkdir build
 cp /usr/lib64/libGLEW.so.2.2 build/
-./build-so.sh
+./build.sh
 ```

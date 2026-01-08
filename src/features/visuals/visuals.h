@@ -5,7 +5,6 @@
 #include "../../settings.h"
 
 #include "thirdperson/thirdperson.h"
-#include "spectatorlist/spectatorlist.h"
 
 namespace Visuals
 {
