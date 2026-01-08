@@ -586,8 +586,8 @@ static void HookVulkan()
 	if (GetModuleBaseAddress("libdxvk_d3d9.so") == nullptr)
 		return;
 
-	interfaces::Cvar->ConsoleColorPrintf((Color_t){255, 100, 100, 255}, "Vulkan is not supported! Use OpenGL\n");
-	return;
+	Color_t color = {255, 100, 100, 255};
+	return interfaces::Cvar->ConsoleColorPrintf(color, "Vulkan is not supported! Use OpenGL\n");
 
 	void* vulkan_lib = dlopen("libvulkan.so.1", RTLD_LAZY | RTLD_NOLOAD);
 	if (!vulkan_lib)

@@ -8,4 +8,5 @@ g++ -shared -fPIC \
 	src/imgui/*.cpp \
 	-o build/libvapo.so \
 	-O2 -std=c++17 -lSDL2 -lGLEW -lvulkan \
+	-Werror -flto=auto \
 	-Wl,-rpath,'$ORIGIN'

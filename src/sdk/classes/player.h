@@ -3,6 +3,7 @@
 #include "entity.h"
 #include "../definitions/types.h"
 #include "../defs.h"
+#include "../definitions/bspflags.h"
 
 #define	FL_ONGROUND (1<<0)
 #define FL_DUCKING (1<<1)
@@ -149,5 +150,40 @@ public:
 			return;
 
 		orig((void*)this);
+	}
+
+	int GetWaterLevel()
+	{
+		int level = WL_NotInWater;
+		Vector point = {};
+		int cont = 0;
+
+		Vector mins = m_vecMins();
+		Vector maxs = m_vecMaxs();
+		Vector origin = GetAbsOrigin();
+
+		point.x = origin.x + (mins.x + maxs.x) * 0.5f;
+		point.y = origin.y + (mins.y + maxs.y) * 0.5f;
+		point.z = origin.z + mins.z + 1;
+
+		cont = interfaces::EngineTrace->GetPointContents(point);
+		if (cont & MASK_WATER)
+		{
+			level = WL_Feet;
+
+			point.z = origin.z + (mins.z + maxs.z)*0.5f;
+			cont = interfaces::EngineTrace->GetPointContents(point);
+			if (cont & MASK_WATER)
+			{
+				level = WL_Waist;
+
+				point.z = origin.z + m_vecViewOffset().z;
+				cont = interfaces::EngineTrace->GetPointContents(point);
+				if (cont & MASK_WATER)
+					level = WL_Eyes;
+			}
+		}
+
+		return level;
 	}
 };
