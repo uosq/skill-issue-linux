@@ -23,7 +23,6 @@ class CBaseHandle;
 class bf_read;
 
 struct model_t;
-struct matrix3x4_t;
 class IClientRenderable;
 struct ClientRenderHandle_t;
 
@@ -235,9 +234,9 @@ public:
 	// currentTime parameter will affect interpolation
 	// nMaxBones specifies how many matrices pBoneToWorldOut can hold. (Should be greater than or
 	// equal to studiohdr_t::numbones. Use MAXSTUDIOBONES to be safe.)
-	virtual bool	SetupBones( matrix3x4_t *pBoneToWorldOut, int nMaxBones, int boneMask, float currentTime ) = 0;
+	virtual bool	SetupBones( matrix3x4 *pBoneToWorldOut, int nMaxBones, int boneMask, float currentTime ) = 0;
 
-	virtual void	SetupWeights( const matrix3x4_t *pBoneToWorld, int nFlexWeightCount, float *pFlexWeights, float *pFlexDelayedWeights ) = 0;
+	virtual void	SetupWeights( const matrix3x4 *pBoneToWorld, int nFlexWeightCount, float *pFlexWeights, float *pFlexDelayedWeights ) = 0;
 	virtual void	DoAnimationEvents( void ) = 0;
 	
 	// Return this if you want PVS notifications. See IPVSNotify for more info.	
@@ -278,12 +277,12 @@ public:
 	virtual ModelInstanceHandle_t GetModelInstance() = 0;
 
 	// Returns the transform from RenderOrigin/RenderAngles to world
-	virtual const matrix3x4_t &RenderableToWorldTransform() = 0;
+	virtual const matrix3x4 &RenderableToWorldTransform() = 0;
 
 	// Attachments
 	virtual int LookupAttachment( const char *pAttachmentName ) = 0;
 	virtual	bool GetAttachment( int number, Vector &origin, QAngle &angles ) = 0;
-	virtual bool GetAttachment( int number, matrix3x4_t &matrix ) = 0;
+	virtual bool GetAttachment( int number, matrix3x4 &matrix ) = 0;
 
 	// Rendering clip plane, should be 4 floats, return value of NULL indicates a disabled render clip plane
 	virtual float *GetRenderClipPlane( void ) = 0;

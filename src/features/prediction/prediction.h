@@ -228,7 +228,7 @@ namespace PlayerPrediction
 		return slideFrac > 0.0f;
 	}
 
-	inline void Predict(CTFPlayer* player, float time_seconds, std::vector<Vector> &path)
+	__always_inline void Predict(CTFPlayer* player, float time_seconds, std::vector<Vector> &path)
 	{
 		Vector velocity(0, 0, 0);
 		{	// copy our velocity because netvars are references!

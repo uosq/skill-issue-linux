@@ -123,8 +123,8 @@ namespace Glow
 		if (!glowEnts.empty())
 			glowEnts.clear();
 		
-		auto render = interfaces::MaterialSystem->GetRenderContext();
-		if (!render)
+		auto pRenderContext = interfaces::MaterialSystem->GetRenderContext();
+		if (!pRenderContext)
 			return;
 
 		GetEntities();
@@ -136,36 +136,36 @@ namespace Glow
 		interfaces::Engine->GetScreenSize(w, h);
 
 		{	// stencil pass
-			render->SetStencilEnable(true);
+			pRenderContext->SetStencilEnable(true);
 			float savedBlend = interfaces::RenderView->GetBlend();
 			interfaces::ModelRender->ForcedMaterialOverride(m_Materials.glowColor);
 			interfaces::RenderView->SetBlend(0);
 
-			render->SetStencilReferenceValue(1);
-			render->SetStencilCompareFunction(STENCILCOMPARISONFUNCTION_ALWAYS);
-			render->SetStencilPassOperation(STENCILOPERATION_REPLACE);
-			render->SetStencilFailOperation(STENCILOPERATION_KEEP);
-			render->SetStencilZFailOperation(STENCILOPERATION_REPLACE);
+			pRenderContext->SetStencilReferenceValue(1);
+			pRenderContext->SetStencilCompareFunction(STENCILCOMPARISONFUNCTION_ALWAYS);
+			pRenderContext->SetStencilPassOperation(STENCILOPERATION_REPLACE);
+			pRenderContext->SetStencilFailOperation(STENCILOPERATION_KEEP);
+			pRenderContext->SetStencilZFailOperation(STENCILOPERATION_REPLACE);
 
 			DrawEntities();
 
 			interfaces::ModelRender->ForcedMaterialOverride(nullptr);
 			interfaces::RenderView->SetBlend(savedBlend);
-			render->SetStencilEnable(false);
+			pRenderContext->SetStencilEnable(false);
 		}
 
 		{	// color pass
-			render->PushRenderTargetAndViewport();
+			pRenderContext->PushRenderTargetAndViewport();
 
 			float savedColor[3], savedBlend;
 			interfaces::RenderView->GetColorModulation(savedColor);
 			savedBlend = interfaces::RenderView->GetBlend();
 
 			interfaces::RenderView->SetBlend(1.0f);
-			render->SetRenderTarget(m_Materials.glowBuffer1);
-			render->Viewport(0, 0, w, h);
-			render->ClearColor3ub(0, 0, 0);
-			render->ClearBuffers(true, false, false);
+			pRenderContext->SetRenderTarget(m_Materials.glowBuffer1);
+			pRenderContext->Viewport(0, 0, w, h);
+			pRenderContext->ClearColor3ub(0, 0, 0);
+			pRenderContext->ClearBuffers(true, false, false);
 			interfaces::ModelRender->ForcedMaterialOverride(m_Materials.glowColor);
 
 			DrawEntities();
@@ -174,59 +174,59 @@ namespace Glow
 			interfaces::RenderView->SetBlend(savedBlend);
 			interfaces::RenderView->SetColorModulation(savedColor);
 
-			render->PopRenderTargetAndViewport();
+			pRenderContext->PopRenderTargetAndViewport();
 		}
 
 		if (settings.esp.blur)
 		{
-			render->PushRenderTargetAndViewport();
-			render->Viewport(0, 0, w, h);
+			pRenderContext->PushRenderTargetAndViewport();
+			pRenderContext->Viewport(0, 0, w, h);
 
 			for (int i = 0; i < settings.esp.blur; ++i)
 			{
-				render->SetRenderTarget(m_Materials.glowBuffer2);
-				render->DrawScreenSpaceRectangle(m_Materials.blurX, 0, 0, w, h, 0, 0, w - 1, h - 1, w, h);
-				render->SetRenderTarget(m_Materials.glowBuffer1);
-				render->DrawScreenSpaceRectangle(m_Materials.blurY, 0, 0, w, h, 0, 0, w - 1, h - 1, w, h);
+				pRenderContext->SetRenderTarget(m_Materials.glowBuffer2);
+				pRenderContext->DrawScreenSpaceRectangle(m_Materials.blurX, 0, 0, w, h, 0, 0, w - 1, h - 1, w, h);
+				pRenderContext->SetRenderTarget(m_Materials.glowBuffer1);
+				pRenderContext->DrawScreenSpaceRectangle(m_Materials.blurY, 0, 0, w, h, 0, 0, w - 1, h - 1, w, h);
 			}
 
-			render->PopRenderTargetAndViewport();
+			pRenderContext->PopRenderTargetAndViewport();
 		}
 
 		{
-			render->SetStencilEnable(true);
-			render->SetStencilWriteMask(0);
-			render->SetStencilTestMask(0xFF);
+			pRenderContext->SetStencilEnable(true);
+			pRenderContext->SetStencilWriteMask(0);
+			pRenderContext->SetStencilTestMask(0xFF);
 
-			render->SetStencilReferenceValue(1);
-			render->SetStencilCompareFunction(STENCILCOMPARISONFUNCTION_NOTEQUAL);
+			pRenderContext->SetStencilReferenceValue(1);
+			pRenderContext->SetStencilCompareFunction(STENCILCOMPARISONFUNCTION_NOTEQUAL);
 
-			render->SetStencilPassOperation(STENCILOPERATION_KEEP);
-			render->SetStencilFailOperation(STENCILOPERATION_KEEP);
-			render->SetStencilZFailOperation(STENCILOPERATION_KEEP);
+			pRenderContext->SetStencilPassOperation(STENCILOPERATION_KEEP);
+			pRenderContext->SetStencilFailOperation(STENCILOPERATION_KEEP);
+			pRenderContext->SetStencilZFailOperation(STENCILOPERATION_KEEP);
 
 			if (settings.esp.stencil)
 			{
 				int side = (settings.esp.stencil + 1) / 2;
-				render->DrawScreenSpaceRectangle(m_Materials.haloAddToScreen, -side, 0, w, h, 0, 0, w - 1, h - 1, w, h);
-				render->DrawScreenSpaceRectangle(m_Materials.haloAddToScreen, 0, -side, w, h, 0, 0, w - 1, h - 1, w, h);
-				render->DrawScreenSpaceRectangle(m_Materials.haloAddToScreen, side, 0, w, h, 0, 0, w - 1, h - 1, w, h);
-				render->DrawScreenSpaceRectangle(m_Materials.haloAddToScreen, 0, side, w, h, 0, 0, w - 1, h - 1, w, h);
+				pRenderContext->DrawScreenSpaceRectangle(m_Materials.haloAddToScreen, -side, 0, w, h, 0, 0, w - 1, h - 1, w, h);
+				pRenderContext->DrawScreenSpaceRectangle(m_Materials.haloAddToScreen, 0, -side, w, h, 0, 0, w - 1, h - 1, w, h);
+				pRenderContext->DrawScreenSpaceRectangle(m_Materials.haloAddToScreen, side, 0, w, h, 0, 0, w - 1, h - 1, w, h);
+				pRenderContext->DrawScreenSpaceRectangle(m_Materials.haloAddToScreen, 0, side, w, h, 0, 0, w - 1, h - 1, w, h);
 				
 				int corner = settings.esp.stencil / 2;
 				if (corner)
 				{
-					render->DrawScreenSpaceRectangle(m_Materials.haloAddToScreen, -corner, -corner, w, h, 0, 0, w - 1, h - 1, w, h);
-					render->DrawScreenSpaceRectangle(m_Materials.haloAddToScreen, corner, corner, w, h, 0, 0, w - 1, h - 1, w, h);
-					render->DrawScreenSpaceRectangle(m_Materials.haloAddToScreen, corner, -corner, w, h, 0, 0, w - 1, h - 1, w, h);
-					render->DrawScreenSpaceRectangle(m_Materials.haloAddToScreen, -corner, corner, w, h, 0, 0, w - 1, h - 1, w, h);
+					pRenderContext->DrawScreenSpaceRectangle(m_Materials.haloAddToScreen, -corner, -corner, w, h, 0, 0, w - 1, h - 1, w, h);
+					pRenderContext->DrawScreenSpaceRectangle(m_Materials.haloAddToScreen, corner, corner, w, h, 0, 0, w - 1, h - 1, w, h);
+					pRenderContext->DrawScreenSpaceRectangle(m_Materials.haloAddToScreen, corner, -corner, w, h, 0, 0, w - 1, h - 1, w, h);
+					pRenderContext->DrawScreenSpaceRectangle(m_Materials.haloAddToScreen, -corner, corner, w, h, 0, 0, w - 1, h - 1, w, h);
 				}
 			}
 
 			if (settings.esp.blur)
-				render->DrawScreenSpaceRectangle(m_Materials.haloAddToScreen, 0, 0, w, h, 0, 0, w - 1, h - 1, w, h);
+				pRenderContext->DrawScreenSpaceRectangle(m_Materials.haloAddToScreen, 0, 0, w, h, 0, 0, w - 1, h - 1, w, h);
 
-			render->SetStencilEnable(false);
+			pRenderContext->SetStencilEnable(false);
 		}
 	}
 }

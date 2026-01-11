@@ -8,6 +8,7 @@
 #include "../features/aimbot/aimbot.h"
 #include "../features/bhop/bhop.h"
 #include "../features/triggerbot/triggerbot.h"
+#include "../features/entitylist/entitylist.h"
 
 // Source https://8dcc.github.io/reversing/reversing-tf2-bsendpacket.html#introduction
 #define SENDPACKET_STACK_OFFSET 0xF8
@@ -22,7 +23,7 @@ DECLARE_VTABLE_HOOK(CreateMove, bool, (IClientMode* thisptr, float sample_framet
 	if (!interfaces::Engine->IsInGame() || !interfaces::Engine->IsConnected())
 		return ret;
 
-	CTFPlayer* pLocal = helper::engine::GetLocalPlayer();
+	CTFPlayer* pLocal = EntityList::GetLocal();
 	if (!pLocal || !pLocal->IsAlive() || pLocal->IsTaunting())
 		return ret;
 

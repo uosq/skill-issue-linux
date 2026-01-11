@@ -49,9 +49,6 @@ namespace Triggerbot
 		if (IsBehindAndFacingEntity(pLocal, pTarget))
 			return true;
 
-		// have to check for gamerules here
-		// but I dont have that yet
-
 		return false;
 	}
 

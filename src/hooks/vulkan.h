@@ -49,7 +49,8 @@ static detour_ctx_t swapctx;
 static detour_ctx_t acquirectx;
 static detour_ctx_t acquire2ctx;
 
-static bool CreateDeviceVK( ) {
+static bool CreateDeviceVK( )
+{
     // Create Vulkan Instance
     {
         VkInstanceCreateInfo create_info = { };

@@ -13,6 +13,7 @@
 #include "../features/esp/esp.h"
 #include "../features/aimbot/aimbot.h"
 #include "../features/visuals/visuals.h"
+#include "../features/entitylist/entitylist.h"
 
 DECLARE_VTABLE_HOOK(VGuiPaint, void, (IEngineVGui* thisptr, PaintMode_t paint))
 {
@@ -28,7 +29,7 @@ DECLARE_VTABLE_HOOK(VGuiPaint, void, (IEngineVGui* thisptr, PaintMode_t paint))
 		//Color color{255, 255, 255, 255};
 		//helper::draw::TextShadow(10, 10, color, "Vapo Linux");
 	
-		CTFPlayer* pLocal = helper::engine::GetLocalPlayer();
+		CTFPlayer* pLocal = EntityList::GetLocal();
 		if (pLocal)
 		{
 			ESP::Run(pLocal);

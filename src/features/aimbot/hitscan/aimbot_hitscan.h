@@ -12,12 +12,22 @@
 #include "../../../settings.h"
 
 #include "../utils/utils.h"
+#include "../../entitylist/entitylist.h"
 
 #include <cmath>
 #include <vector>
 
 struct AimbotHitscan
 {
+	/*static bool Multipoint(Vector &out, CTFPlayer *pLocal, CTFPlayer* pTarget)
+	{
+		matrix3x4 bones;
+		pTarget->SetupBones(&bones, MAXSTUDIOBONES, 0xFFFF, TICKS_TO_TIME(pLocal->GetTickBase()));
+		const model_t* model = pLocal->GetModel();
+		studiohdr_t* studiomodel = interfaces::ModelInfoClient->GetStudiomodel(model);
+		return true;
+	}*/
+
 	void Run(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd, Vector &outAngle, bool &running)
 	{
 		std::vector<PotentialTarget> targets;
@@ -39,10 +49,8 @@ struct AimbotHitscan
 		CTraceFilterHitscan filter;
 		filter.pSkip = pLocal;
 
-		for (int i = 1; i < helper::engine::GetMaxClients(); i++)
+		for (auto entity : EntityList::m_vecPlayers)
 		{
-			CTFPlayer* entity = (CTFPlayer*)interfaces::EntityList->GetClientEntity(i);
-
 			if (!AimbotUtils::IsValidEntity(pLocal, entity))
 				continue;
 
@@ -58,7 +66,7 @@ struct AimbotHitscan
 			if (dot < minDot)
 				continue;
 
-			helper::engine::Trace(shootPos, center, MASK_SHOT_HULL, &filter, &trace);
+			helper::engine::Trace(shootPos, center, MASK_SHOT | CONTENTS_HITBOX, &filter, &trace);
 			if (!trace.DidHit() || !trace.m_pEnt || trace.m_pEnt != entity)
 				continue;
 

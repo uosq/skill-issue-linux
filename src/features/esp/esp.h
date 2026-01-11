@@ -5,6 +5,7 @@
 #include "../../sdk/classes/weaponbase.h"
 #include "../../sdk/classes/cbaseobject.h"
 #include "../../sdk/definitions/eteam.h"
+#include "../entitylist/entitylist.h"
 #include "../../settings.h"
 
 namespace ESP
@@ -28,6 +29,8 @@ namespace ESP
 		return (Color){255, 255, 255, 255};
 	}
 
+	// Had to make a separate one
+	// Because m_iTeamNum for some reason is inverted on buildings
 	inline Color GetBuildingColor(CBaseObject* building)
 	{
 		CTFPlayer* builder = HandleAs<CTFPlayer>(building->m_hBuilder());
@@ -106,16 +109,8 @@ namespace ESP
 		Color white {255, 255, 255, 255};
 		helper::draw::SetFont(fontManager.GetCurrentFont());
 
-		int maxclients = helper::engine::GetMaxClients();
-
-		// start at 1 because 0 is the world
-		for (int i = 1; i < maxclients; i++)
+		for (auto entity : EntityList::m_vecPlayers)
 		{
-			IClientEntity* clientEnt = interfaces::EntityList->GetClientEntity(i);
-			if (!clientEnt)
-				continue;
-
-			auto entity = static_cast<CBaseEntity*>(clientEnt);
 			if (!IsValidPlayer(pLocal, entity))
 				continue;
 
@@ -149,24 +144,8 @@ namespace ESP
 		if (settings.esp.buildings)
 		{
 			// skip players
-			for (int i = maxclients; i <= interfaces::EntityList->GetHighestEntityIndex(); i++)
+			for (auto entity : EntityList::m_vecBuildings)
 			{
-				IClientEntity* clientEnt = interfaces::EntityList->GetClientEntity(i);
-				if (clientEnt == nullptr)
-					continue;
-
-				CBaseEntity* baseEnt = static_cast<CBaseEntity*>(clientEnt);
-				if (baseEnt == nullptr)
-					continue;
-
-				if (!baseEnt->IsBuilding())
-					continue;
-
-				// fucking stupid c++
-				CBaseObject* entity = reinterpret_cast<CBaseObject*>(baseEnt);
-				if (entity == nullptr)
-					continue;
-
 				if (!IsValidBuilding(pLocal, entity))
 					return;
 
@@ -181,7 +160,7 @@ namespace ESP
 					continue;
 
 				int h = (bottom - top).Length();
-				int w = baseEnt->IsTeleporter() ? h * 2.0f : h * 0.3f;
+				int w = reinterpret_cast<CBaseEntity*>(entity)->IsTeleporter() ? h * 2.0f : h * 0.3f;
 
 				Color color = GetBuildingColor(entity);
 

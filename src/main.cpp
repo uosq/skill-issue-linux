@@ -8,6 +8,7 @@
 #include "hooks/cbaseviewmodel_calcviewmodelview.h"
 #include "hooks/cl_checkforpureserverwhitelist.h"
 #include "hooks/clientmodeshared_dopostscreenspaceeffects.h"
+#include "hooks/chlclient_levelshutdown.h"
 
 #include "hooks/ipanel_paint_traverse.h"
 #include "hooks/sdl.h"
@@ -43,6 +44,7 @@ void *MainThread(void*)
 	HookDrawModelExecute();
 	HookDoPostScreenSpaceEffects();
 	HookLockCursor();
+	HookLevelShutdown();
 	return nullptr;
 }
 

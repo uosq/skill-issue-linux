@@ -20,7 +20,7 @@ struct Thirdperson
 	{
 		RunHotkey();
 
-		if (!pLocal || !pLocal->IsAlive())
+		if (pLocal == nullptr || !pLocal->IsAlive())
 			return;
 
 		if (settings.misc.thirdperson)

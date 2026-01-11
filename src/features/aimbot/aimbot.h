@@ -56,6 +56,7 @@ namespace Aimbot
 				hitscan.Run(pLocal, pWeapon, pCmd, angle, running);
 				break;
 			} break;
+
 			case EWeaponType::PROJECTILE:
 			{
 				static AimbotProjectile projectile;

@@ -25,8 +25,8 @@
 #include "../definitions/ivmodelrender.h"
 #include "../definitions/ikeyvaluessystem.h"
 #include "../definitions/igamemovement.h"
-//#include "../classes/ctfgamerules.h" Honestly im getting very pissed off at C++'s header system. Fuck whoever made this shit
 #include "../definitions/imovehelper.h"
+#include "../definitions/ivmodelinfoclient.h"
 
 static HCursor cursor = 0;
 
@@ -49,7 +49,7 @@ namespace interfaces
 	static CInput* CInput = nullptr;
 	static IVModelRender* ModelRender = nullptr;
 	static IKeyValuesSystem* KeyValuesSystem = nullptr;
-	//static CTFGameRules* TFGameRules = nullptr;
+	static IVModelInfoClient* ModelInfoClient = nullptr;
 	static AttributeManager attributeManager;
 }
 
@@ -185,6 +185,9 @@ static bool InitializeInterfaces()
 	//if (!GetInterface(interfaces::GameMovement, factories::client, "GameMovement001"))
 		//return false;
 
+	if (!GetInterface(interfaces::ModelInfoClient, factories::engine, "VModelInfoClient006"))
+		return false;
+
 	{ // ClientModeShared
 		uintptr_t leaInstr = (uintptr_t)sigscan_module("client.so", "48 8D 05 ? ? ? ? 40 0F B6 F6 48 8B 38");
 		uintptr_t g_pClientMode_addr = vtable::ResolveRIP(leaInstr, 3, 7); // lea rax, [g_pClientMode]
@@ -218,14 +221,6 @@ static bool InitializeInterfaces()
 		if (!interfaces::CInput)
 			return false;
 	}
-
-	/*{
-		uintptr_t leaInstr = reinterpret_cast<uintptr_t>(sigscan_module("client.so", "48 8D 05 ? ? ? ? 48 8B 38 48 85 FF 74 ? 31 C0"));
-		uintptr_t g_pGameRules_addr = vtable::ResolveRIP(leaInstr, 3, 7);
-		interfaces::TFGameRules = *reinterpret_cast<CTFGameRules**>(g_pGameRules_addr);
-		if (interfaces::TFGameRules == nullptr)
-			return false;
-	}*/
 
 	return true;
 }

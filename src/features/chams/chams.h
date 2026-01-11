@@ -3,6 +3,7 @@
 #include "../../sdk/definitions/keyvalues.h"
 #include "../../sdk/helpers/helper.h"
 #include "../../features/esp/esp.h"
+#include "../entitylist/entitylist.h"
 #include <vector>
 
 namespace Chams
@@ -44,30 +45,25 @@ namespace Chams
 		interfaces::RenderView->SetBlend(0.5f);
 		interfaces::ModelRender->ForcedMaterialOverride(m_mFlatMat);
 
-		for (int i = 1; i <= helper::engine::GetMaxClients(); i++)
+		for (auto entity : EntityList::m_vecPlayers)
 		{
-			CBaseEntity* baseEntity = static_cast<CBaseEntity*>(interfaces::EntityList->GetClientEntity(i));
-			if (baseEntity == nullptr)
+			if (entity == nullptr)
 				continue;
 
-			if (!baseEntity->IsPlayer())
+			if (!entity->IsPlayer())
 				continue;
 
-			if (baseEntity->IsDormant() || !baseEntity->ShouldDraw())
+			if (entity->IsDormant() || !entity->ShouldDraw())
 				continue;
 
-			CTFPlayer* player = static_cast<CTFPlayer*>(baseEntity);
-			if (player == nullptr)
-				continue;
-
-			if (!player->IsAlive())
+			if (!entity->IsAlive())
 				continue;
 			
-			Color color = ESP::GetPlayerColor(baseEntity);
+			Color color = ESP::GetPlayerColor(entity);
 			float flColor[3] = {color.r()/255.0f, color.g()/255.0f, color.b()/255.0f};
 
 			interfaces::RenderView->SetColorModulation(flColor);
-			player->DrawModel(STUDIO_RENDER | STUDIO_NOSHADOWS);
+			entity->DrawModel(STUDIO_RENDER | STUDIO_NOSHADOWS);
 		}
 
 		interfaces::ModelRender->ForcedMaterialOverride(nullptr);

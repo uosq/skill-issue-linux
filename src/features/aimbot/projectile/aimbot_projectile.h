@@ -12,6 +12,7 @@
 #include "../../../sdk/definitions/bspflags.h"
 #include "../../../settings.h"
 #include "../../prediction/prediction.h"
+#include "../../entitylist/entitylist.h"
 #include <cmath>
 #include <vector>
 
@@ -130,10 +131,8 @@ struct AimbotProjectile
 
 		float gravity = sv_gravity->GetFloat() * 0.5f * info.gravity;
 
-		for (int i = 1; i < helper::engine::GetMaxClients(); i++)
+		for (auto entity : EntityList::m_vecPlayers)
 		{
-			CTFPlayer* entity = (CTFPlayer*)interfaces::EntityList->GetClientEntity(i);
-
 			if (!AimbotUtils::IsValidEntity(pLocal, entity))
 				continue;
 
