@@ -2,11 +2,11 @@
 
 #include "../definitions/fnv.h"
 #include "../definitions/datatable.h"
+#include "../interfaces/interfaces.h"
 #include <cctype>
 #include <cstdint>
 #include <string>
 #include <unordered_map>
-#include "../interfaces/interfaces.h"
 #include <iostream>
 #include <fstream>
 #include <iomanip>

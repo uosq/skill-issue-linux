@@ -189,6 +189,11 @@ public:
 		return m_iClip1() > 0 || m_iClip1() == -1;
 	}
 
+	bool IsMelee()
+	{
+		return GetSlot() == SLOT_MELEE;
+	}
+
 	template<typename T>
 	T As(T)
 	{

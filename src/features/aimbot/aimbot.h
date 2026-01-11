@@ -12,27 +12,27 @@
 
 namespace Aimbot
 {
-	static inline std::vector<Vector> targetPath;
-	static inline Vector angle{0, 0, 0};
+	static std::vector<Vector> targetPath;
+	static Vector angle{0, 0, 0};
 	static bool running = true;
 	static bool shouldSilent = false;
 
-	inline Vector GetAngle()
+	static Vector GetAngle()
 	{
 		return angle;
 	}
 
-	inline bool IsRunning()
+	static bool IsRunning()
 	{
 		return running;
 	}
 
-	inline bool ShouldSilent()
+	static bool ShouldSilent()
 	{
 		return shouldSilent;
 	}
 
-	inline void Run(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd, bool* bSendPacket)
+	static void Run(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd, bool* bSendPacket)
 	{
 		running = false;
 		shouldSilent = false;
@@ -71,17 +71,21 @@ namespace Aimbot
 		}
 	}
 
-	inline void DrawFOVIndicator(CTFPlayer* pLocal, CTFWeaponBase* pWeapon)
+	static void DrawFOVIndicator()
 	{
 		if (settings.aimbot.fov >= 90 || !settings.aimbot.draw_fov_indicator || helper::engine::IsTakingScreenshot())
 			return;
 
+		static ConVar* fov_desired = interfaces::Cvar->FindVar("fov_desired");
+		if (!fov_desired)
+			return;
+
 		float aimFov = DEG2RAD(settings.aimbot.fov);
-		float camFov;// = DEG2RAD(pLocal->m_iDefaultFOV() * 0.5f);
+		float camFov = 0.0f;
 		if (settings.misc.customfov_enabled)
 			camFov = DEG2RAD(std::max(settings.misc.customfov * 0.5f, 1.0f));
 		else
-			camFov = DEG2RAD(pLocal->m_iDefaultFOV() * 0.5f);
+			camFov = DEG2RAD(fov_desired->GetFloat() * 0.5f);
 
 		int w, h;
 		helper::draw::GetScreenSize(w, h);
@@ -92,7 +96,7 @@ namespace Aimbot
 		interfaces::Surface->DrawOutlinedCircle((int)(w*0.5f), (int)(h*0.5f), (int)(radius), 64);
 	}
 
-	inline void CleanTargetPath()
+	static void CleanTargetPath()
 	{
 		static float lastcleartime = 0.0f;
 		if (targetPath.empty())
@@ -105,7 +109,7 @@ namespace Aimbot
 		lastcleartime = interfaces::GlobalVars->realtime;
 	}
 
-	inline void DrawTargetPath()
+	static void DrawTargetPath()
 	{
 		//CleanTargetPath();
 
@@ -127,5 +131,14 @@ namespace Aimbot
 			interfaces::Surface->DrawLine(prevScreen.x, prevScreen.y, currScreen.x, currScreen.y);
 			prevScreen = currScreen;
 		}
+	}
+
+	static void RunPaint()
+	{
+		if (!settings.aimbot.enabled)
+			return;
+
+		DrawTargetPath();
+		DrawFOVIndicator();
 	}
 };

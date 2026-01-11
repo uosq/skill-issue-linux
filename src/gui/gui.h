@@ -9,7 +9,8 @@ enum TabMenu
 {
 	TAB_AIMBOT = 0,
 	TAB_ESP,
-	TAB_MISC
+	TAB_MISC,
+	TAB_TRIGGER
 };
 
 static void DrawTabButtons(int &tab)
@@ -18,6 +19,9 @@ static void DrawTabButtons(int &tab)
 
 	if (ImGui::Button("Aimbot", ImVec2(-1, 0)))
 		tab = TAB_AIMBOT;
+
+	if (ImGui::Button("Trigger", ImVec2(-1, 0)))
+		tab = TAB_TRIGGER;
 
 	if (ImGui::Button("ESP", ImVec2(-1, 0)))
 		tab = TAB_ESP;
@@ -93,6 +97,18 @@ static void DrawMiscTab()
 	ImGui::EndGroup();
 }
 
+static void DrawTriggerTab()
+{
+	ImGui::BeginGroup();
+
+	ImGui::Checkbox("Trigger Enabled", &settings.triggerbot.enabled);
+	ImGui::InputText("Trigger Key", &settings.triggerbot.key);
+	ImGui::Checkbox("Hitscan", &settings.triggerbot.hitscan);
+	ImGui::Checkbox("Auto Backstab", &settings.triggerbot.autobackstab);
+
+	ImGui::EndGroup();
+}
+
 static void DrawSpectatorList()
 {
 	if (helper::engine::IsTakingScreenshot())
@@ -103,7 +119,11 @@ static void DrawSpectatorList()
         	ImVec2(FLT_MAX, FLT_MAX)
     	);
 
-	ImGui::Begin("Spectator List", nullptr, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoResize);
+	int flags = ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoResize;
+	if (!settings.menu_open)
+		flags |= ImGuiWindowFlags_NoMove;
+
+	ImGui::Begin("Spectator List", nullptr, flags);
 
 	int maxclients = helper::engine::GetMaxClients();
 	if (!helper::engine::IsInMatch() || maxclients <= 1)
@@ -116,14 +136,10 @@ static void DrawSpectatorList()
 	int localTeam = pLocal->m_iTeamNum();
 	int localIndex = pLocal->GetIndex();
 
-	for (int i = 1; i <= maxclients; i++)
+	for (int i = 1; i < maxclients; i++)
 	{
-		IClientEntity* clientEnt = interfaces::EntityList->GetClientEntity(i);
-		if (clientEnt == nullptr)
-			continue;
-
-		CTFPlayer* player = static_cast<CTFPlayer*>(clientEnt);
-		if (!player || !player->IsPlayer() || player->IsAlive() || player == pLocal)
+		CTFPlayer* player = static_cast<CTFPlayer*>(interfaces::EntityList->GetClientEntity(i));
+		if (player == nullptr || !player->IsPlayer() || player->IsAlive() || player == pLocal)
 			continue;
 
 		if (player->m_iTeamNum() != localTeam)
@@ -171,6 +187,7 @@ static void DrawMainWindow()
 				case TAB_AIMBOT: DrawAimbotTab(); break;
 				case TAB_ESP: DrawESPTab(); break;
 				case TAB_MISC: DrawMiscTab(); break;
+				case TAB_TRIGGER: DrawTriggerTab(); break;
 				default: break;
 			}
 			

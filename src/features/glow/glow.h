@@ -96,13 +96,9 @@ namespace Glow
 	static void GetEntities()
 	{
 		int maxclients = interfaces::Engine->GetMaxClients();
-		for (int i = 1; i <= maxclients; i++)
+		for (int i = 1; i < maxclients; i++)
 		{
-			IClientEntity* clientEntity = interfaces::EntityList->GetClientEntity(i);
-			if (clientEntity == nullptr)
-				continue;
-
-			CBaseEntity* baseEntity = static_cast<CBaseEntity*>(clientEntity);
+			CBaseEntity* baseEntity = static_cast<CBaseEntity*>(interfaces::EntityList->GetClientEntity(i));
 			if (baseEntity == nullptr)
 				continue;
 
@@ -113,15 +109,6 @@ namespace Glow
 				continue;
 
 			glowEnts.emplace_back(baseEntity);
-
-			/* gotta fix movechild first
-			auto movechild = baseEntity->FirstMoveChild();
-			while (movechild != nullptr)
-			{
-				glowEnts.emplace_back(movechild);
-				movechild->NextMovePeer();
-			}
-			*/
 		}
 	}
 

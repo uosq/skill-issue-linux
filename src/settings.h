@@ -10,6 +10,7 @@ struct Settings_ESP
 	bool buildings = false;
 	bool name = false;
 	bool box = false;
+	bool healthbar = false;
 	bool chams = false;
 	int stencil = 0;
 	int blur = 0;
@@ -41,11 +42,20 @@ struct Settings_Misc
 	float viewmodel_offset[3] = {0.0, 0.0, 0.0};
 };
 
+struct Settings_Triggerbot
+{
+	bool enabled = false;
+	bool hitscan = false;
+	bool autobackstab = false;
+	std::string key = "";
+};
+
 struct Settings
 {
-	Settings_ESP esp;
-	Settings_Aimbot aimbot;
 	Settings_Misc misc;
+	Settings_Aimbot aimbot;
+	Settings_ESP esp;
+	Settings_Triggerbot triggerbot;
 
 	bool menu_open = false;
 };

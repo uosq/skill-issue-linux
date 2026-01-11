@@ -32,13 +32,7 @@ DECLARE_VTABLE_HOOK(VGuiPaint, void, (IEngineVGui* thisptr, PaintMode_t paint))
 		if (pLocal)
 		{
 			ESP::Run(pLocal);
-		
-			CTFWeaponBase* pWeapon = HandleAs<CTFWeaponBase>(pLocal->GetActiveWeapon());
-			if (pWeapon)
-			{
-				Aimbot::DrawTargetPath();
-				Aimbot::DrawFOVIndicator(pLocal, pWeapon);
-			}
+			Aimbot::RunPaint();
 		}
 
 		interfaces::Surface->FinishDrawing();

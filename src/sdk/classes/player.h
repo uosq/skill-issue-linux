@@ -4,6 +4,7 @@
 #include "../definitions/types.h"
 #include "../defs.h"
 #include "../definitions/bspflags.h"
+#include "playerresource.h"
 
 #define	FL_ONGROUND (1<<0)
 #define FL_DUCKING (1<<1)
@@ -185,5 +186,40 @@ public:
 		}
 
 		return level;
+	}
+
+	int GetMaxBuffedHealth()
+	{
+		CTFPlayerResource *resource = nullptr;
+
+		for (int i = interfaces::Engine->GetMaxClients(); i < interfaces::EntityList->GetHighestEntityIndex(); i++)
+		{
+			CBaseEntity* entity = static_cast<CBaseEntity*>(interfaces::EntityList->GetClientEntity(i));
+			if (entity == nullptr)
+				continue;
+
+			if (entity->GetClassID() != ETFClassID::CPlayerResource)
+				continue;
+
+			resource = reinterpret_cast<CTFPlayerResource*>(entity);
+			break;
+		}
+
+		if (resource == nullptr)
+			return 0;
+
+		return resource->m_iMaxBuffedHealth()[GetIndex()];
+	}
+
+	float GetEffectiveInvisibilityLevel()
+	{
+		// xref: taunt_attr_player_invis_percent
+		using GetEffectiveInvisibilityLevelFn = float(*)(void* thisptr);
+		static auto orig = reinterpret_cast<GetEffectiveInvisibilityLevelFn>(sigscan_module("client.so", "55 48 89 E5 41 56 41 55 4C 8D AF 78 1E 00 00 41 54 49 89 FC 4C 89 EF 53 E8"));
+
+		if (orig == nullptr)
+			return -1;
+
+		return orig(this);
 	}
 };

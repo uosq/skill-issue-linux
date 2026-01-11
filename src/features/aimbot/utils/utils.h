@@ -42,6 +42,8 @@ namespace AimbotUtils
 	
 			if (entity->IsGhost())
 				return false;
+
+			return true;
 		}
 
 		if (entity->IsDispenser() || entity->IsSentry() || entity->IsTeleporter())
@@ -52,9 +54,11 @@ namespace AimbotUtils
 
 			if (building->m_iHealth() <= 0)
 				return false;
+
+			return true;
 		}
 
-		return true;
+		return false;
 	}
 
 	// I forgor :skull:

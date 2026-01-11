@@ -1,12 +1,13 @@
 #pragma once
 
+#include <string>
 #include "../sdk/interfaces/interfaces.h"
 #include "../sdk/classes/entity.h"
 #include "../sdk/classes/player.h"
 #include "../sdk/helpers/helper.h"
 #include "../features/aimbot/aimbot.h"
 #include "../features/bhop/bhop.h"
-#include <string>
+#include "../features/triggerbot/triggerbot.h"
 
 // Source https://8dcc.github.io/reversing/reversing-tf2-bsendpacket.html#introduction
 #define SENDPACKET_STACK_OFFSET 0xF8
@@ -37,6 +38,7 @@ DECLARE_VTABLE_HOOK(CreateMove, bool, (IClientMode* thisptr, float sample_framet
 
 	Bhop::Run(pLocal, pCmd);
 	Aimbot::Run(pLocal, pWeapon, pCmd, bSendPacket);
+	Triggerbot::Run(pLocal, pWeapon, pCmd);
 
 	if (Aimbot::IsRunning())
 		helper::engine::FixMovement(pCmd, originalAngles, pCmd->viewangles);

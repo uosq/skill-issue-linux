@@ -7,12 +7,11 @@
 
 namespace Chams
 {
-	inline bool m_bMatLoaded = false;
-	inline bool m_bRunning = false;
-	inline IMaterial* m_mFlatMat = nullptr;
-	inline std::unordered_map<int, bool> m_DrawEnts;
+	static bool m_bMatLoaded = false;
+	static IMaterial* m_mFlatMat = nullptr;
+	static std::unordered_map<int, bool> m_DrawEnts;
 
-	inline bool Init()
+	static bool Init()
 	{
 		if (m_mFlatMat == nullptr)
 		{
@@ -29,12 +28,12 @@ namespace Chams
 		return m_bMatLoaded;
 	}
 
-	inline bool ShouldHide(int entindex)
+	static bool ShouldHide(int entindex)
 	{
 		return m_DrawEnts.find(entindex) != m_DrawEnts.end();
 	}
 
-	inline void DrawPlayers()
+	static void DrawPlayers()
 	{
 		m_DrawEnts.clear();
 
@@ -47,11 +46,7 @@ namespace Chams
 
 		for (int i = 1; i <= helper::engine::GetMaxClients(); i++)
 		{
-			IClientEntity* clientEntity = interfaces::EntityList->GetClientEntity(i);
-			if (clientEntity == nullptr)
-				continue;
-
-			CBaseEntity* baseEntity = static_cast<CBaseEntity*>(clientEntity);
+			CBaseEntity* baseEntity = static_cast<CBaseEntity*>(interfaces::EntityList->GetClientEntity(i));
 			if (baseEntity == nullptr)
 				continue;
 
@@ -72,26 +67,7 @@ namespace Chams
 			float flColor[3] = {color.r()/255.0f, color.g()/255.0f, color.b()/255.0f};
 
 			interfaces::RenderView->SetColorModulation(flColor);
-
-			m_bRunning = true;
-
-			m_DrawEnts[baseEntity->GetIndex()] = true;
-			baseEntity->DrawModel(STUDIO_RENDER);
-
-			m_bRunning = false;
-
-			CBaseEntity* moveChild = player->FirstMoveChild();
-			while (moveChild != nullptr)
-			{
-				m_bRunning = true;
-
-				m_DrawEnts[moveChild->GetIndex()] = true;
-				moveChild->DrawModel(STUDIO_RENDER);
-
-				m_bRunning = false;
-
-				moveChild = moveChild->NextMovePeer();
-			}
+			player->DrawModel(STUDIO_RENDER | STUDIO_NOSHADOWS);
 		}
 
 		interfaces::ModelRender->ForcedMaterialOverride(nullptr);
@@ -99,17 +75,12 @@ namespace Chams
 		interfaces::RenderView->SetBlend(savedBlend);
 	}
 
-	inline void Run()
+	static void Run()
 	{
 		if (!settings.esp.chams)
 			return;
 
 		Init();
-
-		m_bRunning = false;
-
 		DrawPlayers();
-
-		m_bRunning = false;
 	}
 }

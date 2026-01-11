@@ -15,14 +15,20 @@ DECLARE_VTABLE_HOOK(DrawModelExecute, void, (IVModelRender* thisptr, const DrawM
 	//if (settings.esp.chams && !Chams::m_bRunning && Chams::ShouldHide(pInfo.entity_index))
 		//return;
 
-	if (settings.esp.chams)
+	if (interfaces::Engine->IsTakingScreenshot())
+		return originalDrawModelExecute(thisptr, state, pInfo, pCustomBoneToWorld);
+
+	if (Chams::ShouldHide(pInfo.entity_index))
+		return;
+
+	/*if (settings.esp.chams)
 	{
 		if (Chams::m_bRunning)
 			return originalDrawModelExecute(thisptr, state, pInfo, pCustomBoneToWorld);
 
 		if (Chams::ShouldHide(pInfo.entity_index))
 			return;
-	}
+	}*/
 
 	/*if (settings.esp.blur || settings.esp.stencil)
 	{

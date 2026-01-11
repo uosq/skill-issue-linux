@@ -25,46 +25,48 @@
 #include "../definitions/ivmodelrender.h"
 #include "../definitions/ikeyvaluessystem.h"
 #include "../definitions/igamemovement.h"
+//#include "../classes/ctfgamerules.h" Honestly im getting very pissed off at C++'s header system. Fuck whoever made this shit
 #include "../definitions/imovehelper.h"
 
 static HCursor cursor = 0;
 
 namespace interfaces
 {
-	inline IVEngineClient014* Engine = nullptr;
-	inline IBaseClientDLL* BaseClientDLL = nullptr;
-	inline IClientMode* ClientMode = nullptr;
-	inline ICvar* Cvar = nullptr;
-	inline IPanel* VGui = nullptr;
-	inline ISurface* Surface = nullptr;
-	inline IClientEntityList* EntityList = nullptr;
-	inline IEngineVGui* EngineVGui = nullptr;
-	inline IVRenderView* RenderView = nullptr;
-	inline IInputSystem* InputSystem = nullptr;
-	inline IEngineTrace* EngineTrace = nullptr;
-	inline IMaterialSystem* MaterialSystem = nullptr;
-	inline CGlobalVars* GlobalVars = nullptr;
-	inline Prediction* Prediction = nullptr;
-	inline CInput* CInput = nullptr;
-	inline IVModelRender* ModelRender = nullptr;
-	inline IKeyValuesSystem* KeyValuesSystem = nullptr;
-	inline AttributeManager attributeManager;
+	static IVEngineClient014* Engine = nullptr;
+	static IBaseClientDLL* BaseClientDLL = nullptr;
+	static IClientMode* ClientMode = nullptr;
+	static ICvar* Cvar = nullptr;
+	static IPanel* VGui = nullptr;
+	static ISurface* Surface = nullptr;
+	static IClientEntityList* EntityList = nullptr;
+	static IEngineVGui* EngineVGui = nullptr;
+	static IVRenderView* RenderView = nullptr;
+	static IInputSystem* InputSystem = nullptr;
+	static IEngineTrace* EngineTrace = nullptr;
+	static IMaterialSystem* MaterialSystem = nullptr;
+	static CGlobalVars* GlobalVars = nullptr;
+	static Prediction* Prediction = nullptr;
+	static CInput* CInput = nullptr;
+	static IVModelRender* ModelRender = nullptr;
+	static IKeyValuesSystem* KeyValuesSystem = nullptr;
+	//static CTFGameRules* TFGameRules = nullptr;
+	static AttributeManager attributeManager;
 }
 
 namespace factories
 {
-	inline CreateInterfaceFn engine = nullptr;
-	inline CreateInterfaceFn client = nullptr;
-	inline CreateInterfaceFn vstdlib = nullptr;
-	inline CreateInterfaceFn vgui = nullptr;
-	inline CreateInterfaceFn surface = nullptr;
-	inline CreateInterfaceFn enginevgui = nullptr;
-	inline CreateInterfaceFn inputsystem = nullptr;
-	inline CreateInterfaceFn materialsystem = nullptr;
+	static CreateInterfaceFn engine = nullptr;
+	static CreateInterfaceFn client = nullptr;
+	static CreateInterfaceFn vstdlib = nullptr;
+	static CreateInterfaceFn vgui = nullptr;
+	static CreateInterfaceFn surface = nullptr;
+	static CreateInterfaceFn enginevgui = nullptr;
+	static CreateInterfaceFn inputsystem = nullptr;
+	static CreateInterfaceFn materialsystem = nullptr;
 };
 
 template <typename T>
-inline bool GetInterface(T*& out, CreateInterfaceFn factory, const char* name)
+static bool GetInterface(T*& out, CreateInterfaceFn factory, const char* name)
 {
 	if (out)
 		return true;
@@ -73,7 +75,7 @@ inline bool GetInterface(T*& out, CreateInterfaceFn factory, const char* name)
 	return out != nullptr;
 }
 
-inline bool InitializeInterfaces()
+static bool InitializeInterfaces()
 {
 	{ // engine factory
 		void* enginelib = dlopen("./bin/linux64/engine.so", RTLD_NOLOAD | RTLD_NOW);
@@ -216,6 +218,14 @@ inline bool InitializeInterfaces()
 		if (!interfaces::CInput)
 			return false;
 	}
+
+	/*{
+		uintptr_t leaInstr = reinterpret_cast<uintptr_t>(sigscan_module("client.so", "48 8D 05 ? ? ? ? 48 8B 38 48 85 FF 74 ? 31 C0"));
+		uintptr_t g_pGameRules_addr = vtable::ResolveRIP(leaInstr, 3, 7);
+		interfaces::TFGameRules = *reinterpret_cast<CTFGameRules**>(g_pGameRules_addr);
+		if (interfaces::TFGameRules == nullptr)
+			return false;
+	}*/
 
 	return true;
 }

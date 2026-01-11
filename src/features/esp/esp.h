@@ -82,9 +82,6 @@ namespace ESP
 		if (entity->IsDormant())
 			return false;
 
-		if (entity->m_iHealth() <= 0)
-			return false;
-
 		return true;
 	}
 
@@ -112,7 +109,7 @@ namespace ESP
 		int maxclients = helper::engine::GetMaxClients();
 
 		// start at 1 because 0 is the world
-		for (int i = 1; i <= maxclients; i++)
+		for (int i = 1; i < maxclients; i++)
 		{
 			IClientEntity* clientEnt = interfaces::EntityList->GetClientEntity(i);
 			if (!clientEnt)

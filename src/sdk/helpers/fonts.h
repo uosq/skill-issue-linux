@@ -32,7 +32,7 @@ struct FontManager
 
 	void Init()
 	{
-		CreateFont("Verdana", 12, 0, EFONTFLAG_CUSTOM | EFONTFLAG_ANTIALIAS);
+		CreateFont("Verdana", 16, 400, EFONTFLAG_CUSTOM | EFONTFLAG_ANTIALIAS);
 	}
 
 	private:
@@ -40,4 +40,4 @@ struct FontManager
 	HFont current = 0;
 };
 
-static inline FontManager fontManager;
+static FontManager fontManager;
