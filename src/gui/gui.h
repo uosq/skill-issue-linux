@@ -94,6 +94,10 @@ static void DrawMiscTab()
 
 	ImGui::SliderFloat3("Viewmodel Offset", settings.misc.viewmodel_offset, -20, 20.0f );
 
+	ImGui::Separator();
+
+	ImGui::Checkbox("Accept Item Drops", &settings.misc.accept_item_drop);
+
 	ImGui::EndGroup();
 }
 

@@ -364,7 +364,7 @@ SigscanModuleBounds* sigscan_get_module_bounds(int pid, const char* regex) {
          */
         long unsigned start_num = 0, end_num = 0, offset = 0;
         const int fmt_match_num =
-          sscanf(line_buf, "%lx-%lx %4s %lx %*x:%*x %*d %200[^\n]\n",
+          sscanf(line_buf, "%lx-%lx %4s %lx %*x:%*x %*d %199[^\n]\n",
                  &start_num, &end_num, rwxp, &offset, pathname);
 
         if (fmt_match_num < 4) {

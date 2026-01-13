@@ -1,3 +1,4 @@
+#include "hooks/cinventorymanager_showitemspickedup.h"
 #include "hooks/clientmodeshared_createmove.h"
 #include "hooks/ctfplayer_getmaxitemcount.h"
 #include "hooks/isurface_setcursor.h"
@@ -9,7 +10,6 @@
 #include "hooks/cl_checkforpureserverwhitelist.h"
 #include "hooks/clientmodeshared_dopostscreenspaceeffects.h"
 #include "hooks/chlclient_levelshutdown.h"
-
 #include "hooks/ipanel_paint_traverse.h"
 #include "hooks/sdl.h"
 #include "hooks/vulkan.h"
@@ -30,7 +30,6 @@ void *MainThread(void*)
 
 	HookSDL();
 	HookVulkan();
-
 	SetupNetVars();
 	//SetupNetVarsToFile();
 	HookCreateMove();
@@ -45,6 +44,7 @@ void *MainThread(void*)
 	HookDoPostScreenSpaceEffects();
 	HookLockCursor();
 	HookLevelShutdown();
+	HookShowItemsPickedUp();
 	return nullptr;
 }
 

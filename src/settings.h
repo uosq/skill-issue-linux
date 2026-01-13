@@ -38,6 +38,7 @@ struct Settings_Misc
 	bool sv_pure_bypass = false;
 	bool streamer_mode = false;
 	bool bhop = false;
+	bool accept_item_drop = false;
 
 	float viewmodel_offset[3] = {0.0, 0.0, 0.0};
 };
