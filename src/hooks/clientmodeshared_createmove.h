@@ -27,8 +27,8 @@ DECLARE_VTABLE_HOOK(CreateMove, bool, (IClientMode* thisptr, float sample_framet
 	if (!pLocal || !pLocal->IsAlive() || pLocal->IsTaunting())
 		return ret;
 
-	CTFWeaponBase* pWeapon = HandleAs<CTFWeaponBase>(pLocal->GetActiveWeapon());
-	if (!pWeapon)
+	CTFWeaponBase* pWeapon = HandleAs<CTFWeaponBase*>(pLocal->GetActiveWeapon());
+	if (pWeapon == nullptr)
 		return ret;
 
 	Vector originalAngles = pCmd->viewangles;

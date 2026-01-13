@@ -33,7 +33,7 @@ namespace ESP
 	// Because m_iTeamNum for some reason is inverted on buildings
 	inline Color GetBuildingColor(CBaseObject* building)
 	{
-		CTFPlayer* builder = HandleAs<CTFPlayer>(building->m_hBuilder());
+		CTFPlayer* builder = HandleAs<CTFPlayer*>(building->m_hBuilder());
 		if (builder != nullptr)
 		{
 			int team = builder->m_iTeamNum();

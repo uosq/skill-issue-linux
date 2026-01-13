@@ -26,9 +26,6 @@ DECLARE_VTABLE_HOOK(VGuiPaint, void, (IEngineVGui* thisptr, PaintMode_t paint))
 		HFont font = helper::draw::GetCurrentFont();
 		helper::draw::SetFont(font);
 	
-		//Color color{255, 255, 255, 255};
-		//helper::draw::TextShadow(10, 10, color, "Vapo Linux");
-	
 		CTFPlayer* pLocal = EntityList::GetLocal();
 		if (pLocal)
 		{

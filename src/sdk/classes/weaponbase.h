@@ -166,7 +166,7 @@ public:
 
 	bool CanPrimaryAttack()
 	{
-		CTFPlayer* owner = HandleAs<CTFPlayer>(m_hOwnerEntity());
+		CTFPlayer* owner = HandleAs<CTFPlayer*>(m_hOwnerEntity());
 		if (!owner)
 			return false;
 
@@ -176,7 +176,7 @@ public:
 
 	bool CanSecondaryAttack()
 	{
-		CTFPlayer* owner = HandleAs<CTFPlayer>(m_hOwnerEntity());
+		CTFPlayer* owner = HandleAs<CTFPlayer*>(m_hOwnerEntity());
 		if (!owner)
 			return false;
 
@@ -192,12 +192,6 @@ public:
 	bool IsMelee()
 	{
 		return GetSlot() == SLOT_MELEE;
-	}
-
-	template<typename T>
-	T As(T)
-	{
-		return static_cast<T>(this);
 	}
 };
 

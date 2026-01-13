@@ -149,7 +149,7 @@ static void DrawSpectatorList()
 		if (player->m_iTeamNum() != localTeam)
 			continue;
 
-		CTFPlayer* m_hObserverTarget = HandleAs<CTFPlayer>(player->m_hObserverTarget());
+		CTFPlayer* m_hObserverTarget = HandleAs<CTFPlayer*>(player->m_hObserverTarget());
 		if (!m_hObserverTarget || m_hObserverTarget->GetIndex() != localIndex)
 			continue;
 

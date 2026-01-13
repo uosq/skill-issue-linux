@@ -76,7 +76,6 @@ struct AimbotProjectile
 		filter.pSkip = target;
 
 		Vector min{-info.hull.x, -info.hull.y, -info.hull.z};
-
 		for (int i = 1; i <= accuracy; i++)
 		{
 			float t = (static_cast<float>(i) / accuracy) * totalTime;
@@ -97,7 +96,7 @@ struct AimbotProjectile
 		return true;
 	}
 
-	void Run(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd, std::vector<Vector> &targetPath, Vector &outAngle, bool &running, bool &shouldSilent)
+	void Run(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd, AimbotState& state)
 	{
 		if (pCmd->weaponselect)
 			return;
@@ -133,7 +132,7 @@ struct AimbotProjectile
 
 		for (auto entity : EntityList::m_vecPlayers)
 		{
-			if (!AimbotUtils::IsValidEntity(pLocal, entity))
+			if (!AimbotUtils::IsValidEntity(entity, localTeam))
 				continue;
 
 			Vector center = entity->GetCenter();
@@ -188,14 +187,35 @@ struct AimbotProjectile
 				angle = dir.ToAngle();
 
 				if (!CheckTrajectory((CTFPlayer*)target.entity, shootPos, lastPos, angle, info, 0))
-					continue;
+				{
+					Vector out = {};
+					if (!AimbotUtils::GetVisiblePoint(out, pLocal, lastPos, target.entity->m_vecMins(), target.entity->m_vecMaxs()))
+						continue;
+
+					dir = (out - shootPos);
+					dir.Normalize();
+					angle = dir.ToAngle();
+
+					if (!CheckTrajectory((CTFPlayer*)target.entity, shootPos, out, angle, info, 0))
+						continue;
+				}
 			} else
 			{
 				if (!SolveBallisticArc(angle, shootPos, lastPos, info.speed, gravity))
 					continue;
 
 				if (!CheckTrajectory((CTFPlayer*)target.entity, shootPos, lastPos, angle, info, gravity))
-					continue;
+				{
+					Vector out = {};
+					if (!AimbotUtils::GetVisiblePoint(out, pLocal, lastPos, target.entity->m_vecMins(), target.entity->m_vecMaxs()))
+						continue;
+
+					if (!SolveBallisticArc(angle, shootPos, out, info.speed, gravity))
+						continue;
+
+					if (!CheckTrajectory((CTFPlayer*)target.entity, shootPos, out, angle, info, gravity))
+						continue;
+				}
 			}
 
 			if (settings.aimbot.autoshoot)
@@ -224,13 +244,13 @@ struct AimbotProjectile
 					}
 				}
 
-				targetPath = path;
+				state.targetPath = path;
 				pCmd->viewangles = angle;
-				outAngle = angle;
-				shouldSilent = true;
+				state.angle = angle;
+				state.shouldSilent = true;
 			}
 			
-			running = true;
+			state.running = true;
 			return;
 		}
 	}

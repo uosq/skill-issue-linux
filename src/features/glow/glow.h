@@ -83,32 +83,37 @@ namespace Glow
 
 	static void DrawEntities()
 	{
-		for (const auto& ent : glowEnts)
+		for (auto ent : glowEnts)
 		{
-			Color color = ESP::GetPlayerColor(ent);
+			Color color = ent->IsPlayer() ? ESP::GetPlayerColor(ent) : ESP::GetBuildingColor(reinterpret_cast<CBaseObject*>(ent));
 			float mod[3] = {color.r()/255.0f, color.g()/255.0f, color.b()/255.0f};
 			interfaces::RenderView->SetColorModulation(mod);
-
 			ent->DrawModel(STUDIO_RENDER | STUDIO_NOSHADOWS);
 		}
 	}
 
 	static void GetEntities()
 	{
-		int maxclients = interfaces::Engine->GetMaxClients();
-		for (int i = 1; i < maxclients; i++)
+		for (auto entity : EntityList::m_vecPlayers)
 		{
-			CBaseEntity* baseEntity = static_cast<CBaseEntity*>(interfaces::EntityList->GetClientEntity(i));
-			if (baseEntity == nullptr)
+			if (entity->IsDormant() || !entity->ShouldDraw())
 				continue;
 
-			if (baseEntity->IsDormant() || !baseEntity->ShouldDraw())
+			if (!entity->IsPlayer())
 				continue;
 
-			if (!baseEntity->IsPlayer() && !baseEntity->IsBuilding())
+			glowEnts.emplace_back(entity);
+		}
+
+		for (auto entity : EntityList::m_vecBuildings)
+		{
+			if (entity->IsDormant() || !entity->ShouldDraw())
 				continue;
 
-			glowEnts.emplace_back(baseEntity);
+			if (entity->m_iHealth() <= 0)
+				continue;
+
+			glowEnts.emplace_back(reinterpret_cast<CBaseEntity*>(entity));
 		}
 	}
 

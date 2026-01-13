@@ -74,12 +74,14 @@ namespace Triggerbot
 		Vector start = pLocal->GetAbsOrigin() + pLocal->m_vecViewOffset();
 		Vector end = start + (forward * 48);
 
+		int localTeam = pLocal->m_iTeamNum();
+
 		helper::engine::Trace(start, end, MASK_SHOT_HULL, &filter, &trace);
 
 		if (!trace.DidHit() || trace.m_pEnt == nullptr)
 			return;
 
-		if (!AimbotUtils::IsValidEntity(pLocal, static_cast<CTFPlayer*>(trace.m_pEnt)))
+		if (!AimbotUtils::IsValidEntity(trace.m_pEnt, localTeam))
 			return;
 
 		if (!CanBackstabEntity(pLocal, static_cast<CTFPlayer*>(trace.m_pEnt)))
@@ -107,12 +109,14 @@ namespace Triggerbot
 		Vector start = pLocal->GetAbsOrigin() + pLocal->m_vecViewOffset();
 		Vector end = start + (forward * 2048);
 
+		int localTeam = pLocal->m_iTeamNum();
+
 		helper::engine::Trace(start, end, MASK_SHOT | CONTENTS_HITBOX, &filter, &trace);
 
 		if (!trace.DidHit() || trace.m_pEnt == nullptr)
 			return;
 
-		if (!AimbotUtils::IsValidEntity(pLocal, static_cast<CTFPlayer*>(trace.m_pEnt)))
+		if (!AimbotUtils::IsValidEntity(trace.m_pEnt, localTeam))
 			return;
 
 		if (!helper::localplayer::CanShoot(pLocal, pWeapon))

@@ -16,7 +16,7 @@
 
 namespace PlayerPrediction
 {
-	inline void Friction(Vector &velocity, bool isOnGround)
+	static void Friction(Vector &velocity, bool isOnGround)
 	{
 		float speed = velocity.Length();
 		if (speed < 0.01f)
@@ -54,7 +54,7 @@ namespace PlayerPrediction
 		}
 	}
 
-	inline bool CheckIsOnGround(CTFPlayer* player, Vector origin, Vector mins, Vector maxs)
+	static bool CheckIsOnGround(CTFPlayer* player, Vector origin, Vector mins, Vector maxs)
 	{
 		Vector down = Vector(origin.x, origin.y, origin.z - 2);
 
@@ -66,7 +66,7 @@ namespace PlayerPrediction
 		return trace.fraction < 1.0f && trace.plane.normal.z >= 0.7f;
 	}
 
-	inline void AcceleratePlayer(Vector &velocity, Vector wishdir, float wishspeed, float accel)
+	static void AcceleratePlayer(Vector &velocity, Vector wishdir, float wishspeed, float accel)
 	{
 		float addspeed, accelspeed, currentspeed;
 
@@ -83,7 +83,7 @@ namespace PlayerPrediction
 		velocity += wishdir * accelspeed;
 	}
 
-	inline void AirAcceleratePlayer(Vector &velocity, Vector wishdir, float wishspeed, float accel, int surf)
+	static void AirAcceleratePlayer(Vector &velocity, Vector wishdir, float wishspeed, float accel, int surf)
 	{
 		float currentspeed = velocity.Dot(wishdir);
 		float addspeed = wishspeed - currentspeed;
@@ -94,7 +94,7 @@ namespace PlayerPrediction
 		velocity += wishdir * accelspeed;
 	}
 
-	inline void StayOnGround(CTFPlayer* player, Vector &origin, Vector mins, Vector maxs, float stepsize)
+	static void StayOnGround(CTFPlayer* player, Vector &origin, Vector mins, Vector maxs, float stepsize)
 	{
 		Vector start = Vector(origin.x, origin.y, origin.z + 2.0f);
 		Vector end = Vector(origin.x, origin.y, origin.z - stepsize);
@@ -113,7 +113,7 @@ namespace PlayerPrediction
 		}
 	}
 
-	inline bool TryStepMove(CTFPlayer* player, Vector& origin, Vector& velocity, Vector mins, Vector maxs, float stepSize)
+	static bool TryStepMove(CTFPlayer* player, Vector& origin, Vector& velocity, Vector mins, Vector maxs, float stepSize)
 	{
 		Vector move = velocity * interfaces::GlobalVars->interval_per_tick;
 
@@ -228,19 +228,10 @@ namespace PlayerPrediction
 		return slideFrac > 0.0f;
 	}
 
-	__always_inline void Predict(CTFPlayer* player, float time_seconds, std::vector<Vector> &path)
+	static void Predict(CTFPlayer* player, float time_seconds, std::vector<Vector> &path)
 	{
-		Vector velocity(0, 0, 0);
-		{	// copy our velocity because netvars are references!
-			Vector velocity_netvar = player->GetVelocity();
-			velocity.Set(velocity_netvar.x, velocity_netvar.y, velocity_netvar.z);
-		}
-
-		Vector origin(0, 0, 0);
-		{	// copy our origin because netvars are references!
-			Vector origin_netvar = player->GetAbsOrigin();
-			origin.Set(origin_netvar.x, origin_netvar.y, origin_netvar.z);
-		}
+		Vector velocity = player->GetVelocity();
+		Vector origin = player->GetAbsOrigin();
 
 		if (velocity.Length() < 5.0f)
 		{
@@ -291,8 +282,6 @@ namespace PlayerPrediction
 				velocity.x = 0.0f;
 				velocity.y = 0.0f;
 			}
-
-			//origin += velocity * interfaces::GlobalVars->interval_per_tick;
 
 			velocity.z -= gravity;
 

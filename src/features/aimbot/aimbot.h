@@ -12,30 +12,26 @@
 
 namespace Aimbot
 {
-	static std::vector<Vector> targetPath;
-	static Vector angle{0, 0, 0};
-	static bool running = true;
-	static bool shouldSilent = false;
+	static AimbotState state = {};
 
 	static Vector GetAngle()
 	{
-		return angle;
+		return state.angle;
 	}
 
 	static bool IsRunning()
 	{
-		return running;
+		return state.running;
 	}
 
 	static bool ShouldSilent()
 	{
-		return shouldSilent;
+		return state.shouldSilent;
 	}
 
 	static void Run(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd, bool* bSendPacket)
 	{
-		running = false;
-		shouldSilent = false;
+		ClearAimbotState(state);
 
 		if (!settings.aimbot.enabled)
 			return;
@@ -53,16 +49,16 @@ namespace Aimbot
 			case EWeaponType::HITSCAN:
 			{
 				static AimbotHitscan hitscan;
-				hitscan.Run(pLocal, pWeapon, pCmd, angle, running);
+				hitscan.Run(pLocal, pWeapon, pCmd, state);
 				break;
 			} break;
 
 			case EWeaponType::PROJECTILE:
 			{
 				static AimbotProjectile projectile;
-				projectile.Run(pLocal, pWeapon, pCmd, targetPath, angle, running, shouldSilent);
+				projectile.Run(pLocal, pWeapon, pCmd, state);
 
-				if (shouldSilent)
+				if (state.shouldSilent)
 					*bSendPacket = false;
 				break;
 			} break;
@@ -100,13 +96,13 @@ namespace Aimbot
 	static void CleanTargetPath()
 	{
 		static float lastcleartime = 0.0f;
-		if (targetPath.empty())
+		if (state.targetPath.empty())
 			return;
 
 		if (interfaces::GlobalVars && (interfaces::GlobalVars->realtime - lastcleartime) < 5.0f)
 			return;
 
-		targetPath.clear();
+		state.targetPath.clear();
 		lastcleartime = interfaces::GlobalVars->realtime;
 	}
 
@@ -114,19 +110,19 @@ namespace Aimbot
 	{
 		//CleanTargetPath();
 
-		if (targetPath.size() < 2)
+		if (state.targetPath.size() < 2)
 			return;
 
 		Vector prevScreen;
-		if (!helper::engine::WorldToScreen(targetPath[0], prevScreen))
+		if (!helper::engine::WorldToScreen(state.targetPath[0], prevScreen))
 			return;
 
 		helper::draw::SetColor({255, 255, 255, 255});
 
-		for (size_t i = 1; i < targetPath.size(); i++)
+		for (size_t i = 1; i < state.targetPath.size(); i++)
 		{
 			Vector currScreen;
-			if (!helper::engine::WorldToScreen(targetPath[i], currScreen))
+			if (!helper::engine::WorldToScreen(state.targetPath[i], currScreen))
 				continue;
 
 			interfaces::Surface->DrawLine(prevScreen.x, prevScreen.y, currScreen.x, currScreen.y);

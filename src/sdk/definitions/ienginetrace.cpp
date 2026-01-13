@@ -13,7 +13,7 @@ bool CTraceFilterHitscan::ShouldHitEntity(IHandleEntity* pServerEntity, int nCon
 	if (iTeam == -1) iTeam = pSkip ? pSkip->m_iTeamNum() : 0;
 	if (iType != SKIP_CHECK && !vWeapons.empty())
 	{
-		if (auto pWeapon = pSkip && pSkip->IsPlayer() ? HandleAs<CTFWeaponBase>(((CTFPlayer*)pSkip)->GetActiveWeapon()) : nullptr)
+		if (auto pWeapon = pSkip && pSkip->IsPlayer() ? HandleAs<CTFWeaponBase*>(((CTFPlayer*)pSkip)->GetActiveWeapon()) : nullptr)
 		{
 			int iWeaponID = pWeapon->GetWeaponID();
 			bWeapon = std::find(vWeapons.begin(), vWeapons.end(), iWeaponID) != vWeapons.end();
@@ -36,6 +36,8 @@ bool CTraceFilterHitscan::ShouldHitEntity(IHandleEntity* pServerEntity, int nCon
 		if (iType != SKIP_CHECK && (iWeapon == WEAPON_INCLUDE ? bWeapon : !bWeapon))
 			return iType == FORCE_HIT ? true : false;
 		return pEntity->m_iTeamNum() != iTeam;
+
+	default: return true;
 	}
 
 	return true;
@@ -54,7 +56,7 @@ bool CTraceFilterCollideable::ShouldHitEntity(IHandleEntity* pServerEntity, int 
 	if (iTeam == -1) iTeam = pSkip ? pSkip->m_iTeamNum() : 0;
 	if (iType != SKIP_CHECK && !vWeapons.empty())
 	{
-		if (auto pWeapon = pSkip && pSkip->IsPlayer() ? HandleAs<CTFWeaponBase>(((CTFPlayer*)pSkip)->GetActiveWeapon()) : nullptr)
+		if (auto pWeapon = pSkip && pSkip->IsPlayer() ? HandleAs<CTFWeaponBase*>(((CTFPlayer*)pSkip)->GetActiveWeapon()) : nullptr)
 		{
 			int iWeaponID = pWeapon->GetWeaponID();
 			bWeapon = std::find(vWeapons.begin(), vWeapons.end(), iWeaponID) != vWeapons.end();
@@ -102,6 +104,8 @@ bool CTraceFilterCollideable::ShouldHitEntity(IHandleEntity* pServerEntity, int 
 	//case ETFClassID::CHeadlessHatman:
 	//case ETFClassID::CZombie: return bMisc;
 	case ETFClassID::CTFGrenadePipebombProjectile: return bMisc; //&& pEntity->As<CTFGrenadePipebombProjectile>()->m_iType() == TF_GL_MODE_REMOTE_DETONATE;
+
+	default: return true;
 	}
 
 	return false;
@@ -133,6 +137,7 @@ bool CTraceFilterWorldAndPropsOnly::ShouldHitEntity(IHandleEntity* pServerEntity
 	case ETFClassID::CFuncTrackTrain:
 	case ETFClassID::CFuncConveyor: return true;
 	case ETFClassID::CFuncRespawnRoomVisualizer: return nContentsMask & CONTENTS_PLAYERCLIP && pEntity->m_iTeamNum() != iTeam;
+	default: return false;
 	}
 
 	return false;

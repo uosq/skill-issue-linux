@@ -10,7 +10,7 @@ This is made for Linux, so trying to build it on Windows or non Unix-like system
 
 8dcc - [libsigscan](https://github.com/8dcc/libsigscan)
 
-## How to inject
+## How to attach
 
 Run the `attach.sh` file as **sudo**/**root**!
 
@@ -23,7 +23,6 @@ sudo ./attach.sh
 ## How to build
 
 * Requirements
-  * Go (at least 1.25.5)
   * Linux
   * GCC/G++ (compiled with atleast standard C++17)
   * Glew

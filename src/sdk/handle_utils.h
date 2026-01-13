@@ -17,7 +17,7 @@ inline IHandleEntity* CBaseHandle::Get() const
 
 //Casts to T
 template <typename T>
-inline T* HandleAs(const CBaseHandle& h)
+inline T HandleAs(const CBaseHandle& h)
 {
-    return reinterpret_cast<T*>(interfaces::EntityList->GetClientEntity(h.GetEntryIndex()));
+    return reinterpret_cast<T>(interfaces::EntityList->GetClientEntity(h.GetEntryIndex()));
 }

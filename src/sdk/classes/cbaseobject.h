@@ -37,4 +37,9 @@ public:
 	{
 		return GetClientClass()->networkName;
 	}
+
+	Vector GetCenter()
+	{
+		return GetAbsOrigin() + (m_vecBuildMins() + m_vecBuildMaxs()) * 0.5f;
+	}
 };

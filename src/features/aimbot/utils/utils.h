@@ -3,6 +3,11 @@
 #include "../../../sdk/classes/player.h"
 #include "../../../sdk/classes/cbaseobject.h"
 #include "../../../settings.h"
+#include "../../../sdk/definitions/cgametrace.h"
+#include "../../../sdk/definitions/ctracefilters.h"
+#include "../../../sdk/helpers/helper.h"
+
+#define ARRAYSIZE(x) sizeof((x))/sizeof((x[0]))
 
 struct PotentialTarget
 {
@@ -13,40 +18,54 @@ struct PotentialTarget
 	CBaseEntity* entity;
 };
 
+struct AimbotState
+{
+	bool running = false;
+	bool shouldSilent = false;
+	std::vector<Vector> targetPath;
+	Vector angle = {0, 0, 0};
+};
+
+static void ClearAimbotState(AimbotState& state)
+{
+	state.angle.Set(0, 0, 0);
+	state.shouldSilent = false;
+	state.running = false;
+	state.targetPath.clear();
+}
+
 namespace AimbotUtils
 {
-	inline bool IsValidEntity(CTFPlayer* pLocal, CTFPlayer* entity, bool checkTeam = true)
+	inline bool IsValidEntity(CBaseEntity* entity, int localTeam, bool checkTeam = true)
 	{
 		if (entity == nullptr)
-			return false;
-
-		if (entity == pLocal)
-			return false;
-
-		if (checkTeam && entity->m_iTeamNum() == pLocal->m_iTeamNum())
 			return false;
 
 		if (entity->IsDormant())
 			return false;
 
-		if (settings.esp.ignorecloaked && entity->InCond(ETFCond::TF_COND_CLOAKED))
-			return false;
-
 		if (entity->IsPlayer())
 		{
-			if (!entity->IsAlive())
+			CTFPlayer* player = static_cast<CTFPlayer*>(entity);
+			if (player == nullptr)
 				return false;
 
-			if (entity->IsUbercharged())
+			if (!player->IsAlive())
+				return false;
+
+			if (player->IsUbercharged())
 				return false;
 	
-			if (entity->IsGhost())
+			if (player->IsGhost())
+				return false;
+
+			if (settings.esp.ignorecloaked && player->InCond(ETFCond::TF_COND_CLOAKED))
 				return false;
 
 			return true;
 		}
 
-		if (entity->IsDispenser() || entity->IsSentry() || entity->IsTeleporter())
+		if (entity->IsBuilding())
 		{
 			auto* building = reinterpret_cast<CBaseObject*>(entity);
 			if (building == nullptr)
@@ -57,6 +76,9 @@ namespace AimbotUtils
 
 			return true;
 		}
+
+		if (entity->m_iTeamNum() == localTeam && checkTeam)
+			return false;
 
 		return false;
 	}
@@ -94,5 +116,43 @@ namespace AimbotUtils
 
 		if (start < high)
 			QuickSort(targets, start, high);
+	}
+
+	// Is this optimized? absolutely fucking not
+	// I need to think of a better way
+	// I should probably check bones
+	static bool GetVisiblePoint(Vector& out, CTFPlayer* pLocal, Vector origin, Vector mins, Vector maxs)
+	{
+		static float points[] = {0.15f, 0.35f, 0.5f, 0.75f, 0.85f};
+		static constexpr int points_size = ARRAYSIZE(points);
+		CGameTrace trace;
+		CTraceFilterWorldAndPropsOnly filter;
+		filter.pSkip = pLocal;
+
+		Vector absMax, absMin;
+		absMax = origin + maxs;
+		absMin = origin + mins;
+
+		Vector eyePos = pLocal->GetAbsOrigin() + pLocal->m_vecViewOffset();
+
+		for (int x = 0; x < points_size; x++)
+			for (int y = 0; y < points_size; y++)
+				for (int z = 0; z < points_size; z++)
+				{
+					Vector point;
+					point.x = absMin.x + (absMax.x - absMin.x) * points[x];
+					point.y = absMin.y + (absMax.y - absMin.y) * points[y];
+					point.z = absMin.z + (absMax.z - absMin.z) * points[z];
+
+					helper::engine::Trace(eyePos, point, MASK_SHOT_HULL, &filter, &trace);
+
+					if (trace.fraction == 1.0f)
+					{
+						out = point;
+						return true;
+					}
+				}
+
+		return false;
 	}
 };
