@@ -27,16 +27,7 @@ namespace LuaFuncs
 		int FrameTime(lua_State* L);
 		int RealTime(lua_State* L);
 
-		const luaL_Reg globalvarslib[] =
-		{
-			{"TickCount", &TickCount},
-			{"TickInterval", &TickInterval},
-			{"CurTime", &CurTime},
-			{"AbsoluteFrameTime", &AbsoluteFrameTime},
-			{"FrameTime", &FrameTime},
-			{"RealTime", &RealTime},
-			{nullptr, nullptr},
-		};
+		extern const luaL_Reg globalvarslib[];
 	}
 
 	namespace engine
@@ -47,16 +38,10 @@ namespace LuaFuncs
 		int IsTakingScreenshot(lua_State* L);
 		int IsGameUIVisible(lua_State* L);
 		int IsConsoleVisible(lua_State* L);
+		int SetViewAngles(lua_State* L);
+		int GetViewAngles(lua_State* L);
 
-		const luaL_Reg enginelib[] =
-		{
-			{"IsInGame", IsInGame},
-			{"IsConnected", IsConnected},
-			{"IsTakingScreenshot", IsTakingScreenshot},
-			{"IsGameUIVisible", IsGameUIVisible},
-			{"IsConsoleVisible", IsConsoleVisible},
-			{nullptr, nullptr},
-		};
+		extern const luaL_Reg enginelib[];
 	}
 
 	namespace hooks
@@ -65,11 +50,6 @@ namespace LuaFuncs
 		int Register(lua_State* L);
 		int Unregister(lua_State* L);
 
-		const luaL_Reg hooklib[] =
-		{
-			{"Add", Register},
-			{"Remove", Unregister},
-			{nullptr, nullptr},
-		};
+		extern const luaL_Reg hooklib[];
 	}
 }

@@ -1,5 +1,6 @@
 #include "api.h"
 #include "../../gui/console.h"
+#include "classes.h"
 #include "funcs.h"
 
 namespace Lua
@@ -15,6 +16,8 @@ namespace Lua
 		LuaFuncs::globalvars::luaopen_globalvars(m_luaState);
 		LuaFuncs::hooks::luaopen_hooks(m_luaState);
 		LuaFuncs::engine::luaopen_engine(m_luaState);
+
+		LuaClasses::VectorLua::luaopen_vector(m_luaState);
 
 		consoleText += "Lua initialized\n";
 	}
@@ -38,7 +41,6 @@ namespace Lua
 			if (err)
 				consoleText += std::string(err) + "\n";
 			lua_pop(m_luaState, 1);
-			return;
 		}
 	}
 }

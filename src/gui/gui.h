@@ -222,7 +222,16 @@ static void DrawLuaTab()
 	static bool init = false;
 	if (!init)
 	{
-		editor.SetLanguageDefinition(TextEditor::LanguageDefinition::Lua());
+		auto def = TextEditor::LanguageDefinition::Lua();
+		const char* myIdentifiers[] = {"globals", "engine", "hooks", "Vector3"};
+
+		TextEditor::Identifier id;
+		id.mDeclaration = "Custom Function";
+
+		for (auto& k : myIdentifiers)
+			def.mIdentifiers.insert(std::make_pair(std::string(k), id));
+
+		editor.SetLanguageDefinition(def);
 		editor.SetPalette(TextEditor::GetDarkPalette());
 		editor.SetShowWhitespaces(false);
 		init = true;

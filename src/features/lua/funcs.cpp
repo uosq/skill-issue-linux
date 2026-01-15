@@ -1,6 +1,7 @@
 #include "funcs.h"
 #include "../../gui/console.h"
 #include <lua5.4/lua.h>
+#include "classes.h"
 #include "hooks.h"
 
 namespace LuaFuncs
@@ -36,13 +37,24 @@ namespace LuaFuncs
 {
 	namespace globalvars
 	{
+		const luaL_Reg globalvarslib[] =
+		{
+			{"TickCount", &TickCount},
+			{"TickInterval", &TickInterval},
+			{"CurTime", &CurTime},
+			{"AbsoluteFrameTime", &AbsoluteFrameTime},
+			{"FrameTime", &FrameTime},
+			{"RealTime", &RealTime},
+			{nullptr, nullptr},
+		};
+
 		void luaopen_globalvars(lua_State* L)
 		{
 			lua_newtable(L);
 			luaL_setfuncs(L, globalvarslib, 0);
 			lua_setglobal(L, "globals");
 
-			consoleText += "globals library initialized\n";
+			//consoleText += "globals library initialized\n";
 		}
 
 		int TickCount(lua_State* L)
@@ -87,6 +99,13 @@ namespace LuaFuncs
 {
 	namespace hooks
 	{
+		const luaL_Reg hooklib[] =
+		{
+			{"Add", Register},
+			{"Remove", Unregister},
+			{nullptr, nullptr},
+		};
+
 		int Register(lua_State* L)
 		{
 			const char* name = luaL_checkstring(L, 1);
@@ -128,13 +147,25 @@ namespace LuaFuncs
 {
 	namespace engine
 	{
+		const luaL_Reg enginelib[] =
+		{
+			{"IsInGame", IsInGame},
+			{"IsConnected", IsConnected},
+			{"IsTakingScreenshot", IsTakingScreenshot},
+			{"IsGameUIVisible", IsGameUIVisible},
+			{"IsConsoleVisible", IsConsoleVisible},
+			{"GetViewAngles", GetViewAngles},
+			{"SetViewAngles", SetViewAngles},
+			{nullptr, nullptr},
+		};
+
 		void luaopen_engine(lua_State* L)
 		{
 			lua_newtable(L);
 			luaL_setfuncs(L, enginelib, 0);
 			lua_setglobal(L, "engine");
 
-			consoleText += "engine library initialized\n";
+			//consoleText += "engine library initialized\n";
 		}
 
 		int IsInGame(lua_State* L)
@@ -165,6 +196,21 @@ namespace LuaFuncs
 		{
 			lua_pushboolean(L, interfaces::Engine->Con_IsVisible());
 			return 1;
+		}
+
+		int GetViewAngles(lua_State* L)
+		{
+			Vector angles;
+			interfaces::Engine->GetViewAngles(angles);
+			LuaClasses::VectorLua::push_vector(L, angles);
+			return 1;
+		}
+
+		int SetViewAngles(lua_State* L)
+		{
+			Vector* vec = static_cast<Vector*>(luaL_checkudata(L, 1, "Vector3"));
+			interfaces::Engine->SetViewAngles(*vec);
+			return 0;
 		}
 	}
 }
