@@ -24,4 +24,5 @@ namespace LuaHookManager
 	void Add(std::string name, std::string id, int lua_func_ref);
 	bool Remove(lua_State* L, std::string name, std::string id);
 	void Call(lua_State* L, const std::string& name, int nargs = 0, bool popargs = true);
+	bool HasHooks(const std::string& name);
 }

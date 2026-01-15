@@ -79,4 +79,10 @@ namespace LuaHookManager
 		if (nargs > 0 && popargs)
 			lua_pop(L, nargs);
 	}
+
+	bool HasHooks(const std::string &name)
+	{
+		auto it = hooks.find(name);
+		return it != hooks.end() && !it->second.empty();
+	}
 }

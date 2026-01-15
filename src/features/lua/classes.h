@@ -15,6 +15,11 @@ struct LuaEntity
     CBaseEntity* ent;
 };
 
+struct LuaMaterial
+{
+	IMaterial* mat;
+};
+
 namespace LuaClasses
 {
 	namespace VectorLua
@@ -84,7 +89,29 @@ namespace LuaClasses
 		int IsWeapon(lua_State* L);
 		int IsDormant(lua_State* L);
 		int IsAlive(lua_State* L);
+		int IsPlayer(lua_State* L);
 
 		int GetPlayerResources(lua_State* L);
 	};
+
+	namespace MaterialLua
+	{
+		extern const luaL_Reg methods[];
+		void luaopen_material(lua_State* L);
+		LuaMaterial* push_material(lua_State* L, IMaterial* mat);
+
+		int Index(lua_State* L);
+		int NewIndex(lua_State* L);
+		int GC(lua_State* L);
+		int ToString(lua_State* L);
+
+		int SetColorModulation(lua_State* L);
+		int GetColorModulation(lua_State* L);
+
+		int SetMaterialVarFlag(lua_State* L);
+		int GetMaterialVarFlag(lua_State* L);
+
+		int GetTextureGroupName(lua_State* L);
+		int GetName(lua_State* L);
+	}
 }

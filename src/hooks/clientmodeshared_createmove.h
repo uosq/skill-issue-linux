@@ -145,7 +145,8 @@ DECLARE_VTABLE_HOOK(CreateMove, bool, (IClientMode* thisptr, float sample_framet
     	uintptr_t current_stack_address = current_frame_address + 0x8;
     	bool* bSendPacket = (bool*)(current_stack_address + SENDPACKET_STACK_OFFSET);
 
-	RunLuaHooks(pCmd, bSendPacket);
+	if (LuaHookManager::HasHooks("CreateMove"))
+		RunLuaHooks(pCmd, bSendPacket);
 
 	if (reinterpret_cast<CClientState*>(interfaces::ClientState)->chokedcommands >= 21)
 		*bSendPacket = true;

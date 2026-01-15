@@ -228,10 +228,17 @@ static void DrawLuaTab()
 	if (!init)
 	{
 		auto def = TextEditor::LanguageDefinition::Lua();
-		const char* myIdentifiers[] = {"globals", "engine", "hooks", "Vector3", "entities"};
+		const char* myIdentifiers[] =
+		{
+			"globals", "engine",
+			"hooks", "Vector3",
+			"entities", "draw",
+			"render", "materials",
+			"client"
+		};
 
 		TextEditor::Identifier id;
-		id.mDeclaration = "Custom Function";
+		id.mDeclaration = "Custom Library";
 
 		for (auto& k : myIdentifiers)
 			def.mIdentifiers.insert(std::make_pair(std::string(k), id));

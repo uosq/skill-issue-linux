@@ -1,9 +1,12 @@
 #include "funcs.h"
 #include "../../gui/console.h"
+#include <algorithm>
+#include <lua5.4/lauxlib.h>
 #include <lua5.4/lua.h>
 #include "classes.h"
 #include "hooks.h"
 #include "../entitylist/entitylist.h"
+#include "../../sdk/definitions/inetchannel.h"
 
 namespace LuaFuncs
 {
@@ -509,7 +512,190 @@ namespace LuaFuncs
 
 			int font = luaL_checkinteger(L, 1);
 			interfaces::Surface->DrawSetTextFont(font);
+			currentFont = font;
 			return 0;
+		}
+	}
+}
+
+namespace LuaFuncs
+{
+	namespace render
+	{
+		const luaL_Reg renderlib[]
+		{
+			{"GetColorModulation", GetColorModulation},
+			{"SetColorModulation", SetColorModulation},
+			{"GetBlend", GetBlend},
+			{"SetBlend", SetBlend},
+			{"ForcedMaterialOverride", ForcedMaterialOverride},
+			{"GetMaterialOverride", GetMaterialOverride},
+			{nullptr, nullptr}
+		};
+
+		void luaopen_render(lua_State *L)
+		{
+			lua_newtable(L);
+			luaL_setfuncs(L, renderlib, 0);
+			lua_setglobal(L, "render");
+		}
+
+		int GetColorModulation(lua_State* L)
+		{
+			float color[3] = {0, 0, 0};
+			interfaces::RenderView->GetColorModulation(color);
+
+			lua_pushnumber(L, color[0]);
+			lua_pushnumber(L, color[1]);
+			lua_pushnumber(L, color[2]);
+			return 3;
+		}
+
+		int SetColorModulation(lua_State* L)
+		{
+			float r = luaL_optnumber(L, 1, 0.0f);
+			float g = luaL_optnumber(L, 2, 0.0f);
+			float b = luaL_optnumber(L, 3, 0.0f);
+
+			r = std::clamp(r, 0.0f, 1.0f);
+			g = std::clamp(g, 0.0f, 1.0f);
+			b = std::clamp(b, 0.0f, 1.0f);
+
+			float color[3] = {r, g, b};
+
+			interfaces::RenderView->SetColorModulation(color);
+			return 0;
+		}
+
+		int GetBlend(lua_State* L)
+		{
+			lua_pushnumber(L, interfaces::RenderView->GetBlend());
+			return 1;
+		}
+
+		int SetBlend(lua_State* L)
+		{
+			float blend = luaL_optnumber(L, 1, 0.0f);
+			interfaces::RenderView->SetBlend(blend);
+			return 0;
+		}
+
+		int ForcedMaterialOverride(lua_State *L)
+		{
+			if (lua_isnil(L, 1))
+			{
+				interfaces::ModelRender->ForcedMaterialOverride(nullptr);
+				return 0;
+			}
+
+			// dont need to check for nil as we already do it
+			LuaMaterial* lmat = static_cast<LuaMaterial*>(luaL_checkudata(L, 1, "Material"));
+			interfaces::ModelRender->ForcedMaterialOverride(lmat->mat);
+			return 0;
+		}
+
+		int GetMaterialOverride(lua_State *L)
+		{
+			IMaterial* mat;
+			OverrideType_t override;
+			interfaces::ModelRender->GetMaterialOverride(&mat, &override);
+			LuaClasses::MaterialLua::push_material(L, mat);
+			return 1;
+		}
+	}
+}
+
+namespace LuaFuncs
+{
+	namespace materials
+	{
+		const luaL_Reg matslib[]
+		{
+			{"Create", Create},
+			{nullptr, nullptr}
+		};
+
+		void luaopen_materials(lua_State* L)
+		{
+			lua_newtable(L);
+			luaL_setfuncs(L, matslib, 0);
+			lua_setglobal(L, "materials");
+		}
+
+		// materials.Create("name", "vmt")
+		int Create(lua_State* L)
+		{
+			const char* name = luaL_checkstring(L, 1);
+			if (name == nullptr)
+			{
+				lua_pushnil(L);
+				return 1;
+			}
+
+			const char* vmt = luaL_checkstring(L, 2);
+			if (vmt == nullptr)
+			{
+				lua_pushnil(L);
+				return 1;
+			}
+
+			IMaterial* mat = helper::material::CreateMaterial(name, vmt);
+			if (mat == nullptr)
+			{
+				lua_pushnil(L);
+				return 1;
+			}
+			
+			LuaClasses::MaterialLua::push_material(L, mat);
+			return 1;
+		}
+	}
+}
+
+namespace LuaFuncs
+{
+	namespace client
+	{
+		const luaL_Reg clientlib[]
+		{
+			{"GetNetChannel", GetNetChannel},
+			{nullptr, nullptr}
+		};
+
+		void luaopen_client(lua_State* L)
+		{
+			lua_newtable(L);
+			luaL_setfuncs(L, clientlib, 0);
+			lua_setglobal(L, "client");
+		}
+
+		int GetNetChannel(lua_State* L)
+		{
+			CNetChannel* netchan = reinterpret_cast<CNetChannel*>(interfaces::Engine->GetNetChannelInfo());
+			if (netchan == nullptr)
+			{
+				lua_pushnil(L);
+				return 1;
+			}
+
+			lua_newtable(L);
+
+			lua_pushinteger(L, netchan->m_nChokedPackets);
+			lua_setfield(L, -2, "chokedcommands");
+
+			lua_pushinteger(L, netchan->m_nInSequenceNr);
+			lua_setfield(L, -2, "inSequenceNr");
+
+			lua_pushinteger(L, netchan->m_nOutSequenceNr);
+			lua_setfield(L, -2, "outSequenceNr");
+
+			lua_pushinteger(L, netchan->m_nOutSequenceNrAck);
+			lua_setfield(L, -2, "outSequenceNrAck");
+
+			lua_pushboolean(L, netchan->IsOverflowed());
+			lua_setfield(L, -2, "is_overflowed");
+
+			return 1;
 		}
 	}
 }

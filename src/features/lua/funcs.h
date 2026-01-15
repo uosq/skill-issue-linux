@@ -85,4 +85,33 @@ namespace LuaFuncs
 		int CreateFont(lua_State* L);
 		int SetFont(lua_State* L);
 	}
+
+	namespace render
+	{
+		extern const luaL_Reg renderlib[];
+
+		void luaopen_render(lua_State* L);
+		int GetColorModulation(lua_State* L);
+		int SetColorModulation(lua_State* L);
+		int GetBlend(lua_State* L);
+		int SetBlend(lua_State* L);
+		int ForcedMaterialOverride(lua_State* L);
+		int GetMaterialOverride(lua_State* L);
+	}
+
+	namespace materials
+	{
+		extern const luaL_Reg matslib[];
+
+		void luaopen_materials(lua_State* L);
+
+		int Create(lua_State* L);
+	}
+
+	namespace client
+	{
+		extern const luaL_Reg clientlib[];
+		void luaopen_client(lua_State* L);
+		int GetNetChannel(lua_State* L);
+	}
 }

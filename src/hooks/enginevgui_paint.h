@@ -26,7 +26,8 @@ DECLARE_VTABLE_HOOK(VGuiPaint, void, (IEngineVGui* thisptr, PaintMode_t paint))
 	{
 		interfaces::Surface->StartDrawing();
 
-		LuaHookManager::Call(Lua::m_luaState, "Draw", 0);
+		if (LuaHookManager::HasHooks("Draw"))
+			LuaHookManager::Call(Lua::m_luaState, "Draw", 0);
 
 		HFont font = helper::draw::GetCurrentFont();
 		helper::draw::SetFont(font);
