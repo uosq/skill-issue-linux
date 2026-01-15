@@ -376,7 +376,7 @@ static void DrawMainWindow()
 
 	static int tab = 0;
 
-	if (ImGui::Begin("Vapo Linux", nullptr, ImGuiWindowFlags_NoCollapse))
+	if (ImGui::Begin("Skill Issue", nullptr, ImGuiWindowFlags_NoCollapse))
 	{
 		if (ImGui::BeginTable("MainTable", 2, 0))
 		{

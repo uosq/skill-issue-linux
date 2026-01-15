@@ -1,4 +1,4 @@
-# Vapo Linux (temporary name)
+# Skill Issue Linux
 
 A project for me to learn more about TF2 and how it works
 
