@@ -35,7 +35,8 @@ DECLARE_VTABLE_HOOK(DrawModelExecute, void, (IVModelRender* thisptr, const DrawM
 
 	float color[3] = {1, 1, 1};
 	interfaces::RenderView->SetColorModulation(color);
-	interfaces::RenderView->SetBlend(1.0);
+	interfaces::RenderView->SetBlend(1.0f);
+	interfaces::ModelRender->ForcedMaterialOverride(nullptr);
 
 	if (LuaHookManager::HasHooks("DrawModel"))
 	{
@@ -50,13 +51,13 @@ DECLARE_VTABLE_HOOK(DrawModelExecute, void, (IVModelRender* thisptr, const DrawM
 
 		lua_setfield(Lua::m_luaState, -2, "entity");
 
-		/*lua_pushcfunction(Lua::m_luaState, LuaCallDME);
+		lua_pushcfunction(Lua::m_luaState, LuaCallDME);
 		lua_setfield(Lua::m_luaState, -2, "Execute");
 
 		ctx.state = state;
 		ctx.pCustomBoneToWorld = pCustomBoneToWorld;
 		ctx.pInfo = pInfo;
-		ctx.thisptr = thisptr;*/
+		ctx.thisptr = thisptr;
 
 		LuaHookManager::Call(Lua::m_luaState, "DrawModel", 1, true);
 	}

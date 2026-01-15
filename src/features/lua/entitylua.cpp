@@ -15,7 +15,7 @@ namespace LuaClasses
 		{
 			{"IsValid", IsValid},
 			{"GetName", GetName},
-			{"GeClassName", GetClassName},
+			{"GetClassName", GetClassName},
 			{"GetAbsOrigin", GetAbsOrigin},
 			{"GetAbsAngles", GetAbsAngles},
 			{"GetNetvarInt", GetNetvarInt},

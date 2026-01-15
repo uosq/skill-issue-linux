@@ -8,12 +8,16 @@
 #include "../features/chams/chams.h"
 #include "../features/glow/glow.h"
 
+#include "../features/lua/hooks.h"
+#include "../features/lua/api.h"
+
 DECLARE_VTABLE_HOOK(DoPostScreenSpaceEffects, bool, (IClientMode* thisptr, CViewSetup* setup))
 {
+	if (LuaHookManager::HasHooks("DoPostScreenSpaceEffects"))
+		LuaHookManager::Call(Lua::m_luaState, "DoPostScreenSpaceEffects", 0);
+
 	Chams::Run();
 	Glow::Run();
-
-	//helper::console::Print("DoPost\n");
 
 	return originalDoPostScreenSpaceEffects(thisptr, setup);
 }

@@ -255,12 +255,20 @@ static void DrawLuaTab()
 	{
 		if (ImGui::BeginTabItem("Console Tab"))
 		{
+			ImVec2 size = ImGui::GetContentRegionAvail();
+			size.y -= 30;
+
 			ImGui::InputTextMultiline(
 				"##ConsoleText",
 				&consoleText,
-				ImGui::GetContentRegionAvail(),
+				size,
 				ImGuiInputTextFlags_ReadOnly | ImGuiInputTextFlags_WordWrap
 			);
+
+			ImGui::Spacing();
+
+			if (ImGui::Button("Clear"))
+				consoleText = "";
 
 			ImGui::EndTabItem();
 		}
@@ -288,7 +296,7 @@ static void DrawLuaTab()
 	ImGui::EndGroup();
 }
 
-static void DrawParsedData(const std::vector<ClassEntry>& classes)
+static void DrawParsedNetvarData(const std::vector<ClassEntry>& classes)
 {
 	for (const auto& cls : classes)
 	{
@@ -311,7 +319,7 @@ static void DrawNetVarsTab()
 	static auto data = ParseFile(path);
 
 	if (ImGui::BeginChild("NetvarContent"))
-		DrawParsedData(data);
+		DrawParsedNetvarData(data);
 	ImGui::EndChild();
 
 }

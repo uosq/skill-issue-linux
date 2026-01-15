@@ -11,6 +11,10 @@
 
 #include "../libdetour/libdetour.h"
 
+#include "../features/lua/hooks.h"
+#include "../features/lua/api.h"
+#include "../features/lua/classes.h"
+
 using CalcViewModelViewFn = void(*)(void* thisptr, CBaseEntity* owner, const Vector& eyePosition, const QAngle& eyeAngles);
 inline CalcViewModelViewFn originalCalcViewModelView = nullptr;
 
@@ -27,6 +31,14 @@ inline void HookedCalcViewModelView(void* thisptr, CBaseEntity* owner, const Vec
 
 	if (owner)
 	{
+		if (LuaHookManager::HasHooks("CalcViewModelView"))
+		{
+			LuaClasses::VectorLua::push_vector(Lua::m_luaState, position);
+			LuaClasses::VectorLua::push_vector(Lua::m_luaState, angle);
+
+			LuaHookManager::Call(Lua::m_luaState, "CalcViewModelView", 2, false);
+		}
+
 		if (settings.aimbot.viewmodelaim)
 		{
 			if (Aimbot::IsRunning() && interfaces::GlobalVars && interfaces::GlobalVars->curtime)

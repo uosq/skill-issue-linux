@@ -4,9 +4,17 @@
 #include "../sdk/helpers/helper.h"
 #include "../features/visuals/visuals.h"
 #include "../features/entitylist/entitylist.h"
+#include "../features/lua/hooks.h"
+#include "../features/lua/api.h"
 
 DECLARE_VTABLE_HOOK(FrameStageNotify, void, (IBaseClientDLL* thisptr, int stage))
 {
+	if (LuaHookManager::HasHooks("FrameStageNotify"))
+	{
+		lua_pushinteger(Lua::m_luaState, stage);
+		LuaHookManager::Call(Lua::m_luaState, "FrameStageNotify", 1);
+	}
+
 	switch (stage)
 	{
 		case FRAME_RENDER_START:
