@@ -11,6 +11,7 @@ namespace Chams
 	static bool m_bMatLoaded = false;
 	static IMaterial* m_mFlatMat = nullptr;
 	static std::unordered_map<int, bool> m_DrawEnts;
+	static bool m_bRunning = false;
 
 	static bool Init()
 	{
@@ -63,7 +64,9 @@ namespace Chams
 			float flColor[3] = {color.r()/255.0f, color.g()/255.0f, color.b()/255.0f};
 
 			interfaces::RenderView->SetColorModulation(flColor);
+			m_bRunning = true;
 			entity->DrawModel(STUDIO_RENDER | STUDIO_NOSHADOWS);
+			m_bRunning = false;
 		}
 
 		interfaces::ModelRender->ForcedMaterialOverride(nullptr);
@@ -73,6 +76,8 @@ namespace Chams
 
 	static void Run()
 	{
+		m_bRunning = false;
+
 		if (!settings.esp.chams)
 			return;
 

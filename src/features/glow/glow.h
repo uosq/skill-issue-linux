@@ -21,6 +21,7 @@ namespace Glow
 {
 	static GlowMaterials m_Materials;
 	static std::vector<CBaseEntity*> glowEnts = {};
+	static bool m_bRunning = false;
 
 	static void Init()
 	{
@@ -88,7 +89,9 @@ namespace Glow
 			Color color = ent->IsPlayer() ? ESP::GetPlayerColor(ent) : ESP::GetBuildingColor(reinterpret_cast<CBaseObject*>(ent));
 			float mod[3] = {color.r()/255.0f, color.g()/255.0f, color.b()/255.0f};
 			interfaces::RenderView->SetColorModulation(mod);
+			m_bRunning = true;
 			ent->DrawModel(STUDIO_RENDER | STUDIO_NOSHADOWS);
+			m_bRunning = false;
 		}
 	}
 
@@ -120,6 +123,8 @@ namespace Glow
 	// Call in DoPostScreenSpaceEffects
 	static void Run()
 	{
+		m_bRunning = false;
+
 		if (settings.esp.blur == 0 && settings.esp.stencil == 0)
 			return;
 

@@ -33,10 +33,13 @@ DECLARE_VTABLE_HOOK(DrawModelExecute, void, (IVModelRender* thisptr, const DrawM
 	if (interfaces::Engine->IsTakingScreenshot())
 		return originalDrawModelExecute(thisptr, state, pInfo, pCustomBoneToWorld);
 
-	float color[3] = {1, 1, 1};
-	interfaces::RenderView->SetColorModulation(color);
-	interfaces::RenderView->SetBlend(1.0f);
-	interfaces::ModelRender->ForcedMaterialOverride(nullptr);
+	if (!Chams::m_bRunning && !Glow::m_bRunning)
+	{
+		float color[3] = {1, 1, 1};
+		interfaces::RenderView->SetColorModulation(color);
+		interfaces::RenderView->SetBlend(1.0f);
+		interfaces::ModelRender->ForcedMaterialOverride(nullptr);
+	}
 
 	if (LuaHookManager::HasHooks("DrawModel"))
 	{
@@ -54,15 +57,21 @@ DECLARE_VTABLE_HOOK(DrawModelExecute, void, (IVModelRender* thisptr, const DrawM
 		lua_pushcfunction(Lua::m_luaState, LuaCallDME);
 		lua_setfield(Lua::m_luaState, -2, "Execute");
 
+		lua_pushboolean(Lua::m_luaState, Chams::m_bRunning);
+		lua_setfield(Lua::m_luaState, - 2, "is_chams");
+
+		lua_pushboolean(Lua::m_luaState, Glow::m_bRunning);
+		lua_setfield(Lua::m_luaState, - 2, "is_glow");
+
 		ctx.state = state;
 		ctx.pCustomBoneToWorld = pCustomBoneToWorld;
 		ctx.pInfo = pInfo;
 		ctx.thisptr = thisptr;
 
-		LuaHookManager::Call(Lua::m_luaState, "DrawModel", 1, true);
+		LuaHookManager::Call(Lua::m_luaState, "DrawModel", 1);
 	}
 
-	if (Chams::ShouldHide(pInfo.entity_index))
+	if (settings.esp.chams && Chams::ShouldHide(pInfo.entity_index))
 		return;
 
 	originalDrawModelExecute(thisptr, state, pInfo, pCustomBoneToWorld);

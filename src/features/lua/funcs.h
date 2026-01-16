@@ -64,6 +64,8 @@ namespace LuaFuncs
 		int GetHighestEntityIndex(lua_State* L);
 		int GetPlayers(lua_State* L);
 		int GetPlayerResources(lua_State* L);
+		int GetTeammates(lua_State* L);
+		int GetEnemies(lua_State* L);
 	}
 
 	namespace draw

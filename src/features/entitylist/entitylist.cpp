@@ -6,11 +6,15 @@ namespace EntityList
 	std::vector<CTFPlayer*> m_vecPlayers;
 	CTFPlayer* m_pLocalPlayer = nullptr;
 	CTFPlayerResource *m_pPlayerResource = nullptr;
+	std::vector<CTFPlayer*> m_vecTeammates;
+	std::vector<CTFPlayer*> m_vecEnemies;
 
 	void Clear()
 	{
 		m_vecBuildings.clear();
 		m_vecPlayers.clear();
+		m_vecTeammates.clear();
+		m_vecEnemies.clear();
 		m_pLocalPlayer = nullptr;
 		m_pPlayerResource = nullptr;
 	}
@@ -21,6 +25,10 @@ namespace EntityList
 		Clear();
 
 		m_pLocalPlayer = helper::engine::GetLocalPlayer();
+		if (m_pLocalPlayer == nullptr)
+			return;
+
+		int localTeam = m_pLocalPlayer->m_iTeamNum();
 
 		for (int i = 1; i < interfaces::EntityList->GetHighestEntityIndex(); i++)
 		{
@@ -32,7 +40,14 @@ namespace EntityList
 			{
 				case ETFClassID::CTFPlayer:
 				{
-					m_vecPlayers.emplace_back(static_cast<CTFPlayer*>(entity));
+					CTFPlayer* player = static_cast<CTFPlayer*>(entity);
+					m_vecPlayers.emplace_back(player);
+
+					if (player->m_iTeamNum() == localTeam )
+						m_vecTeammates.emplace_back(player);
+					else
+						m_vecEnemies.emplace_back(player);
+					
 					break;
 				}
 
@@ -73,5 +88,15 @@ namespace EntityList
 	CTFPlayerResource* GetPlayerResources()
 	{
 		return m_pPlayerResource;
+	}
+
+	std::vector<CTFPlayer*> GetTeammates()
+	{
+		return m_vecTeammates;
+	}
+
+	std::vector<CTFPlayer*> GetEnemies()
+	{
+		return m_vecEnemies;
 	}
 }

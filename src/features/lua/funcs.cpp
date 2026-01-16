@@ -248,6 +248,8 @@ namespace LuaFuncs
 			{"GetLocalPlayer", GetLocalPlayer},
 			{"GetHighestIndex", GetHighestEntityIndex},
 			{"GetPlayers", GetPlayers},
+			{"GetTeammates", GetTeammates},
+			{"GetEnemies", GetEnemies},
 			{nullptr, nullptr}
 		};
 
@@ -318,6 +320,46 @@ namespace LuaFuncs
 			int index = 1; // lua arrays start at 1
 
 			for (CTFPlayer* player : players)
+			{
+				if (!player)
+					continue;
+
+				LuaClasses::EntityLua::push_entity(L, static_cast<CBaseEntity*>(player));
+				lua_rawseti(L, -2, index++);
+			}
+
+			return 1; // return the table
+		}
+
+		int GetTeammates(lua_State* L)
+		{
+			const auto& teammates = EntityList::m_vecTeammates;
+
+			lua_newtable(L);
+
+			int index = 1; // lua arrays start at 1
+
+			for (CTFPlayer* player : teammates)
+			{
+				if (!player)
+					continue;
+
+				LuaClasses::EntityLua::push_entity(L, static_cast<CBaseEntity*>(player));
+				lua_rawseti(L, -2, index++);
+			}
+
+			return 1; // return the table
+		}
+
+		int GetEnemies(lua_State* L)
+		{
+			const auto& enemies = EntityList::m_vecEnemies;
+
+			lua_newtable(L);
+
+			int index = 1; // lua arrays start at 1
+
+			for (CTFPlayer* player : enemies)
 			{
 				if (!player)
 					continue;
