@@ -339,12 +339,12 @@ namespace LuaFuncs
 
 			int index = 1; // lua arrays start at 1
 
-			for (CTFPlayer* player : teammates)
+			for (const auto& team : teammates)
 			{
-				if (!player)
+				if (!team)
 					continue;
 
-				LuaClasses::EntityLua::push_entity(L, static_cast<CBaseEntity*>(player));
+				LuaClasses::EntityLua::push_entity(L, static_cast<CBaseEntity*>(team));
 				lua_rawseti(L, -2, index++);
 			}
 
@@ -359,12 +359,12 @@ namespace LuaFuncs
 
 			int index = 1; // lua arrays start at 1
 
-			for (CTFPlayer* player : enemies)
+			for (const auto& enemy : enemies)
 			{
-				if (!player)
+				if (!enemy)
 					continue;
 
-				LuaClasses::EntityLua::push_entity(L, static_cast<CBaseEntity*>(player));
+				LuaClasses::EntityLua::push_entity(L, static_cast<CBaseEntity*>(enemy));
 				lua_rawseti(L, -2, index++);
 			}
 

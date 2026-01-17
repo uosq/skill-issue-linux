@@ -6,8 +6,9 @@ namespace EntityList
 	std::vector<CTFPlayer*> m_vecPlayers;
 	CTFPlayer* m_pLocalPlayer = nullptr;
 	CTFPlayerResource *m_pPlayerResource = nullptr;
-	std::vector<CTFPlayer*> m_vecTeammates;
-	std::vector<CTFPlayer*> m_vecEnemies;
+	std::vector<CBaseEntity*> m_vecTeammates;
+	std::vector<CBaseEntity*> m_vecEnemies;
+	CBaseEntity* m_pAimbotTarget = nullptr;
 
 	void Clear()
 	{
@@ -43,7 +44,7 @@ namespace EntityList
 					CTFPlayer* player = static_cast<CTFPlayer*>(entity);
 					m_vecPlayers.emplace_back(player);
 
-					if (player->m_iTeamNum() == localTeam )
+					if (player->m_iTeamNum() == localTeam)
 						m_vecTeammates.emplace_back(player);
 					else
 						m_vecEnemies.emplace_back(player);
@@ -55,7 +56,18 @@ namespace EntityList
 				case ETFClassID::CObjectDispenser:
 				case ETFClassID::CObjectTeleporter:
 				{
-					m_vecBuildings.emplace_back(static_cast<CBaseObject*>(entity));
+					CBaseObject* building = static_cast<CBaseObject*>(entity);
+					m_vecBuildings.emplace_back(building);
+
+					CBaseEntity* builder = HandleAs<CTFPlayer*>(building->m_hBuilder());
+					if (builder == nullptr)
+						break;
+
+					if (builder->m_iTeamNum() == localTeam)
+						m_vecTeammates.emplace_back(static_cast<CBaseEntity*>(entity));
+					else
+						m_vecEnemies.emplace_back(static_cast<CBaseEntity*>(entity));
+
 					break;
 				}
 
@@ -90,12 +102,12 @@ namespace EntityList
 		return m_pPlayerResource;
 	}
 
-	std::vector<CTFPlayer*> GetTeammates()
+	std::vector<CBaseEntity*> GetTeammates()
 	{
 		return m_vecTeammates;
 	}
 
-	std::vector<CTFPlayer*> GetEnemies()
+	std::vector<CBaseEntity*> GetEnemies()
 	{
 		return m_vecEnemies;
 	}

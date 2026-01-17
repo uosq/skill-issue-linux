@@ -12,6 +12,9 @@ namespace ESP
 {
 	inline Color GetPlayerColor(CBaseEntity* player)
 	{
+		if (player == EntityList::m_pAimbotTarget)
+			return settings.colors.aimbot_target;
+
 		int team = player->m_iTeamNum();
 
 		if (player->IsPlayer())
@@ -19,9 +22,9 @@ namespace ESP
 			switch (team)
 			{
 				case ETeam::TEAM_RED:
-					return (Color){255, 0, 0, 255};
+					return settings.colors.red_team;
 				case ETeam::TEAM_BLU:
-					return (Color){0, 255, 255, 255};
+					return settings.colors.blu_team;
 				default: break;
 			}
 		}
@@ -33,6 +36,9 @@ namespace ESP
 	// Because m_iTeamNum for some reason is inverted on buildings
 	inline Color GetBuildingColor(CBaseObject* building)
 	{
+		if (reinterpret_cast<CBaseEntity*>(building) == EntityList::m_pAimbotTarget)
+			return settings.colors.aimbot_target;
+
 		CTFPlayer* builder = HandleAs<CTFPlayer*>(building->m_hBuilder());
 		if (builder != nullptr)
 		{
@@ -40,9 +46,9 @@ namespace ESP
 			switch (team)
 			{
 				case ETeam::TEAM_RED:
-					return (Color){255, 0, 0, 255};
+					return settings.colors.red_team;
 				case ETeam::TEAM_BLU:
-					return (Color){0, 255, 255, 255};
+					return settings.colors.blu_team;
 				default: break;
 			}
 		}

@@ -98,7 +98,8 @@ struct AimbotProjectile
 
 	void Run(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd, AimbotState& state)
 	{
-		if (pCmd->weaponselect)
+		static ConVar* sv_gravity = interfaces::Cvar->FindVar("sv_gravity");
+		if (!sv_gravity)
 			return;
 
 		ProjectileInfo_t info;
@@ -124,18 +125,26 @@ struct AimbotProjectile
 		CTraceFilterHitscan filter;
 		filter.pSkip = pLocal;
 
-		static ConVar* sv_gravity = interfaces::Cvar->FindVar("sv_gravity");
-		if (!sv_gravity)
-			return;
-
 		float gravity = sv_gravity->GetFloat() * 0.5f * info.gravity;
 
-		for (auto entity : EntityList::m_vecPlayers)
+		for (auto entity : EntityList::GetEnemies())
 		{
+			if (entity == nullptr)
+				continue;
+
 			if (!AimbotUtils::IsValidEntity(entity, localTeam))
 				continue;
 
-			Vector center = entity->GetCenter();
+			Vector center;// = entity->GetCenter();
+			{
+				if (entity->IsPlayer())
+					center = static_cast<CTFPlayer*>(entity)->GetCenter();
+				else if (entity->IsBuilding())
+					center = reinterpret_cast<CBaseObject*>(entity)->GetCenter();
+				else
+					center = entity->GetAbsOrigin();
+			}
+
 			Vector dir = center - shootPos;
 			float distance = dir.Normalize();
 
@@ -157,28 +166,41 @@ struct AimbotProjectile
 
 		for (const auto& target : targets)
 		{
+			if (target.entity == nullptr)
+				continue;
+
 			float time = (target.distance/info.speed);
-			//interfaces::vstdlib->ConsolePrintf("Time: %f\n", time);
 
 			if (time > settings.aimbot.max_sim_time)
 				continue;
 
+			Vector lastPos;
 			std::vector<Vector> path;
-			PlayerPrediction::Predict((CTFPlayer*)target.entity, time, path);
-
-			// something went wrong
-			if (path.empty())
-				continue;
-
-			Vector lastPos = path.back();
-			if (!std::isfinite(lastPos.x) || !std::isfinite(lastPos.y) || !std::isfinite(lastPos.z))
-                		continue;
-
-			float aimOffset = GetInitialOffset((CTFPlayer*)target.entity, pWeapon);
-			if (aimOffset > 0)
-				lastPos.z += aimOffset;
-
 			Vector angle;
+
+			if (target.entity->IsPlayer())
+			{
+				PlayerPrediction::Predict((CTFPlayer*)target.entity, time, path);
+	
+				// something went wrong
+				if (path.empty())
+					continue;
+	
+				lastPos = path.back();
+	
+				float aimOffset = GetInitialOffset((CTFPlayer*)target.entity, pWeapon);
+				if (aimOffset > 0)
+					lastPos.z += aimOffset;
+			}
+			else if (target.entity->IsBuilding())
+			{
+				lastPos = reinterpret_cast<CBaseObject*>(target.entity)->GetCenter();
+				path.emplace_back(target.entity->GetAbsOrigin());
+			}
+			else
+			{
+				continue;
+			}
 
 			if (info.simple_trace)
 			{
@@ -187,35 +209,14 @@ struct AimbotProjectile
 				angle = dir.ToAngle();
 
 				if (!CheckTrajectory((CTFPlayer*)target.entity, shootPos, lastPos, angle, info, 0))
-				{
-					Vector out = {};
-					if (!AimbotUtils::GetVisiblePoint(out, pLocal, lastPos, target.entity->m_vecMins(), target.entity->m_vecMaxs()))
-						continue;
-
-					dir = (out - shootPos);
-					dir.Normalize();
-					angle = dir.ToAngle();
-
-					if (!CheckTrajectory((CTFPlayer*)target.entity, shootPos, out, angle, info, 0))
-						continue;
-				}
+					continue;
 			} else
 			{
 				if (!SolveBallisticArc(angle, shootPos, lastPos, info.speed, gravity))
 					continue;
 
 				if (!CheckTrajectory((CTFPlayer*)target.entity, shootPos, lastPos, angle, info, gravity))
-				{
-					Vector out = {};
-					if (!AimbotUtils::GetVisiblePoint(out, pLocal, lastPos, target.entity->m_vecMins(), target.entity->m_vecMaxs()))
-						continue;
-
-					if (!SolveBallisticArc(angle, shootPos, out, info.speed, gravity))
-						continue;
-
-					if (!CheckTrajectory((CTFPlayer*)target.entity, shootPos, out, angle, info, gravity))
-						continue;
-				}
+					continue;
 			}
 
 			if (settings.aimbot.autoshoot)
@@ -249,7 +250,7 @@ struct AimbotProjectile
 				state.angle = angle;
 				state.shouldSilent = true;
 			}
-			
+
 			state.running = true;
 			return;
 		}

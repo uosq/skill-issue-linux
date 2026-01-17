@@ -10,14 +10,15 @@ namespace EntityList
 	extern std::vector<CTFPlayer*> m_vecPlayers;
 	extern CTFPlayer* m_pLocalPlayer;
 	extern CTFPlayerResource *m_pPlayerResource;
-	extern std::vector<CTFPlayer*> m_vecTeammates;
-	extern std::vector<CTFPlayer*> m_vecEnemies;
+	extern std::vector<CBaseEntity*> m_vecTeammates;
+	extern std::vector<CBaseEntity*> m_vecEnemies;
+	extern CBaseEntity* m_pAimbotTarget;
 
 	void Clear();
 	void Store(); // Call in FrameStageNotify -> FRAME_NET_UPDATE_END
 	std::vector<CTFPlayer*> GetPlayers();
-	std::vector<CTFPlayer*> GetTeammates();
-	std::vector<CTFPlayer*> GetEnemies();
+	std::vector<CBaseEntity*> GetTeammates();
+	std::vector<CBaseEntity*> GetEnemies();
 	std::vector<CBaseObject*> GetBuildings();
 	CTFPlayer* GetLocal();
 	CTFPlayerResource* GetPlayerResources();

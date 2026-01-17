@@ -6,6 +6,7 @@
 #include "../../../sdk/definitions/cgametrace.h"
 #include "../../../sdk/definitions/ctracefilters.h"
 #include "../../../sdk/helpers/helper.h"
+#include "../../entitylist/entitylist.h"
 
 #define ARRAYSIZE(x) sizeof((x))/sizeof((x[0]))
 
@@ -121,7 +122,7 @@ namespace AimbotUtils
 	// Is this optimized? absolutely fucking not
 	// I need to think of a better way
 	// I should probably check bones
-	static bool GetVisiblePoint(Vector& out, CTFPlayer* pLocal, Vector origin, Vector mins, Vector maxs)
+	inline bool GetVisiblePoint(Vector& out, CTFPlayer* pLocal, Vector origin, Vector mins, Vector maxs)
 	{
 		static float points[] = {0.15f, 0.35f, 0.5f, 0.75f, 0.85f};
 		static constexpr int points_size = ARRAYSIZE(points);
@@ -154,5 +155,26 @@ namespace AimbotUtils
 				}
 
 		return false;
+	}
+
+	inline std::vector<CBaseEntity*> GetTargets(int localTeam)
+	{
+		const auto& enemies = EntityList::GetEnemies();
+		std::vector<CBaseEntity*> targets;
+
+		for (const auto& enemy : enemies)
+		{
+			if (enemy == nullptr)
+				continue;
+
+			// pass no team and dont check team
+			// must be pretty obvious why
+			if (!IsValidEntity(enemy, 0, false))
+				continue;
+
+			targets.emplace_back(enemy);
+		}
+
+		return targets;
 	}
 };

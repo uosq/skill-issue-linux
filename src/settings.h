@@ -1,5 +1,6 @@
 #pragma once
 
+#include "sdk/definitions/color.h"
 #include <string>
 #include <unistd.h>
 
@@ -76,6 +77,13 @@ struct Settings_Triggerbot
 	std::string key = "";
 };
 
+struct Settings_Colors
+{
+	Color red_team = {255, 0, 0, 255};
+	Color blu_team = {0, 255, 255, 255};
+	Color aimbot_target = {255, 255, 255, 255};
+};
+
 struct Settings
 {
 	Settings_Misc misc;
@@ -83,8 +91,9 @@ struct Settings
 	Settings_ESP esp;
 	Settings_Triggerbot triggerbot;
 	Settings_Antiaim antiaim;
+	Settings_Colors colors;
 
 	bool menu_open = false;
 };
 
-static Settings settings;
+extern Settings settings;

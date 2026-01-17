@@ -2,7 +2,7 @@
 
 #include "../../sdk/netvars/netvar.h"
 
-class CTFPlayerResource
+class CTFPlayerResource: public IClientEntity
 {
 public:
 	NETVAR_ARRAY(m_iTotalScore, "CTFPlayerResource->m_iTotalScore", int);

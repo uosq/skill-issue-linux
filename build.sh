@@ -65,6 +65,8 @@ g++ -shared -fPIC \
 	src/sdk/interfaces/*.cpp \
 	src/gui/*.cpp \
 	src/features/entitylist/*.cpp \
+	src/features/aimbot/aimbot.cpp \
+	src/settings.cpp \
 	-o build/libvapo.so \
 	-O2 -std=c++17 -lSDL2 -lvulkan -lm -ldl \
 	-Werror -flto=auto

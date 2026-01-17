@@ -68,14 +68,20 @@ struct AimbotHitscan
 		CTraceFilterHitscan filter;
 		filter.pSkip = pLocal;
 
-		HitscanOffset initialOffset = GetInitialOffset(pWeapon);
+		//HitscanOffset initialOffset = GetInitialOffset(pWeapon);
 
-		for (auto entity : EntityList::m_vecPlayers)
+		for (const auto& entity : EntityList::GetEnemies())
 		{
-			if (!AimbotUtils::IsValidEntity(entity, localTeam))
-				continue;
+			Vector pos;
+			{
+				if (entity->IsPlayer())
+					pos = static_cast<CTFPlayer*>(entity)->GetCenter();
+				else if (entity->IsBuilding())
+					pos = reinterpret_cast<CBaseObject*>(entity)->GetCenter();
+				else
+					pos = entity->GetAbsOrigin();
+			}
 
-			Vector pos = entity->GetCenter();
 			Vector dir = pos - shootPos;
 			float distance = dir.Normalize();
 
@@ -94,32 +100,6 @@ struct AimbotHitscan
 			targets.emplace_back(PotentialTarget{dir, pos, distance, dot, entity});
 		}
 
-		for (auto entity : EntityList::m_vecBuildings)
-		{
-			CBaseEntity* building = reinterpret_cast<CBaseEntity*>(entity);
-
-			if (!AimbotUtils::IsValidEntity(building, localTeam))
-				continue;
-
-			Vector pos = entity->GetCenter();
-			Vector dir = pos - shootPos;
-			float distance = dir.Normalize();
-
-			if (distance >= 2048.f)
-				continue;
-
-			float dot = dir.Dot(viewForward);
-
-			if (dot < minDot)
-				continue;
-
-			helper::engine::Trace(shootPos, pos, MASK_SHOT | CONTENTS_HITBOX, &filter, &trace);
-			if (!trace.DidHit() || !trace.m_pEnt || trace.m_pEnt != building)
-				continue;
-
-			targets.emplace_back(PotentialTarget{dir, pos, distance, dot, building});
-		}
-
 		if (targets.empty())
 			return;
 
@@ -130,11 +110,14 @@ struct AimbotHitscan
 
 		if (pWeapon->CanPrimaryAttack() && (pCmd->buttons & IN_ATTACK))
 		{
-			auto target = targets.at(0);
+			auto target = targets.front();
 			Vector angle = target.dir.ToAngle();
 			pCmd->viewangles = angle;
 			state.angle = angle;
 			state.running = true;
 		}
+
+		if (targets.front().entity != nullptr)
+			EntityList::m_pAimbotTarget = targets.front().entity;
 	}
 };

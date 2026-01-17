@@ -36,7 +36,7 @@ DECLARE_VTABLE_HOOK(VGuiPaint, void, (IEngineVGui* thisptr, PaintMode_t paint))
 		if (pLocal)
 		{
 			ESP::Run(pLocal);
-			Aimbot::RunPaint();
+			Aimbot::RunPaint(pLocal);
 		}
 
 		interfaces::Surface->FinishDrawing();
