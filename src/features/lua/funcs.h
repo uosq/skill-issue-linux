@@ -120,4 +120,16 @@ namespace LuaFuncs
 		int ChatSay(lua_State* L);
 		int Command(lua_State* L);
 	}
+
+	namespace clientstate
+	{
+		extern const luaL_Reg clientlib[];
+		void luaopen_clientstate(lua_State* L);
+
+		int GetChokedCommands(lua_State* L);
+		int GetLastOutgoingCommand(lua_State* L);
+		int GetClientSignonState(lua_State* L);
+		int GetDeltaTick(lua_State* L);
+		int GetLastCommandAck(lua_State* L);
+	}
 }

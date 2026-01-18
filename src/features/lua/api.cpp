@@ -24,6 +24,7 @@ namespace Lua
 		LuaFuncs::render::luaopen_render(m_luaState);
 		LuaFuncs::materials::luaopen_materials(m_luaState);
 		LuaFuncs::client::luaopen_client(m_luaState);
+		LuaFuncs::clientstate::luaopen_clientstate(m_luaState);
 
 		// open classes
 		LuaClasses::VectorLua::luaopen_vector(m_luaState);

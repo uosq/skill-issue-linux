@@ -86,6 +86,23 @@ static void DrawESPTab()
 	ImGui::SliderInt("Stencil", &settings.esp.stencil, 0, 10);
 	ImGui::SliderInt("Blur", &settings.esp.blur, 0, 10);
 
+	ImGui::Separator();
+
+	static float red[3] = {settings.colors.red_team.r()/255.0f, settings.colors.red_team.g()/255.0f, settings.colors.red_team.b()/255.0f};
+	static float blu[3] = {settings.colors.blu_team.r()/255.0f, settings.colors.blu_team.g()/255.0f, settings.colors.blu_team.b()/255.0f};
+	static float target[3] = {settings.colors.aimbot_target.r()/255.0f, settings.colors.aimbot_target.g()/255.0f, settings.colors.aimbot_target.b()/255.0f};
+
+	ImGui::TextUnformatted("Colors");
+
+	if (ImGui::ColorEdit3("RED Team", red))
+		settings.colors.red_team.SetColor(red[0]*255.0f, red[1]*255.0f, red[2]*255.0f, 255.0f);
+
+	if (ImGui::ColorEdit3("BLU Team", blu))
+		settings.colors.blu_team.SetColor(blu[0]*255.0f, blu[1]*255.0f, blu[2]*255.0f, 255.0f);
+
+	if (ImGui::ColorEdit3("Aimbot Target", target))
+		settings.colors.aimbot_target.SetColor(target[0]*255.0f, target[1]*255.0f, target[2]*255.0f, 255.0f);
+
 	ImGui::EndGroup();
 }
 
@@ -234,7 +251,8 @@ static void DrawLuaTab()
 			"hooks", "Vector3",
 			"entities", "draw",
 			"render", "materials",
-			"client", "BitBuffer"
+			"client", "BitBuffer",
+			"clientstate"
 		};
 
 		TextEditor::Identifier id;

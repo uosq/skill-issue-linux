@@ -7,6 +7,7 @@
 #include "hooks.h"
 #include "../entitylist/entitylist.h"
 #include "../../sdk/definitions/inetchannel.h"
+#include "../../sdk/definitions/cclientstate.h"
 
 namespace LuaFuncs
 {
@@ -727,7 +728,7 @@ namespace LuaFuncs
 			lua_newtable(L);
 
 			lua_pushinteger(L, netchan->m_nChokedPackets);
-			lua_setfield(L, -2, "chokedcommands");
+			lua_setfield(L, -2, "chokedpackets");
 
 			lua_pushinteger(L, netchan->m_nInSequenceNr);
 			lua_setfield(L, -2, "inSequenceNr");
@@ -851,6 +852,89 @@ namespace LuaFuncs
 				interfaces::Engine->ClientCmd(luaL_checkstring(L, 1));
 
 			return 0;
+		}
+	}
+}
+
+namespace LuaFuncs
+{
+	namespace clientstate
+	{
+		const luaL_Reg clientstatelib[]
+		{
+			{"GetChokedCommands", GetChokedCommands},
+			{"GetLastOutgoingCommand", GetLastOutgoingCommand},
+			{"GetClientSignonState", GetClientSignonState},
+			{"GetDeltaTick", GetDeltaTick},
+			{"GetLastCommandAck", GetLastCommandAck},
+			{nullptr, nullptr}
+		};
+
+		void luaopen_clientstate(lua_State* L)
+		{
+			lua_newtable(L);
+			luaL_setfuncs(L, clientstatelib, 0);
+			lua_setglobal(L, "clientstate");
+		}
+
+		int GetChokedCommands(lua_State* L)
+		{
+			if (interfaces::ClientState == nullptr)
+			{
+				lua_pushnil(L);
+				return 1;
+			}
+
+			lua_pushinteger(L, static_cast<CClientState*>(interfaces::ClientState)->chokedcommands);
+			return 1;
+		}
+
+		int GetLastOutgoingCommand(lua_State* L)
+		{
+			if (interfaces::ClientState == nullptr)
+			{
+				lua_pushnil(L);
+				return 1;
+			}
+
+			lua_pushinteger(L, static_cast<CClientState*>(interfaces::ClientState)->lastoutgoingcommand);
+			return 1;
+		}
+
+		int GetClientSignonState(lua_State* L)
+		{
+			if (interfaces::ClientState == nullptr)
+			{
+				lua_pushnil(L);
+				return 1;
+			}
+
+			lua_pushinteger(L, static_cast<CClientState*>(interfaces::ClientState)->m_nSignonState);
+			return 1;
+		}
+
+		int GetDeltaTick(lua_State* L)
+		{
+			if (interfaces::ClientState == nullptr)
+			{
+				lua_pushnil(L);
+				return 1;
+			}
+
+			lua_pushinteger(L, static_cast<CClientState*>(interfaces::ClientState)->m_nDeltaTick);
+			return 1;
+		}
+
+		int GetLastCommandAck(lua_State* L)
+		{
+			if (interfaces::ClientState == nullptr)
+			{
+				lua_pushnil(L);
+				return 1;
+			}
+
+			lua_pushinteger(L, static_cast<CClientState*>(interfaces::ClientState)->last_command_ack);
+			return 1;
 		}
 	}
 }
