@@ -36,6 +36,8 @@ namespace LuaClasses
 			{"IsPlayer", IsPlayer},
 			{"GetWeaponID", GetWeaponID},
 			{"GetClassID", GetClassID},
+			{"GetFirstMoveChild", GetFirstMoveChild},
+			{"GetNextMovePeer", GetNextMovePeer},
 			{nullptr, nullptr}
 		};
 
@@ -705,6 +707,46 @@ namespace LuaClasses
 			}
 
 			lua_pushinteger(L, static_cast<int>(le->ent->GetClassID()));
+			return 1;
+		}
+
+		int GetFirstMoveChild(lua_State* L)
+		{
+			LuaEntity* le = CheckEntity(L, 1);
+			if (le->ent == nullptr)
+			{
+				lua_pushnil(L);
+				return 1;
+			}
+
+			auto moveChild = le->ent->FirstShadowChild();
+			if (moveChild == nullptr)
+			{
+				lua_pushnil(L);
+				return 1;
+			}
+
+			push_entity(L, static_cast<CBaseEntity*>(moveChild));
+			return 1;
+		}
+
+		int GetNextMovePeer(lua_State* L)
+		{
+			LuaEntity* le = CheckEntity(L, 1);
+			if (le->ent == nullptr)
+			{
+				lua_pushnil(L);
+				return 1;
+			}
+
+			auto movePeer = le->ent->NextShadowPeer();
+			if (movePeer == nullptr)
+			{
+				lua_pushnil(L);
+				return 1;
+			}
+
+			push_entity(L, static_cast<CBaseEntity*>(movePeer));
 			return 1;
 		}
 	}

@@ -40,6 +40,7 @@ struct Settings_ESP
 	bool chams = false;
 	int stencil = 0;
 	int blur = 0;
+	bool weapon = false;
 };
 
 struct Settings_Aimbot
@@ -82,6 +83,7 @@ struct Settings_Colors
 	Color red_team = {255, 0, 0, 255};
 	Color blu_team = {0, 255, 255, 255};
 	Color aimbot_target = {255, 255, 255, 255};
+	Color weapon = {255, 255, 255, 255};
 };
 
 struct Settings

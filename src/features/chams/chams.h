@@ -66,6 +66,24 @@ namespace Chams
 			interfaces::RenderView->SetColorModulation(flColor);
 			m_bRunning = true;
 			entity->DrawModel(STUDIO_RENDER | STUDIO_NOSHADOWS);
+
+			int passes = 0;
+			auto moveChild = entity->FirstShadowChild();
+			while (moveChild != nullptr && passes <= 32)
+			{
+				if (settings.esp.weapon && static_cast<CBaseEntity*>(moveChild)->IsWeapon())
+				{
+					color = settings.colors.weapon;
+					flColor[0] = color.r()/255.0f;
+					flColor[1] = color.g()/255.0f;
+					flColor[2] = color.b()/255.0f;
+					interfaces::RenderView->SetColorModulation(flColor);
+				}
+
+				moveChild->DrawModel(STUDIO_RENDER | STUDIO_NOSHADOWS);
+				moveChild = moveChild->NextShadowPeer();
+				passes++;
+			}
 			m_bRunning = false;
 		}
 

@@ -91,6 +91,26 @@ namespace Glow
 			interfaces::RenderView->SetColorModulation(mod);
 			m_bRunning = true;
 			ent->DrawModel(STUDIO_RENDER | STUDIO_NOSHADOWS);
+
+			auto moveChild = ent->FirstShadowChild();
+			int passes = 0;
+			while (moveChild != nullptr && passes <= 32)
+			{
+				if (settings.esp.weapon && static_cast<CBaseEntity*>(moveChild)->IsWeapon())
+				{
+					color = settings.colors.weapon;
+					// this is fucking stupid
+					// why is a array not assignable?
+					mod[0] = color.r()/255.0f;
+					mod[1] = color.g()/255.0f;
+					mod[2] = color.b()/255.0f;
+					interfaces::RenderView->SetColorModulation(mod);
+				}
+
+				moveChild->DrawModel(STUDIO_RENDER | STUDIO_NOSHADOWS);
+				moveChild = moveChild->NextShadowPeer();
+				passes++;
+			}
 			m_bRunning = false;
 		}
 	}

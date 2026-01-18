@@ -112,6 +112,9 @@ namespace LuaClasses
 
 		int GetWeaponID(lua_State *L);
 		int GetClassID(lua_State* L);
+
+		int GetFirstMoveChild(lua_State* L);
+		int GetNextMovePeer(lua_State* L);
 	};
 
 	namespace MaterialLua

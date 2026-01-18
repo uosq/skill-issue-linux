@@ -187,16 +187,16 @@ public:
 		return m_moveparent ? HandleAs<CBaseEntity*>(m_moveparent) : nullptr;
 	}
 
-	inline CBaseEntity* NextMovePeer()
+	/*inline CBaseEntity* NextMovePeer()
 	{
-		static int nOffset = netvars[fnv::HashConst("CBaseEntity->moveparent")] - 16;
+		static int nOffset = netvars[fnv::HashConst("CBaseEntity->m_Collision")] - 20;
 		auto m_pMovePeer = *reinterpret_cast<EHANDLE*>(uintptr_t(this) + nOffset);
 		return m_pMovePeer ? HandleAs<CBaseEntity*>(m_pMovePeer) : nullptr;
 	}
 
 	inline CBaseEntity* FirstMoveChild()
 	{
-		static int nOffset = netvars[fnv::HashConst("CBaseEntity->moveparent")] - 24;
+		static int nOffset = netvars[fnv::HashConst("CBaseEntity->m_Collision")] - 24;
 		auto m_pMoveChild = *reinterpret_cast<EHANDLE*>(uintptr_t(this) + nOffset);
 		return m_pMoveChild ? HandleAs<CBaseEntity*>(m_pMoveChild) : nullptr;
 	}
@@ -213,5 +213,5 @@ public:
 		}
 
 		return ent;
-	}
+	}*/
 };

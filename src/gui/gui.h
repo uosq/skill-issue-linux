@@ -85,12 +85,14 @@ static void DrawESPTab()
 	ImGui::TextUnformatted("Glow");
 	ImGui::SliderInt("Stencil", &settings.esp.stencil, 0, 10);
 	ImGui::SliderInt("Blur", &settings.esp.blur, 0, 10);
+	ImGui::Checkbox("Weapon", &settings.esp.weapon);
 
 	ImGui::Separator();
 
 	static float red[3] = {settings.colors.red_team.r()/255.0f, settings.colors.red_team.g()/255.0f, settings.colors.red_team.b()/255.0f};
 	static float blu[3] = {settings.colors.blu_team.r()/255.0f, settings.colors.blu_team.g()/255.0f, settings.colors.blu_team.b()/255.0f};
 	static float target[3] = {settings.colors.aimbot_target.r()/255.0f, settings.colors.aimbot_target.g()/255.0f, settings.colors.aimbot_target.b()/255.0f};
+	static float weapon[3] = {settings.colors.weapon.r()/255.0f, settings.colors.weapon.g()/255.0f, settings.colors.weapon.b()/255.0f};
 
 	ImGui::TextUnformatted("Colors");
 
@@ -102,6 +104,9 @@ static void DrawESPTab()
 
 	if (ImGui::ColorEdit3("Aimbot Target", target))
 		settings.colors.aimbot_target.SetColor(target[0]*255.0f, target[1]*255.0f, target[2]*255.0f, 255.0f);
+
+	if (ImGui::ColorEdit3("Weapon", weapon))
+		settings.colors.weapon.SetColor(weapon[0]*255.0f, weapon[1]*255.0f, weapon[2]*255.0f, 255.0f);
 
 	ImGui::EndGroup();
 }
