@@ -1,13 +1,6 @@
 #include "../../sdk/definitions/imaterial.h"
 #include "classes.h"
 
-extern "C"
-{
-	#include <lua5.4/lua.h>
-	#include <lua5.4/lua.hpp>
-	#include <lua5.4/lualib.h>
-}
-
 namespace LuaClasses
 {
 	namespace MaterialLua

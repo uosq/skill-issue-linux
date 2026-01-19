@@ -574,7 +574,7 @@ namespace LuaClasses
 			}
 
 			LuaEntity* le = CheckEntity(L, 1);
-			if (le->ent == nullptr)
+			if (le->ent == nullptr || !le->ent->IsPlayer())
 			{
 				lua_pushnil(L);
 				return 1;
@@ -596,7 +596,7 @@ namespace LuaClasses
 			lua_pushinteger(L, resource->m_iPlayerClass(index));
 			lua_setfield(L, -2, "m_iPlayerClass");
 			
-			lua_pushinteger(L, resource->m_bArenaSpectator(index));
+			lua_pushboolean(L, resource->m_bArenaSpectator(index));
 			lua_setfield(L, -2, "m_bArenaSpectator");
 			
 			lua_pushinteger(L, resource->m_iActiveDominations(index));

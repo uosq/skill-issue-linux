@@ -1,13 +1,6 @@
 #include "classes.h"
 #include "../../sdk/definitions/bitbuf.h"
-#include <lua5.4/lauxlib.h>
-
-extern "C"
-{
-	#include <lua5.4/lua.h>
-	#include <lua5.4/lua.hpp>
-	#include <lua5.4/lualib.h>
-}
+#include "pluto/lauxlib.h"
 
 namespace LuaClasses
 {

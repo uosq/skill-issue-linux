@@ -4,12 +4,8 @@
 #include "../../sdk/classes/entity.h"
 #include "../../sdk/definitions/inetmessage.h"
 
-extern "C"
-{
-	#include <lua5.4/lua.h>
-	#include <lua5.4/lua.hpp>
-	#include <lua5.4/lualib.h>
-}
+#include "pluto/lua.hpp"
+#include "pluto/lualib.h"
 
 // Reference instead of the real ones
 // Or else lua might cook us

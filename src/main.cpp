@@ -14,6 +14,9 @@
 #include "hooks/netchan_sendnetmsg.h"
 #include "hooks/sdl.h"
 #include "hooks/vulkan.h"
+#include "hooks/chlclient_levelinitpreentity.h"
+#include "hooks/chlclient_levelpostentity.h"
+
 #include "sdk/interfaces/interfaces.h"
 #include <sys/types.h>
 #include <unistd.h>
@@ -49,6 +52,8 @@ void init(void)
 	HookLevelShutdown();
 	HookShowItemsPickedUp();
 	HookSendNetMsg();
+	HookLevelInitPostEntity();
+	HookLevelInitPreEntity();
 
 	Lua::InitLua();
 }

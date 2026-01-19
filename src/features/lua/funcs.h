@@ -2,12 +2,8 @@
 
 #include "../../sdk/interfaces/interfaces.h"
 
-extern "C"
-{
-	#include <lua5.4/lua.h>
-	#include <lua5.4/lua.hpp>
-	#include <lua5.4/lualib.h>
-}
+#include "pluto/lua.hpp"
+#include "pluto/lualib.h"
 
 namespace LuaFuncs
 {
@@ -131,5 +127,17 @@ namespace LuaFuncs
 		int GetClientSignonState(lua_State* L);
 		int GetDeltaTick(lua_State* L);
 		int GetLastCommandAck(lua_State* L);
+	}
+
+	namespace input
+	{
+		extern const luaL_Reg inputlib[];
+		void luaopen_input(lua_State* L);
+		int IsButtonDown(lua_State* L);
+		int IsButtonPressed(lua_State* L);
+		int IsButtonReleased(lua_State* L);
+		int SetCursorAlwaysVisible(lua_State* L);
+		int IsCursorVisible(lua_State* L);
+		int GetPollTick(lua_State* L);
 	}
 }

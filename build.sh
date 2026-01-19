@@ -4,6 +4,24 @@ if [ ! -d build ]; then
 	mkdir build
 fi
 
+if [ ! -f build/libplutostatic.a ]; then
+	cd build
+
+	wget https://github.com/PlutoLang/Pluto/archive/refs/tags/0.12.2.zip
+	unzip "0.12.2.zip"
+	rm "0.12.2.zip"
+
+	cd Pluto-0.12.2
+
+	make -j PLAT=linux
+
+	cp src/libplutostatic.a ../
+
+	cd ../
+	rm -fr Pluto-0.12.2
+	cd ../
+fi
+
 if [ ! -f build/liblua.a ]; then
 	cd build
 
@@ -54,7 +72,7 @@ fi
 g++ -shared -fPIC \
 	-Wl,--whole-archive \
 	build/libGLEW.a \
-	build/liblua.a \
+	build/libplutostatic.a \
 	-Wl,--no-whole-archive \
 	src/main.cpp \
 	src/libsigscan.c \
