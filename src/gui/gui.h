@@ -421,6 +421,9 @@ static void DrawPlayerList()
 	{
 		for (const auto& entity : EntityList::m_vecPlayers)
 		{
+			if (entity == nullptr)
+				continue;
+
 			std::string name = entity->GetName();
 
 			switch (entity->m_iTeamNum())
