@@ -57,6 +57,7 @@ std::vector<ClassEntry> ParseFile(const std::string& path)
 	return result;
 }
 
+// outputs something like /home/abcdef/skill-issue-linux/build
 std::string GetThisDirectory()
 {
 	Dl_info info{};
@@ -64,9 +65,9 @@ std::string GetThisDirectory()
 		return {};
 
 	char path[PATH_MAX];
+	// no discard function
 	char* _ = realpath(info.dli_fname, path);
 
-	// dirname may modify its argument
 	return std::string(dirname(path));
 }
 
