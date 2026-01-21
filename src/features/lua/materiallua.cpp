@@ -64,6 +64,12 @@ namespace LuaClasses
 
 		LuaMaterial* push_material(lua_State* L, IMaterial* mat)
 		{
+			if (mat == nullptr)
+			{
+				lua_pushnil(L);
+				return nullptr;
+			}
+
 			LuaMaterial* v = static_cast<LuaMaterial*>(lua_newuserdata(L, sizeof(LuaMaterial)));
 			v->mat = mat;
 

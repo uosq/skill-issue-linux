@@ -20,8 +20,6 @@ inline detour_ctx_t SendNetMsg_ctx;
 
 DETOUR_DECL_TYPE(bool, originalSendNetMsg, void* ptr, INetMessage& msg, bool bForceReliable, bool bVoice);
 
-inline int BfWriteToBuffer(lua_State* L);
-
 inline bool Hooked_SendNetMsg(void* ptr, INetMessage& msg, bool bForceReliable, bool bVoice)
 {
 	if (LuaHookManager::HasHooks("SendNetMsg"))

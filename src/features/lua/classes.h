@@ -3,6 +3,7 @@
 #include "../../sdk/definitions/types.h"
 #include "../../sdk/classes/entity.h"
 #include "../../sdk/definitions/inetmessage.h"
+#include "../../sdk/definitions/inetchannel.h"
 
 #include "pluto/lua.hpp"
 #include "pluto/lualib.h"
@@ -31,6 +32,16 @@ struct LuaBuffer
 struct LuaNetMessage
 {
 	INetMessage* msg;
+};
+
+struct LuaTexture
+{
+	ITexture* tex;
+};
+
+struct LuaNetChannel
+{
+	CNetChannel* netchan;
 };
 
 namespace LuaClasses
@@ -111,6 +122,9 @@ namespace LuaClasses
 
 		int GetFirstMoveChild(lua_State* L);
 		int GetNextMovePeer(lua_State* L);
+
+		int AttributeHookValueInt(lua_State* L);
+		int AttributeHookValueFloat(lua_State* L);
 	};
 
 	namespace MaterialLua
@@ -120,7 +134,6 @@ namespace LuaClasses
 		LuaMaterial* push_material(lua_State* L, IMaterial* mat);
 
 		int Index(lua_State* L);
-		int NewIndex(lua_State* L);
 		int GC(lua_State* L);
 		int ToString(lua_State* L);
 
@@ -184,5 +197,72 @@ namespace LuaClasses
 		int IsReliable(lua_State* L);
 		int SetReliable(lua_State* L);
 		int GetGroup(lua_State* L);
+	}
+
+	namespace TextureLua
+	{
+		extern const luaL_Reg methods[];
+		void luaopen_texture(lua_State* L);
+		LuaTexture* push_texture(lua_State* L, ITexture* tex);
+
+		int Index(lua_State* L);
+		int GC(lua_State* L);
+		int ToString(lua_State* L);
+
+		int Delete(lua_State* L);
+		int GetName(lua_State* L);
+		int GetFlags(lua_State* L);
+		int GetActualWidth(lua_State* L);
+		int GetActualHeight(lua_State* L);
+		int IsTranslucent(lua_State* L);
+		int IsRenderTarget(lua_State* L);
+	}
+
+	namespace NetChannelLua
+	{
+		extern const luaL_Reg methods[];
+		void luaopen_netchannel(lua_State* L);
+		LuaNetChannel* push_netchannel(lua_State* L, CNetChannel* netchan);
+
+		int Index(lua_State* L);
+		int GC(lua_State* L);
+
+		int SetDataRate(lua_State* L);
+		int RegisterMessage(lua_State* L);
+		int SetTimeout(lua_State* L);
+		int SetChallengeNr(lua_State* L);
+		int Reset(lua_State* L);
+		int Clear(lua_State* L);
+		int Shutdown(lua_State* L);
+		int ProcessPlayback(lua_State* L);
+		int SendNetMsg(lua_State* L);
+		int SendData(lua_State* L);
+		int SendFile(lua_State* L);
+		int DenyFile(lua_State* L);
+		int SetChoked(lua_State* L);
+		int SendDatagram(lua_State* L);
+		int Transmit(lua_State* L);
+		int GetDropNumber(lua_State* L);
+		int GetSocket(lua_State* L);
+		int GetChallengeNr(lua_State* L);
+		int GetSequenceData(lua_State* L);
+		int SetSequenceData(lua_State* L);
+		int UpdateMessageStats(lua_State* L);
+		int CanPacket(lua_State* L);
+		int IsOverflowed(lua_State* L);
+		int IsTimedOut(lua_State* L);
+		int HasPendingReliableData(lua_State* L);
+		int SetFileTransmissionMode(lua_State* L);
+		int SetCompressionMode(lua_State* L);
+		int RequestFile(lua_State* L);
+		int GetTimeSinceLastReceived(lua_State* L);
+		int SetMaxBufferSize(lua_State* L);
+		int IsNull(lua_State* L);
+		int GetNumBitsWritten(lua_State* L);
+		int SetInterpolationAmount(lua_State* L);
+		int SetRemoteFramerate(lua_State* L);
+		int SetMaxRoutablePayloadSize(lua_State* L);
+		int GetMaxRoutablePayloadSize(lua_State* L);
+		int GetProtocolVersion(lua_State* L);
 	}
 }

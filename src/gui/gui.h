@@ -254,6 +254,8 @@ static void DrawLuaTab()
 	if (!init)
 	{
 		auto def = TextEditor::LanguageDefinition::Lua();
+		def.mKeywords.insert("begin");
+
 		const char* myIdentifiers[] =
 		{
 			"globals", "engine",

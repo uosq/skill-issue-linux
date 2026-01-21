@@ -2,6 +2,7 @@
 
 #include "../../sdk/interfaces/interfaces.h"
 
+#include "pluto/lua.h"
 #include "pluto/lua.hpp"
 #include "pluto/lualib.h"
 
@@ -87,14 +88,39 @@ namespace LuaFuncs
 	namespace render
 	{
 		extern const luaL_Reg renderlib[];
-
 		void luaopen_render(lua_State* L);
+
 		int GetColorModulation(lua_State* L);
 		int SetColorModulation(lua_State* L);
 		int GetBlend(lua_State* L);
 		int SetBlend(lua_State* L);
 		int ForcedMaterialOverride(lua_State* L);
 		int GetMaterialOverride(lua_State* L);
+		int DrawScreenSpaceRectangle(lua_State* L);
+		int DrawScreenSpaceQuad(lua_State* L);
+		int GetViewport(lua_State* L);
+		int DepthRange(lua_State* L);
+		int GetDepthRange(lua_State* L);
+		int SetRenderTarget(lua_State* L);
+		int GetRenderTarget(lua_State* L);
+		int ClearBuffers(lua_State* L);
+		int ClearColor3ub(lua_State* L);
+		int ClearColor4ub(lua_State* L);
+		int OverrideDepthEnable(lua_State* L);
+		int OverrideAlphaEnable(lua_State* L);
+		int OverrideColorEnable(lua_State* L);
+		int PushRenderTargetAndViewport(lua_State* L);
+		int PopRenderTargetAndViewport(lua_State* L);
+		int SetStencilEnable(lua_State* L);
+		int SetStencilFailOperation(lua_State* L);
+		int SetStencilZFailOperation(lua_State* L);
+		int SetStencilPassOperation(lua_State* L);
+		int SetStencilCompareFunction(lua_State* L);
+		int SetStencilReferenceValue(lua_State* L);
+		int SetStencilTestMask(lua_State* L);
+		int SetStencilWriteMask(lua_State* L);
+		int ClearStencilBufferRectangle(lua_State* L);
+		int Viewport(lua_State* L);
 	}
 
 	namespace materials
@@ -104,6 +130,10 @@ namespace LuaFuncs
 		void luaopen_materials(lua_State* L);
 
 		int Create(lua_State* L);
+		int FindMaterial(lua_State* L);
+		int FindTexture(lua_State* L);
+		int CreateTextureRenderTarget(lua_State* L);
+		int Enumerate(lua_State* L);
 	}
 
 	namespace client

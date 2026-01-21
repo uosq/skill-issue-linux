@@ -38,6 +38,8 @@ namespace LuaClasses
 			{"GetClassID", GetClassID},
 			{"GetFirstMoveChild", GetFirstMoveChild},
 			{"GetNextMovePeer", GetNextMovePeer},
+			{"AttributeHookInt", AttributeHookValueInt},
+			{"AttributeHookFloat", AttributeHookValueFloat},
 			{nullptr, nullptr}
 		};
 
@@ -747,6 +749,38 @@ namespace LuaClasses
 			}
 
 			push_entity(L, static_cast<CBaseEntity*>(movePeer));
+			return 1;
+		}
+
+		int AttributeHookValueInt(lua_State* L)
+		{
+			LuaEntity* le = CheckEntity(L, 1);
+			if (le->ent == nullptr)
+			{
+				lua_pushnil(L);
+				return 1;
+			}
+
+			const char* attrib = luaL_checkstring(L, 2);
+			int number = luaL_optinteger(L, 3, 1);
+			int value = static_cast<int>(AttributeHookValue(static_cast<float>(number), attrib, le->ent, nullptr, true));
+			lua_pushinteger(L, value);
+			return 1;
+		}
+
+		int AttributeHookValueFloat(lua_State* L)
+		{
+			LuaEntity* le = CheckEntity(L, 1);
+			if (le->ent == nullptr)
+			{
+				lua_pushnil(L);
+				return 1;
+			}
+
+			const char* attrib = luaL_checkstring(L, 2);
+			int number = luaL_optnumber(L, 3, 1.0f);
+			float value = AttributeHookValue(number, attrib, le->ent, nullptr, true);
+			lua_pushnumber(L, value);
 			return 1;
 		}
 	}

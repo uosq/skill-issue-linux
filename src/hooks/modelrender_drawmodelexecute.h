@@ -55,7 +55,7 @@ DECLARE_VTABLE_HOOK(DrawModelExecute, void, (IVModelRender* thisptr, const DrawM
 		lua_setfield(Lua::m_luaState, -2, "entity");
 
 		lua_pushcfunction(Lua::m_luaState, LuaCallDME);
-		lua_setfield(Lua::m_luaState, -2, "Execute");
+		lua_setfield(Lua::m_luaState, -2, "Call");
 
 		lua_pushboolean(Lua::m_luaState, Chams::m_bRunning);
 		lua_setfield(Lua::m_luaState, - 2, "is_chams");

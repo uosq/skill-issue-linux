@@ -28,7 +28,8 @@ sudo ./attach.sh
   * Linux
   * GCC/G++ (compiled with atleast standard C++17)
   * Glew
-  * Lua 5.4
+  * Lua 5.4.8
+  * Pluto 0.12.2
 
 Run `build.sh` to build the .so file
 

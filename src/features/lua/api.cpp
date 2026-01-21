@@ -33,6 +33,8 @@ namespace Lua
 		LuaClasses::MaterialLua::luaopen_material(m_luaState);
 		LuaClasses::BitBufferLua::luaopen_buffer(m_luaState);
 		LuaClasses::NetMessageLua::luaopen_netmessage(m_luaState);
+		LuaClasses::TextureLua::luaopen_texture(m_luaState);
+		LuaClasses::NetChannelLua::luaopen_netchannel(m_luaState);
 
 		luaregister_constants(m_luaState);
 
