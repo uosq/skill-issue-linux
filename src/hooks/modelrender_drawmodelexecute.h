@@ -71,7 +71,10 @@ DECLARE_VTABLE_HOOK(DrawModelExecute, void, (IVModelRender* thisptr, const DrawM
 		LuaHookManager::Call(Lua::m_luaState, "DrawModel", 1);
 	}
 
-	if (settings.esp.chams && Chams::ShouldHide(pInfo.entity_index))
+	if (Chams::m_bRunning || Glow::m_bRunning)
+		return originalDrawModelExecute(thisptr, state, pInfo, pCustomBoneToWorld);
+
+	if (Chams::ShouldHide(pInfo.entity_index) || Glow::ShouldHide(pInfo.entity_index))
 		return;
 
 	originalDrawModelExecute(thisptr, state, pInfo, pCustomBoneToWorld);
