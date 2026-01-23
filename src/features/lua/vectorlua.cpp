@@ -44,19 +44,34 @@ namespace LuaClasses
 			lua_pushcfunction(L, ToString);
 			lua_setfield(L, -2, "__tostring");
 
+			lua_pushcfunction(L, Add);
+			lua_setfield(L, -2, "__add");
+
+			lua_pushcfunction(L, Sub);
+			lua_setfield(L, -2, "__sub");
+
+			lua_pushcfunction(L, Div);
+			lua_setfield(L, -2, "__div");
+
+			lua_pushcfunction(L, Eq);
+			lua_setfield(L, -2, "__eq");
+
+			lua_pushcfunction(L, Unary);
+			lua_setfield(L, -2, "__unm");
+
 			lua_pushcfunction(L, Vector3);
 			lua_setglobal(L, "Vector3");
 		}
 
 		int Vector3(lua_State* L)
 		{
-			lua_Number x = luaL_optnumber(L, 1, 0.0);
-			lua_Number y = luaL_optnumber(L, 2, 0.0);
-			lua_Number z = luaL_optnumber(L, 3, 0.0);
+			float x = static_cast<float>(luaL_optnumber(L, 1, 0.0));
+			float y = static_cast<float>(luaL_optnumber(L, 2, 0.0));
+			float z = static_cast<float>(luaL_optnumber(L, 3, 0.0));
 
 			Vector* v = static_cast<Vector*>(lua_newuserdata(L, sizeof(Vector)));
-			//new (v) Vector((float)x, (float)y, (float)z);
-			v->Set(static_cast<float>(x), static_cast<float>(y), static_cast<float>(z));
+			new (v) Vector(x, y, z);
+			v->Set(x, y, z);
 
 			luaL_getmetatable(L, "Vector3");
 			lua_setmetatable(L, -2);
@@ -196,8 +211,8 @@ namespace LuaClasses
 		{
 			Vector* a = static_cast<Vector*>(luaL_checkudata(L, 1, "Vector3"));
 			Vector* b = static_cast<Vector*>(luaL_checkudata(L, 2, "Vector3"));
-			Vector dot = a->Dot(*b);
-			push_vector(L, dot);
+			float dot = a->Dot(*b);
+			lua_pushnumber(L, dot);
 			return 1;
 		}
 
@@ -205,8 +220,8 @@ namespace LuaClasses
 		{
 			Vector* a = static_cast<Vector*>(luaL_checkudata(L, 1, "Vector3"));
 			Vector* b = static_cast<Vector*>(luaL_checkudata(L, 2, "Vector3"));
-			Vector dist = a->DistTo(*b);
-			push_vector(L, dist);
+			float dist = a->DistTo(*b);
+			lua_pushnumber(L, dist);
 			return 1;
 		}
 
@@ -214,8 +229,8 @@ namespace LuaClasses
 		{
 			Vector* a = static_cast<Vector*>(luaL_checkudata(L, 1, "Vector3"));
 			Vector* b = static_cast<Vector*>(luaL_checkudata(L, 2, "Vector3"));
-			Vector dist = a->DistTo2D(*b);
-			push_vector(L, dist);
+			float dist = a->DistTo2D(*b);
+			lua_pushnumber(L, dist);
 			return 1;
 		}
 
@@ -237,6 +252,75 @@ namespace LuaClasses
 			push_vector(L, forward);
 			push_vector(L, right);
 			push_vector(L, up);
+			return 1;
+		}
+
+		int Add(lua_State* L)
+		{
+			Vector* a = static_cast<Vector*>(luaL_checkudata(L, 1, "Vector3"));
+			Vector* b = static_cast<Vector*>(luaL_checkudata(L, 2, "Vector3"));
+
+			Vector result = (*a) + (*b);
+			push_vector(L, result);
+			return 1;
+		}
+
+		int Sub(lua_State* L)
+		{
+			Vector* a = static_cast<Vector*>(luaL_checkudata(L, 1, "Vector3"));
+			Vector* b = static_cast<Vector*>(luaL_checkudata(L, 2, "Vector3"));
+
+			Vector result = (*a) - (*b);
+			push_vector(L, result);
+			return 1;
+		}
+
+		int Div(lua_State* L)
+		{
+			Vector* a = static_cast<Vector*>(luaL_checkudata(L, 1, "Vector3"));
+
+			if (lua_isnumber(L, 2))
+			{
+				float s = (float)luaL_checknumber(L, 2);
+				Vector result = *a / s;
+				push_vector(L, result);
+				return 1;
+			}
+
+			Vector* b = static_cast<Vector*>(luaL_checkudata(L, 2, "Vector3"));
+			Vector result = Vector(a->x / b->x, a->y / b->y, a->z / b->z);
+			push_vector(L, result);
+			return 1;
+		}
+
+		int Eq(lua_State* L)
+		{
+			Vector* a = static_cast<Vector*>(luaL_checkudata(L, 1, "Vector3"));
+			Vector* b = static_cast<Vector*>(luaL_checkudata(L, 2, "Vector3"));
+			lua_pushboolean(L, a->x == b->x && a->y == b->y && a->z == b->z);
+			return 1;
+		}
+
+		int Mul(lua_State* L)
+		{
+			Vector* a = static_cast<Vector*>(luaL_checkudata(L, 1, "Vector3"));
+
+			if (lua_isnumber(L, 2))
+			{
+				float scalar = luaL_checknumber(L, 2);
+				push_vector(L, (*a) * scalar);
+				return 1;
+			}
+
+			Vector* b = static_cast<Vector*>(luaL_checkudata(L, 2, "Vector3"));
+			push_vector(L, (*a) * (*b));
+			return 1;
+		}
+
+		int Unary(lua_State* L)
+		{
+			Vector* a = static_cast<Vector*>(luaL_checkudata(L, 1, "Vector3"));
+			push_vector(L, Vector(-(a->x), -(a->y), -(a->z)));
 			return 1;
 		}
 	}

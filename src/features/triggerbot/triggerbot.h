@@ -119,7 +119,7 @@ namespace Triggerbot
 		if (!AimbotUtils::IsValidEntity(trace.m_pEnt, localTeam))
 			return;
 
-		if (!helper::localplayer::CanShoot(pLocal, pWeapon))
+		if (!helper::localplayer::CanShoot(pLocal, pWeapon, pCmd))
 			return;
 
 		pCmd->buttons |= IN_ATTACK;

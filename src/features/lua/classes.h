@@ -5,6 +5,7 @@
 #include "../../sdk/definitions/inetmessage.h"
 #include "../../sdk/definitions/inetchannel.h"
 
+#include "pluto/lua.h"
 #include "pluto/lua.hpp"
 #include "pluto/lualib.h"
 
@@ -72,6 +73,14 @@ namespace LuaClasses
 		int DistTo2D(lua_State* L);
 		int ToAngle(lua_State* L);
 		int Angles(lua_State* L);
+
+		// operators
+		int Add(lua_State* L);
+		int Sub(lua_State* L);
+		int Div(lua_State* L);
+		int Eq(lua_State* L);
+		int Mul(lua_State* L);
+		int Unary(lua_State* L);
 	};
 
 	namespace EntityLua

@@ -145,6 +145,7 @@ namespace LuaFuncs
 		int SetConVar(lua_State* L);
 		int ChatSay(lua_State* L);
 		int Command(lua_State* L);
+		int IsClassMenuOpen(lua_State* L);
 	}
 
 	namespace clientstate
@@ -170,5 +171,29 @@ namespace LuaFuncs
 		int SetCursorAlwaysVisible(lua_State* L);
 		int IsCursorVisible(lua_State* L);
 		int GetPollTick(lua_State* L);
+	}
+
+	namespace menu
+	{
+		extern const luaL_Reg menulib[];
+		void luaopen_menu(lua_State* L);
+
+		int IsOpen(lua_State* L);
+		int SetOpen(lua_State* L);
+		int GetValue(lua_State* L);
+		int SetValue(lua_State* L);
+	}
+
+	namespace ui
+	{
+		extern const luaL_Reg uilib[];
+		void luaopen_ui(lua_State* L);
+		
+		int Begin(lua_State* L);
+		int Button(lua_State* L);
+		int Checkbox(lua_State* L);
+		int TextUnformatted(lua_State* L);
+		int SliderFloat(lua_State* L);
+		int End(lua_State* L);
 	}
 }

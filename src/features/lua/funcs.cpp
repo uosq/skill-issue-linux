@@ -10,6 +10,8 @@
 #include "../../sdk/definitions/inetchannel.h"
 #include "../../sdk/definitions/cclientstate.h"
 #include "../../sdk/definitions/itexture.h"
+#include "../../settings.h"
+#include "../../imgui/imgui.h"
 
 namespace LuaFuncs
 {
@@ -1253,6 +1255,7 @@ namespace LuaFuncs
 			{"SetConVar", SetConVar},
 			{"ChatSay", ChatSay},
 			{"Command", Command},
+			{"IsClassMenuOpen", IsClassMenuOpen},
 			{nullptr, nullptr}
 		};
 
@@ -1370,6 +1373,16 @@ namespace LuaFuncs
 				interfaces::Engine->ClientCmd(luaL_checkstring(L, 1));
 
 			return 0;
+		}
+
+		int IsClassMenuOpen(lua_State* L)
+		{
+			static ConVar* _cl_classmenuopen = interfaces::Cvar->FindVar("_cl_classmenuopen");
+			if (_cl_classmenuopen == nullptr)
+				return 0;
+
+			lua_pushboolean(L, _cl_classmenuopen->GetInt());
+			return 1;
 		}
 	}
 }
@@ -1571,6 +1584,190 @@ namespace LuaFuncs
 		int GetPollTick(lua_State* L)
 		{
 			lua_pushinteger(L, interfaces::InputSystem->GetPollTick());
+			return 1;
+		}
+	}
+}
+
+namespace LuaFuncs
+{
+	namespace menu
+	{
+		const luaL_Reg menulib[]
+		{
+			{"IsOpen", IsOpen},
+			{"SetOpen", SetOpen},
+			{"SetValue", SetValue},
+			{"GetValue", GetValue},
+			{nullptr, nullptr}
+		};
+
+		int SetValue(lua_State* L)
+		{
+			const char* key = luaL_checkstring(L, 1);
+			auto it = g_SettingsMap.find(key);
+			if (it == g_SettingsMap.end())
+				return 0;
+
+			SettingEntry& e = it->second;
+
+			switch (e.type)
+			{
+				case SettingType::BOOL:
+				*reinterpret_cast<bool*>(e.ptr) = lua_toboolean(L, 2);
+				break;
+
+				case SettingType::INT:
+				*reinterpret_cast<int*>(e.ptr) = luaL_checkinteger(L, 2);
+				break;
+
+				case SettingType::FLOAT:
+				*reinterpret_cast<float*>(e.ptr) = (float)luaL_checknumber(L, 2);
+				break;
+
+				case SettingType::STRING:
+				*reinterpret_cast<std::string*>(e.ptr) = luaL_checkstring(L, 2);
+				break;
+			}
+
+			return 0;
+		}
+
+		int GetValue(lua_State* L)
+		{
+			const char* key = luaL_checkstring(L, 1);
+			auto it = g_SettingsMap.find(key);
+			if (it == g_SettingsMap.end())
+				return 0;
+
+			SettingEntry& e = it->second;
+
+			switch (e.type)
+			{
+				case SettingType::BOOL:
+				lua_pushboolean(L, *reinterpret_cast<bool*>(e.ptr));
+				break;
+
+				case SettingType::INT:
+				lua_pushinteger(L, *reinterpret_cast<bool*>(e.ptr));
+				break;
+
+				case SettingType::FLOAT:
+				lua_pushnumber(L, *reinterpret_cast<bool*>(e.ptr));
+				break;
+
+				case SettingType::STRING:
+				lua_pushstring(L, (reinterpret_cast<std::string*>(e.ptr)->c_str()));
+				break;
+			}
+
+			return 1;
+		}
+
+		void luaopen_menu(lua_State* L)
+		{
+			lua_newtable(L);
+			luaL_setfuncs(L, menulib, 0);
+			lua_setglobal(L, "menu");
+
+			RegisterSettings();
+		}
+
+		int IsOpen(lua_State* L)
+		{
+			lua_pushboolean(L, settings.menu_open);
+			return 1;
+		}
+
+		int SetOpen(lua_State* L)
+		{
+			int open = luaL_checkinteger(L, 1);
+			settings.menu_open = open;
+			interfaces::Surface->SetCursorAlwaysVisible(open);
+			return 0;
+		}
+	}
+}
+
+namespace LuaFuncs
+{
+	namespace ui
+	{
+		const luaL_Reg uilib[]
+		{
+			{"Begin", Begin},
+			{"Button", Button},
+			{"Checkbox", Checkbox},
+			{"TextUnformatted", TextUnformatted},
+			{"SliderFloat", SliderFloat},
+			{"End", End},
+			{nullptr, nullptr}
+		};
+
+		void luaopen_ui(lua_State* L)
+		{
+			lua_newtable(L);
+			luaL_setfuncs(L, uilib, 0);
+			lua_setglobal(L, "ui");
+		}
+		
+		int Begin(lua_State* L)
+		{
+			const char* name = luaL_checkstring(L, 1);
+			if (strcmp(name, "Skill Issue") == 0)
+			{
+				luaL_error(L, "Can't use the menu's name!");
+				return 0;
+			}
+
+			int flags = luaL_optinteger(L, 2, 0);
+
+			lua_pushboolean(L, ImGui::Begin(name, nullptr, flags));
+			return 1;
+		}
+
+		int Button(lua_State* L)
+		{
+			const char* label = luaL_checkstring(L, 1);
+			lua_pushboolean(L, ImGui::Button(label));
+			return 1;
+		}
+
+		int Checkbox(lua_State* L)
+		{
+			const char* label = luaL_checkstring(L, 1);
+			luaL_checktype(L, 2, LUA_TBOOLEAN);
+
+			bool value = lua_toboolean(L, 2);
+
+			bool changed = ImGui::Checkbox(label, &value);
+
+			lua_pushboolean(L, changed);
+			lua_pushboolean(L, value);
+			return 2;
+		}
+
+		int TextUnformatted(lua_State* L)
+		{
+			const char* text = luaL_checkstring(L, 1);
+			ImGui::TextUnformatted(text);
+			return 1;
+		}
+
+		int SliderFloat(lua_State* L)
+		{
+			const char* label = luaL_checkstring(L, 1);
+			float value = luaL_checknumber(L, 2);
+			float min = luaL_checknumber(L, 3);
+			float max = luaL_checknumber(L, 4);
+			lua_pushboolean(L, ImGui::SliderFloat(label, &value, min, max));
+			lua_pushnumber(L, value);
+			return 2;
+		}
+
+		int End(lua_State* L)
+		{
+			ImGui::End();
 			return 1;
 		}
 	}

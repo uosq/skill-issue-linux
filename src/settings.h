@@ -4,6 +4,19 @@
 #include <cstdint>
 #include <string>
 #include <unistd.h>
+#include <unordered_map>
+
+enum class SettingType {
+    BOOL,
+    INT,
+    FLOAT,
+    STRING
+};
+
+struct SettingEntry {
+    void* ptr;
+    SettingType type;
+};
 
 enum class PitchMode
 {
@@ -20,6 +33,13 @@ enum class YawMode
 	BACK, FORWARD,
 	SPIN_LEFT, SPIN_RIGHT,
 	JITTER,
+};
+
+enum class MeleeMode
+{
+	NONE = 0,
+	LEGIT,
+	RAGE
 };
 
 struct Settings_Antiaim
@@ -58,6 +78,7 @@ struct Settings_Aimbot
 	bool ignoreubered = false;
 	bool ignorehoovy = false;
 	bool ignorebonked = false;
+	MeleeMode melee = MeleeMode::NONE;
 };
 
 struct Settings_Misc
@@ -73,7 +94,6 @@ struct Settings_Misc
 	bool bhop = false;
 	bool accept_item_drop = false;
 	bool playerlist = false;
-	bool insecure_mode_bypass = false;
 
 	float viewmodel_offset[3] = {0.0, 0.0, 0.0};
 };
@@ -107,3 +127,6 @@ struct Settings
 };
 
 extern Settings settings;
+extern std::unordered_map<std::string, SettingEntry> g_SettingsMap;
+
+void RegisterSettings(void);

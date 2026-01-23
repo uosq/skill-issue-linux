@@ -11,6 +11,7 @@
 #include "netvar_parser.h"
 #include "../features/entitylist/entitylist.h"
 #include "../sdk/definitions/eteam.h"
+#include "../features/aimbot/melee/aimbot_melee.h"
 
 static TextEditor editor;
 
@@ -29,25 +30,25 @@ static void DrawTabButtons(int &tab)
 {
 	ImGui::BeginGroup();
 
-	if (ImGui::Button("Aimbot", ImVec2(-1, 0)))
+	if (ImGui::Button("AIMBOT", ImVec2(-1, 0)))
 		tab = TAB_AIMBOT;
 
-	if (ImGui::Button("Trigger", ImVec2(-1, 0)))
+	if (ImGui::Button("TRIGGER", ImVec2(-1, 0)))
 		tab = TAB_TRIGGER;
 
 	if (ImGui::Button("ESP", ImVec2(-1, 0)))
 		tab = TAB_ESP;
 
-	if (ImGui::Button("Misc", ImVec2(-1, 0)))
+	if (ImGui::Button("MISC", ImVec2(-1, 0)))
 		tab = TAB_MISC;
 
-	if (ImGui::Button("Antiaim", ImVec2(-1, 0)))
+	if (ImGui::Button("ANTIAIM", ImVec2(-1, 0)))
 		tab = TAB_ANTIAIM;
 
-	if (ImGui::Button("Lua", ImVec2(-1, 0)))
+	if (ImGui::Button("PLUTO", ImVec2(-1, 0)))
 		tab = TAB_LUA;
 
-	if (ImGui::Button("Netvars", ImVec2(-1, 0)))
+	if (ImGui::Button("NETVARS", ImVec2(-1, 0)))
 		tab = TAB_NETVARS;
 
 	ImGui::EndGroup();
@@ -64,6 +65,20 @@ static void DrawAimbotTab()
 	ImGui::Checkbox("Draw FOV Indicator", &settings.aimbot.draw_fov_indicator);
 	ImGui::SliderFloat("Fov", &settings.aimbot.fov, 0.0f, 180.0f);
 	ImGui::SliderFloat("Max Sim Time", &settings.aimbot.max_sim_time, 0.0f, 5.0f);
+
+	if (ImGui::BeginCombo("Melee Aimbot", GetMeleeModeName().c_str()))
+	{
+		if (ImGui::Selectable("None"))
+			settings.aimbot.melee = MeleeMode::NONE;
+
+		if (ImGui::Selectable("Legit"))
+			settings.aimbot.melee = MeleeMode::LEGIT;
+
+		if (ImGui::Selectable("Rage"))
+			settings.aimbot.melee = MeleeMode::RAGE;
+
+		ImGui::EndCombo();
+	}
 
 	ImGui::Separator();
 
@@ -140,7 +155,6 @@ static void DrawMiscTab()
 	ImGui::Checkbox("Bhop", &settings.misc.bhop);
 	ImGui::Checkbox("Backpack Expander", &settings.misc.backpack_expander);
 	ImGui::Checkbox("Accept Item Drops", &settings.misc.accept_item_drop);
-	ImGui::Checkbox("Insecure Bypass", &settings.misc.insecure_mode_bypass);
 
 	ImGui::Separator();
 
@@ -150,7 +164,6 @@ static void DrawMiscTab()
 	ImGui::Separator();
 
 	ImGui::SliderFloat3("Viewmodel Offset", settings.misc.viewmodel_offset, -20, 20.0f );
-
 
 	ImGui::EndGroup();
 }
@@ -264,18 +277,32 @@ static void DrawLuaTab()
 	static bool init = false;
 	if (!init)
 	{
-		auto def = TextEditor::LanguageDefinition::Lua();
-		def.mKeywords.insert("begin");
+		const char* keywords[]
+		{
+			"begin", "switch", "continue", "number",
+			"int", "float", "boolean", "bool",
+			"function", "table", "userdata", "nil",
+			"any", "void", "enum", "export",
+			"class", "new", "parent", "try",
+			"catch",
+		};
 
-		const char* myIdentifiers[] =
+		const char* myIdentifiers[]
 		{
 			"globals", "engine",
 			"hooks", "Vector3",
 			"entities", "draw",
 			"render", "materials",
 			"client", "BitBuffer",
-			"clientstate"
+			"clientstate", "ui",
+			"menu"
 		};
+
+		auto def = TextEditor::LanguageDefinition::Lua();
+		def.mPreprocChar = '$';
+
+		for (auto& k: keywords)
+			def.mKeywords.insert(k);
 
 		TextEditor::Identifier id;
 		id.mDeclaration = "Custom Library";

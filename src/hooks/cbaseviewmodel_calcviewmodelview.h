@@ -36,7 +36,7 @@ inline void HookedCalcViewModelView(void* thisptr, CBaseEntity* owner, const Vec
 			LuaClasses::VectorLua::push_vector(Lua::m_luaState, position);
 			LuaClasses::VectorLua::push_vector(Lua::m_luaState, angle);
 
-			LuaHookManager::Call(Lua::m_luaState, "CalcViewModelView", 2, false);
+			LuaHookManager::Call(Lua::m_luaState, "CalcViewModelView", 2);
 		}
 
 		if (settings.aimbot.viewmodelaim)

@@ -27,8 +27,10 @@
 #include "../definitions/imovehelper.h"
 #include "../definitions/ivmodelinfoclient.h"
 
-using AttributeHookValueFn = float(*)(float, const char*, CBaseEntity*, void*, bool);
+using AttributeHookValueFn = float(*)(float defaultValue, const char* attribName, CBaseEntity* pEntity, void*, bool);
 extern AttributeHookValueFn AttributeHookValue;
+
+//using AttributeHookValueInt = int(*)(int)
 
 extern HCursor cursor;
 

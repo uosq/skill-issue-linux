@@ -1,6 +1,7 @@
 #pragma once
 
 #include "cusercmd.h"
+#include "ipanel.h"
 #include "ivengineclient.h"
 #include "types.h"
 
@@ -8,8 +9,6 @@ class CUserCmd;
 class HeadtrackMovementMode_t;
 class CBaseEntity;
 class CBasePlayer;
-
-class Panel;
 class AnimationController;
 
 class IClientMode

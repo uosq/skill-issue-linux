@@ -4,14 +4,15 @@
 #include "../../sdk/helpers/helper.h"
 #include "../../features/esp/esp.h"
 #include "../entitylist/entitylist.h"
+#include <unordered_set>
 #include <vector>
 
 namespace Chams
 {
 	static bool m_bMatLoaded = false;
 	static IMaterial* m_mFlatMat = nullptr;
-	static std::unordered_map<int, bool> m_DrawEnts;
 	static bool m_bRunning = false;
+	static std::unordered_set<int> m_Entities;
 
 	static bool Init()
 	{
@@ -32,13 +33,11 @@ namespace Chams
 
 	static bool ShouldHide(int entindex)
 	{
-		return m_DrawEnts.find(entindex) != m_DrawEnts.end();
+		return m_Entities.find(entindex) != m_Entities.end();
 	}
 
 	static void DrawPlayers()
 	{
-		m_DrawEnts.clear();
-
 		float savedColor[3], savedBlend;
 		savedBlend = interfaces::RenderView->GetBlend();
 
@@ -65,13 +64,15 @@ namespace Chams
 
 			interfaces::RenderView->SetColorModulation(flColor);
 			m_bRunning = true;
+			m_Entities.insert(entity->GetIndex());
 			entity->DrawModel(STUDIO_RENDER | STUDIO_NOSHADOWS);
 
 			int passes = 0;
 			auto moveChild = entity->FirstShadowChild();
 			while (moveChild != nullptr && passes <= 32)
 			{
-				if (settings.esp.weapon && static_cast<CBaseEntity*>(moveChild)->IsWeapon())
+				CBaseEntity* attachment = static_cast<CBaseEntity*>(moveChild);
+				if (settings.esp.weapon && attachment->IsWeapon())
 				{
 					color = settings.colors.weapon;
 					flColor[0] = color.r()/255.0f;
@@ -80,10 +81,12 @@ namespace Chams
 					interfaces::RenderView->SetColorModulation(flColor);
 				}
 
+				m_Entities.insert(attachment->GetIndex());
 				moveChild->DrawModel(STUDIO_RENDER | STUDIO_NOSHADOWS);
 				moveChild = moveChild->NextShadowPeer();
 				passes++;
 			}
+
 			m_bRunning = false;
 		}
 
@@ -94,6 +97,9 @@ namespace Chams
 
 	static void Run()
 	{
+		if (!m_Entities.empty())
+			m_Entities.clear();
+
 		m_bRunning = false;
 
 		if (!settings.esp.chams)

@@ -14,34 +14,49 @@
 
 #include "../utils/utils.h"
 #include "../../entitylist/entitylist.h"
+#include <climits>
 
 struct AimbotMelee
 {
 	inline void Run(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd, AimbotState& state)
 	{
-		if (pWeapon->GetWeaponID() == TF_WEAPON_KNIFE)
+		if (settings.aimbot.melee == MeleeMode::NONE || pWeapon->GetWeaponID() == TF_WEAPON_KNIFE)
 			return;
+		
+		std::vector<PotentialTarget> targets;
 
-		Vector shootPos = pLocal->GetCenter();
-		float range = 48.0f * 2.0f;
+		bool is_a_sword = static_cast<int>(AttributeHookValue(0, "is_a_sword", pWeapon, nullptr, true));
+		float range = (is_a_sword ? 72.0f : 48.0f) * 1.9f;
+		int localTeam = pLocal->m_iTeamNum();
+
+		Vector shootPos = pLocal->GetEyePos();
+		
+		CGameTrace trace;
+		CTraceFilterHitscan filter;
+		filter.pSkip = pLocal;
+		
+		Vector swingMins, swingMaxs;
+		float fBoundsScale = AttributeHookValue(1.0f, "melee_bounds_multiplier", pWeapon, nullptr, true);
+		swingMins.Set(-18 * fBoundsScale, -18 * fBoundsScale, -18 * fBoundsScale);
+		swingMaxs.Set(18 * fBoundsScale, 18 * fBoundsScale, 18 * fBoundsScale);
+
+		Vector targetAngle;
+		CBaseEntity* target = nullptr;
+		float highestDot = 0.0f;
+
+		MeleeMode mode = settings.aimbot.melee;
+		float fovRad = DEG2RAD(mode == MeleeMode::LEGIT ? 90.0f : 180.0f);
+		float minDot = cosf(fovRad);
+
+		Vector viewAngles, viewForward;
+		interfaces::Engine->GetViewAngles(viewAngles);
+		Math::AngleVectors(viewAngles, &viewForward);
+		viewForward.Normalize();
 
 		for (const auto& enemy : EntityList::GetEnemies())
 		{
-			if (enemy->IsDormant())
+			if (!AimbotUtils::IsValidEntity(enemy, localTeam))
 				continue;
-
-			if (enemy->IsPlayer())
-			{
-				CTFPlayer* player = static_cast<CTFPlayer*>(enemy);
-				if (!player->IsAlive())
-					continue;
-			}
-			else if (enemy->IsBuilding())
-			{
-				CBaseObject* building = static_cast<CBaseObject*>(enemy);
-				if (building->m_iHealth() <= 0)
-					continue;
-			}
 
 			Vector hitPos = enemy->GetCenter();
 			Vector dir = hitPos - shootPos;
@@ -49,20 +64,45 @@ struct AimbotMelee
 			if (distance > range)
 				continue;
 
-			if (settings.aimbot.autoshoot)
-				pCmd->buttons |= IN_ATTACK;
+			float dot = dir.Dot(viewForward);
+			if (dot < minDot)
+				continue;
 
-			if (pWeapon->m_flSmackTime() != -1.0f && interfaces::GlobalVars->curtime >= pWeapon->m_flSmackTime())
-			{
-				Vector angle = dir.ToAngle();
-				state.angle = angle;
-				pCmd->viewangles = angle;
-				state.shouldSilent = true;
-				EntityList::m_pAimbotTarget = enemy;
-			}
+			helper::engine::TraceHull(shootPos, shootPos + (dir * range), swingMins, swingMaxs, MASK_SHOT_HULL, &filter, &trace);
+			if (!trace.DidHit() || !trace.m_pEnt || trace.m_pEnt != enemy)
+				continue;
 
-			state.running = true;
-			break;
+			targetAngle = dir.ToAngle();
+			target = enemy;
+			highestDot = dot;
 		}
+
+		if (target == nullptr)
+			return;
+
+		if (settings.aimbot.autoshoot)
+			pCmd->buttons |= IN_ATTACK;
+
+		if (helper::localplayer::IsAttacking(pLocal, pWeapon, pCmd))
+		{
+			Vector angle = targetAngle;
+			state.angle = angle;
+			pCmd->viewangles = angle;
+			state.shouldSilent = true;
+		}
+
+		EntityList::m_pAimbotTarget = target;
+		state.running = true;
 	}
 };
+
+inline std::string GetMeleeModeName()
+{
+	switch(settings.aimbot.melee)
+	{
+		case MeleeMode::NONE: return "NONE";
+		case MeleeMode::LEGIT: return "LEGIT";
+		case MeleeMode::RAGE: return "RAGE";
+		default: return "UNKNOWN";
+        }
+}

@@ -8,7 +8,7 @@ namespace Lua
 {
 	lua_State* m_luaState = nullptr;
 
-	void InitLua()
+	void InitPluto()
 	{
 		m_luaState = luaL_newstate();
 		luaL_openlibs(m_luaState);
@@ -26,6 +26,8 @@ namespace Lua
 		LuaFuncs::client::luaopen_client(m_luaState);
 		LuaFuncs::clientstate::luaopen_clientstate(m_luaState);
 		LuaFuncs::input::luaopen_input(m_luaState);
+		LuaFuncs::menu::luaopen_menu(m_luaState);
+		LuaFuncs::ui::luaopen_ui(m_luaState);
 
 		// open classes
 		LuaClasses::VectorLua::luaopen_vector(m_luaState);
@@ -38,10 +40,10 @@ namespace Lua
 
 		luaregister_constants(m_luaState);
 
-		consoleText += "Lua initialized\n";
+		consoleText += "Pluto initialized\n";
 	}
 
-	void CloseLua()
+	void ClosePluto()
 	{
 		lua_close(m_luaState);
 	}

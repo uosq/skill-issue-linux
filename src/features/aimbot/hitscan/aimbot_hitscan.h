@@ -108,7 +108,7 @@ struct AimbotHitscan
 		if (settings.aimbot.autoshoot)
 			pCmd->buttons |= IN_ATTACK;
 
-		if (pWeapon->CanPrimaryAttack() && (pCmd->buttons & IN_ATTACK))
+		if (helper::localplayer::IsAttacking(pLocal, pWeapon, pCmd))
 		{
 			auto target = targets.front();
 			Vector angle = target.dir.ToAngle();

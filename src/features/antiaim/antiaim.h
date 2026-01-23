@@ -84,7 +84,7 @@ namespace Antiaim
 		if (!pLocal->IsAlive() || pLocal->IsGhost() || pLocal->IsTaunting())
 			return;
 
-		if (helper::localplayer::CanShoot(pLocal, pWeapon) && (pCmd->buttons & IN_ATTACK))
+		if (helper::localplayer::IsAttacking(pLocal, pWeapon, pCmd))
 			return;
 
 		constexpr int maxChoke = 2; // fake on 2 ticks, real on 1

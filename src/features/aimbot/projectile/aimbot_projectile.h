@@ -439,7 +439,7 @@ struct AimbotProjectile
 			if (settings.aimbot.autoshoot)
 				pCmd->buttons |= IN_ATTACK;
 
-			if (helper::localplayer::CanShoot(pLocal, pWeapon))
+			if (helper::localplayer::CanShoot(pLocal, pWeapon, pCmd))
 			{
 				if ((pCmd->buttons & IN_ATTACK))
 				{
@@ -450,7 +450,7 @@ struct AimbotProjectile
 						case TF_WEAPON_PIPEBOMBLAUNCHER:
 						{
 							float flchargebegintime = static_cast<CTFPipebombLauncher*>(pWeapon)->m_flChargeBeginTime();
-							interfaces::Cvar->ConsolePrintf("Charge: %f\n", flchargebegintime);
+							//interfaces::Cvar->ConsolePrintf("Charge: %f\n", flchargebegintime);
 
 							float charge = flchargebegintime > 0.f ? TICKS_TO_TIME(pLocal->GetTickBase()) - flchargebegintime : 0.f;
 							if (charge > 0.0f)
@@ -462,12 +462,15 @@ struct AimbotProjectile
 					}
 				}
 
-				//state.targetPath = path;
+			}
+
+			if (helper::localplayer::IsAttacking(pLocal, pWeapon, pCmd))
+			{
 				pCmd->viewangles = angle;
 				state.angle = angle;
 				state.shouldSilent = true;
 			}
-
+			
 			EntityList::m_pAimbotTarget = target.entity;
 			state.running = true;
 			return;

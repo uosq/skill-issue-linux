@@ -15,6 +15,7 @@
 #include "../settings.h"
 #include "../gui/gui.h"
 #include "../features/esp/esp.h"
+#include "../features/lua/hooks.h"
 
 using SwapWindowFn = void(*)(SDL_Window* window);
 static SwapWindowFn original_SwapWindow = nullptr;
@@ -168,6 +169,9 @@ inline void Hooked_SwapWindow(SDL_Window* window)
   	ImGui::NewFrame();
 
 	cursor = ImGui::GetMouseCursor();
+
+	if (LuaHookManager::HasHooks("ImGui"))
+		LuaHookManager::Call(Lua::m_luaState, "ImGui");
 
 	if (settings.misc.spectatorlist)
 		DrawSpectatorList();

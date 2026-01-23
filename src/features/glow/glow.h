@@ -4,6 +4,7 @@
 #include "../../sdk/helpers/helper.h"
 #include "../../sdk/definitions/itexture.h"
 #include "../../features/esp/esp.h"
+#include <unordered_set>
 #include <vector>
 
 struct GlowMaterials
@@ -21,6 +22,7 @@ namespace Glow
 {
 	static GlowMaterials m_Materials;
 	static std::vector<CBaseEntity*> glowEnts = {};
+	static std::unordered_set<int> m_Entities = {};
 	static bool m_bRunning = false;
 
 	static void Init()
@@ -28,8 +30,6 @@ namespace Glow
 		static bool initialized = false;
 		if (initialized)
 			return;
-
-		glowEnts = {};
 
 		m_Materials.glowColor = interfaces::MaterialSystem->FindMaterial("dev/glow_color", TEXTURE_GROUP_OTHER, true);
 		
@@ -80,6 +80,11 @@ namespace Glow
 		);
 
 		initialized = true;
+	}
+
+	static bool ShouldHide(int entindex)
+	{
+		return m_Entities.find(entindex) != m_Entities.end();
 	}
 
 	static void DrawEntities()
@@ -144,14 +149,15 @@ namespace Glow
 	static void Run()
 	{
 		m_bRunning = false;
+		if (!m_Entities.empty())
+			m_Entities.clear();
+		if (!glowEnts.empty())
+			glowEnts.clear();
 
 		if (settings.esp.blur == 0 && settings.esp.stencil == 0)
 			return;
 
 		Init();
-		
-		if (!glowEnts.empty())
-			glowEnts.clear();
 		
 		auto pRenderContext = interfaces::MaterialSystem->GetRenderContext();
 		if (!pRenderContext)
@@ -235,6 +241,7 @@ namespace Glow
 			pRenderContext->SetStencilFailOperation(STENCILOPERATION_KEEP);
 			pRenderContext->SetStencilZFailOperation(STENCILOPERATION_KEEP);
 
+			// this is from amalgam
 			if (settings.esp.stencil)
 			{
 				int side = (settings.esp.stencil + 1) / 2;
