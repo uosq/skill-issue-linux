@@ -28,23 +28,90 @@ enum class HitscanOffset
 
 struct AimbotHitscan
 {
-	HitscanOffset GetInitialOffset(CTFWeaponBase* pWeapon)
+	HitscanOffset GetInitialOffset(CTFPlayer* pLocal, CTFWeaponBase* pWeapon)
 	{
 		if (pWeapon == nullptr)
 			return HitscanOffset::CHEST;
 
 		switch(pWeapon->GetWeaponID())
 		{
-			case TF_WEAPON_SNIPERRIFLE:
-			case TF_WEAPON_SNIPERRIFLE_CLASSIC:
-			case TF_WEAPON_SNIPERRIFLE_DECAP:
+			case TF_WEAPON_REVOLVER:
 			{
-				if (static_cast<CTFSniperRifle*>(pWeapon)->m_flChargedDamage() > 150)
+				if (pWeapon->CanAmbassadorHeadshot())
 					return HitscanOffset::HEAD;
 			}
+
+			case TF_WEAPON_SNIPERRIFLE:
+			case TF_WEAPON_SNIPERRIFLE_DECAP:
+			{
+				if (pLocal->InCond(TF_COND_ZOOMED) && static_cast<CTFSniperRifle*>(pWeapon)->m_flChargedDamage() > 50.0f)
+				return HitscanOffset::HEAD;
+			}
+			//case TF_WEAPON_SNIPERRIFLE_CLASSIC:
 		}
 		
 		return HitscanOffset::CHEST;
+	}
+
+	bool GetShotPosition(CTFPlayer* pLocal, CBaseEntity* pTarget, CTFWeaponBase* pWeapon, Vector eyePos, Vector& shotPosition)
+	{
+		matrix3x4 bones[MAXSTUDIOBONES];
+		if (!pTarget->SetupBones(bones, MAXSTUDIOBONES, BONE_USED_BY_ANYTHING, interfaces::GlobalVars->curtime))
+			return false;
+
+		CGameTrace trace;
+		CTraceFilterHitscan filter;
+		filter.pSkip = pLocal;
+
+		auto initialOffset = GetInitialOffset(pLocal, pWeapon);
+		switch(initialOffset)
+		{
+			case HitscanOffset::HEAD:
+			{
+				Vector boneCenter;
+				static_cast<CBaseAnimating*>(pTarget)->GetHitboxCenter(bones, HITBOX_HEAD, boneCenter);
+
+				helper::engine::Trace(eyePos, boneCenter, MASK_SHOT | CONTENTS_HITBOX, &filter, &trace);
+				if (!trace.DidHit() || trace.m_pEnt != pTarget)
+					break;
+
+				shotPosition = boneCenter;
+				return true;
+			}
+			case HitscanOffset::CHEST:
+			{
+				Vector boneCenter;
+				static_cast<CBaseAnimating*>(pTarget)->GetHitboxCenter(bones, HITBOX_SPINE3, boneCenter);
+
+				helper::engine::Trace(eyePos, boneCenter, MASK_SHOT | CONTENTS_HITBOX, &filter, &trace);
+				if (!trace.DidHit() || trace.m_pEnt != pTarget)
+					break;
+
+				shotPosition = boneCenter;
+				return true;
+			}
+                }
+
+                for (int i = 0; i < HITBOX_LEFT_UPPERARM; i++)
+		{
+			Vector bonePos;
+			if (!static_cast<CBaseAnimating*>(pTarget)->GetHitboxCenter(bones, i, bonePos))
+				continue;
+
+			helper::engine::Trace(eyePos, bonePos, MASK_SHOT | CONTENTS_HITBOX, &filter, &trace);
+			if (!trace.DidHit() || trace.m_pEnt != pTarget)
+				continue;
+
+			shotPosition = bonePos;
+			return true;
+		}
+
+		helper::engine::Trace(eyePos, pTarget->GetCenter(), MASK_SHOT | CONTENTS_HITBOX, &filter, &trace);
+		if (!trace.DidHit() || trace.m_pEnt != pTarget)
+			return false;
+
+		shotPosition = pTarget->GetCenter();
+		return true;
 	}
 
 	void Run(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd, AimbotState& state)
@@ -75,7 +142,7 @@ struct AimbotHitscan
 			Vector pos;
 			{
 				if (entity->IsPlayer())
-					pos = static_cast<CTFPlayer*>(entity)->GetCenter();
+					GetShotPosition(pLocal, entity, pWeapon, shootPos, pos);
 				else if (entity->IsBuilding())
 					pos = reinterpret_cast<CBaseObject*>(entity)->GetCenter();
 				else
@@ -93,9 +160,9 @@ struct AimbotHitscan
 			if (dot < minDot)
 				continue;
 
-			helper::engine::Trace(shootPos, pos, MASK_SHOT | CONTENTS_HITBOX, &filter, &trace);
-			if (!trace.DidHit() || !trace.m_pEnt || trace.m_pEnt != entity)
-				continue;
+			/*helper::engine::Trace(shootPos, pos, MASK_SHOT | CONTENTS_HITBOX, &filter, &trace);
+			if (!trace.DidHit() || trace.m_pEnt != entity)
+				continue;*/
 
 			targets.emplace_back(PotentialTarget{dir, pos, distance, dot, entity});
 		}

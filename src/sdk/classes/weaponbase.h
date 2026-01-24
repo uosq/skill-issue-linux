@@ -187,6 +187,13 @@ public:
 	{
 		return GetSlot() == SLOT_MELEE;
 	}
+
+	bool CanAmbassadorHeadshot()
+	{
+		if (GetWeaponID() == TF_WEAPON_REVOLVER && AttributeHookValue(0, "set_weapon_mode", this, nullptr, true))
+			return (interfaces::GlobalVars->curtime - m_flLastFireTime()) > 1.0f;
+		return false;
+	}
 };
 
 class CTFKnife : public CTFWeaponBase

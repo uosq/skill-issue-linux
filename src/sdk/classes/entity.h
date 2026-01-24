@@ -11,8 +11,6 @@
 
 #define MULTIPLAYER_BACKUP 90
 
-// entity + 0xd4 = m_iHealth
-
 typedef CHandle<CBaseEntity> EHANDLE;
 
 class CBaseEntity : public IClientEntity

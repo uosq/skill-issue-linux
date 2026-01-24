@@ -3,6 +3,7 @@
 #include "../classes/entity.h"
 #include "../netvars/netvar.h"
 #include "cbasehandle.h"
+#include "studio.h"
 
 class CBaseAnimating : public CBaseEntity
 {
@@ -32,6 +33,28 @@ public:
 	{
 		static int nOffset = netvars[fnv::Hash("CBaseAnimating->m_flPoseParameter")];
 		return *reinterpret_cast<std::array<float, 24>*>(uintptr_t(this) + nOffset);
+	}
+
+	inline bool GetHitboxCenter(matrix3x4* bones, int hitbox, Vector& outPos)
+	{
+		auto model = GetModel();
+		if (model == nullptr)
+			return false;
+
+		auto studiomodel = interfaces::ModelInfoClient->GetStudiomodel(model);
+		if (studiomodel == nullptr)
+			return false;
+
+		auto set = studiomodel->pHitboxSet(m_nHitboxSet());
+		if (set == nullptr || set->numhitboxes <= hitbox)
+			return false;
+
+		auto box = set->pHitbox(hitbox);
+		if (box == nullptr)
+			return false;
+
+		Math::VectorTransform((box->bbmax + box->bbmin) * 0.5f, bones[box->bone], outPos);
+		return true;
 	}
 };
 
