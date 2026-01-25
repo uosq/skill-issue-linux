@@ -4,6 +4,7 @@
 #include "../../sdk/classes/entity.h"
 #include "../../sdk/definitions/inetmessage.h"
 #include "../../sdk/definitions/inetchannel.h"
+#include "../../sdk/definitions/igameevents.h"
 
 #include "pluto/lua.h"
 #include "pluto/lua.hpp"
@@ -43,6 +44,11 @@ struct LuaTexture
 struct LuaNetChannel
 {
 	CNetChannel* netchan;
+};
+
+struct LuaGameEvent
+{
+	IGameEvent* event;
 };
 
 namespace LuaClasses
@@ -274,5 +280,31 @@ namespace LuaClasses
 		int SetMaxRoutablePayloadSize(lua_State* L);
 		int GetMaxRoutablePayloadSize(lua_State* L);
 		int GetProtocolVersion(lua_State* L);
+	}
+
+	namespace GameEventLua
+	{
+		extern const luaL_Reg methods[];
+		void luaopen_gameevent(lua_State* L);
+		LuaGameEvent* push_gameevent(lua_State* L, IGameEvent* event);
+
+		int Index(lua_State* L);
+		int GC(lua_State* L);
+
+		int GetName(lua_State* L);
+
+		int IsReliable(lua_State* L);
+		int IsLocal(lua_State* L);
+		int IsEmpty(lua_State* L);
+		
+		int GetBool(lua_State* L);
+		int GetInt(lua_State* L);
+		int GetFloat(lua_State* L);
+		int GetString(lua_State* L);
+
+		int SetBool(lua_State* L);
+		int SetInt(lua_State* L);
+		int SetFloat(lua_State* L);
+		int SetString(lua_State* L);
 	}
 }

@@ -37,6 +37,7 @@ namespace Lua
 		LuaClasses::NetMessageLua::luaopen_netmessage(m_luaState);
 		LuaClasses::TextureLua::luaopen_texture(m_luaState);
 		LuaClasses::NetChannelLua::luaopen_netchannel(m_luaState);
+		LuaClasses::GameEventLua::luaopen_gameevent(m_luaState);
 
 		luaregister_constants(m_luaState);
 

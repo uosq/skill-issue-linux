@@ -55,10 +55,11 @@ namespace LuaClasses
 		int GC(lua_State* L)
 		{
 			// I should probably not let GC do this
-			//LuaTexture* ltex = static_cast<LuaTexture*>(luaL_checkudata(L, 1, "Texture"));
+			LuaTexture* ltex = static_cast<LuaTexture*>(luaL_checkudata(L, 1, "Texture"));
 			//ltex->tex->DecrementReferenceCount();
 			//ltex->tex->DeleteIfUnreferenced();
 			//ltex->tex = nullptr;
+			ltex->~LuaTexture();
 			return 0;
 		}
 

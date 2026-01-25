@@ -20,7 +20,7 @@ Called when leaving a match
 Called when the game wants to create a movement command
 
 ## DoPostScreenSpaceEffects ( )
-Called when the game wants to create screen effects.
+Called when the game wants to create screen effects
 
 You can use this to make custom bloom, glow, etc
 
@@ -42,3 +42,6 @@ You can use this to change the info we are sending to the server
 
 ## FrameStageNotify ( stage: **int** )
 Called at various stages of a frame
+
+## FireGameEvent ( event: **GameEvent** )
+Called when a game event is called. For example, when a player spawns
