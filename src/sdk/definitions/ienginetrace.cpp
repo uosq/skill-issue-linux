@@ -1,8 +1,14 @@
+#include "ienginetrace.h"
 #include "bspflags.h"
 #include "ctracefilters.h"
 #include "../classes/player.h"
 #include "../classes/weaponbase.h"
 #include "../handle_utils.h"
+#include "ihandleentity.h"
+
+#include "../../features/lua/classes.h"
+#include "../../features/lua/api.h"
+#include "../../gui/console.h"
 
 bool CTraceFilterHitscan::ShouldHitEntity(IHandleEntity* pServerEntity, int nContentsMask)
 {
@@ -145,4 +151,42 @@ bool CTraceFilterWorldAndPropsOnly::ShouldHitEntity(IHandleEntity* pServerEntity
 TraceType_t CTraceFilterWorldAndPropsOnly::GetTraceType() const
 {
 	return TRACE_EVERYTHING_FILTER_PROPS;
+}
+
+TraceType_t CTraceFilterLua::GetTraceType() const
+{
+	return TRACE_EVERYTHING;
+}
+
+bool CTraceFilterLua::ShouldHitEntity(IHandleEntity* pServerEntity, int nContentsMask)
+{
+	luaL_checktype(Lua::m_luaState, 4, LUA_TFUNCTION);
+	lua_pushvalue(Lua::m_luaState, 4);
+
+	int callbackRef = luaL_ref(Lua::m_luaState, LUA_REGISTRYINDEX);
+	lua_rawgeti(Lua::m_luaState, LUA_REGISTRYINDEX, callbackRef);
+
+	LuaClasses::EntityLua::push_entity(Lua::m_luaState, static_cast<CBaseEntity*>(pServerEntity));
+	lua_pushinteger(Lua::m_luaState, nContentsMask);
+
+	bool result = true;
+
+	if (lua_pcall(Lua::m_luaState, 2, 1, 0) != LUA_OK)
+	{
+		const char* err = lua_tostring(Lua::m_luaState, -1);
+		if (err) consoleText += std::string(err) + "\n";
+		lua_pop(Lua::m_luaState, 1);
+	}
+	else
+	{
+		// read return value
+		if (lua_isboolean(Lua::m_luaState, -1))
+			result = lua_toboolean(Lua::m_luaState, -1);
+
+		lua_pop(Lua::m_luaState, 1); // pop return value
+	}
+
+	luaL_unref(Lua::m_luaState, LUA_REGISTRYINDEX, callbackRef);
+
+	return result;
 }

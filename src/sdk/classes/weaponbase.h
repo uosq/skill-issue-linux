@@ -242,9 +242,12 @@ class CTFSniperRifle : public CTFWeaponBase
 public:
 	NETVAR(m_flChargedDamage, "CTFSniperRifle->m_flChargedDamage", float);
 
-	//int GetRifleType();
-	//float GetHeadshotMult(CTFPlayer* pTarget = nullptr);
-	//float GetBodyshotMult(CTFPlayer* pTarget = nullptr);
+	float GetChargedDamage()
+	{
+		bool isMachina = m_iItemDefinitionIndex() == Sniper_m_TheMachina;
+		float mult = isMachina ? 1.15f : 1.0f;
+		return m_flChargedDamage() * 3 * mult;
+	}
 };
 
 class CTFGrenadeLauncher : public CTFWeaponBase

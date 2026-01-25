@@ -6,6 +6,7 @@
 #include "../../sdk/netvars/netvar.h"
 #include "../entitylist/entitylist.h"
 #include "../../sdk/handle_utils.h"
+#include "pluto/lua.h"
 
 namespace LuaClasses
 {
@@ -40,6 +41,9 @@ namespace LuaClasses
 			{"GetNextMovePeer", GetNextMovePeer},
 			{"AttributeHookInt", AttributeHookValueInt},
 			{"AttributeHookFloat", AttributeHookValueFloat},
+			{"GetWeaponType", GetWeaponType},
+			{"IsInReload", IsInReload},
+			{"GetSmackTime", GetSmackTime},
 			{nullptr, nullptr}
 		};
 
@@ -781,6 +785,50 @@ namespace LuaClasses
 			int number = luaL_optnumber(L, 3, 1.0f);
 			float value = AttributeHookValue(number, attrib, le->ent, nullptr, true);
 			lua_pushnumber(L, value);
+			return 1;
+		}
+
+		int GetWeaponType(lua_State* L)
+		{
+			LuaEntity* le = static_cast<LuaEntity*>(luaL_checkudata(L, 1, "Entity"));
+			if (le->ent == nullptr)
+				return 0;
+
+			if (!le->ent->IsWeapon())
+				return 0;
+
+			// why c++ syntax is so fucking ugly?
+			lua_pushinteger(L, static_cast<int>(static_cast<CTFWeaponBase*>(le->ent)->GetWeaponType()));
+			return 1;
+		}
+
+		int IsInReload(lua_State* L)
+		{
+			LuaEntity* le = static_cast<LuaEntity*>(luaL_checkudata(L, 1, "Entity"));
+			if (le->ent == nullptr)
+				return 0;
+
+			if (!le->ent->IsWeapon())
+				return 0;
+
+			lua_pushboolean(L, static_cast<CTFWeaponBase*>(le->ent)->m_bInReload());
+			return 1;
+		}
+
+		int GetSmackTime(lua_State* L)
+		{
+			LuaEntity* le = static_cast<LuaEntity*>(luaL_checkudata(L, 1, "Entity"));
+			if (le->ent == nullptr)
+				return 0;
+
+			if (!le->ent->IsWeapon())
+				return 0;
+
+			CTFWeaponBase* pWeapon = static_cast<CTFWeaponBase*>(le->ent);
+			if (!pWeapon || !pWeapon->IsMelee())
+				return 0;
+
+			lua_pushnumber(L, pWeapon->m_flSmackTime());
 			return 1;
 		}
 	}

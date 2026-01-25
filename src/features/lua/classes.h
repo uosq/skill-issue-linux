@@ -134,6 +134,10 @@ namespace LuaClasses
 
 		int AttributeHookValueInt(lua_State* L);
 		int AttributeHookValueFloat(lua_State* L);
+
+		int GetWeaponType(lua_State* L);
+		int IsInReload(lua_State* L);
+		int GetSmackTime(lua_State* L);
 	};
 
 	namespace MaterialLua
@@ -240,9 +244,6 @@ namespace LuaClasses
 		int RegisterMessage(lua_State* L);
 		int SetTimeout(lua_State* L);
 		int SetChallengeNr(lua_State* L);
-		int Reset(lua_State* L);
-		int Clear(lua_State* L);
-		int Shutdown(lua_State* L);
 		int ProcessPlayback(lua_State* L);
 		int SendNetMsg(lua_State* L);
 		int SendData(lua_State* L);

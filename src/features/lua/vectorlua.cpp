@@ -59,6 +59,9 @@ namespace LuaClasses
 			lua_pushcfunction(L, Unary);
 			lua_setfield(L, -2, "__unm");
 
+			lua_pushcfunction(L, Mul);
+			lua_setfield(L, -2, "__mul");
+
 			lua_pushcfunction(L, Vector3);
 			lua_setglobal(L, "Vector3");
 		}

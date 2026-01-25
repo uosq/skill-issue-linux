@@ -161,8 +161,10 @@ namespace LuaClasses
 				return 0;
 			}
 
+			int numbits = luaL_optinteger(L, 2, 32);
+
 			lbf->reader->Seek(lbf->curbitpos);
-			float value = lbf->reader->ReadFloat();
+			float value = lbf->reader->ReadFloat(numbits);
 
 			lbf->curbitpos = lbf->reader->GetNumBitsRead();
 

@@ -69,3 +69,10 @@ public:
 
 	int iTeam = -1;
 };
+
+class CTraceFilterLua: public ITraceFilter
+{
+public:
+	bool ShouldHitEntity(IHandleEntity* pServerEntity, int nContentsMask) override;
+	TraceType_t GetTraceType() const override;
+};

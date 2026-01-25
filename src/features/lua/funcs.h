@@ -41,6 +41,9 @@ namespace LuaFuncs
 		int GetViewAngles(lua_State* L);
 		int WorldToScreen(lua_State* L);
 		int GetNetChannel(lua_State* L);
+		int Trace(lua_State* L);
+		int TraceHull(lua_State* L);
+		int GetPointContent(lua_State* L);
 
 		extern const luaL_Reg enginelib[];
 	}
@@ -63,7 +66,6 @@ namespace LuaFuncs
 		int GetLocalPlayer(lua_State* L);
 		int GetHighestEntityIndex(lua_State* L);
 		int GetPlayers(lua_State* L);
-		int GetPlayerResources(lua_State* L);
 		int GetTeammates(lua_State* L);
 		int GetEnemies(lua_State* L);
 	}

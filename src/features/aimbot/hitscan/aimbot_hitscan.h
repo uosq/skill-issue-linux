@@ -43,11 +43,17 @@ struct AimbotHitscan
 
 			case TF_WEAPON_SNIPERRIFLE:
 			case TF_WEAPON_SNIPERRIFLE_DECAP:
+			case TF_WEAPON_SNIPERRIFLE_CLASSIC:
 			{
-				if (pLocal->InCond(TF_COND_ZOOMED) && static_cast<CTFSniperRifle*>(pWeapon)->m_flChargedDamage() > 50.0f)
+				if (!pLocal->InCond(TF_COND_ZOOMED))
+					break;
+
+				if (static_cast<CTFSniperRifle*>(pWeapon)->GetChargedDamage() < 150.0f)
+					break;
+
 				return HitscanOffset::HEAD;
 			}
-			//case TF_WEAPON_SNIPERRIFLE_CLASSIC:
+
 		}
 		
 		return HitscanOffset::CHEST;
