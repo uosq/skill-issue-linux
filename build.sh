@@ -102,26 +102,4 @@ g++ -shared -fPIC \
 	src/settings.cpp \
 	-o build/libvapo.so \
 	-O2 -std=c++17 -lSDL2 -lvulkan -lm -ldl \
-	-Werror -flto=auto -g
-
-if [[ $1 -eq "stripped" ]]; then
-g++ -shared -fPIC \
-	-Wl,--whole-archive \
-	build/libGLEW.a \
-	build/libplutostatic.a \
-	-Wl,--no-whole-archive \
-	src/main.cpp \
-	src/libsigscan.c \
-	src/libdetour/libdetour.c \
-	src/imgui/*.cpp \
-	src/sdk/definitions/*.cpp \
-	src/features/lua/*.cpp \
-	src/sdk/interfaces/*.cpp \
-	src/gui/*.cpp \
-	src/features/entitylist/*.cpp \
-	src/features/aimbot/aimbot.cpp \
-	src/settings.cpp \
-	-o build/libvapo-stripped.so \
-	-O2 -std=c++17 -lSDL2 -lvulkan -lm -ldl \
-	-Werror -flto=auto
-fi
+	-Werror -g
