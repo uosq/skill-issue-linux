@@ -26,24 +26,24 @@ fi
 
 # check for Lua static binary
 # if not there, compile it
-if [ ! -f build/liblua.a ]; then
-	cd build
+#if [ ! -f build/liblua.a ]; then
+	#cd build
 
-	if [ ! -d lua-5.4.8 ]; then
-		wget https://www.lua.org/ftp/lua-5.4.8.tar.gz
-		tar -xzf lua-5.4.8.tar.gz
-		rm lua-5.4.8.tar.gz
-	fi
+	#if [ ! -d lua-5.4.8 ]; then
+		#wget https://www.lua.org/ftp/lua-5.4.8.tar.gz
+		#tar -xzf lua-5.4.8.tar.gz
+		#rm lua-5.4.8.tar.gz
+	#fi
 
-	cd lua-5.4.8
+	#cd lua-5.4.8
 
-	make -j$(nproc) linux MYCFLAGS="-fPIC" MYLDFLAGS="-fPIC"
-	cp src/liblua.a "../"
+	#make -j$(nproc) linux MYCFLAGS="-fPIC" MYLDFLAGS="-fPIC"
+	#cp src/liblua.a "../"
 
-	cd ..
+	#cd ..
 
-	rm -fr lua-5.4.8
-fi
+	#rm -fr lua-5.4.8
+#fi
 
 # check for glew (opengl)
 # if not there, compile it
@@ -102,4 +102,26 @@ g++ -shared -fPIC \
 	src/settings.cpp \
 	-o build/libvapo.so \
 	-O2 -std=c++17 -lSDL2 -lvulkan -lm -ldl \
+	-Werror -flto=auto -g
+
+if [[ $1 -eq "stripped" ]]; then
+g++ -shared -fPIC \
+	-Wl,--whole-archive \
+	build/libGLEW.a \
+	build/libplutostatic.a \
+	-Wl,--no-whole-archive \
+	src/main.cpp \
+	src/libsigscan.c \
+	src/libdetour/libdetour.c \
+	src/imgui/*.cpp \
+	src/sdk/definitions/*.cpp \
+	src/features/lua/*.cpp \
+	src/sdk/interfaces/*.cpp \
+	src/gui/*.cpp \
+	src/features/entitylist/*.cpp \
+	src/features/aimbot/aimbot.cpp \
+	src/settings.cpp \
+	-o build/libvapo-stripped.so \
+	-O2 -std=c++17 -lSDL2 -lvulkan -lm -ldl \
 	-Werror -flto=auto
+fi
