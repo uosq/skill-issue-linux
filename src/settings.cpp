@@ -25,6 +25,7 @@ void RegisterSettings(void)
 	REG_SETTING(aimbot, waitforcharge, SettingType::BOOL)
 	REG_SETTING(aimbot, mode, SettingType::INT)
 	REG_SETTING(aimbot, smoothness, SettingType::FLOAT)
+	REG_SETTING(aimbot, teamMode, SettingType::INT);
 
 	// esp
 	REG_SETTING(esp, enabled, SettingType::BOOL)
