@@ -16,6 +16,7 @@
 // Source https://8dcc.github.io/reversing/reversing-tf2-bsendpacket.html#introduction
 #define SENDPACKET_STACK_OFFSET 0xF8
 
+// I should probably just make a usercmd class
 inline void RunLuaCreateMoveCallback(CUserCmd* pCmd, bool* bSendPacket)
 {
 	lua_newtable(Lua::m_luaState);
@@ -128,7 +129,7 @@ DECLARE_VTABLE_HOOK(CreateMove, bool, (IClientMode* thisptr, float sample_framet
 	if (!pCmd || !pCmd->command_number)
 		return ret;
 
-	if (!interfaces::Engine->IsInGame() || !interfaces::Engine->IsConnected())
+	if (!interfaces::Engine->IsInGame() || !interfaces::Engine->IsConnected() || interfaces::Engine->IsPlayingDemo())
 		return ret;
 
 	EntityList::m_pAimbotTarget = nullptr;

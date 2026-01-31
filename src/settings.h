@@ -116,7 +116,7 @@ struct Settings_Misc
 	bool thirdperson = false;
 	std::string thirdperson_key = "";
 	bool customfov_enabled = false;
-	float customfov = 0.0f;
+	float customfov = 90.0f;
 	bool spectatorlist = false;
 	bool backpack_expander = false;
 	bool sv_pure_bypass = false;
@@ -126,6 +126,7 @@ struct Settings_Misc
 	bool playerlist = false;
 
 	float viewmodel_offset[3] = {0.0, 0.0, 0.0};
+	float viewmodel_interp = 0.0f;
 };
 
 struct Settings_Triggerbot
@@ -134,6 +135,7 @@ struct Settings_Triggerbot
 	bool hitscan = false;
 	AutoBackstabMode autobackstab = AutoBackstabMode::NONE;
 	std::string key = "";
+	bool autoairblast = false;
 };
 
 struct Settings_Colors
@@ -156,7 +158,7 @@ struct Settings
 	bool menu_open = false;
 };
 
-extern Settings settings;
+extern Settings g_Settings;
 extern std::unordered_map<std::string, SettingEntry> g_SettingsMap;
 
 void RegisterSettings(void);

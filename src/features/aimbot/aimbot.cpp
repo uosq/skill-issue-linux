@@ -25,13 +25,13 @@ namespace Aimbot
 	{
 		ClearAimbotState(state);
 
-		if (!settings.aimbot.enabled)
+		if (!g_Settings.aimbot.enabled)
 			return;
 
 		if (helper::engine::IsConsoleVisible() || helper::engine::IsGameUIVisible() || helper::engine::IsTakingScreenshot())
 			return;
 
-		ButtonCode_t key = interfaces::InputSystem->StringToButtonCode(settings.aimbot.key.c_str());
+		ButtonCode_t key = interfaces::InputSystem->StringToButtonCode(g_Settings.aimbot.key.c_str());
 
 		if (key != BUTTON_CODE_INVALID && !interfaces::InputSystem->IsButtonDown(key))
 			return;
@@ -49,7 +49,7 @@ namespace Aimbot
 				static AimbotProjectile projectile;
 				projectile.Run(pLocal, pWeapon, pCmd, state);
 
-				if (settings.aimbot.mode == AimbotMode::PSILENT && state.shouldSilent)
+				if (g_Settings.aimbot.mode == AimbotMode::PSILENT && state.shouldSilent)
 					*bSendPacket = false;
 			} break;
 
@@ -58,7 +58,7 @@ namespace Aimbot
 				static AimbotMelee melee;
 				melee.Run(pLocal, pWeapon, pCmd, state);
 
-				if (settings.aimbot.mode == AimbotMode::PSILENT && state.shouldSilent)
+				if (g_Settings.aimbot.mode == AimbotMode::PSILENT && state.shouldSilent)
 					*bSendPacket = false;
 			} break;
 			default: break;
@@ -67,12 +67,12 @@ namespace Aimbot
 
 	void DrawFOVIndicator(CTFPlayer* pLocal)
 	{
-		if (settings.aimbot.fov >= 90 || !settings.aimbot.draw_fov_indicator)
+		if (g_Settings.aimbot.fov >= 90 || !g_Settings.aimbot.draw_fov_indicator)
 			return;
 
-		//float aimFov = DEG2RAD(settings.aimbot.fov);
+		//float aimFov = DEG2RAD(g_Settings.aimbot.fov);
 		float aimFov = DEG2RAD(AimbotUtils::GetAimbotFovScaled(pLocal));
-		float camFov = DEG2RAD(customfov.GetFov() * 0.5f);
+		float camFov = DEG2RAD(g_Customfov.GetFov() * 0.5f);
 
 		int w, h;
 		helper::draw::GetScreenSize(w, h);
@@ -126,7 +126,7 @@ namespace Aimbot
 
 	void RunPaint(CTFPlayer* pLocal)
 	{
-		if (!settings.aimbot.enabled)
+		if (!g_Settings.aimbot.enabled)
 			return;
 
 		//DrawTargetPath();

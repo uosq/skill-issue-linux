@@ -6,23 +6,23 @@
 
 class CustomFov
 {
-	float m_flFov = 0.0f;
-	float m_flOldFov = 0.0f;
+	float m_flFov = 90.0f;
+	float m_flOldFov = 90.0f;
 
 public:
 	void Run(CTFPlayer* pLocal, CViewSetup* pView);
 	float GetFov();
 };
 
-inline CustomFov customfov;
+inline CustomFov g_Customfov;
 
 inline void CustomFov::Run(CTFPlayer* pLocal, CViewSetup* pView)
 {
 	static ConVar* fov_desired = interfaces::Cvar->FindVar("fov_desired");
 	static ConVar* default_fov = interfaces::Cvar->FindVar("default_fov");
 
-	if (settings.misc.customfov_enabled)
-		m_flFov = settings.misc.customfov;
+	if (g_Settings.misc.customfov_enabled)
+		m_flFov = g_Settings.misc.customfov;
 	else
 		m_flFov = fov_desired->GetFloat();
 
@@ -41,7 +41,7 @@ inline void CustomFov::Run(CTFPlayer* pLocal, CViewSetup* pView)
 	this doesn't feel right
 	*/
 
-	if (pLocal->IsAlive())
+	if (pLocal->IsAlive() && pView->fov >= fov_desired->GetFloat())
 	{
 		pLocal->m_iDefaultFOV() = m_flFov;
 		pLocal->m_iFOV() = m_flFov;

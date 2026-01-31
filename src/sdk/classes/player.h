@@ -32,14 +32,14 @@ enum {
 	CLASS_ENGINEER
 };
 
-struct player_info {
+struct PlayerInfo {
 	char name[32];
-	int user_id;
-	char guid[33];
-	unsigned long friends_id;
-	char friends_name[32];
-	bool fakeplayer;
-	bool ishltv;
+	int UserID;
+	char GUID[33];
+	unsigned long FriendIDs;
+	char FriendNames[32];
+	bool isFakePlayer;
+	bool isHLTV;
 	unsigned long custom_files[4];
 	unsigned char files_downloaded;
 };
@@ -91,12 +91,12 @@ public:
 	NETVAR(m_nWaterLevel, "CTFPlayer->m_nWaterLevel", uint8_t)
 	NETVAR(m_iFOV, "CBasePlayer->m_iFOV", int)
 
-	bool IsAlive()
+	inline bool IsAlive()
 	{
 		return m_lifeState() == LIFE_ALIVE;
 	}
 
-	bool InCond(ETFCond cond)
+	inline bool InCond(ETFCond cond)
 	{
 		switch ((int)(cond/32))
 		{
@@ -111,32 +111,32 @@ public:
 		return false;
 	}
 
-	Vector GetCenter()
+	inline Vector GetCenter()
 	{
 		return GetAbsOrigin() + ((m_vecMins() + m_vecMaxs()) * 0.5f);
 	}
 
-	Vector GetEyePos()
+	inline Vector GetEyePos()
 	{
 		return GetAbsOrigin() + m_vecViewOffset();
 	}
 
-	bool IsGhost()
+	inline bool IsGhost()
 	{
 		return InCond(ETFCond::TF_COND_HALLOWEEN_GHOST_MODE);
 	}
 
-	bool IsTaunting()
+	inline bool IsTaunting()
 	{
 		return InCond(ETFCond::TF_COND_TAUNTING);
 	}
 
-	bool IsUbercharged()
+	inline bool IsUbercharged()
 	{
 		return InCond(ETFCond::TF_COND_INVULNERABLE);
 	}
 
-	std::string GetName()
+	inline std::string GetName()
 	{
 		player_info_t info{};
 		if (!interfaces::Engine->GetPlayerInfo(GetIndex(), &info))
@@ -145,7 +145,7 @@ public:
 		return info.name;
 	}
 
-	void UpdateClientSideAnimation()
+	inline void UpdateClientSideAnimation()
 	{
 		using C_BaseAnimating_UpdateClientSideAnimationFn = void(*)(void*);
 		static auto orig = (C_BaseAnimating_UpdateClientSideAnimationFn)sigscan_module("client.so", "80 BF D0 0A 00 00 00 75");
@@ -155,7 +155,7 @@ public:
 		orig((void*)this);
 	}
 
-	int GetWaterLevel()
+	inline int GetWaterLevel()
 	{
 		int level = WL_NotInWater;
 		Vector point = {};
@@ -190,7 +190,7 @@ public:
 		return level;
 	}
 
-	float GetEffectiveInvisibilityLevel()
+	inline float GetEffectiveInvisibilityLevel()
 	{
 		// xref: taunt_attr_player_invis_percent
 		using GetEffectiveInvisibilityLevelFn = float(*)(void* thisptr);

@@ -12,7 +12,6 @@
 
 #include "../features/esp/esp.h"
 #include "../features/aimbot/aimbot.h"
-#include "../features/visuals/visuals.h"
 #include "../features/entitylist/entitylist.h"
 
 #include "../features/lua/hooks.h"
@@ -43,10 +42,11 @@ DECLARE_VTABLE_HOOK(VGuiPaint, void, (IEngineVGui* thisptr, PaintMode_t paint))
 		}
 
 		// compile time
-		if (settings.menu_open)
+		if (g_Settings.menu_open)
 		{
 			Color color = {255, 255, 255, 255};
-			helper::draw::TextShadow(10, 10, color, "Build date: " __DATE__ " " __TIME__);
+			helper::draw::TextShadow(10, 10, color, "Skill Issue - Beta");
+			helper::draw::TextShadow(10, 30, color, "Build date: " __DATE__ " " __TIME__);
 		}
 
 		interfaces::Surface->FinishDrawing();

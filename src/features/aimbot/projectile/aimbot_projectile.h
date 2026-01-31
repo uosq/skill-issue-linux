@@ -330,7 +330,7 @@ struct AimbotProjectile
 
 		std::vector<PotentialTarget> targets;
 
-		float maxFov = AimbotUtils::GetAimbotFovScaled(pLocal); //settings.aimbot.fov;
+		float maxFov = AimbotUtils::GetAimbotFovScaled(pLocal); //g_Settings.aimbot.fov;
 
 		CGameTrace trace;
 		CTraceFilterHitscan filter;
@@ -342,45 +342,24 @@ struct AimbotProjectile
 
 		float gravity = sv_gravity->GetFloat() * 0.5f * info.gravity;
 
-		auto scanList = [&](const auto& list)
+		bool bCanHitTeammates = pWeapon->CanHitTeammates();
+
+		for (EntityListEntry entry : AimbotUtils::GetTargets(bCanHitTeammates, localTeam))
 		{
-			for (CBaseEntity* entity : list)
-			{
-				if (!AimbotUtils::IsValidEntity(entity, 0))
-					continue;
-	
-				Vector center;// = entity->GetCenter();
-				{
-					if (entity->IsPlayer())
-						center = static_cast<CTFPlayer*>(entity)->GetCenter();
-					else if (entity->IsBuilding())
-						center = reinterpret_cast<CBaseObject*>(entity)->GetCenter();
-					else
-						center = entity->GetAbsOrigin();
-				}
-	
-				float distance = (center - shootPos).Normalize();
-				if (distance >= 2048.f)
-					continue;
+			CBaseEntity* entity = entry.ptr;
 
-				Vector angle = Math::CalcAngle(shootPos, center);
-				float fov = Math::CalcFov(viewAngles, angle);
-				if (fov > maxFov)
-					continue;
+			Vector center = entity->GetCenter();
 
-				targets.emplace_back(PotentialTarget{angle, center, distance, fov, entity});
-			}
-		};
+			float distance = (center - shootPos).Normalize();
+			if (distance >= 2048.f)
+				continue;
 
-		{
-			TeamMode teamMode = settings.aimbot.teamMode;
-			bool bCanHitTeammates = pWeapon->CanHitTeammates();
-	
-			if (!bCanHitTeammates || teamMode == TeamMode::ONLYENEMY || teamMode == TeamMode::BOTH)
-				scanList(EntityList::GetEnemies());
-	
-			if (bCanHitTeammates && (teamMode == TeamMode::ONLYTEAMMATE || teamMode == TeamMode::BOTH))
-				scanList(EntityList::GetTeammates());
+			Vector angle = Math::CalcAngle(shootPos, center);
+			float fov = Math::CalcFov(viewAngles, angle);
+			if (fov > maxFov)
+				continue;
+
+			targets.emplace_back(PotentialTarget{angle, center, distance, fov, entity});
 		}
 
 		if (targets.empty())
@@ -394,7 +373,7 @@ struct AimbotProjectile
 		{
 			float time = (target.distance/info.speed);
 
-			if (time > settings.aimbot.max_sim_time)
+			if (time > g_Settings.aimbot.max_sim_time)
 				continue;
 
 			Vector lastPos;
@@ -446,7 +425,7 @@ struct AimbotProjectile
 					continue;
 			}
 
-			if (settings.aimbot.autoshoot)
+			if (g_Settings.aimbot.autoshoot)
 				pCmd->buttons |= IN_ATTACK;
 
 			if (helper::localplayer::CanShoot(pLocal, pWeapon, pCmd))
@@ -478,7 +457,7 @@ struct AimbotProjectile
 				pCmd->viewangles = angle;
 				state.angle = angle;
 
-				AimbotMode mode = settings.aimbot.mode;
+				AimbotMode mode = g_Settings.aimbot.mode;
 
 				if (mode == AimbotMode::PSILENT)
 					state.shouldSilent = true;

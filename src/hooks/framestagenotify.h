@@ -2,7 +2,7 @@
 
 #include "../sdk/interfaces/interfaces.h"
 #include "../sdk/helpers/helper.h"
-#include "../features/visuals/visuals.h"
+#include "../features/visuals/thirdperson/thirdperson.h"
 #include "../features/entitylist/entitylist.h"
 #include "../features/visuals/customfov/customfov.h"
 
@@ -15,7 +15,7 @@ DECLARE_VTABLE_HOOK(FrameStageNotify, void, (CHLClient* thisptr, int stage))
 	{
 		case FRAME_RENDER_START:
 		{
-			if (settings.misc.thirdperson)
+			if (g_Settings.misc.thirdperson)
 			{
 				CTFPlayer* pLocal = EntityList::GetLocal();
 				if (pLocal == nullptr || !pLocal->IsAlive())
@@ -33,7 +33,7 @@ DECLARE_VTABLE_HOOK(FrameStageNotify, void, (CHLClient* thisptr, int stage))
 			if (pLocal == nullptr)
 				break;
 
-			Visuals::thirdperson.Run(pLocal);
+			g_Thirdperson.Run(pLocal);
 			break;
 		}
 

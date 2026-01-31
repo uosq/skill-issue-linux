@@ -182,4 +182,38 @@ public:
 	{
 		return GetAbsOrigin() + (m_vecMaxs() + m_vecMins()) * 0.5f;
 	}
+
+	void CalcAbsVelocity()
+	{
+		// xref: Main: %s, Cycle: %.2f\n
+		// is inside CMultiPlayerAnimState::DebugShowAnimStateForPlayer
+		// first function
+		using CalcAbsVelocityFn = void(*)(CBaseEntity* self);
+		static CalcAbsVelocityFn original = reinterpret_cast<CalcAbsVelocityFn>(sigscan_module("client.so", "F6 87 11 02 00 00 10"));
+		original(this);
+	}
+
+	// janky ahh shit
+	Vector EstimateAbsVelocity()
+	{
+		CalcAbsVelocity();
+
+		/*
+		The offsets are from CMultiPlayerAnimState::GetOuterAbsVelocity
+
+			C_BaseEntity::CalcAbsVelocity(pLocal);
+			*vec = *(undefined4 *)(pLocal + 0x1c8);
+			vec[1] = *(undefined4 *)(pLocal + 0x1cc);
+			vec[2] = *(undefined4 *)(pLocal + 0x1d0);
+			return;
+		}
+		*/
+		//Vector* m_vecAbsVelocity = reinterpret_cast<Vector*>(reinterpret_cast<uintptr_t>(this) + 0x1c8);
+		uintptr_t ptr = reinterpret_cast<uintptr_t>(this);
+		float* m_vecAbsVelocityX = reinterpret_cast<float*>(ptr + 0x1c8);
+		float* m_vecAbsVelocityY = reinterpret_cast<float*>(ptr + 0x1cc);
+		float* m_vecAbsVelocityZ = reinterpret_cast<float*>(ptr + 0x1d0);
+
+		return Vector(*m_vecAbsVelocityX, *m_vecAbsVelocityY, *m_vecAbsVelocityZ);
+	}
 };

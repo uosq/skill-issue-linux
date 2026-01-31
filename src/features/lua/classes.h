@@ -153,6 +153,8 @@ namespace LuaClasses
 		int GetIndex(lua_State* L);
 
 		int Predict(lua_State* L);
+
+		int EstimateAbsVelocity(lua_State* L);
 	};
 
 	namespace MaterialLua

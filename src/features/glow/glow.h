@@ -101,9 +101,9 @@ namespace Glow
 			int passes = 0;
 			while (moveChild != nullptr && passes <= 32)
 			{
-				if (settings.esp.weapon && static_cast<CBaseEntity*>(moveChild)->IsWeapon())
+				if (g_Settings.esp.weapon && static_cast<CBaseEntity*>(moveChild)->IsWeapon())
 				{
-					color = settings.colors.weapon;
+					color = g_Settings.colors.weapon;
 					// this is fucking stupid
 					// why is a array not assignable?
 					mod[0] = color.r()/255.0f;
@@ -122,26 +122,27 @@ namespace Glow
 
 	static void GetEntities()
 	{
-		for (auto entity : EntityList::m_vecPlayers)
+		for (auto entry : EntityList::GetEntities())
 		{
-			if (entity->IsDormant() || !entity->ShouldDraw())
+			CBaseEntity* entity = entry.ptr;
+
+			if (!entity->ShouldDraw())
 				continue;
 
-			if (!entity->IsPlayer())
+			if (!(entry.flags & (EntityFlags::IsPlayer | EntityFlags::IsBuilding)))
 				continue;
+
+			if (entry.flags & EntityFlags::IsBuilding)
+			{
+				CBaseObject* building = static_cast<CBaseObject*>(entity);
+				if (building == nullptr)
+					continue;
+
+				if (building->m_iHealth() <= 0)
+					continue;
+			}
 
 			glowEnts.emplace_back(entity);
-		}
-
-		for (auto entity : EntityList::m_vecBuildings)
-		{
-			if (entity->IsDormant() || !entity->ShouldDraw())
-				continue;
-
-			if (entity->m_iHealth() <= 0)
-				continue;
-
-			glowEnts.emplace_back(reinterpret_cast<CBaseEntity*>(entity));
 		}
 	}
 
@@ -154,7 +155,10 @@ namespace Glow
 		if (!glowEnts.empty())
 			glowEnts.clear();
 
-		if (settings.esp.blur == 0 && settings.esp.stencil == 0)
+		if (g_Settings.esp.blur == 0 && g_Settings.esp.stencil == 0)
+			return;
+
+		if (interfaces::Engine->IsTakingScreenshot())
 			return;
 
 		Init();
@@ -214,12 +218,12 @@ namespace Glow
 		}
 
 		// blur pass
-		if (settings.esp.blur > 0)
+		if (g_Settings.esp.blur > 0)
 		{
 			pRenderContext->PushRenderTargetAndViewport();
 			pRenderContext->Viewport(0, 0, w, h);
 
-			for (int i = 0; i < settings.esp.blur; ++i)
+			for (int i = 0; i < g_Settings.esp.blur; ++i)
 			{
 				pRenderContext->SetRenderTarget(m_Materials.glowBuffer2);
 				pRenderContext->DrawScreenSpaceRectangle(m_Materials.blurX, 0, 0, w, h, 0, 0, w - 1, h - 1, w, h);
@@ -243,15 +247,15 @@ namespace Glow
 			pRenderContext->SetStencilZFailOperation(STENCILOPERATION_KEEP);
 
 			// this is from amalgam
-			if (settings.esp.stencil)
+			if (g_Settings.esp.stencil)
 			{
-				int side = (settings.esp.stencil + 1) / 2;
+				int side = (g_Settings.esp.stencil + 1) / 2;
 				pRenderContext->DrawScreenSpaceRectangle(m_Materials.haloAddToScreen, -side, 0, w, h, 0, 0, w - 1, h - 1, w, h);
 				pRenderContext->DrawScreenSpaceRectangle(m_Materials.haloAddToScreen, 0, -side, w, h, 0, 0, w - 1, h - 1, w, h);
 				pRenderContext->DrawScreenSpaceRectangle(m_Materials.haloAddToScreen, side, 0, w, h, 0, 0, w - 1, h - 1, w, h);
 				pRenderContext->DrawScreenSpaceRectangle(m_Materials.haloAddToScreen, 0, side, w, h, 0, 0, w - 1, h - 1, w, h);
 				
-				int corner = settings.esp.stencil / 2;
+				int corner = g_Settings.esp.stencil / 2;
 				if (corner)
 				{
 					pRenderContext->DrawScreenSpaceRectangle(m_Materials.haloAddToScreen, -corner, -corner, w, h, 0, 0, w - 1, h - 1, w, h);
@@ -261,7 +265,7 @@ namespace Glow
 				}
 			}
 
-			if (settings.esp.blur)
+			if (g_Settings.esp.blur)
 				pRenderContext->DrawScreenSpaceRectangle(m_Materials.haloAddToScreen, 0, 0, w, h, 0, 0, w - 1, h - 1, w, h);
 
 			pRenderContext->SetStencilEnable(false);

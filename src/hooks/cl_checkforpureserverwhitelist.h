@@ -13,7 +13,7 @@ static detour_ctx_t CL_CheckForPureServerWhitelist_ctx;
 
 inline void Hooked_CL_CheckForPureServerWhitelist(void*& pFilesToReload)
 {
-	if (settings.misc.sv_pure_bypass)
+	if (g_Settings.misc.sv_pure_bypass)
 		return;
 
 	DETOUR_ORIG_CALL(&CL_CheckForPureServerWhitelist_ctx, originalCheckForPureServerWhitelistFn, pFilesToReload);

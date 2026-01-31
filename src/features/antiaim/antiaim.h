@@ -12,7 +12,7 @@ namespace Antiaim
 {
 	static std::string GetPitchModeName(PitchMode mode)
 	{
-		switch (settings.antiaim.pitch_mode)
+		switch (g_Settings.antiaim.pitch_mode)
 		{
 			case PitchMode::NONE: return "None";
 			case PitchMode::UP: return "Up";
@@ -44,7 +44,7 @@ namespace Antiaim
 
 	static float GetPitch(CUserCmd* pCmd)
 	{
-		switch (settings.antiaim.pitch_mode)
+		switch (g_Settings.antiaim.pitch_mode)
 		{
 			case PitchMode::NONE: return pCmd->viewangles.x;
 			case PitchMode::UP: return -89.0f;
@@ -59,7 +59,7 @@ namespace Antiaim
 
 	static float GetYaw(CUserCmd* pCmd, YawMode mode)
 	{
-		float spin_speed = settings.antiaim.spin_speed;
+		float spin_speed = g_Settings.antiaim.spin_speed;
 
 		switch (mode)
 		{
@@ -78,7 +78,7 @@ namespace Antiaim
 
 	static void Run(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd, bool* bSendPacket)
 	{
-		if (!settings.antiaim.enabled)
+		if (!g_Settings.antiaim.enabled)
 			return;
 
 		if (!pLocal->IsAlive() || pLocal->IsGhost() || pLocal->IsTaunting())
@@ -95,13 +95,13 @@ namespace Antiaim
 
 		bool isFake = *bSendPacket;
 		
-		if (settings.antiaim.pitch_mode != PitchMode::NONE)
+		if (g_Settings.antiaim.pitch_mode != PitchMode::NONE)
 		{
 			float pitch = GetPitch(pCmd);
 			pCmd->viewangles.x = pitch;
 		}
 
-		YawMode mode = isFake ? settings.antiaim.fake_yaw_mode : settings.antiaim.real_yaw_mode;
+		YawMode mode = isFake ? g_Settings.antiaim.fake_yaw_mode : g_Settings.antiaim.real_yaw_mode;
 
 		if (mode != YawMode::NONE)
 			pCmd->viewangles.y = GetYaw(pCmd, mode);

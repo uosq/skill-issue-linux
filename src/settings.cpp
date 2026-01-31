@@ -1,10 +1,10 @@
 #include "settings.h"
 
-Settings settings = {};
+Settings g_Settings = {};
 std::unordered_map<std::string, SettingEntry> g_SettingsMap = {};
 
 #define REG_SETTING(path, field, type) \
-    g_SettingsMap[#path "." #field] = { &settings.path.field, type };
+    g_SettingsMap[#path "." #field] = { &g_Settings.path.field, type };
 
 // probably not very efficient code, but it works so fuck it ig
 void RegisterSettings(void)
@@ -54,12 +54,14 @@ void RegisterSettings(void)
 	REG_SETTING(misc, viewmodel_offset[0], SettingType::FLOAT)
 	REG_SETTING(misc, viewmodel_offset[1], SettingType::FLOAT)
 	REG_SETTING(misc, viewmodel_offset[2], SettingType::FLOAT)
+	REG_SETTING(misc, viewmodel_interp, SettingType::FLOAT);
 
 	//triggerbot
 	REG_SETTING(triggerbot, enabled, SettingType::BOOL)
 	REG_SETTING(triggerbot, hitscan, SettingType::BOOL)
 	REG_SETTING(triggerbot, autobackstab, SettingType::INT)
 	REG_SETTING(triggerbot, key, SettingType::STRING)
+	REG_SETTING(triggerbot, autoairblast, SettingType::BOOL)
 
 	// colors
 	REG_SETTING(colors, red_team[0], SettingType::INT)

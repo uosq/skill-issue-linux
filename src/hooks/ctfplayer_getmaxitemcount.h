@@ -18,7 +18,7 @@ static detour_ctx_t GetMaxItemCount_ctx;
 
 inline int Hooked_GetMaxItemCount(void* thisptr)
 {
-	if (settings.misc.backpack_expander)
+	if (g_Settings.misc.backpack_expander)
 		return 4000;
 
 	int ret;

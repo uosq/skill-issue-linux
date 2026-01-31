@@ -2,6 +2,7 @@
 #include "hooks/clientmodeshared_createmove.h"
 #include "hooks/clientmodeshared_firegameevent.h"
 #include "hooks/ctfplayer_getmaxitemcount.h"
+#include "hooks/host_shutdown.h"
 #include "hooks/istudiorender_forcedmaterialoverride.h"
 #include "hooks/isurface_setcursor.h"
 #include "hooks/modelrender_drawmodelexecute.h"
@@ -59,6 +60,7 @@ void init(void)
 	HookLevelInitPreEntity();
 	HookFireGameEvent();
 	HookForcedMaterialOverride();
+	HookHost_Shutdown();
 
 	Lua::InitPluto();
 }

@@ -20,7 +20,7 @@ struct AimbotMelee
 {
 	inline void Run(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd, AimbotState& state)
 	{
-		if (settings.aimbot.melee == MeleeMode::NONE || pWeapon->GetWeaponID() == TF_WEAPON_KNIFE)
+		if (g_Settings.aimbot.melee == MeleeMode::NONE || pWeapon->GetWeaponID() == TF_WEAPON_KNIFE)
 			return;
 		
 		std::vector<PotentialTarget> targets;
@@ -44,7 +44,7 @@ struct AimbotMelee
 		CBaseEntity* target = nullptr;
 		float highestDot = -1.0f;
 
-		MeleeMode mode = settings.aimbot.melee;
+		MeleeMode mode = g_Settings.aimbot.melee;
 		float maxFov = mode == MeleeMode::LEGIT ? 90.0f : 180.0f;
 		float smallestFov = maxFov;
 
@@ -53,50 +53,37 @@ struct AimbotMelee
 		Math::AngleVectors(viewAngles, &viewForward);
 		viewForward.Normalize();
 
-		auto scanList = [&](const auto& list)
+		bool bCanHitTeammates = pWeapon->CanHitTeammates();
+
+		for (const EntityListEntry& entry : AimbotUtils::GetTargets(bCanHitTeammates, localTeam))
 		{
-			for (CBaseEntity* enemy : list)
-			{
-				if (!AimbotUtils::IsValidEntity(enemy, 0))
-					continue;
+			CBaseEntity* enemy = entry.ptr;
 
-				Vector hitPos = enemy->GetCenter();
-				Vector dir = hitPos - shootPos;
-				float distance = dir.Normalize();
-				if (distance > range)
-					continue;
+			Vector hitPos = enemy->GetCenter();
+			Vector dir = hitPos - shootPos;
+			float distance = dir.Normalize();
+			if (distance > range)
+				continue;
 
-				Vector angle = Math::CalcAngle(shootPos, hitPos);
-				float fov = Math::CalcFov(viewAngles, angle);
-				if (fov > maxFov || fov > smallestFov)
-					continue;
+			Vector angle = Math::CalcAngle(shootPos, hitPos);
+			float fov = Math::CalcFov(viewAngles, angle);
+			if (fov > maxFov || fov > smallestFov)
+				continue;
 
-				helper::engine::TraceHull(shootPos, shootPos + (dir * range), swingMins, swingMaxs, MASK_SHOT_HULL, &filter, &trace);
+			helper::engine::TraceHull(shootPos, shootPos + (dir * range), swingMins, swingMaxs, MASK_SHOT_HULL, &filter, &trace);
 
-				if (!trace.DidHit() || trace.m_pEnt != enemy)
-					continue;
+			if (!trace.DidHit() || trace.m_pEnt != enemy)
+				continue;
 
-				targetAngle = dir.ToAngle();
-				target = enemy;
-				smallestFov = fov;
-			}
-		};
-
-		{
-			bool bCanHitTeammates = pWeapon->CanHitTeammates();
-			TeamMode teamMode = settings.aimbot.teamMode;
-
-			if (!bCanHitTeammates || teamMode == TeamMode::ONLYENEMY || teamMode == TeamMode::BOTH)
-				scanList(EntityList::GetEnemies());
-
-			if (bCanHitTeammates && (teamMode == TeamMode::ONLYTEAMMATE || teamMode == TeamMode::BOTH))
-				scanList(EntityList::GetTeammates());
+			targetAngle = dir.ToAngle();
+			target = enemy;
+			smallestFov = fov;
 		}
 
 		if (target == nullptr)
 			return;
 
-		if (settings.aimbot.autoshoot)
+		if (g_Settings.aimbot.autoshoot)
 			pCmd->buttons |= IN_ATTACK;
 
 		if (helper::localplayer::IsAttacking(pLocal, pWeapon, pCmd))
@@ -114,7 +101,7 @@ struct AimbotMelee
 
 inline std::string GetMeleeModeName()
 {
-	switch(settings.aimbot.melee)
+	switch(g_Settings.aimbot.melee)
 	{
 		case MeleeMode::NONE: return "None";
 		case MeleeMode::LEGIT: return "Legit";

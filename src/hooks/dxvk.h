@@ -108,14 +108,14 @@ static void RenderImGui()
 
 	if (ImGui::IsKeyPressed(ImGuiKey_Insert, false) || ImGui::IsKeyPressed(ImGuiKey_F11, false))
 	{
-		settings.menu_open = !settings.menu_open;
-		interfaces::Surface->SetCursorAlwaysVisible(settings.menu_open);
+		g_Settings.menu_open = !g_Settings.menu_open;
+		interfaces::Surface->SetCursorAlwaysVisible(g_Settings.menu_open);
 	}
 
 	if (ImGui::IsKeyPressed(ImGuiKey_Escape, false))
 	{
-		settings.menu_open = false;
-		interfaces::Surface->SetCursorAlwaysVisible(settings.menu_open);
+		g_Settings.menu_open = false;
+		interfaces::Surface->SetCursorAlwaysVisible(g_Settings.menu_open);
 	}
 
 	cursor = ImGui::GetMouseCursor();
@@ -123,13 +123,13 @@ static void RenderImGui()
 	if (LuaHookManager::HasHooks("ImGui"))
 		LuaHookManager::Call(Lua::m_luaState, "ImGui");
 
-	if (settings.misc.spectatorlist)
+	if (g_Settings.misc.spectatorlist)
 		DrawSpectatorList();
 
-	if (settings.misc.playerlist)
+	if (g_Settings.misc.playerlist)
 		DrawPlayerList();
 
-	if (settings.menu_open)
+	if (g_Settings.menu_open)
 		DrawMainWindow();
 
 	ImGui::EndFrame();

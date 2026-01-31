@@ -8,7 +8,7 @@ namespace Bhop
 {
 	inline void Run(CTFPlayer* pLocal, CUserCmd* pCmd)
 	{
-		if (!settings.misc.bhop || pLocal->GetWaterLevel() > WL_Feet)
+		if (!g_Settings.misc.bhop || pLocal->GetWaterLevel() > WL_Feet)
 			return;
 
 		static bool usedAirJump = false;

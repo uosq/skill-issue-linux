@@ -32,7 +32,7 @@ DECLARE_VTABLE_HOOK(OverrideView, void, (IClientMode *thisptr, CViewSetup *pView
 		if (!pLocal->IsAlive())
 			return;
 
-		customfov.Run(pLocal, pView);
+		g_Customfov.Run(pLocal, pView);
 	}
 }
 

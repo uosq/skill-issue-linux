@@ -48,3 +48,6 @@ Called when a game event is called. For example, when a player spawns
 
 ## OverrideView ( view: **ViewSetup** )
 Called before drawing the localplayer's view
+
+## GameShutdown ( )
+Called before the game closes so you can do stuff like saving settings or something else before closing

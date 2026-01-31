@@ -39,7 +39,30 @@ inline void HookedCalcViewModelView(void* thisptr, CBaseEntity* owner, const Vec
 			LuaHookManager::Call(Lua::m_luaState, "CalcViewModelView", 2);
 		}
 
-		if (settings.aimbot.viewmodelaim)
+		if (g_Settings.misc.viewmodel_interp > 0.0f)
+		{
+			if (auto pLocal = helper::engine::GetLocalPlayer(); pLocal != nullptr)
+			{
+				if (pLocal->IsAlive())
+				{
+					if (auto pWeapon = HandleAs<CTFWeaponBase*>(pLocal->GetActiveWeapon()); pWeapon != nullptr)
+					{
+						static Vector smooth;
+						float frameTime = interfaces::GlobalVars->absolute_frametime;
+
+						float alpha = 1.0f - expf(-g_Settings.misc.viewmodel_interp * frameTime);
+
+						smooth.x += Math::NormalizeAngle(angle.x - smooth.x) * alpha;
+						smooth.z += Math::NormalizeAngle(angle.z - smooth.z) * alpha;
+						smooth.y += Math::NormalizeAngle(angle.y - smooth.y) * alpha;
+
+						angle = smooth;
+					}
+				}
+			}
+		}
+
+		if (g_Settings.aimbot.viewmodelaim)
 		{
 			if (Aimbot::IsRunning() && interfaces::GlobalVars && interfaces::GlobalVars->curtime)
 				stoptime = interfaces::GlobalVars->curtime + VIEWMODELAIM_INTERVAL;
@@ -48,7 +71,7 @@ inline void HookedCalcViewModelView(void* thisptr, CBaseEntity* owner, const Vec
 				angle = Aimbot::GetAngle();
 		}
 
-		Vector offset = {settings.misc.viewmodel_offset[0], settings.misc.viewmodel_offset[1], settings.misc.viewmodel_offset[2]};
+		Vector offset = {g_Settings.misc.viewmodel_offset[0], g_Settings.misc.viewmodel_offset[1], g_Settings.misc.viewmodel_offset[2]};
 		if (!offset.IsZero())
 		{
 			Vector forward, right, up;

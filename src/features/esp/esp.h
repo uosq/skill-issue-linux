@@ -13,7 +13,7 @@ namespace ESP
 	inline Color GetPlayerColor(CBaseEntity* player)
 	{
 		if (player == EntityList::m_pAimbotTarget)
-			return settings.colors.aimbot_target;
+			return g_Settings.colors.aimbot_target;
 
 		int team = player->m_iTeamNum();
 
@@ -22,9 +22,9 @@ namespace ESP
 			switch (team)
 			{
 				case ETeam::TEAM_RED:
-					return settings.colors.red_team;
+					return g_Settings.colors.red_team;
 				case ETeam::TEAM_BLU:
-					return settings.colors.blu_team;
+					return g_Settings.colors.blu_team;
 				default: break;
 			}
 		}
@@ -38,7 +38,7 @@ namespace ESP
 	inline Color GetBuildingColor(CBaseObject* building)
 	{
 		if (reinterpret_cast<CBaseEntity*>(building) == EntityList::m_pAimbotTarget)
-			return settings.colors.aimbot_target;
+			return g_Settings.colors.aimbot_target;
 
 		CTFPlayer* builder = HandleAs<CTFPlayer*>(building->m_hBuilder());
 		if (builder != nullptr)
@@ -47,9 +47,9 @@ namespace ESP
 			switch (team)
 			{
 				case ETeam::TEAM_RED:
-					return settings.colors.red_team;
+					return g_Settings.colors.red_team;
 				case ETeam::TEAM_BLU:
-					return settings.colors.blu_team;
+					return g_Settings.colors.blu_team;
 				default: break;
 			}
 		}
@@ -61,9 +61,6 @@ namespace ESP
 	inline bool IsValidPlayer(CTFPlayer* pLocal, CBaseEntity* entity)
 	{
 		if (entity == nullptr)
-			return false;
-
-		if (entity->IsDormant())
 			return false;
 
 		if (!entity->IsPlayer())
@@ -79,7 +76,7 @@ namespace ESP
 		if (!player->IsAlive())
 			return false;
 
-		if (player->InCond(TF_COND_CLOAKED) && settings.esp.ignorecloaked)
+		if (player->InCond(TF_COND_CLOAKED) && g_Settings.esp.ignorecloaked)
 			return false;
 
 		return true;
@@ -111,16 +108,37 @@ namespace ESP
 
 	inline void Run(CTFPlayer* pLocal)
 	{
-		if (!helper::engine::IsInMatch() || !settings.esp.enabled)
+		if (!helper::engine::IsInMatch() || !g_Settings.esp.enabled)
 			return;
 
 		Color white {255, 255, 255, 255};
 		helper::draw::SetFont(fontManager.GetCurrentFont());
 
-		for (auto entity : EntityList::m_vecPlayers)
+		for (auto& entry : EntityList::GetEntities())
 		{
-			if (!IsValidPlayer(pLocal, entity))
+			bool isPlayer, isBuilding;
+			isPlayer = entry.flags & EntityFlags::IsPlayer;
+			isBuilding = entry.flags & EntityFlags::IsBuilding;
+
+			if (!isPlayer && !isBuilding)
 				continue;
+
+			CBaseEntity* entity = entry.ptr;
+			if (entity == nullptr)
+				continue;
+
+			if (isPlayer)
+			{
+				CTFPlayer* pPlayer = static_cast<CTFPlayer*>(entry.ptr);
+				if (!interfaces::CInput->CAM_IsThirdPerson() && entity->GetIndex() == pLocal->GetIndex())
+					continue;
+
+				if (!pPlayer->IsAlive())
+					continue;
+	
+				if (pPlayer->InCond(TF_COND_CLOAKED) && g_Settings.esp.ignorecloaked)
+					continue;
+			}
 
 			Vector origin = entity->GetAbsOrigin();
 			Vector feet; // fuck i need to sleep
@@ -131,52 +149,23 @@ namespace ESP
 			if (!helper::engine::WorldToScreen(origin + Vector{0, 0, entity->m_vecMaxs().z}, head))
 				continue;
 
-			// name, class, etc
-			CTFPlayer* player = static_cast<CTFPlayer*>(entity);
-			if (player == nullptr)
-				continue;
-
-			int h = (feet - head).Length();
-			int w = h * 0.3;
+			int h = (feet - head).Length2D();
+			int w = (entity->IsTeleporter()) ? (h * 2.0f) : (h * 0.3);
 
 			Color color = GetPlayerColor(entity);
 
-			if (settings.esp.box)
+			if (g_Settings.esp.box)
 				PaintBox(color, head, feet, w, h);
 	
 			// name
-			if (settings.esp.name)
-				PaintName(white, head, w, h, player->GetName());
-		}
-
-		if (settings.esp.buildings)
-		{
-			// skip players
-			for (auto entity : EntityList::m_vecBuildings)
+			if (g_Settings.esp.name)
 			{
-				if (!IsValidBuilding(pLocal, entity))
-					return;
-
-				Vector bottom;
-				Vector origin = entity->GetAbsOrigin();
-				if (!helper::engine::WorldToScreen(origin, bottom))
-					continue;
-
-				Vector top;
-				Vector max = origin + Vector(0, 0, entity->m_vecMaxs().z);
-				if (!helper::engine::WorldToScreen(max, top))
-					continue;
-
-				int h = (bottom - top).Length();
-				int w = static_cast<CBaseEntity*>(entity)->IsTeleporter() ? h * 2.0f : h * 0.3f;
-
-				Color color = GetBuildingColor(entity);
-
-				if (settings.esp.box)
-					PaintBox(color, top, bottom, w, h);
-
-				if (settings.esp.name)
-					PaintName(white, top, w, h, std::string(entity->GetName()));
+				if (isPlayer)
+					PaintName(white, head, w, h, static_cast<CTFPlayer*>(entity)->GetName());
+				else if (isBuilding)
+					PaintName(white, head, w, h, static_cast<CBaseObject*>(entity)->GetName());
+				else
+					PaintName(white, head, w, h, entity->GetClientClass()->networkName);
 			}
 		}
 	}

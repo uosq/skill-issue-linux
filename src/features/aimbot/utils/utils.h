@@ -38,20 +38,14 @@ static void ClearAimbotState(AimbotState& state)
 
 namespace AimbotUtils
 {
-	inline bool IsValidEntity(CBaseEntity* entity, int localTeam, bool ignoreTeammate = true)
+	inline bool IsValidEntity(CBaseEntity* entity)
 	{
 		if (entity == nullptr)
 			return false;
 
-		if (entity->IsDormant())
-			return false;
-
-		if (ignoreTeammate && entity->m_iTeamNum() == localTeam)
-			return false;
-
 		if (entity->IsPlayer())
 		{
-			CTFPlayer* player = static_cast<CTFPlayer*>(entity);
+			auto* player = static_cast<CTFPlayer*>(entity);
 			if (player == nullptr)
 				return false;
 
@@ -64,32 +58,23 @@ namespace AimbotUtils
 			if (player->IsGhost())
 				return false;
 
-			if (settings.aimbot.ignorecloaked && player->InCond(ETFCond::TF_COND_CLOAKED))
+			if (g_Settings.aimbot.ignorecloaked && player->InCond(ETFCond::TF_COND_CLOAKED))
 				return false;
 
-			if (settings.aimbot.ignorebonked && player->InCond(ETFCond::TF_COND_BONKED))
+			if (g_Settings.aimbot.ignorebonked && player->InCond(ETFCond::TF_COND_BONKED))
 				return false;
 
-			if (settings.aimbot.ignoreubered && player->InCond(ETFCond::TF_COND_INVULNERABLE))
+			if (g_Settings.aimbot.ignoreubered && player->InCond(ETFCond::TF_COND_INVULNERABLE))
 				return false;
 
-			if (settings.aimbot.ignorehoovy && player->m_iClass() == ETFClass::TF_CLASS_HEAVYWEAPONS && (player->GetFlags() & FL_DUCKING))
+			if (g_Settings.aimbot.ignorehoovy && player->m_iClass() == ETFClass::TF_CLASS_HEAVYWEAPONS && (player->GetFlags() & FL_DUCKING))
 				return false;
 
 			return true;
 		}
 
 		if (entity->IsBuilding())
-		{
-			auto* building = static_cast<CBaseObject*>(entity);
-			if (building == nullptr)
-				return false;
-
-			if (building->m_iHealth() <= 0)
-				return false;
-
 			return true;
-		}
 
 		return false;
 	}
@@ -132,30 +117,9 @@ namespace AimbotUtils
 		return false;
 	}
 
-	inline std::vector<CBaseEntity*> GetTargets(int localTeam)
-	{
-		const auto& enemies = EntityList::GetEnemies();
-		std::vector<CBaseEntity*> targets;
-
-		for (const auto& enemy : enemies)
-		{
-			if (enemy == nullptr)
-				continue;
-
-			// pass no team and dont check team
-			// must be pretty obvious why
-			if (!IsValidEntity(enemy, 0, false))
-				continue;
-
-			targets.emplace_back(enemy);
-		}
-
-		return targets;
-	}
-
 	inline std::string GetAimbotModeName()
 	{
-		switch(settings.aimbot.mode)
+		switch(g_Settings.aimbot.mode)
 		{
 			case AimbotMode::PLAIN: return "Plain";
 			case AimbotMode::SMOOTH: return "Smooth";
@@ -168,7 +132,7 @@ namespace AimbotUtils
 
 	inline std::string GetTeamModeName()
 	{
-		switch(settings.aimbot.teamMode)
+		switch(g_Settings.aimbot.teamMode)
 		{
 			case TeamMode::ONLYENEMY: return "Only Enemy";
 			case TeamMode::ONLYTEAMMATE: return "Only Teammate";
@@ -210,14 +174,50 @@ namespace AimbotUtils
 
 	inline float GetAimbotFovScaled(CTFPlayer* pLocal)
 	{
-		float cameraFOV = customfov.GetFov();
+		float cameraFOV = g_Customfov.GetFov();
 
-		float radAimbotHalf = DEG2RAD(settings.aimbot.fov / 2.0f);
+		float radAimbotHalf = DEG2RAD(g_Settings.aimbot.fov / 2.0f);
 		float radPlayerHalf = DEG2RAD(cameraFOV / 2.0f);
 		float radBaseHalf   = DEG2RAD(90.0f / 2.0f);
 
 		float scaledRad = atan(tan(radAimbotHalf) * (tan(radPlayerHalf) / tan(radBaseHalf)));
 
 		return RAD2DEG(scaledRad) * 2.0f;
+	}
+
+	inline std::vector<EntityListEntry> GetTargets(const bool& bCanHitTeammates, int localTeam)
+	{
+		std::vector<EntityListEntry> vecEntities;
+
+		for (const auto& entry : EntityList::GetEntities())
+		{
+			if (!(entry.flags & EntityFlags::IsAlive))
+				continue;
+
+			if (entry.ptr == nullptr)
+				continue;
+
+			if (!IsValidEntity(entry.ptr))
+				continue;
+
+			TeamMode teamMode = g_Settings.aimbot.teamMode;
+			int teamNum = entry.ptr->m_iTeamNum();
+
+			if (!bCanHitTeammates || teamMode == TeamMode::ONLYENEMY)
+			{
+				if (teamNum == localTeam)
+					continue;
+			}
+
+			if (bCanHitTeammates && teamMode == TeamMode::ONLYTEAMMATE)
+			{
+				if (teamNum != localTeam)
+					continue;
+			}
+
+			vecEntities.emplace_back(entry);
+		}
+
+		return vecEntities;
 	}
 };

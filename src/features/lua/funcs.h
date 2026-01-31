@@ -68,7 +68,7 @@ namespace LuaFuncs
 		int GetPlayers(lua_State* L);
 		int GetTeammates(lua_State* L);
 		int GetEnemies(lua_State* L);
-		int GetCurrentWeapon(lua_State* L);
+		int GetActiveWeapon(lua_State* L);
 	}
 
 	namespace draw

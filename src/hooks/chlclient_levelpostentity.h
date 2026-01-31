@@ -10,6 +10,8 @@
 
 DECLARE_VTABLE_HOOK(LevelInitPostEntity, void, (CHLClient* thisptr))
 {
+	EntityList::Reserve();
+
 	if (LuaHookManager::HasHooks("LevelInitPostEntity"))
 		LuaHookManager::Call(Lua::m_luaState, "LevelInitPostEntity", 0);
 

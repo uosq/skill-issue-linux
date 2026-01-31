@@ -147,14 +147,14 @@ inline void Hooked_SwapWindow(SDL_Window* window)
 
 	if (ImGui::IsKeyPressed(ImGuiKey_Insert, false) || ImGui::IsKeyPressed(ImGuiKey_F11, false))
 	{
-		settings.menu_open = !settings.menu_open;
-		interfaces::Surface->SetCursorAlwaysVisible(settings.menu_open);
+		g_Settings.menu_open = !g_Settings.menu_open;
+		interfaces::Surface->SetCursorAlwaysVisible(g_Settings.menu_open);
 	}
 
 	if (ImGui::IsKeyPressed(ImGuiKey_Escape, false))
 	{
-		settings.menu_open = false;
-		interfaces::Surface->SetCursorAlwaysVisible(settings.menu_open);
+		g_Settings.menu_open = false;
+		interfaces::Surface->SetCursorAlwaysVisible(g_Settings.menu_open);
 	}
 
 	ImGui_ImplOpenGL3_NewFrame();
@@ -166,13 +166,13 @@ inline void Hooked_SwapWindow(SDL_Window* window)
 	if (LuaHookManager::HasHooks("ImGui"))
 		LuaHookManager::Call(Lua::m_luaState, "ImGui");
 
-	if (settings.misc.spectatorlist)
+	if (g_Settings.misc.spectatorlist)
 		DrawSpectatorList();
 
-	if (settings.misc.playerlist)
+	if (g_Settings.misc.playerlist)
 		DrawPlayerList();
 
-	if (settings.menu_open)
+	if (g_Settings.menu_open)
 		DrawMainWindow();
 
 	ImGui::Render();
@@ -194,7 +194,7 @@ inline int Hooked_PollEvent(SDL_Event* event)
 	if (tfwindow && ImGui::GetCurrentContext())
 		ImGui_ImplSDL2_ProcessEvent(event);
 
-	if (settings.menu_open)
+	if (g_Settings.menu_open)
 		event->type = 0;
 
 	return ret;

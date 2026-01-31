@@ -506,7 +506,7 @@ namespace LuaFuncs
 			{"GetPlayers", GetPlayers},
 			{"GetTeammates", GetTeammates},
 			{"GetEnemies", GetEnemies},
-			{"GetCurrentWeapon", GetCurrentWeapon},
+			{"GetActiveWeapon", GetActiveWeapon},
 			{nullptr, nullptr}
 		};
 
@@ -570,18 +570,21 @@ namespace LuaFuncs
 
 		int GetPlayers(lua_State* L)
 		{
-			const auto& players = EntityList::m_vecPlayers;
+			const auto& entities = EntityList::GetEntities();
 
 			lua_newtable(L);
 
 			int index = 1; // lua arrays start at 1
 
-			for (CTFPlayer* player : players)
+			for (auto& entry : entities)
 			{
-				if (!player)
+				if (entry.ptr == nullptr)
 					continue;
 
-				LuaClasses::EntityLua::push_entity(L, static_cast<CBaseEntity*>(player));
+				if (!(entry.flags & EntityFlags::IsPlayer))
+					continue;
+
+				LuaClasses::EntityLua::push_entity(L, entry.ptr);
 				lua_rawseti(L, -2, index++);
 			}
 
@@ -590,18 +593,21 @@ namespace LuaFuncs
 
 		int GetTeammates(lua_State* L)
 		{
-			const auto& teammates = EntityList::m_vecTeammates;
+			const auto& entities = EntityList::GetEntities();
 
 			lua_newtable(L);
 
 			int index = 1; // lua arrays start at 1
 
-			for (const auto& team : teammates)
+			for (auto& entry : entities)
 			{
-				if (!team)
+				if (entry.ptr == nullptr)
 					continue;
 
-				LuaClasses::EntityLua::push_entity(L, static_cast<CBaseEntity*>(team));
+				if (entry.flags & EntityFlags::IsEnemy)
+					continue;
+
+				LuaClasses::EntityLua::push_entity(L, entry.ptr);
 				lua_rawseti(L, -2, index++);
 			}
 
@@ -610,36 +616,48 @@ namespace LuaFuncs
 
 		int GetEnemies(lua_State* L)
 		{
-			const auto& enemies = EntityList::m_vecEnemies;
+			const auto& entities = EntityList::GetEntities();
 
 			lua_newtable(L);
 
 			int index = 1; // lua arrays start at 1
 
-			for (const auto& enemy : enemies)
+			for (auto& entry : entities)
 			{
-				if (!enemy)
+				if (entry.ptr == nullptr)
 					continue;
 
-				LuaClasses::EntityLua::push_entity(L, static_cast<CBaseEntity*>(enemy));
+				if (!(entry.flags & EntityFlags::IsEnemy))
+					continue;
+
+				LuaClasses::EntityLua::push_entity(L, entry.ptr);
 				lua_rawseti(L, -2, index++);
 			}
 
 			return 1; // return the table
 		}
 
-		int GetCurrentWeapon(lua_State* L)
+		int GetActiveWeapon(lua_State* L)
 		{
 			if (!interfaces::Engine->IsInGame() || !interfaces::Engine->IsConnected())
-				return 0;
+			{
+				lua_pushnil(L);
+				return 1;
+			}
 
 			CTFPlayer* pLocal = EntityList::m_pLocalPlayer;
 			if (pLocal == nullptr)
-				return 0;
+			{
+				lua_pushnil(L);
+				return 1;
+			}
 
 			CTFWeaponBase* pWeapon = HandleAs<CTFWeaponBase*>(pLocal->GetActiveWeapon());
 			if (pWeapon == nullptr)
-				return 0;
+			{
+				lua_pushnil(L);
+				return 1;
+			}
 
 			LuaClasses::EntityLua::push_entity(L, pWeapon);
 			return 1;
@@ -1963,14 +1981,14 @@ namespace LuaFuncs
 
 		int IsOpen(lua_State* L)
 		{
-			lua_pushboolean(L, settings.menu_open);
+			lua_pushboolean(L, g_Settings.menu_open);
 			return 1;
 		}
 
 		int SetOpen(lua_State* L)
 		{
 			int open = luaL_checkinteger(L, 1);
-			settings.menu_open = open;
+			g_Settings.menu_open = open;
 			interfaces::Surface->SetCursorAlwaysVisible(open);
 			return 0;
 		}
@@ -2121,7 +2139,7 @@ namespace LuaFuncs
 
 		int GetMode(lua_State* L)
 		{
-			lua_pushinteger(L, int(settings.aimbot.mode));
+			lua_pushinteger(L, int(g_Settings.aimbot.mode));
 			lua_pushstring(L, AimbotUtils::GetAimbotModeName().c_str());
 			return 2;
 		}
@@ -2135,13 +2153,13 @@ namespace LuaFuncs
 				return 0;
 			}
 
-			settings.aimbot.mode = AimbotMode(mode);
+			g_Settings.aimbot.mode = AimbotMode(mode);
 			return 0;
 		}
 
 		int GetFOV(lua_State* L)
 		{
-			lua_pushnumber(L, settings.aimbot.fov);
+			lua_pushnumber(L, g_Settings.aimbot.fov);
 			return 1;
 		}
 
@@ -2179,7 +2197,7 @@ namespace LuaFuncs
 				return 1;
 			}
 
-			lua_pushboolean(L, AimbotUtils::IsValidEntity(le->ent, pLocal->m_iTeamNum()));
+			lua_pushboolean(L, AimbotUtils::IsValidEntity(le->ent));
 			return 1;
 		}
 
@@ -2191,7 +2209,7 @@ namespace LuaFuncs
 
 		int GetKey(lua_State* L)
 		{
-			const std::string& key = settings.aimbot.key;
+			const std::string& key = g_Settings.aimbot.key;
 			ButtonCode_t btn = interfaces::InputSystem->StringToButtonCode(key.c_str());
 
 			if (!helper::input::IsButtonValid(btn))
@@ -2217,7 +2235,7 @@ namespace LuaFuncs
 				ButtonCode_t btn = interfaces::InputSystem->StringToButtonCode(str);
 
 				if (helper::input::IsButtonValid(btn))
-					settings.aimbot.key = str;
+					g_Settings.aimbot.key = str;
 
 				return 0;
 			}
@@ -2228,7 +2246,7 @@ namespace LuaFuncs
 				ButtonCode_t btn = interfaces::InputSystem->VirtualKeyToButtonCode(key);
 				
 				if (helper::input::IsButtonValid(btn))
-					settings.aimbot.key = interfaces::InputSystem->ButtonCodeToString(btn);
+					g_Settings.aimbot.key = interfaces::InputSystem->ButtonCodeToString(btn);
 
 				return 0;
 			}

@@ -8,7 +8,7 @@
 
 DECLARE_VTABLE_HOOK(ISurface_LockCursor, void, (void* thisptr))
 {
-	if (settings.menu_open)
+	if (g_Settings.menu_open)
 		return interfaces::Surface->UnlockCursor();
 
 	originalISurface_LockCursor(thisptr);
@@ -16,7 +16,7 @@ DECLARE_VTABLE_HOOK(ISurface_LockCursor, void, (void* thisptr))
 
 DECLARE_VTABLE_HOOK(ISurface_SetCursor, void, (void* thisptr, HCursor cursor))
 {
-	if (settings.menu_open)
+	if (g_Settings.menu_open)
 	{
 		switch (cursor)
 		{

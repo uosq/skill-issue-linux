@@ -8,11 +8,11 @@ struct Thirdperson
 {
 	void RunHotkey()
 	{
-		if (settings.misc.thirdperson_key == "")
+		if (g_Settings.misc.thirdperson_key == "")
 			return;
 
-		if (helper::input::IsKeyPressed(settings.misc.thirdperson_key))
-			settings.misc.thirdperson = !settings.misc.thirdperson;
+		if (helper::input::IsKeyPressed(g_Settings.misc.thirdperson_key))
+			g_Settings.misc.thirdperson = !g_Settings.misc.thirdperson;
 	}
 
 	// Call in FrameStageNotify -> FRAME_NET_UPDATE_END
@@ -23,10 +23,12 @@ struct Thirdperson
 		if (pLocal == nullptr || !pLocal->IsAlive())
 			return;
 
-		if (settings.misc.thirdperson)
+		if (g_Settings.misc.thirdperson)
 			pLocal->m_nForceTauntCam() = 1;
 
-		if (!settings.misc.thirdperson && interfaces::CInput->CAM_IsThirdPerson())
+		if (!g_Settings.misc.thirdperson && interfaces::CInput->CAM_IsThirdPerson())
 			pLocal->m_nForceTauntCam() = 0;
 	}
 };
+
+inline Thirdperson g_Thirdperson;

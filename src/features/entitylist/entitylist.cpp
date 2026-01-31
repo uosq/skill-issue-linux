@@ -2,22 +2,25 @@
 
 namespace EntityList
 {
-	std::vector<CBaseObject*> m_vecBuildings;
-	std::vector<CTFPlayer*> m_vecPlayers;
 	CTFPlayer* m_pLocalPlayer = nullptr;
 	CTFPlayerResource *m_pPlayerResource = nullptr;
-	std::vector<CBaseEntity*> m_vecTeammates;
-	std::vector<CBaseEntity*> m_vecEnemies;
 	CBaseEntity* m_pAimbotTarget = nullptr;
+	std::vector<EntityListEntry> m_vecEntities;
 
 	void Clear()
 	{
-		m_vecBuildings.clear();
-		m_vecPlayers.clear();
-		m_vecTeammates.clear();
-		m_vecEnemies.clear();
+		m_vecEntities.clear();
 		m_pLocalPlayer = nullptr;
 		m_pPlayerResource = nullptr;
+	}
+
+	// Call in LevelInitPostEntity
+	void Reserve()
+	{
+		int maxentities = interfaces::EntityList->GetMaxEntities();
+		m_vecEntities.reserve(maxentities);
+
+		//interfaces::Cvar->ConsolePrintf("Reserved %i entities\n", maxentities);
 	}
 
 	// Call in FrameStageNotify -> FRAME_NET_UPDATE_END
@@ -34,7 +37,7 @@ namespace EntityList
 		for (int i = 1; i < interfaces::EntityList->GetHighestEntityIndex(); i++)
 		{
 			IClientEntity* entity = interfaces::EntityList->GetClientEntity(i);
-			if (entity == nullptr)
+			if (entity == nullptr || entity->IsDormant())
 				continue;
 
 			switch (entity->GetClassID())
@@ -42,13 +45,20 @@ namespace EntityList
 				case ETFClassID::CTFPlayer:
 				{
 					CTFPlayer* player = static_cast<CTFPlayer*>(entity);
-					m_vecPlayers.emplace_back(player);
+					if (player == nullptr)
+						break;
 
-					if (player->m_iTeamNum() == localTeam)
-						m_vecTeammates.emplace_back(player);
-					else
-						m_vecEnemies.emplace_back(player);
+					EntityListEntry entry;
+					entry.flags = EntityFlags::IsPlayer;
+					entry.ptr = player;
 					
+					if (player->m_iTeamNum() != localTeam)
+						entry.flags |= EntityFlags::IsEnemy;
+			
+					if (player->IsAlive())
+						entry.flags |= EntityFlags::IsAlive;
+
+					m_vecEntities.emplace_back(entry);
 					break;
 				}
 
@@ -57,17 +67,17 @@ namespace EntityList
 				case ETFClassID::CObjectTeleporter:
 				{
 					CBaseObject* building = static_cast<CBaseObject*>(entity);
-					m_vecBuildings.emplace_back(building);
-
-					CBaseEntity* builder = HandleAs<CTFPlayer*>(building->m_hBuilder());
-					if (builder == nullptr)
+					if (building == nullptr || building->m_iHealth() <= 0)
 						break;
 
-					if (builder->m_iTeamNum() == localTeam)
-						m_vecTeammates.emplace_back(static_cast<CBaseEntity*>(entity));
-					else
-						m_vecEnemies.emplace_back(static_cast<CBaseEntity*>(entity));
+					EntityListEntry entry = {};
+					entry.flags = EntityFlags::IsBuilding | EntityFlags::IsAlive;
+					entry.ptr = building;
 
+					if (building->m_iTeamNum() != localTeam)
+						entry.flags |= EntityFlags::IsEnemy;
+
+					m_vecEntities.emplace_back(entry);
 					break;
 				}
 
@@ -77,19 +87,35 @@ namespace EntityList
 					break;
 				}
 
+				case ETFClassID::CTFProjectile_Rocket:
+				case ETFClassID::CTFProjectile_Arrow:
+				case ETFClassID::CTFProjectile_BallOfFire:
+				case ETFClassID::CTFProjectile_Flare:
+				case ETFClassID::CTFProjectile_HealingBolt:
+				case ETFClassID::CTFProjectile_Jar:
+				case ETFClassID::CTFProjectile_JarGas:
+				case ETFClassID::CTFProjectile_JarMilk:
+				case ETFClassID::CTFProjectile_SentryRocket:
+				case ETFClassID::CTFStickBomb:
+				{
+					CBaseProjectile* baseEnt = static_cast<CBaseProjectile*>(entity);
+					if (baseEnt == nullptr)
+						break;
+
+					EntityListEntry entry = {};
+					entry.flags = EntityFlags::IsProjectile | EntityFlags::IsAlive;
+					entry.ptr = baseEnt;
+
+					if (baseEnt->m_iTeamNum() != localTeam)
+						entry.flags |= EntityFlags::IsEnemy;
+
+					m_vecEntities.emplace_back(entry);
+					break;
+				}
+
 				default: break;
 			}
 		}
-	}
-
-	std::vector<CTFPlayer*> GetPlayers()
-	{
-		return m_vecPlayers;
-	}
-
-	std::vector<CBaseObject*> GetBuildings()
-	{
-		return m_vecBuildings;
 	}
 
 	CTFPlayer* GetLocal()
@@ -102,13 +128,38 @@ namespace EntityList
 		return m_pPlayerResource;
 	}
 
-	std::vector<CBaseEntity*> GetTeammates()
+	const std::vector<EntityListEntry>& GetEntities()
 	{
-		return m_vecTeammates;
+		return m_vecEntities;
 	}
 
-	std::vector<CBaseEntity*> GetEnemies()
+	std::vector<EntityListEntry> GetTeammates()
 	{
-		return m_vecEnemies;
+		std::vector<EntityListEntry> teammates;
+
+		for (const auto& entry : m_vecEntities)
+		{
+			if (entry.flags & EntityFlags::IsEnemy)
+				continue;
+
+			teammates.emplace_back(entry);
+		}
+
+		return teammates;
+	}
+
+	std::vector<EntityListEntry> GetEnemies()
+	{
+		std::vector<EntityListEntry> enemies;
+
+		for (const auto& entry : m_vecEntities)
+		{
+			if (!(entry.flags & EntityFlags::IsEnemy))
+				continue;
+
+			enemies.emplace_back(entry);
+		}
+
+		return enemies;
 	}
 }

@@ -45,15 +45,16 @@ namespace Chams
 		interfaces::RenderView->SetBlend(0.5f);
 		interfaces::ModelRender->ForcedMaterialOverride(m_mFlatMat);
 
-		for (auto entity : EntityList::m_vecPlayers)
+		for (auto& entry : EntityList::GetEntities())
 		{
+			CTFPlayer* entity = static_cast<CTFPlayer*>(entry.ptr);
 			if (entity == nullptr)
 				continue;
 
-			if (!entity->IsPlayer())
+			if (!(entry.flags & EntityFlags::IsPlayer))
 				continue;
 
-			if (entity->IsDormant() || !entity->ShouldDraw())
+			if (!entity->ShouldDraw())
 				continue;
 
 			if (!entity->IsAlive())
@@ -72,9 +73,9 @@ namespace Chams
 			while (moveChild != nullptr && passes <= 32)
 			{
 				CBaseEntity* attachment = static_cast<CBaseEntity*>(moveChild);
-				if (settings.esp.weapon && attachment->IsWeapon())
+				if (g_Settings.esp.weapon && attachment->IsWeapon())
 				{
-					color = settings.colors.weapon;
+					color = g_Settings.colors.weapon;
 					flColor[0] = color.r()/255.0f;
 					flColor[1] = color.g()/255.0f;
 					flColor[2] = color.b()/255.0f;
@@ -102,7 +103,10 @@ namespace Chams
 
 		m_bRunning = false;
 
-		if (!settings.esp.chams)
+		if (!g_Settings.esp.chams)
+			return;
+
+		if (interfaces::Engine->IsTakingScreenshot())
 			return;
 
 		Init();

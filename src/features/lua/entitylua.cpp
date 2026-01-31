@@ -47,6 +47,7 @@ namespace LuaClasses
 			{"GetSmackTime", GetSmackTime},
 			{"GetIndex", GetIndex},
 			{"Predict", Predict},
+			{"EstimateAbsVelocity", EstimateAbsVelocity},
 			{nullptr, nullptr}
 		};
 
@@ -900,6 +901,19 @@ namespace LuaClasses
 				lua_rawseti(L, -2, i++);
 			}
 
+			return 1;
+		}
+
+		int EstimateAbsVelocity(lua_State* L)
+		{
+			LuaEntity* le = static_cast<LuaEntity*>(luaL_checkudata(L, 1, "Entity"));
+			if (le->ent == nullptr)
+			{
+				lua_pushnil(L);
+				return 1;
+			}
+
+			LuaClasses::VectorLua::push_vector(L, le->ent->EstimateAbsVelocity());
 			return 1;
 		}
 	}

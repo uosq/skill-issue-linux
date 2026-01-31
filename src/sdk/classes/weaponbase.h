@@ -235,6 +235,15 @@ public:
 
 		return false;
 	}
+
+	bool CanAirblast()
+	{
+		int iAirblastDisabled = static_cast<int>(AttributeHookValue(0, "airblast_disabled", this, nullptr, true));
+		bool bAllowed = iAirblastDisabled == 0;
+		return bAllowed;
+	}
+
+	Vector GetDeflectionSize() { return Vector( 128, 128, 64 ); }
 };
 
 class CTFKnife : public CTFWeaponBase
