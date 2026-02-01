@@ -57,7 +57,7 @@ namespace Triggerbot
                 if (g_Settings.triggerbot.autobackstab != AutoBackstabMode::NONE && pWeapon->IsMelee())
 			g_Autobackstab.Run(pLocal, pWeapon, pCmd, pSendPacket);
 
-		if (g_Settings.triggerbot.autoairblast && pWeapon->GetWeaponID() == TF_WEAPON_FLAMETHROWER)
-			g_AutoAirblast.Run(pLocal, pWeapon, pCmd);
+		if (g_Settings.triggerbot.autoairblast != AutoAirblastMode::NONE && pWeapon->GetWeaponID() == TF_WEAPON_FLAMETHROWER)
+			g_AutoAirblast.Run(pLocal, pWeapon, pCmd, pSendPacket);
 	}
 }

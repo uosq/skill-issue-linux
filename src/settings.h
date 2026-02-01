@@ -68,6 +68,12 @@ enum class TeamMode
 	MAX
 };
 
+enum class AutoAirblastMode
+{
+	NONE = 0,
+	LEGIT, RAGE
+};
+
 struct Settings_Antiaim
 {
 	bool enabled = false;
@@ -135,7 +141,7 @@ struct Settings_Triggerbot
 	bool hitscan = false;
 	AutoBackstabMode autobackstab = AutoBackstabMode::NONE;
 	std::string key = "";
-	bool autoairblast = false;
+	AutoAirblastMode autoairblast = AutoAirblastMode::NONE;
 };
 
 struct Settings_Colors

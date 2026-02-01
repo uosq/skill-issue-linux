@@ -229,7 +229,19 @@ static void DrawTriggerTab()
 		ImGui::EndCombo();
 	}
 
-	ImGui::Checkbox("Auto Airblast", &g_Settings.triggerbot.autoairblast);
+	if (ImGui::BeginCombo("Auto Airblast", g_AutoAirblast.GetModeName().c_str()))
+	{
+		if (ImGui::Selectable("None"))
+			g_Settings.triggerbot.autoairblast = AutoAirblastMode::NONE;
+
+		if (ImGui::Selectable("Legit"))
+			g_Settings.triggerbot.autoairblast = AutoAirblastMode::LEGIT;
+
+		if (ImGui::Selectable("Rage"))
+			g_Settings.triggerbot.autoairblast = AutoAirblastMode::RAGE;
+
+		ImGui::EndCombo();
+	}
 
 	ImGui::EndGroup();
 }
