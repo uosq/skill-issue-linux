@@ -141,6 +141,9 @@ Only call this in a weapon, will return nil on anything else
 ### > GetSmackTime( )
 returns **number**
 
+### > ShouldDraw()
+returns **bool**
+
 ### > SetupBones( [boneMask: **int** = 0x7FF00], [currentTime: **number** = current time] )
 Returns a table of at most 128 bones
 
