@@ -15,4 +15,4 @@ if [ ! -f build/attach.sh ]; then
 	exit 1
 fi
 
-zip -r build/skill-issue.zip build/libvapo.so build/attach.sh lua-docs/
+zip -r build/skill-issue.zip build/libvapo.so build/attach.sh lua-docs/ src/
