@@ -3,6 +3,7 @@
 #include "../vtables.h"
 #include "../sdk/helpers/helper.h"
 #include "../features/entitylist/entitylist.h"
+#include "../features/visuals/viewmodel_aim/viewmodel_aim.h"
 
 #include "../features/lua/hooks.h"
 #include "../features/lua/api.h"
@@ -11,6 +12,7 @@
 DECLARE_VTABLE_HOOK(LevelInitPostEntity, void, (CHLClient* thisptr))
 {
 	EntityList::Reserve();
+	g_ViewmodelAim.ResetStopTime();
 
 	if (LuaHookManager::HasHooks("LevelInitPostEntity"))
 		LuaHookManager::Call(Lua::m_luaState, "LevelInitPostEntity", 0);

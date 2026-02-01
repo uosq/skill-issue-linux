@@ -19,3 +19,6 @@ returns **number**
 
 ### > RealTime( )
 returns **number**
+
+### > MaxClients( )
+returns **int**

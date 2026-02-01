@@ -23,8 +23,8 @@ namespace LuaFuncs
 	{
 		void luaopen_commonfunctions(lua_State* L)
 		{
-			lua_register(L, "print", &Print);
-			lua_register(L, "typeof", &Typeof);
+			lua_register(L, "print", Print);
+			lua_register(L, "typeof", Typeof);
 		}
 
 		int Print(lua_State* L)
@@ -81,12 +81,13 @@ namespace LuaFuncs
 	{
 		const luaL_Reg globalvarslib[] =
 		{
-			{"TickCount", &TickCount},
-			{"TickInterval", &TickInterval},
-			{"CurTime", &CurTime},
-			{"AbsoluteFrameTime", &AbsoluteFrameTime},
-			{"FrameTime", &FrameTime},
-			{"RealTime", &RealTime},
+			{"TickCount", TickCount},
+			{"TickInterval", TickInterval},
+			{"CurTime", CurTime},
+			{"AbsoluteFrameTime", AbsoluteFrameTime},
+			{"FrameTime", FrameTime},
+			{"RealTime", RealTime},
+			{"MaxClients", MaxClients},
 			{nullptr, nullptr},
 		};
 
@@ -134,6 +135,12 @@ namespace LuaFuncs
 			lua_pushnumber(L, interfaces::GlobalVars != nullptr ? interfaces::GlobalVars->realtime : 0);
 			return 1;
 		}
+
+		int MaxClients(lua_State* L)
+		{
+			lua_pushnumber(L, interfaces::GlobalVars != nullptr ? interfaces::GlobalVars->max_clients : 0);
+			return 1;
+		}
 	}
 }
 
@@ -158,7 +165,7 @@ namespace LuaFuncs
 			int ref = luaL_ref(L, LUA_REGISTRYINDEX);
 
 			lua_pushboolean(L, LuaHookManager::Add(name, id, ref));
-			return 0;
+			return 1;
 		}
 
 		int Unregister(lua_State* L)
@@ -167,7 +174,7 @@ namespace LuaFuncs
 			const char* id = luaL_checkstring(L, 2);
 
 			lua_pushboolean(L, LuaHookManager::Remove(L, name, id));
-			return 0;
+			return 1;
 		}
 
 		void luaopen_hooks(lua_State* L)
@@ -1905,6 +1912,7 @@ namespace LuaFuncs
 			{"SetOpen", SetOpen},
 			{"SetValue", SetValue},
 			{"GetValue", GetValue},
+			{"ClearOutput", ClearOutput},
 			{nullptr, nullptr}
 		};
 
@@ -1920,19 +1928,19 @@ namespace LuaFuncs
 			switch (e.type)
 			{
 				case SettingType::BOOL:
-				*reinterpret_cast<bool*>(e.ptr) = lua_toboolean(L, 2);
+				*static_cast<bool*>(e.ptr) = lua_toboolean(L, 2);
 				break;
 
 				case SettingType::INT:
-				*reinterpret_cast<int*>(e.ptr) = luaL_checkinteger(L, 2);
+				*static_cast<int*>(e.ptr) = luaL_checkinteger(L, 2);
 				break;
 
 				case SettingType::FLOAT:
-				*reinterpret_cast<float*>(e.ptr) = (float)luaL_checknumber(L, 2);
+				*static_cast<float*>(e.ptr) = (float)luaL_checknumber(L, 2);
 				break;
 
 				case SettingType::STRING:
-				*reinterpret_cast<std::string*>(e.ptr) = luaL_checkstring(L, 2);
+				*static_cast<std::string*>(e.ptr) = luaL_checkstring(L, 2);
 				break;
 			}
 
@@ -1990,6 +1998,14 @@ namespace LuaFuncs
 			int open = luaL_checkinteger(L, 1);
 			g_Settings.menu_open = open;
 			interfaces::Surface->SetCursorAlwaysVisible(open);
+			return 0;
+		}
+
+		// tbh I wanted to name it ClearConsole
+		// But client lib already has a function with that name
+		int ClearOutput(lua_State* L)
+		{
+			consoleText.clear();
 			return 0;
 		}
 	}

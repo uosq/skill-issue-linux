@@ -25,6 +25,7 @@ namespace LuaFuncs
 		int AbsoluteFrameTime(lua_State* L);
 		int FrameTime(lua_State* L);
 		int RealTime(lua_State* L);
+		int MaxClients(lua_State* L);
 
 		extern const luaL_Reg globalvarslib[];
 	}
@@ -189,6 +190,8 @@ namespace LuaFuncs
 		int SetOpen(lua_State* L);
 		int GetValue(lua_State* L);
 		int SetValue(lua_State* L);
+
+		int ClearOutput(lua_State* L);
 	}
 
 	namespace ui

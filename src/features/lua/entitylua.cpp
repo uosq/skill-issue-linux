@@ -48,6 +48,8 @@ namespace LuaClasses
 			{"GetIndex", GetIndex},
 			{"Predict", Predict},
 			{"EstimateAbsVelocity", EstimateAbsVelocity},
+			{"ShouldDraw", ShouldDraw},
+			{"SetupBones", SetupBones},
 			{nullptr, nullptr}
 		};
 
@@ -854,7 +856,7 @@ namespace LuaClasses
 				return 0;
 
 			CTFWeaponBase* pWeapon = static_cast<CTFWeaponBase*>(le->ent);
-			if (!pWeapon || !pWeapon->IsMelee())
+			if (pWeapon == nullptr || !pWeapon->IsMelee())
 				return 0;
 
 			lua_pushnumber(L, pWeapon->m_flSmackTime());
@@ -914,6 +916,66 @@ namespace LuaClasses
 			}
 
 			LuaClasses::VectorLua::push_vector(L, le->ent->EstimateAbsVelocity());
+			return 1;
+		}
+
+		int ShouldDraw(lua_State* L)
+		{
+			LuaEntity* le = static_cast<LuaEntity*>(luaL_checkudata(L, 1, "Entity"));
+			if (le->ent == nullptr)
+			{
+				lua_pushnil(L);
+				return 1;
+			}
+
+			lua_pushboolean(L, le->ent->ShouldDraw());
+			return 1;
+		}
+
+		int SetupBones(lua_State* L)
+		{
+			LuaEntity* le = static_cast<LuaEntity*>(luaL_checkudata(L, 1, "Entity"));
+			if (le->ent == nullptr)
+			{
+				lua_pushnil(L);
+				return 1;
+			}
+
+			int boneMask = luaL_optinteger(L, 2, BONE_USED_BY_ANYTHING);
+			float currentTime = luaL_optnumber(L, 3, interfaces::GlobalVars->curtime);
+
+			matrix3x4 bones[MAXSTUDIOBONES];
+			if (!le->ent->SetupBones(bones, MAXSTUDIOBONES, boneMask, currentTime))
+			{
+				lua_pushnil(L);
+				return 1;
+			}
+
+			// we return this one
+			lua_newtable(L);
+
+			// always start at 1 :p
+			for (int i = 0; i < MAXSTUDIOBONES; i++)
+			{
+				lua_newtable(L);
+
+				// push 3 rows of 4 floats
+				for (int r = 0; r < 3; r++)
+				{
+					lua_newtable(L); // row
+
+					for (int c = 0; c < 4; c++)
+					{
+						lua_pushnumber(L, bones[i][r][c]);
+						lua_rawseti(L, -2, c + 1);
+					}
+
+					lua_rawseti(L, -2, r + 1);
+				}
+
+				lua_rawseti(L, -2, i + 1);
+			}
+
 			return 1;
 		}
 	}

@@ -73,7 +73,6 @@ namespace LuaClasses
 			float z = static_cast<float>(luaL_optnumber(L, 3, 0.0));
 
 			Vector* v = static_cast<Vector*>(lua_newuserdata(L, sizeof(Vector)));
-			new (v) Vector(x, y, z);
 			v->Set(x, y, z);
 
 			luaL_getmetatable(L, "Vector3");
@@ -92,7 +91,7 @@ namespace LuaClasses
 		Vector* push_vector(lua_State* L, float x, float y, float z)
 		{
 			Vector* v = static_cast<Vector*>(lua_newuserdata(L, sizeof(Vector)));
-			new (v) Vector(x, y, z);
+			v->Set(x, y, z);
 
 			luaL_getmetatable(L, "Vector3");
 			lua_setmetatable(L, -2);
@@ -103,7 +102,6 @@ namespace LuaClasses
 		Vector* push_vector(lua_State* L, const Vector& vec)
 		{
 			Vector* v = static_cast<Vector*>(lua_newuserdata(L, sizeof(Vector)));
-			//new (v) Vector(vec.x, vec.y, vec.z);
 			*v = vec;
 
 			luaL_getmetatable(L, "Vector3");

@@ -45,7 +45,9 @@ namespace EntityList
 				case ETFClassID::CTFPlayer:
 				{
 					CTFPlayer* player = static_cast<CTFPlayer*>(entity);
-					if (player == nullptr)
+
+					// skip localplayer
+					if (player == m_pLocalPlayer)
 						break;
 
 					EntityListEntry entry;
@@ -67,7 +69,7 @@ namespace EntityList
 				case ETFClassID::CObjectTeleporter:
 				{
 					CBaseObject* building = static_cast<CBaseObject*>(entity);
-					if (building == nullptr || building->m_iHealth() <= 0)
+					if (building->m_iHealth() <= 0)
 						break;
 
 					EntityListEntry entry = {};
@@ -99,8 +101,6 @@ namespace EntityList
 				case ETFClassID::CTFStickBomb:
 				{
 					CBaseProjectile* baseEnt = static_cast<CBaseProjectile*>(entity);
-					if (baseEnt == nullptr)
-						break;
 
 					EntityListEntry entry = {};
 					entry.flags = EntityFlags::IsProjectile | EntityFlags::IsAlive;

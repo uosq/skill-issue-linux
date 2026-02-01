@@ -11,3 +11,6 @@ returns **bool**
 returns **string**
 
 ### > SetValue( option: **string**, value: **int|number|string|bool** )
+
+### > ClearOutput( )
+Clears the menu's console

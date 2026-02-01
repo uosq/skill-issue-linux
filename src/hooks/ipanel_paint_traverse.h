@@ -4,13 +4,9 @@
 #include "../sdk/interfaces/interfaces.h"
 #include "../sdk/helpers/helper.h"
 #include "../settings.h"
-#include "cbaseviewmodel_calcviewmodelview.h"
 
 DECLARE_VTABLE_HOOK(PaintTraverse, void, (IPanel* thisptr, VPANEL vguiPanel, bool forceRepaint, bool allowForce))
 {
-	if (!helper::engine::IsInMatch())
-		stoptime = 0.0f;
-
 	const char* panelName = interfaces::VGui->GetName(vguiPanel);
 
 	// https://github.com/rei-2/Amalgam/blob/master/Amalgam/src/Hooks/IPanel_PaintTraverse.cpp

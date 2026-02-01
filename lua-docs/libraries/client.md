@@ -15,3 +15,4 @@ returns **int**, **number**, **string**
 returns **bool**
 
 ### > ClearConsole()
+Clears TF2's console

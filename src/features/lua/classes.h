@@ -151,10 +151,11 @@ namespace LuaClasses
 		int GetSmackTime(lua_State* L);
 
 		int GetIndex(lua_State* L);
-
 		int Predict(lua_State* L);
-
 		int EstimateAbsVelocity(lua_State* L);
+		int ShouldDraw(lua_State* L);
+
+		int SetupBones(lua_State* L);
 	};
 
 	namespace MaterialLua
