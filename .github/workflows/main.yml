@@ -12,15 +12,16 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Update system
+        run: sudo apt update
+
       - name: Install SDL2
         run: |
           sudo apt update
           sudo apt install -y libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev
 
       - name: Install Vulkan
-        run: |
-          sudo apt update
-          sudo apt install -y libvulkan-dev
+        run: sudo apt install -y libvulkan-dev
 
       - name: Make build.sh executable
         run: chmod +x ./build.sh
