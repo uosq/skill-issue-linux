@@ -16,9 +16,7 @@ jobs:
         run: sudo apt update
 
       - name: Install SDL2
-        run: |
-          sudo apt update
-          sudo apt install -y libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev
+        run: sudo apt install -y libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev
 
       - name: Install Vulkan
         run: sudo apt install -y libvulkan-dev
