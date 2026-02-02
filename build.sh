@@ -96,4 +96,4 @@ g++ -shared -fPIC \
 	build/libplutostatic.a \
 	-o build/libvapo.so \
 	-O2 -std=c++17 -lSDL2 -lvulkan -lm -ldl \
-	-Werror -flto=auto -fno-exceptions -g
+	-Werror -flto=auto -fno-exceptions -s -march=x86-64-v3
