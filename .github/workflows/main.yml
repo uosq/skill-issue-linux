@@ -1,0 +1,31 @@
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: compile
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Make build.sh executable
+        run: chmod +x ./build.sh
+
+      - name: Run build script
+        run: ./build.sh
+
+      - name: Make pack.sh executable
+        run: chmod +x ./pack.sh
+
+      - name: Pack the project
+        run: ./pack.sh
+
+      - name: Upload zip artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-output
+          path: "build/*.zip"
