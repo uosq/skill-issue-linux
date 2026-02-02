@@ -170,7 +170,7 @@ namespace Math
 	inline Vec3 CalcAngle(const Vec3& vFrom, const Vec3& vTo, bool bClamp = true)
 	{
 		Vec3 vDelta = vFrom - vTo;
-		float flHyp = std::sqrtf((vDelta.x * vDelta.x) + (vDelta.y * vDelta.y));
+		float flHyp = std::sqrt((vDelta.x * vDelta.x) + (vDelta.y * vDelta.y));
 
 		Vec3 vAngles = {
 			atanf(vDelta.z / flHyp) * float(M_RADPI),
