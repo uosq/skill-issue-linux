@@ -6,11 +6,16 @@ on:
 jobs:
   build:
     name: compile
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Install SDL2
+        run: |
+          sudo apt update
+          sudo apt install -y libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev
 
       - name: Make build.sh executable
         run: chmod +x ./build.sh
