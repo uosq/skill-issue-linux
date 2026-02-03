@@ -33,12 +33,6 @@ jobs:
       - name: Run build-tracy script
         run: ./build-tracy.sh
 
-      - name: Make pack.sh executable
-        run: chmod +x ./pack.sh
-
-      - name: Pack the project
-        run: ./pack.sh
-
       - name: Upload zip artifact
         uses: actions/upload-artifact@v4
         with:
