@@ -4,6 +4,8 @@ A project for me to learn more about TF2 and how it works
 
 This is made for Linux, so trying to build it on Windows or non Unix-like systems might not work!
 
+![Static Badge](https://img.shields.io/badge/click_me_to_join_the_discord_server-blue)
+
 ## Credits
 
 8dcc - [libdetour](https://github.com/8dcc/libdetour)
@@ -11,6 +13,8 @@ This is made for Linux, so trying to build it on Windows or non Unix-like system
 8dcc - [libsigscan](https://github.com/8dcc/libsigscan)
 
 ocornut - [imgui](https://github.com/ocornut/imgui)
+
+wolfpld - [tracy](github.com/wolfpld/tracy)
 
 ## How to attach
 

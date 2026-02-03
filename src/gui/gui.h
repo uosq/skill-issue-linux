@@ -25,7 +25,7 @@ enum TabMenu
 	TAB_ANTIAIM,
 	TAB_LUA,
 	TAB_NETVARS,
-	TAB_CONFIG
+	TAB_CONFIG,
 };
 
 static void DrawTabButtons(int &tab)
@@ -361,7 +361,10 @@ static void DrawLuaTab()
 			"render", "materials",
 			"client", "BitBuffer",
 			"clientstate", "ui",
-			"menu", "aimbot"
+			"menu", "aimbot",
+			#ifdef TRACY_ENABLE
+			"tracy"
+			#endif
 		};
 
 		auto def = TextEditor::LanguageDefinition::Lua();
@@ -451,11 +454,6 @@ static void DrawNetVarsTab()
 	if (ImGui::BeginChild("NetvarContent"))
 		DrawParsedNetvarData(netvarUI);
 	ImGui::EndChild();
-}
-
-static void DrawConfigTab()
-{
-	
 }
 
 static void DrawSpectatorList()

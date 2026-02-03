@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../tracy/tracy/Tracy.hpp"
+
 #include "../sdk/interfaces/interfaces.h"
 #include "../sdk/classes/entity.h"
 #include "../sdk/classes/player.h"
@@ -18,6 +20,8 @@ static detour_ctx_t GetMaxItemCount_ctx;
 
 inline int Hooked_GetMaxItemCount(void* thisptr)
 {
+	ZoneScoped;
+
 	if (g_Settings.misc.backpack_expander)
 		return 4000;
 

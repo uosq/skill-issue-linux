@@ -1,3 +1,7 @@
+#pragma once
+
+#include "../tracy/tracy/Tracy.hpp"
+
 #include <dlfcn.h>
 #include "../imgui/imgui.h"
 #include "../imgui/imgui_impl_dx9.h"
@@ -102,6 +106,8 @@ static void RenderImGui()
 	if (needsGammaCorrection)
 		g_pd3dDevice->SetRenderState(D3DRS_SRGBWRITEENABLE, FALSE);
 
+	ZoneScopedN("ImGui");
+
 	ImGui_ImplDX9_NewFrame();
 	ImGui_ImplSDL2_NewFrame();
 	ImGui::NewFrame();
@@ -142,6 +148,10 @@ static void RenderImGui()
 
 static HRESULT __stdcall Hooked_Present(IDirect3DDevice9* pDevice, const RECT* pSourceRect, const RECT* pDestRect, HWND hDestWindowOverride, const RGNDATA* pDirtyRegion)
 {
+	FrameMark;
+
+	ZoneScoped;
+
 	if (!g_pd3dDevice)
 		g_pd3dDevice = pDevice;
 

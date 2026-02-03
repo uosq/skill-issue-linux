@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../tracy/tracy/Tracy.hpp"
+
 #include "../sdk/interfaces/interfaces.h"
 #include "../settings.h"
 #include "../libdetour/libdetour.h"
@@ -18,6 +20,8 @@ static detour_ctx_t shutdownctx;
 
 static void HookedHost_ShutdownFn(void)
 {
+	ZoneScoped;
+
 	if (LuaHookManager::HasHooks("GameShutdown"))
 		LuaHookManager::Call(Lua::m_luaState, "GameShutdown");
 

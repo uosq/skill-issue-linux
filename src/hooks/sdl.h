@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../tracy/tracy/Tracy.hpp"
+
 #include "SDL2/SDL.h"
 #include "SDL2/SDL_main.h"
 #include <SDL2/SDL_events.h>
@@ -126,6 +128,10 @@ static void SetupImGuiStyle()
 
 inline void Hooked_SwapWindow(SDL_Window* window)
 {
+	FrameMark;
+
+	ZoneScoped;
+
 	static SDL_GLContext origcontext = nullptr, ourcontext = nullptr;
 
 	if (ourcontext == nullptr)

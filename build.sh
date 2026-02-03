@@ -24,53 +24,6 @@ if [ ! -f build/libplutostatic.a ]; then
 	cd ../
 fi
 
-# check for Lua static binary
-# if not there, compile it
-#if [ ! -f build/liblua.a ]; then
-	#cd build
-
-	#if [ ! -d lua-5.4.8 ]; then
-		#wget https://www.lua.org/ftp/lua-5.4.8.tar.gz
-		#tar -xzf lua-5.4.8.tar.gz
-		#rm lua-5.4.8.tar.gz
-	#fi
-
-	#cd lua-5.4.8
-
-	#make -j$(nproc) linux MYCFLAGS="-fPIC" MYLDFLAGS="-fPIC"
-	#cp src/liblua.a "../"
-
-	#cd ..
-
-	#rm -fr lua-5.4.8
-#fi
-
-# check for glew (opengl)
-# if not there, compile it
-#if [ ! -f build/libGLEW.a ]; then
-	#cd build
-
-	#if [ ! -d glew-2.3.0 ]; then
-		#wget https://github.com/nigels-com/glew/releases/download/glew-2.3.0/glew-2.3.0.zip
-		#unzip glew-2.3.0.zip
-		#rm glew-2.3.0.zip
-	#fi
-
-	#cd glew-2.3.0
-	#cd build
-
-	#cmake ./cmake \
-  		#-DBUILD_SHARED_LIBS=OFF \
-  		#-DCMAKE_POSITION_INDEPENDENT_CODE=ON
-
-	#make -j$(nproc) glew_s
-	#cp lib/libGLEW.a ../../
-
-	#cd ../../../
-
-	#rm build/glew-2.3.0
-#fi
-
 # copy our p100 attach script
 cp attach.sh build/
 

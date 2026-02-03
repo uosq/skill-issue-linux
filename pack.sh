@@ -15,4 +15,17 @@ if [ ! -f build/attach.sh ]; then
 	exit 1
 fi
 
-zip -r build/skill-issue.zip build/libvapo.so build/attach.sh lua-docs/ src/
+if [ -f build/skill-issue.zip ]; then
+	rm build/skill-issue.zip
+fi
+
+if [ ! -f build/libvapo-tracy.so ]; then
+	zip -r build/skill-issue.zip build/libvapo.so build/attach.sh lua-docs/ src/
+else
+	if [ ! -f build/attach-tracy.sh ]; then
+		echo "No attach-tracy.sh found! Did you run build-tracy.sh?"
+		exit 1
+	fi
+
+	zip -r build/skill-issue.zip build/libvapo-tracy.so build/attach-tracy.sh lua-docs/ src/
+fi

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../tracy/tracy/Tracy.hpp"
+
 #include "../sdk/definitions/ipanel.h"
 #include <cwchar>
 #include <string>
@@ -19,6 +21,8 @@
 
 DECLARE_VTABLE_HOOK(VGuiPaint, void, (IEngineVGui* thisptr, PaintMode_t paint))
 {
+	ZoneScoped;
+
 	originalVGuiPaint(thisptr, paint);
 
 	if (interfaces::Engine->IsTakingScreenshot())
@@ -45,8 +49,15 @@ DECLARE_VTABLE_HOOK(VGuiPaint, void, (IEngineVGui* thisptr, PaintMode_t paint))
 		if (g_Settings.menu_open)
 		{
 			Color color = {255, 255, 255, 255};
-			helper::draw::TextShadow(10, 10, color, "Skill Issue - Beta");
+			
+			#ifdef TRACY_ENABLE
+			helper::draw::TextShadow(10, 10, color, "Skill Issue - Debug");
+			helper::draw::TextShadow(10, 30, color, "This is a debug build, performance may be bad");
+			helper::draw::TextShadow(10, 50, color, "Build date: " __DATE__ " " __TIME__);
+			#else
+			helper::draw::TextShadow(10, 10, color, "Skill Issue");
 			helper::draw::TextShadow(10, 30, color, "Build date: " __DATE__ " " __TIME__);
+			#endif
 		}
 
 		interfaces::Surface->FinishDrawing();

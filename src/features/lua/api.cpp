@@ -4,6 +4,8 @@
 #include "funcs.h"
 #include "constants.h"
 
+#include "../../tracy/tracy/TracyLua.hpp"
+
 namespace Lua
 {
 	lua_State* m_luaState = nullptr;
@@ -12,6 +14,10 @@ namespace Lua
 	{
 		m_luaState = luaL_newstate();
 		luaL_openlibs(m_luaState);
+
+		#ifdef TRACY_ENABLE
+		tracy::LuaRegister(m_luaState);
+		#endif
 
 		LuaFuncs::common::luaopen_commonfunctions(m_luaState);
 

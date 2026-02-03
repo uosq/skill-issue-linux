@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../tracy/tracy/Tracy.hpp"
+
 #include "../sdk/interfaces/interfaces.h"
 #include "../sdk/classes/entity.h"
 #include "../sdk/classes/player.h"
@@ -26,6 +28,8 @@ inline detour_ctx_t calcViewModel_ctx;
 
 inline void HookedCalcViewModelView(void* thisptr, CBaseEntity* owner, const Vector& eyePosition, const QAngle& eyeAngles)
 {
+	ZoneScoped;
+
 	Vector angle = eyeAngles;
 	Vector position = eyePosition;
 

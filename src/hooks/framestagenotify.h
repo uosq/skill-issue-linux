@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../tracy/tracy/Tracy.hpp"
+
 #include "../sdk/interfaces/interfaces.h"
 #include "../sdk/helpers/helper.h"
 #include "../features/visuals/thirdperson/thirdperson.h"
@@ -11,6 +13,8 @@
 
 DECLARE_VTABLE_HOOK(FrameStageNotify, void, (CHLClient* thisptr, int stage))
 {
+	ZoneScoped;
+
 	switch (stage)
 	{
 		case FRAME_RENDER_START:

@@ -24,8 +24,14 @@ jobs:
       - name: Make build.sh executable
         run: chmod +x ./build.sh
 
+      - name: Make build-tracy.sh executable
+        run: chmod +x ./build-tracy.sh
+
       - name: Run build script
         run: ./build.sh
+
+      - name: Run build-tracy script
+        run: ./build-tracy.sh
 
       - name: Make pack.sh executable
         run: chmod +x ./pack.sh
@@ -37,4 +43,6 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: build-output
-          path: "build/*.zip"
+          path: |
+            *.so
+            *.sh

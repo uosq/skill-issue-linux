@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../tracy/tracy/Tracy.hpp"
+
 #include "../sdk/definitions/ipanel.h"
 #include "../sdk/interfaces/interfaces.h"
 #include "../sdk/helpers/helper.h"
@@ -7,6 +9,8 @@
 
 DECLARE_VTABLE_HOOK(PaintTraverse, void, (IPanel* thisptr, VPANEL vguiPanel, bool forceRepaint, bool allowForce))
 {
+	ZoneScoped;
+
 	const char* panelName = interfaces::VGui->GetName(vguiPanel);
 
 	// https://github.com/rei-2/Amalgam/blob/master/Amalgam/src/Hooks/IPanel_PaintTraverse.cpp

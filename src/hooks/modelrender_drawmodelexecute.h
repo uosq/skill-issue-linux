@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../tracy/tracy/Tracy.hpp"
+
 #include "../sdk/interfaces/interfaces.h"
 #include "../sdk/classes/entity.h"
 #include "../sdk/classes/player.h"
@@ -27,6 +29,8 @@ static int LuaCallDME(lua_State* L);
 
 DECLARE_VTABLE_HOOK(DrawModelExecute, void, (IVModelRender* thisptr, const DrawModelState_t &state, const ModelRenderInfo_t &pInfo, matrix3x4 *pCustomBoneToWorld))
 {
+	ZoneScoped;
+
 	//if (settings.esp.chams && !Chams::m_bRunning && Chams::ShouldHide(pInfo.entity_index))
 		//return;
 

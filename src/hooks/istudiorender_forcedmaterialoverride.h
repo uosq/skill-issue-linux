@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../tracy/tracy/Tracy.hpp"
+
 #include "../sdk/interfaces/interfaces.h"
 #include "../sdk/helpers/helper.h"
 #include "../settings.h"
@@ -10,6 +12,8 @@
 
 DECLARE_VTABLE_HOOK(ForcedMaterialOverride, void, (IStudioRender *thisptr, IMaterial* mat, OverrideType_t nOverrideType))
 {
+	ZoneScoped;
+
 	if (Chams::m_bRunning || Glow::m_bRunning)
 		return;
 

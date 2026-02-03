@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../tracy/tracy/Tracy.hpp"
+
 #include "../sdk/interfaces/interfaces.h"
 #include "../sdk/classes/entity.h"
 #include "../sdk/classes/player.h"
@@ -20,6 +22,8 @@ static detour_ctx_t showitemsctx;
 
 static bool HookedShowItemsPickedUpFn(void* thisptr, bool bForce, bool bReturnToGame, bool bNoPanel)
 {
+	ZoneScoped;
+
 	if (g_Settings.misc.accept_item_drop)
 	{
 		interfaces::Cvar->ConsolePrintf("Collected item drop\n");

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../tracy/tracy/Tracy.hpp"
+
 #include <string>
 #include "../sdk/interfaces/interfaces.h"
 #include "../sdk/classes/entity.h"
@@ -124,6 +126,8 @@ inline void RunLuaCreateMoveCallback(CUserCmd* pCmd, bool* bSendPacket)
 
 DECLARE_VTABLE_HOOK(CreateMove, bool, (IClientMode* thisptr, float sample_frametime, CUserCmd* pCmd))
 {
+	ZoneScoped;
+
 	bool ret = originalCreateMove(thisptr, sample_frametime, pCmd);
 
 	if (!pCmd || !pCmd->command_number)

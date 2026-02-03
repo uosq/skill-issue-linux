@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../tracy/tracy/Tracy.hpp"
+
 #include "../sdk/interfaces/interfaces.h"
 #include "../features/entitylist/entitylist.h"
 #include "../sdk/classes/entity.h"
@@ -16,6 +18,8 @@
 
 DECLARE_VTABLE_HOOK(OverrideView, void, (IClientMode *thisptr, CViewSetup *pView))
 {
+	ZoneScoped;
+
 	originalOverrideView(thisptr, pView);
 
 	if (pView == nullptr)
