@@ -42,7 +42,7 @@ jobs:
       - name: Upload zip artifact
         uses: actions/upload-artifact@v4
         with:
-          name: build-output
+          name: artifact
           path: |
-            *.so
-            *.sh
+            build/*.so
+            build/*.sh
