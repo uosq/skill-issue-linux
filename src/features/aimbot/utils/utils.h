@@ -191,6 +191,9 @@ namespace AimbotUtils
 
 		for (const auto& entry : EntityList::GetEntities())
 		{
+			if (entry.ptr == EntityList::m_pLocalPlayer)
+				continue;
+
 			if (!(entry.flags & EntityFlags::IsAlive))
 				continue;
 

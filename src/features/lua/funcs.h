@@ -223,4 +223,25 @@ namespace LuaFuncs
 		int GetKey(lua_State* L);
 		int SetKey(lua_State* L);
 	}
+
+	namespace radar
+	{
+		extern const luaL_Reg radarlib[];
+		void luaopen_radar(lua_State* L);
+
+		int GetRange(lua_State* L);
+		int GetRadius(lua_State* L);
+		int WorldToRadar(lua_State* L);
+	}
+
+	namespace colors
+	{
+		extern const luaL_Reg colorslib[];
+		void luaopen_colors(lua_State* L);
+
+		int GetAimbotTargetColor(lua_State* L);
+		int GetRedTeamColor(lua_State* L);
+		int GetBluTeamColor(lua_State* L);
+		int GetWeaponColor(lua_State* L);
+	}
 }

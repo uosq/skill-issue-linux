@@ -87,4 +87,14 @@ void RegisterSettings(void)
 	REG_SETTING(antiaim, real_yaw_mode, SettingType::INT)
 	REG_SETTING(antiaim, fake_yaw_mode, SettingType::INT)
 	REG_SETTING(antiaim, spin_speed, SettingType::FLOAT)
+
+	// radar
+	REG_SETTING(radar, enabled, SettingType::BOOL)
+	REG_SETTING(radar, size, SettingType::INT)
+	REG_SETTING(radar, range, SettingType::INT)
+	REG_SETTING(radar, players, SettingType::BOOL)
+	REG_SETTING(radar, buildings, SettingType::BOOL)
+	REG_SETTING(radar, objective, SettingType::BOOL)
+	REG_SETTING(radar, projectiles, SettingType::BOOL);
+	REG_SETTING(radar, icon_size, SettingType::INT)
 }

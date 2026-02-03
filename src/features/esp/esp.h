@@ -10,48 +10,18 @@
 
 namespace ESP
 {
-	inline Color GetPlayerColor(CBaseEntity* player)
+	inline Color GetEntityColor(CBaseEntity* entity)
 	{
-		if (player == EntityList::m_pAimbotTarget)
+		if (entity == EntityList::m_pAimbotTarget)
 			return g_Settings.colors.aimbot_target;
 
-		int team = player->m_iTeamNum();
-
-		if (player->IsPlayer())
+		switch (entity->m_iTeamNum())
 		{
-			switch (team)
-			{
-				case ETeam::TEAM_RED:
-					return g_Settings.colors.red_team;
-				case ETeam::TEAM_BLU:
-					return g_Settings.colors.blu_team;
-				default: break;
-			}
-		}
-
-		Color defaultColor = {255, 255, 255, 255};
-		return defaultColor;
-	}
-
-	// Had to make a separate one
-	// Because m_iTeamNum for some reason is inverted on buildings
-	inline Color GetBuildingColor(CBaseObject* building)
-	{
-		if (reinterpret_cast<CBaseEntity*>(building) == EntityList::m_pAimbotTarget)
-			return g_Settings.colors.aimbot_target;
-
-		CTFPlayer* builder = HandleAs<CTFPlayer*>(building->m_hBuilder());
-		if (builder != nullptr)
-		{
-			int team = builder->m_iTeamNum();
-			switch (team)
-			{
-				case ETeam::TEAM_RED:
-					return g_Settings.colors.red_team;
-				case ETeam::TEAM_BLU:
-					return g_Settings.colors.blu_team;
-				default: break;
-			}
+			case ETeam::TEAM_RED:
+				return g_Settings.colors.red_team;
+			case ETeam::TEAM_BLU:
+				return g_Settings.colors.blu_team;
+			default: break;
 		}
 
 		Color defaultColor = {255, 255, 255, 255};
@@ -152,7 +122,7 @@ namespace ESP
 			int h = (feet - head).Length2D();
 			int w = (entity->IsTeleporter()) ? (h * 2.0f) : (h * 0.3);
 
-			Color color = GetPlayerColor(entity);
+			Color color = GetEntityColor(entity);
 
 			if (g_Settings.esp.box)
 				PaintBox(color, head, feet, w, h);

@@ -47,8 +47,8 @@ namespace EntityList
 					CTFPlayer* player = static_cast<CTFPlayer*>(entity);
 
 					// skip localplayer
-					if (player == m_pLocalPlayer)
-						break;
+					//if (player == m_pLocalPlayer)
+						//break;
 
 					EntityListEntry entry;
 					entry.flags = EntityFlags::IsPlayer;

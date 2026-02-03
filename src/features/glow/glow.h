@@ -91,7 +91,7 @@ namespace Glow
 	{
 		for (auto ent : glowEnts)
 		{
-			Color color = ent->IsPlayer() ? ESP::GetPlayerColor(ent) : ESP::GetBuildingColor(reinterpret_cast<CBaseObject*>(ent));
+			Color color = ESP::GetEntityColor(ent);
 			float mod[3] = {color.r()/255.0f, color.g()/255.0f, color.b()/255.0f};
 			interfaces::RenderView->SetColorModulation(mod);
 			m_bRunning = true;

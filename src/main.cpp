@@ -1,3 +1,5 @@
+#include "features/chams/chams.h"
+#include "features/glow/glow.h"
 #include "hooks/cinventorymanager_showitemspickedup.h"
 #include "hooks/clientmodeshared_createmove.h"
 #include "hooks/clientmodeshared_firegameevent.h"

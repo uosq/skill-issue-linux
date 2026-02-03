@@ -11,6 +11,7 @@
 #include "sdl.h"
 #include "../libdetour/libdetour.h"
 #include "../sdk/definitions/d3d9.h"
+#include "../features/radar/radar.h"
 
 typedef struct IDirect3DDevice9 *LPDIRECT3DDEVICE9;
 
@@ -45,7 +46,7 @@ static void InitImGui()
 	//if (!ImGui_ImplSDL2_InitForD3D(tfwindow)) {
 	if (!ImGui_ImplSDL2_InitForVulkan(tfwindow))
 	{
-		interfaces::Cvar->ConsolePrintf("ImGui_ImplSDL2_InitForD3D failed!\n");
+		interfaces::Cvar->ConsolePrintf("ImGui_ImplSDL2_InitForVulkan failed!\n");
 		return;
 	}
 	
@@ -128,6 +129,9 @@ static void RenderImGui()
 
 	if (LuaHookManager::HasHooks("ImGui"))
 		LuaHookManager::Call(Lua::m_luaState, "ImGui");
+
+	if (g_Settings.radar.enabled)
+		g_Radar.Run();
 
 	if (g_Settings.misc.spectatorlist)
 		DrawSpectatorList();

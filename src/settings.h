@@ -152,6 +152,18 @@ struct Settings_Colors
 	Color weapon = {255, 255, 255, 255};
 };
 
+struct Settings_Radar
+{
+	int size = 120;
+	int range = 3000;
+	int icon_size = 3;
+	bool enabled = false;
+	bool players = false;
+	bool buildings = false;
+	bool objective = false;
+	bool projectiles = false;
+};
+
 struct Settings
 {
 	Settings_Misc misc;
@@ -160,6 +172,7 @@ struct Settings
 	Settings_Triggerbot triggerbot;
 	Settings_Antiaim antiaim;
 	Settings_Colors colors;
+	Settings_Radar radar;
 
 	bool menu_open = false;
 };

@@ -35,6 +35,8 @@ namespace Lua
 		LuaFuncs::menu::luaopen_menu(m_luaState);
 		LuaFuncs::ui::luaopen_ui(m_luaState);
 		LuaFuncs::aimbot::luaopen_aimbot(m_luaState);
+		LuaFuncs::radar::luaopen_radar(m_luaState);
+		LuaFuncs::colors::luaopen_colors(m_luaState);
 
 		// open classes
 		LuaClasses::VectorLua::luaopen_vector(m_luaState);

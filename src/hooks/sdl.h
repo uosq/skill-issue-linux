@@ -18,6 +18,8 @@
 #include "../features/esp/esp.h"
 #include "../features/lua/hooks.h"
 
+#include "../features/radar/radar.h"
+
 using SwapWindowFn = void(*)(SDL_Window* window);
 static SwapWindowFn original_SwapWindow = nullptr;
 DETOUR_DECL_TYPE(void, original_SwapWindow, SDL_Window* window);
@@ -170,6 +172,9 @@ inline void Hooked_SwapWindow(SDL_Window* window)
 
 	if (LuaHookManager::HasHooks("ImGui"))
 		LuaHookManager::Call(Lua::m_luaState, "ImGui");
+
+	if (g_Settings.radar.enabled)
+		g_Radar.Run();
 
 	if (g_Settings.misc.spectatorlist)
 		DrawSpectatorList();

@@ -25,7 +25,7 @@ enum TabMenu
 	TAB_ANTIAIM,
 	TAB_LUA,
 	TAB_NETVARS,
-	TAB_CONFIG,
+	TAB_RADAR,
 };
 
 static void DrawTabButtons(int &tab)
@@ -46,6 +46,9 @@ static void DrawTabButtons(int &tab)
 
 	if (ImGui::Button("ANTIAIM", ImVec2(-1, 0)))
 		tab = TAB_ANTIAIM;
+
+	if (ImGui::Button("RADAR", ImVec2(-1, 0)))
+		tab = TAB_RADAR;
 
 	if (ImGui::Button("PLUTO", ImVec2(-1, 0)))
 		tab = TAB_LUA;
@@ -362,6 +365,7 @@ static void DrawLuaTab()
 			"client", "BitBuffer",
 			"clientstate", "ui",
 			"menu", "aimbot",
+			"radar", "colors",
 			#ifdef TRACY_ENABLE
 			"tracy"
 			#endif
@@ -454,6 +458,20 @@ static void DrawNetVarsTab()
 	if (ImGui::BeginChild("NetvarContent"))
 		DrawParsedNetvarData(netvarUI);
 	ImGui::EndChild();
+}
+
+inline void DrawRadarTab()
+{
+	ImGui::Checkbox("Enabled", &g_Settings.radar.enabled);
+	ImGui::SliderInt("Size", &g_Settings.radar.size, 1, 300);
+	ImGui::SliderInt("Icon Size", &g_Settings.radar.icon_size, 1, 15);
+	ImGui::SliderInt("Range", &g_Settings.radar.range, 10, 3000);
+
+	ImGui::Separator();
+	ImGui::Checkbox("Players", &g_Settings.radar.players);
+	ImGui::Checkbox("Projectiles", &g_Settings.radar.projectiles);
+	//ImGui::Checkbox("Objective", &g_Settings.radar.objective);
+	ImGui::Checkbox("Buildings", &g_Settings.radar.buildings);
 }
 
 static void DrawSpectatorList()
@@ -596,6 +614,7 @@ static void DrawMainWindow()
 				case TAB_ANTIAIM: DrawAntiaimTab(); break;
 				case TAB_LUA: DrawLuaTab(); break;
 				case TAB_NETVARS: DrawNetVarsTab(); break;
+				case TAB_RADAR: DrawRadarTab(); break;
 				default: break;
 			}
 			
