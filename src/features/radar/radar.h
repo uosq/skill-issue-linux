@@ -9,6 +9,7 @@ class Radar
 {
 private:
 	void DrawContents();
+	void DrawHealthbar(ImDrawList* draw, ImVec2 pos, int health, int maxhealth, int iconSize);
 
 protected:
 	int m_iRange;
@@ -96,6 +97,9 @@ inline void Radar::DrawContents()
 	draw->AddLine({ center.x, pos.y }, { center.x, pos.y + size }, IM_COL32(255,255,255,40));
 	draw->AddLine({ pos.x, center.y }, { pos.x + size, center.y }, IM_COL32(255,255,255,40));
 
+	if (EntityList::GetPlayerResources() == nullptr)
+		return;
+
 	if (!interfaces::Engine->IsInGame() || !interfaces::Engine->IsConnected())
 		return;
 
@@ -111,7 +115,7 @@ inline void Radar::DrawContents()
 
 	for (const auto& entry : EntityList::GetEntities())
 	{
-		if (entry.ptr == EntityList::m_pLocalPlayer)
+		if (entry.ptr == EntityList::GetLocal())
 			continue;
 
 		if (entry.flags & EntityFlags::IsBuilding && !g_Settings.radar.buildings)
@@ -127,7 +131,44 @@ inline void Radar::DrawContents()
 		Color color = ESP::GetEntityColor(entry.ptr);
 
 		draw->AddCircleFilled({ center.x + p.x, center.y - p.y }, iconSize, IM_COL32(color.r(), color.g(), color.b(), color.a()));
+
+		if (entry.flags & (EntityFlags::IsPlayer | EntityFlags::IsBuilding))
+		{
+			int health = 0;
+			int maxhealth = 0;
+
+			if (entry.flags & EntityFlags::IsPlayer)
+			{
+				CTFPlayer* pTarget = static_cast<CTFPlayer*>(entry.ptr);
+				if (pTarget != nullptr)
+				{
+					health = pTarget->GetHealth();
+					maxhealth = EntityList::GetPlayerResources()->m_iMaxHealth(pTarget->GetIndex());
+				}
+			}
+
+			if (entry.flags & EntityFlags::IsBuilding)
+			{
+				CBaseObject* pTarget = static_cast<CBaseObject*>(entry.ptr);
+				if (pTarget != nullptr)
+				{
+					health = pTarget->m_iHealth();
+					maxhealth = pTarget->m_iMaxHealth();
+				}
+			}
+
+			if (health != 0 && maxhealth != 0)
+				DrawHealthbar(draw, ImVec2(center.x + p.x, center.y - p.y), health, maxhealth, iconSize);
+		}
 	}
+}
+
+inline void Radar::DrawHealthbar(ImDrawList* draw, ImVec2 pos, int health, int maxhealth, int iconSize)
+{
+	int half = static_cast<int>(iconSize);
+	constexpr int barOffset = 3;
+
+	draw->AddRectFilled(ImVec2(pos.x - half, pos.y - half + barOffset), ImVec2(pos.x + half, pos.y + half + barOffset), IM_COL32(255, 255, 255, 255));
 }
 
 inline Radar g_Radar;

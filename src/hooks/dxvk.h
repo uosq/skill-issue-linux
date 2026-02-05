@@ -128,7 +128,22 @@ static void RenderImGui()
 	cursor = ImGui::GetMouseCursor();
 
 	if (LuaHookManager::HasHooks("ImGui"))
-		LuaHookManager::Call(Lua::m_luaState, "ImGui");
+		LuaHookManager::Call(Lua::m_luaState, "ImGui", 0);
+
+	/*if (LuaHookManager::HasHooks("ImGuiDraw"))
+	{
+		int w, h;
+		interfaces::Engine->GetScreenSize(w, h);
+
+		ImGui::SetNextWindowSize(ImVec2(w, h));
+
+		if (ImGui::Begin("##Lua", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoInputs | ImGuiWindowFlags_NoCollapse))
+		{
+			ImDrawList* draw = ImGui::GetWindowDrawList();
+			LuaHookManager::Call(Lua::m_luaState, "ImGuiDraw");
+		}
+		ImGui::End();
+	}*/
 
 	if (g_Settings.radar.enabled)
 		g_Radar.Run();

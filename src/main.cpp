@@ -3,6 +3,7 @@
 #include "hooks/cinventorymanager_showitemspickedup.h"
 #include "hooks/clientmodeshared_createmove.h"
 #include "hooks/clientmodeshared_firegameevent.h"
+#include "hooks/cmaterial_uncache.h"
 #include "hooks/ctfplayer_getmaxitemcount.h"
 #include "hooks/host_shutdown.h"
 #include "hooks/istudiorender_forcedmaterialoverride.h"
@@ -37,6 +38,9 @@ void init(void)
 
 	fontManager.Init();
 
+	Glow::Init();
+	Chams::Init();
+
 	HookSDL();
 	//HookVulkan();
 	HookDXVK();
@@ -63,6 +67,7 @@ void init(void)
 	HookFireGameEvent();
 	HookForcedMaterialOverride();
 	HookHost_Shutdown();
+	HookCMaterial_Uncache();
 
 	Lua::InitPluto();
 }

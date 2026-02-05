@@ -1,3 +1,4 @@
+#include "../../features/MaterialManager/materialmanager.h"
 #include "funcs.h"
 #include "../../gui/console.h"
 #include <algorithm>
@@ -17,8 +18,6 @@
 #include "../aimbot/utils/utils.h"
 #include "../aimbot/aimbot.h"
 #include "../radar/radar.h"
-#include "../chams/chams.h"
-#include "../glow/glow.h"
 
 namespace LuaFuncs
 {
@@ -1434,7 +1433,7 @@ namespace LuaFuncs
 				return 1;
 			}
 
-			IMaterial* mat = helper::material::CreateMaterial(name, vmt);
+			IMaterial* mat = g_MaterialManager.CreateMaterial(name, vmt);
 			if (mat == nullptr)
 			{
 				lua_pushnil(L);
@@ -1480,11 +1479,11 @@ namespace LuaFuncs
 
 		int CreateTextureRenderTarget(lua_State* L)
 		{
-			const char* pRTName = luaL_checkstring(L, 1);
+			const char* name = luaL_checkstring(L, 1);
 			int w = luaL_checkinteger(L, 2);
 			int h = luaL_checkinteger(L, 3);
 
-			ITexture* tex = interfaces::MaterialSystem->CreateNamedRenderTargetTexture(pRTName, w, h, RenderTargetSizeMode_t::RT_SIZE_LITERAL, IMAGE_FORMAT_RGB888);
+			ITexture* tex = g_MaterialManager.CreateTextureNamedRenderTarget(name, w, h);
 			if (tex != nullptr)
 			{
 				LuaClasses::TextureLua::push_texture(L, tex);

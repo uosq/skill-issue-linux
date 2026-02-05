@@ -5,6 +5,7 @@
 #include "../../sdk/definitions/inetmessage.h"
 #include "../../sdk/definitions/inetchannel.h"
 #include "../../sdk/definitions/igameevents.h"
+#include "../../imgui/imgui.h"
 
 #include "pluto/lua.h"
 #include "pluto/lua.hpp"
@@ -54,6 +55,11 @@ struct LuaGameEvent
 struct LuaViewSetup
 {
 	CViewSetup* view;
+};
+
+struct LuaImGuiDraw
+{
+	ImDrawList* draw;
 };
 
 namespace LuaClasses
@@ -328,4 +334,16 @@ namespace LuaClasses
 		int Index(lua_State* L);
 		int NewIndex(lua_State* L);
 	}
+
+	/*namespace ImGuiDraw
+	{
+		void open(lua_State* L);
+		extern const luaL_Reg methods[];
+		LuaImGuiDraw* push_drawlist(lua_State* L, ImDrawList* draw);
+
+		int Index(lua_State* L);
+		
+		// methods
+		int FillRect(lua_State* L);
+	}*/
 }

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../../features/MaterialManager/materialmanager.h"
 #include "../../sdk/definitions/keyvalues.h"
 #include "../../sdk/helpers/helper.h"
 #include "../../features/esp/esp.h"
@@ -18,12 +19,13 @@ namespace Chams
 	{
 		if (m_mFlatMat == nullptr)
 		{
-			m_mFlatMat = helper::material::CreateMaterial("CoolFlatMat",
-				"UnlitGeneric\n"
+			m_mFlatMat = g_MaterialManager.CreateMaterial("SKFlatMat",
+			"UnlitGeneric\n"
 				"{\n"
 				"	$basetexture \"white\"\n"
 				"}"
 			);
+
 			m_bMatLoaded = true;
 			helper::console::Print("Material vapooo created!\n");
 		}
@@ -109,7 +111,6 @@ namespace Chams
 		if (interfaces::Engine->IsTakingScreenshot())
 			return;
 
-		Init();
 		DrawPlayers();
 	}
 }

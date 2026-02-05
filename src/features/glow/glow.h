@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../../features/MaterialManager/materialmanager.h"
 #include "../../sdk/definitions/texture_group_names.h"
 #include "../../sdk/helpers/helper.h"
 #include "../../sdk/definitions/itexture.h"
@@ -32,8 +33,8 @@ namespace Glow
 			return;
 
 		m_Materials.glowColor = interfaces::MaterialSystem->FindMaterial("dev/glow_color", TEXTURE_GROUP_OTHER, true);
-		
-		m_Materials.haloAddToScreen = helper::material::CreateMaterial("GlowMaterial1",
+
+		m_Materials.haloAddToScreen = g_MaterialManager.CreateMaterial("GlowMaterial1",
 			"UnlitGeneric\n"
 			"{\n"
 			"	$basetexture \"GlowBuffer1\"\n"
@@ -41,14 +42,14 @@ namespace Glow
 			"}"
 		);
 
-		m_Materials.blurX = helper::material::CreateMaterial("GlowMatBlurX",
+		m_Materials.blurX = g_MaterialManager.CreateMaterial("GlowMatBlurX", 
 			"BlurFilterX\n"
 			"{\n"
 			"	$basetexture \"GlowBuffer1\"\n"
 			"}"
 		);
 
-		m_Materials.blurY = helper::material::CreateMaterial("GlowMatBlurY",
+		m_Materials.blurY = g_MaterialManager.CreateMaterial("GlowMatBlurY",
 			"BlurFilterY\n"
 			"{\n"
 			"	$basetexture \"GlowBuffer2\"\n"
@@ -57,27 +58,8 @@ namespace Glow
 
 		m_Materials.pRtFullFrame = interfaces::MaterialSystem->FindTexture("_rt_FullFrameFB", "RenderTargets", true);
 
-		m_Materials.glowBuffer1 = interfaces::MaterialSystem->CreateNamedRenderTargetTextureEx(
-			"GlowBuffer1",
-			m_Materials.pRtFullFrame->GetActualWidth(),
-			m_Materials.pRtFullFrame->GetActualHeight(),
-			RT_SIZE_LITERAL,
-			IMAGE_FORMAT_RGB888,
-			MATERIAL_RT_DEPTH_SHARED,
-			TEXTUREFLAGS_CLAMPS | TEXTUREFLAGS_CLAMPT | TEXTUREFLAGS_EIGHTBITALPHA,
-			CREATERENDERTARGETFLAGS_HDR
-		);
-	
-		m_Materials.glowBuffer2 = interfaces::MaterialSystem->CreateNamedRenderTargetTextureEx(
-			"GlowBuffer2",
-			m_Materials.pRtFullFrame->GetActualWidth(),
-			m_Materials.pRtFullFrame->GetActualHeight(),
-			RT_SIZE_LITERAL,
-			IMAGE_FORMAT_RGB888,
-			MATERIAL_RT_DEPTH_SHARED,
-			TEXTUREFLAGS_CLAMPS | TEXTUREFLAGS_CLAMPT | TEXTUREFLAGS_EIGHTBITALPHA,
-			CREATERENDERTARGETFLAGS_HDR
-		);
+		m_Materials.glowBuffer1 = g_MaterialManager.CreateTextureNamedRenderTarget("GlowBuffer1", m_Materials.pRtFullFrame->GetActualWidth(), m_Materials.pRtFullFrame->GetActualHeight());
+		m_Materials.glowBuffer2 = g_MaterialManager.CreateTextureNamedRenderTarget("GlowBuffer2", m_Materials.pRtFullFrame->GetActualWidth(), m_Materials.pRtFullFrame->GetActualHeight());
 
 		initialized = true;
 	}
@@ -160,8 +142,6 @@ namespace Glow
 
 		if (interfaces::Engine->IsTakingScreenshot())
 			return;
-
-		Init();
 		
 		auto pRenderContext = interfaces::MaterialSystem->GetRenderContext();
 		if (!pRenderContext)
