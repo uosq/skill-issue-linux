@@ -163,7 +163,7 @@ namespace LuaClasses
 	{
 		extern const luaL_Reg methods[];
 		void luaopen_material(lua_State* L);
-		LuaMaterial* push_material(lua_State* L, IMaterial* mat, const std::string& name);
+		LuaMaterial* push_material(lua_State* L, IMaterial* mat);
 
 		int Index(lua_State* L);
 		int GC(lua_State* L);
