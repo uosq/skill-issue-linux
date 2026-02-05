@@ -48,6 +48,7 @@ g++ -shared -fPIC \
 	src/features/entitylist/*.cpp \
 	src/features/aimbot/aimbot.cpp \
 	src/features/triggerbot/triggerbot.cpp \
+	src/features/MaterialManager/materialmanager.cpp \
 	src/tracy/TracyClient.cpp \
 	build/libplutostatic.a \
 	-o build/libvapo-tracy.so \

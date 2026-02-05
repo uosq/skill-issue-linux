@@ -54,9 +54,13 @@ struct AimbotMelee
 		viewForward.Normalize();
 
 		bool bCanHitTeammates = pWeapon->CanHitTeammates();
+		bool bIsWrench = pWeapon->GetWeaponID() == TF_WEAPON_WRENCH;
 
 		for (const EntityListEntry& entry : AimbotUtils::GetTargets(bCanHitTeammates, localTeam))
 		{
+			if (!bIsWrench && (entry.flags & EntityFlags::IsBuilding) && !(entry.flags & EntityFlags::IsEnemy))
+				continue;
+
 			CBaseEntity* enemy = entry.ptr;
 
 			Vector hitPos = enemy->GetCenter();

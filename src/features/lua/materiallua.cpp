@@ -49,6 +49,8 @@ namespace LuaClasses
 			if (g_MaterialManager.MaterialExists(name))
 				g_MaterialManager.FreeMaterial(lmat->mat->GetName());
 
+			lmat->mat = nullptr;
+			lmat->~LuaMaterial();
 			return 0;
 		}
 
@@ -66,7 +68,7 @@ namespace LuaClasses
 			return 1;
 		}
 
-		LuaMaterial* push_material(lua_State* L, IMaterial* mat)
+		LuaMaterial* push_material(lua_State* L, IMaterial* mat, const std::string& name)
 		{
 			if (mat == nullptr)
 			{
@@ -74,13 +76,13 @@ namespace LuaClasses
 				return nullptr;
 			}
 
-			LuaMaterial* v = static_cast<LuaMaterial*>(lua_newuserdata(L, sizeof(LuaMaterial)));
-			v->mat = mat;
+			LuaMaterial* lmat = static_cast<LuaMaterial*>(lua_newuserdata(L, sizeof(LuaMaterial)));
+			new (lmat) LuaMaterial{mat};
 
 			luaL_getmetatable(L, "Material");
 			lua_setmetatable(L, -2);
 
-			return v;
+			return lmat;
 		}
 
 		int SetColorModulation(lua_State* L)

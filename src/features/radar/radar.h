@@ -168,7 +168,7 @@ inline void Radar::DrawHealthbar(ImDrawList* draw, ImVec2 pos, int health, int m
 	int half = static_cast<int>(iconSize);
 	constexpr int barOffset = 3;
 
-	draw->AddRectFilled(ImVec2(pos.x - half, pos.y - half + barOffset), ImVec2(pos.x + half, pos.y + half + barOffset), IM_COL32(255, 255, 255, 255));
+	draw->AddRectFilled(ImVec2(pos.x - half, pos.y + barOffset), ImVec2(pos.x + iconSize, pos.y + (barOffset*2.0f)), IM_COL32(255, 255, 255, 255));
 }
 
 inline Radar g_Radar;

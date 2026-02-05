@@ -57,11 +57,6 @@ struct LuaViewSetup
 	CViewSetup* view;
 };
 
-struct LuaImGuiDraw
-{
-	ImDrawList* draw;
-};
-
 namespace LuaClasses
 {
 	namespace VectorLua
@@ -168,7 +163,7 @@ namespace LuaClasses
 	{
 		extern const luaL_Reg methods[];
 		void luaopen_material(lua_State* L);
-		LuaMaterial* push_material(lua_State* L, IMaterial* mat);
+		LuaMaterial* push_material(lua_State* L, IMaterial* mat, const std::string& name);
 
 		int Index(lua_State* L);
 		int GC(lua_State* L);

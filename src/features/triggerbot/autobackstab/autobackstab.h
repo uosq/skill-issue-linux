@@ -91,7 +91,7 @@ inline void AutoBackstab::Legit(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUser
 	Math::AngleVectors(viewAngles, &forward);
 
 	Vector start = pLocal->GetAbsOrigin() + pLocal->m_vecViewOffset();
-	Vector end = start + (forward * 48);
+	Vector end = start + (forward * (48*2));
 
 	int localTeam = pLocal->m_iTeamNum();
 
@@ -133,7 +133,7 @@ inline void AutoBackstab::Rage(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserC
 		Vector dir = center - shootPos;
 		float distance = dir.Normalize();
 
-		if (distance > 96.0f)
+		if (distance > (48*2))
 			continue;
 
 		if (IsBehindEntity(pLocal, pTarget))
