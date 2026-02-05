@@ -334,16 +334,4 @@ namespace LuaClasses
 		int Index(lua_State* L);
 		int NewIndex(lua_State* L);
 	}
-
-	/*namespace ImGuiDraw
-	{
-		void open(lua_State* L);
-		extern const luaL_Reg methods[];
-		LuaImGuiDraw* push_drawlist(lua_State* L, ImDrawList* draw);
-
-		int Index(lua_State* L);
-		
-		// methods
-		int FillRect(lua_State* L);
-	}*/
 }

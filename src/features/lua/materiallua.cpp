@@ -1,3 +1,4 @@
+#include "../../features/MaterialManager/materialmanager.h"
 #include "../../sdk/definitions/imaterial.h"
 #include "classes.h"
 
@@ -43,8 +44,11 @@ namespace LuaClasses
 		int GC(lua_State* L)
 		{
 			LuaMaterial* lmat = static_cast<LuaMaterial*>(luaL_checkudata(L, 1, "Material"));
-			lmat->mat->Release();
-			lmat->mat->DeleteIfUnreferenced();
+			const char* name = lmat->mat->GetName();
+
+			if (g_MaterialManager.MaterialExists(name))
+				g_MaterialManager.FreeMaterial(lmat->mat->GetName());
+
 			return 0;
 		}
 
