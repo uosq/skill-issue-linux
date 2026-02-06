@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../features/MaterialManager/materialmanager.h"
+#include "../../sdk/MaterialManager/materialmanager.h"
 #include "../../sdk/definitions/keyvalues.h"
 #include "../../sdk/helpers/helper.h"
 #include "../../features/esp/esp.h"

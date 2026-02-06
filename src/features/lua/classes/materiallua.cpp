@@ -1,6 +1,6 @@
-#include "../../features/MaterialManager/materialmanager.h"
-#include "../../sdk/definitions/imaterial.h"
-#include "classes.h"
+#include "../../../sdk/MaterialManager/materialmanager.h"
+#include "../../../sdk/definitions/imaterial.h"
+#include "../classes.h"
 
 namespace LuaClasses
 {
@@ -14,6 +14,7 @@ namespace LuaClasses
 			{"GetMaterialVarFlag", GetMaterialVarFlag},
 			{"GetTextureGroupName", GetTextureGroupName},
 			{"GetName", GetName},
+			{"Delete", Delete},
 			{nullptr, nullptr}
 		};
 
@@ -44,12 +45,6 @@ namespace LuaClasses
 		int GC(lua_State* L)
 		{
 			LuaMaterial* lmat = static_cast<LuaMaterial*>(luaL_checkudata(L, 1, "Material"));
-			const char* name = lmat->mat->GetName();
-
-			if (g_MaterialManager.MaterialExists(name))
-				g_MaterialManager.FreeMaterial(lmat->mat->GetName());
-
-			lmat->mat = nullptr;
 			lmat->~LuaMaterial();
 			return 0;
 		}
@@ -77,7 +72,7 @@ namespace LuaClasses
 			}
 
 			LuaMaterial* lmat = static_cast<LuaMaterial*>(lua_newuserdata(L, sizeof(LuaMaterial)));
-			new (lmat) LuaMaterial{mat};
+			new (lmat) LuaMaterial{mat, name};
 
 			luaL_getmetatable(L, "Material");
 			lua_setmetatable(L, -2);
@@ -170,6 +165,19 @@ namespace LuaClasses
 			const char* name = lmat->mat->GetName();
 			lua_pushlstring(L, name, sizeof(name));
 			return 1;
+		}
+
+		int Delete(lua_State* L)
+		{
+			LuaMaterial* lmat = static_cast<LuaMaterial*>(luaL_checkudata(L, 1, "Material"));
+			const std::string& name = lmat->name;
+
+			if (g_MaterialManager.MaterialExists(name))
+				g_MaterialManager.FreeMaterial(name);
+
+			lmat->mat = nullptr;
+			lmat->~LuaMaterial();
+			return 0;
 		}
 	}
 }

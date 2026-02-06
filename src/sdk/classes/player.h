@@ -91,6 +91,8 @@ public:
 	NETVAR(m_nWaterLevel, "CTFPlayer->m_nWaterLevel", uint8_t)
 	NETVAR(m_iFOV, "CBasePlayer->m_iFOV", int)
 
+	NETVAR(m_vecPunchAngle, "CBasePlayer->m_vecPunchAngle", Vector)
+
 	inline bool IsAlive()
 	{
 		return m_lifeState() == LIFE_ALIVE;

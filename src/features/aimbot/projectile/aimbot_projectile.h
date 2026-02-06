@@ -330,7 +330,8 @@ struct AimbotProjectile
 
 		std::vector<PotentialTarget> targets;
 
-		float maxFov = AimbotUtils::GetAimbotFovScaled(pLocal); //g_Settings.aimbot.fov;
+		float maxFov = AimbotUtils::GetAimbotFovScaled(); //g_Settings.aimbot.fov;
+		bool bNoFovLimit = g_Settings.aimbot.fov >= 180.0f;
 
 		CGameTrace trace;
 		CTraceFilterHitscan filter;
@@ -356,7 +357,7 @@ struct AimbotProjectile
 
 			Vector angle = Math::CalcAngle(shootPos, center);
 			float fov = Math::CalcFov(viewAngles, angle);
-			if (fov > maxFov)
+			if (!bNoFovLimit && fov > maxFov)
 				continue;
 
 			targets.emplace_back(PotentialTarget{angle, center, distance, fov, entity});

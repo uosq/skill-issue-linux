@@ -25,7 +25,8 @@ void RegisterSettings(void)
 	REG_SETTING(aimbot, waitforcharge, SettingType::BOOL)
 	REG_SETTING(aimbot, mode, SettingType::INT)
 	REG_SETTING(aimbot, smoothness, SettingType::FLOAT)
-	REG_SETTING(aimbot, teamMode, SettingType::INT);
+	REG_SETTING(aimbot, teamMode, SettingType::INT)
+	REG_SETTING(aimbot, hold_minigun_spin, SettingType::BOOL)
 
 	// esp
 	REG_SETTING(esp, enabled, SettingType::BOOL)
@@ -54,7 +55,9 @@ void RegisterSettings(void)
 	REG_SETTING(misc, viewmodel_offset[0], SettingType::FLOAT)
 	REG_SETTING(misc, viewmodel_offset[1], SettingType::FLOAT)
 	REG_SETTING(misc, viewmodel_offset[2], SettingType::FLOAT)
-	REG_SETTING(misc, viewmodel_interp, SettingType::FLOAT);
+	REG_SETTING(misc, viewmodel_interp, SettingType::FLOAT)
+	REG_SETTING(misc, norecoil, SettingType::BOOL)
+	REG_SETTING(misc, norecoil_hide, SettingType::BOOL)
 
 	//triggerbot
 	REG_SETTING(triggerbot, enabled, SettingType::BOOL)

@@ -6,7 +6,7 @@
 #include "../sdk/helpers/helper.h"
 #include "../features/entitylist/entitylist.h"
 
-#include "../features/lua/hooks.h"
+#include "../features/lua/hookmgr.h"
 #include "../features/lua/api.h"
 #include "../features/lua/classes.h"
 

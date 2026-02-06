@@ -7,7 +7,7 @@
 #include "../libdetour/libdetour.h"
 #include <cstdlib>
 
-#include "../features/lua/hooks.h"
+#include "../features/lua/hookmgr.h"
 #include "../features/lua/api.h"
 #include "../features/lua/classes.h"
 

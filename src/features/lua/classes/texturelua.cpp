@@ -1,5 +1,6 @@
-#include "classes.h"
-#include "../../sdk/definitions/itexture.h"
+#include "../classes.h"
+#include "../../../sdk/definitions/itexture.h"
+#include "../../../sdk/MaterialManager/materialmanager.h"
 
 namespace LuaClasses
 {
@@ -33,10 +34,10 @@ namespace LuaClasses
 			lua_setfield(L, -2, "__tostring");
 		}
 
-		LuaTexture* push_texture(lua_State* L, ITexture* tex)
+		LuaTexture* push_texture(lua_State* L, ITexture* tex, const std::string& name)
 		{
 			LuaTexture* ltex = static_cast<LuaTexture*>(lua_newuserdata(L, sizeof(LuaTexture)));
-			ltex->tex = tex;
+			new (ltex) LuaTexture{tex, name};
 
 			luaL_getmetatable(L, "Texture");
 			lua_setmetatable(L, -2);
@@ -55,7 +56,9 @@ namespace LuaClasses
 		int GC(lua_State* L)
 		{
 			LuaTexture* ltex = static_cast<LuaTexture*>(luaL_checkudata(L, 1, "Texture"));
-			ltex->~LuaTexture();
+
+			ltex->name.clear();
+			ltex->tex = nullptr;
 			return 0;
 		}
 
@@ -81,8 +84,8 @@ namespace LuaClasses
 				return 1;
 			}
 
-			ltex->tex->DecrementReferenceCount();
-			ltex->tex->DeleteIfUnreferenced();
+			g_MaterialManager.FreeTexture(ltex->name);
+			ltex->name.clear();
 			ltex->tex = nullptr;
 			return 0;
 		}

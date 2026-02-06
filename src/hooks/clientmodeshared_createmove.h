@@ -7,12 +7,15 @@
 #include "../sdk/classes/entity.h"
 #include "../sdk/classes/player.h"
 #include "../sdk/helpers/helper.h"
+
 #include "../features/aimbot/aimbot.h"
 #include "../features/bhop/bhop.h"
 #include "../features/triggerbot/triggerbot.h"
 #include "../features/entitylist/entitylist.h"
 #include "../features/antiaim/antiaim.h"
-#include "../features/lua/hooks.h"
+#include "../features/visuals/norecoil/norecoil.h"
+
+#include "../features/lua/hookmgr.h"
 #include "../features/lua/api.h"
 
 // Source https://8dcc.github.io/reversing/reversing-tf2-bsendpacket.html#introduction
@@ -151,6 +154,8 @@ DECLARE_VTABLE_HOOK(CreateMove, bool, (IClientMode* thisptr, float sample_framet
 	uintptr_t current_frame_address = reinterpret_cast<uintptr_t>(__builtin_frame_address(0));
     	uintptr_t current_stack_address = current_frame_address + 0x8;
     	bool* pSendPacket = (bool*)(current_stack_address + SENDPACKET_STACK_OFFSET);
+
+	NoRecoil::RunCreateMove(pLocal, pWeapon, pCmd);
 
 	Bhop::Run(pLocal, pCmd);
 	Antiaim::Run(pLocal, pWeapon, pCmd, pSendPacket);

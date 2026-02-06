@@ -16,7 +16,7 @@
 #include "../settings.h"
 #include "../gui/gui.h"
 #include "../features/esp/esp.h"
-#include "../features/lua/hooks.h"
+#include "../features/lua/hookmgr.h"
 
 #include "../features/radar/radar.h"
 

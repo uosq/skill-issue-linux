@@ -2,15 +2,9 @@
 
 #include "../tracy/tracy/Tracy.hpp"
 
-#include "../features/MaterialManager/materialmanager.h"
-#include "../sdk/interfaces/interfaces.h"
-#include "../settings.h"
+#include "../sdk/MaterialManager/materialmanager.h"
 #include "../libdetour/libdetour.h"
 #include <cstdlib>
-
-#include "../features/lua/hooks.h"
-#include "../features/lua/api.h"
-#include "../features/lua/classes.h"
 
 inline detour_ctx_t uncache_ctx;
 DETOUR_DECL_TYPE(void, original_Uncache, IMaterial* mat, bool bPreserveVars);
@@ -18,7 +12,7 @@ DETOUR_DECL_TYPE(void, original_Uncache, IMaterial* mat, bool bPreserveVars);
 inline void HookedUncache(IMaterial* mat, bool bPreserveVars)
 {
 	if (g_MaterialManager.MaterialExists(mat->GetName()))
-		return;
+		return;;
 
 	DETOUR_ORIG_CALL(&uncache_ctx, original_Uncache, mat, bPreserveVars);
 }

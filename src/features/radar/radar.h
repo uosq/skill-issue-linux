@@ -13,7 +13,7 @@ private:
 
 protected:
 	int m_iRange;
-	int m_flRadius;
+	float m_flRadius;
 
 public:
 	Radar() {}
@@ -132,7 +132,7 @@ inline void Radar::DrawContents()
 
 		draw->AddCircleFilled({ center.x + p.x, center.y - p.y }, iconSize, IM_COL32(color.r(), color.g(), color.b(), color.a()));
 
-		if (entry.flags & (EntityFlags::IsPlayer | EntityFlags::IsBuilding))
+		/*if (entry.flags & (EntityFlags::IsPlayer | EntityFlags::IsBuilding))
 		{
 			int health = 0;
 			int maxhealth = 0;
@@ -159,7 +159,7 @@ inline void Radar::DrawContents()
 
 			if (health != 0 && maxhealth != 0)
 				DrawHealthbar(draw, ImVec2(center.x + p.x, center.y - p.y), health, maxhealth, iconSize);
-		}
+		}*/
 	}
 }
 

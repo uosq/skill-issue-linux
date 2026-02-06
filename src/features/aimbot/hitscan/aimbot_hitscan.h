@@ -128,6 +128,9 @@ struct AimbotHitscan
 			if (!pWeapon->CanAmbassadorHeadshot())
 				return;
 
+		if (g_Settings.aimbot.hold_minigun_spin && pWeapon->GetWeaponID() == TF_WEAPON_MINIGUN)
+			pCmd->buttons |= IN_ATTACK2;
+
 		std::vector<PotentialTarget> targets;
 
 		int localTeam = pLocal->m_iTeamNum();
@@ -147,7 +150,8 @@ struct AimbotHitscan
 		bool bIsSniperRifle = pWeapon->IsSniperRifle();
 		bool bIsZoomed = pLocal->InCond(TF_COND_ZOOMED);
 		
-		float maxFov = AimbotUtils::GetAimbotFovScaled(pLocal); //settings.aimbot.fov;
+		float maxFov = AimbotUtils::GetAimbotFovScaled(); //settings.aimbot.fov;
+		bool bNoFovLimit = g_Settings.aimbot.fov >= 180.0f;
 
 		bool bCanHitTeammates = pWeapon->CanHitTeammates();
 
@@ -171,7 +175,8 @@ struct AimbotHitscan
 
 			Vector angle = Math::CalcAngle(shootPos, pos);
 			float fov = Math::CalcFov(viewAngles, angle);
-			if (fov > maxFov)
+
+			if (!bNoFovLimit && fov > maxFov)
 				continue;
 
 			if (g_Settings.aimbot.waitforcharge && bIsZoomed && bIsSniperRifle && !AimbotUtils::CanDamageWithSniperRifle(pLocal, entity, pWeapon))

@@ -4,26 +4,26 @@
 
 namespace Aimbot
 {
-	AimbotState state = {};
+	AimbotState m_state = {};
 
 	Vector GetAngle()
 	{
-		return state.angle;
+		return m_state.angle;
 	}
 
 	bool IsRunning()
 	{
-		return state.running;
+		return m_state.running;
 	}
 
 	bool ShouldSilent()
 	{
-		return state.shouldSilent;
+		return m_state.shouldSilent;
 	}
 
 	void Run(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd, bool* bSendPacket)
 	{
-		ClearAimbotState(state);
+		ClearAimbotState(m_state);
 
 		if (!g_Settings.aimbot.enabled)
 			return;
@@ -41,37 +41,37 @@ namespace Aimbot
 			case EWeaponType::HITSCAN:
 			{
 				static AimbotHitscan hitscan;
-				hitscan.Run(pLocal, pWeapon, pCmd, state);
+				hitscan.Run(pLocal, pWeapon, pCmd, m_state);
 			} break;
 			
 			case EWeaponType::PROJECTILE:
 			{
 				static AimbotProjectile projectile;
-				projectile.Run(pLocal, pWeapon, pCmd, state);
+				projectile.Run(pLocal, pWeapon, pCmd, m_state);
 
-				if (g_Settings.aimbot.mode == AimbotMode::PSILENT && state.shouldSilent)
+				if (g_Settings.aimbot.mode == AimbotMode::PSILENT && m_state.shouldSilent)
 					*bSendPacket = false;
 			} break;
 
 			case EWeaponType::MELEE:
 			{
 				static AimbotMelee melee;
-				melee.Run(pLocal, pWeapon, pCmd, state);
+				melee.Run(pLocal, pWeapon, pCmd, m_state);
 
-				if (g_Settings.aimbot.mode == AimbotMode::PSILENT && state.shouldSilent)
+				if (g_Settings.aimbot.mode == AimbotMode::PSILENT && m_state.shouldSilent)
 					*bSendPacket = false;
 			} break;
 			default: break;
 		}
 	}
 
-	void DrawFOVIndicator(CTFPlayer* pLocal)
+	void DrawFOVIndicator()
 	{
 		if (g_Settings.aimbot.fov >= 90 || !g_Settings.aimbot.draw_fov_indicator)
 			return;
 
 		//float aimFov = DEG2RAD(g_Settings.aimbot.fov);
-		float aimFov = DEG2RAD(AimbotUtils::GetAimbotFovScaled(pLocal));
+		float aimFov = DEG2RAD(AimbotUtils::GetAimbotFovScaled());
 		float camFov = DEG2RAD(g_Customfov.GetFov() * 0.5f);
 
 		int w, h;
@@ -124,12 +124,12 @@ namespace Aimbot
 		}*/
 	}
 
-	void RunPaint(CTFPlayer* pLocal)
+	void RunPaint()
 	{
 		if (!g_Settings.aimbot.enabled)
 			return;
 
 		//DrawTargetPath();
-		DrawFOVIndicator(pLocal);
+		DrawFOVIndicator();
 	}
 };

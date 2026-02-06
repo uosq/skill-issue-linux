@@ -16,7 +16,7 @@
 
 #include "../libdetour/libdetour.h"
 
-#include "../features/lua/hooks.h"
+#include "../features/lua/hookmgr.h"
 #include "../features/lua/api.h"
 #include "../features/lua/classes.h"
 
@@ -45,7 +45,7 @@ inline void HookedCalcViewModelView(void* thisptr, CBaseEntity* owner, const Vec
 
 		g_ViewmodelInterp.Run(angle);
 		g_ViewmodelAim.Run(angle);
-		g_ViewmodelOffset.Run(position, angle);
+		ViewmodelOffset::Run(position, angle);
 	}
 
 	DETOUR_ORIG_CALL(&calcViewModel_ctx, originalCalcViewModelView, thisptr, owner, position, angle);

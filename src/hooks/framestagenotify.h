@@ -8,7 +8,7 @@
 #include "../features/entitylist/entitylist.h"
 #include "../features/visuals/customfov/customfov.h"
 
-#include "../features/lua/hooks.h"
+#include "../features/lua/hookmgr.h"
 #include "../features/lua/api.h"
 
 DECLARE_VTABLE_HOOK(FrameStageNotify, void, (CHLClient* thisptr, int stage))
@@ -37,7 +37,7 @@ DECLARE_VTABLE_HOOK(FrameStageNotify, void, (CHLClient* thisptr, int stage))
 			if (pLocal == nullptr)
 				break;
 
-			g_Thirdperson.Run(pLocal);
+			Thirdperson::Run(pLocal);
 			break;
 		}
 

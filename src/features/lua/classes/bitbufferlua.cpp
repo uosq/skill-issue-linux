@@ -1,6 +1,6 @@
-#include "classes.h"
-#include "../../sdk/definitions/bitbuf.h"
-#include "pluto/lauxlib.h"
+#include "../classes.h"
+#include "../../../sdk/definitions/bitbuf.h"
+#include "../pluto/lauxlib.h"
 
 namespace LuaClasses
 {
@@ -44,8 +44,7 @@ namespace LuaClasses
 		LuaBuffer* push_buffer(lua_State* L, bf_write* writer, bf_read* reader)
 		{
 			LuaBuffer* lbf = static_cast<LuaBuffer*>(lua_newuserdata(L, sizeof(LuaBuffer)));
-			lbf->writer = writer;
-			lbf->reader = reader;
+			new (lbf) LuaBuffer{writer, reader};
 
 			luaL_getmetatable(L, "BitBuffer");
 			lua_setmetatable(L, -2);

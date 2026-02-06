@@ -1,13 +1,13 @@
-#include "classes.h"
+#include "../classes.h"
 
-#include "../../sdk/classes/player.h"
-#include "../../sdk/classes/cbaseobject.h"
-#include "../../sdk/classes/ctfrobotdestruction_robot.h"
-#include "../../sdk/netvars/netvar.h"
-#include "../entitylist/entitylist.h"
-#include "../../sdk/handle_utils.h"
-#include "pluto/lua.h"
-#include "../prediction/prediction.h"
+#include "../../../sdk/classes/player.h"
+#include "../../../sdk/classes/cbaseobject.h"
+#include "../../../sdk/classes/ctfrobotdestruction_robot.h"
+#include "../../../sdk/netvars/netvar.h"
+#include "../../entitylist/entitylist.h"
+#include "../../../sdk/handle_utils.h"
+#include "../pluto/lua.h"
+#include "../../prediction/prediction.h"
 
 namespace LuaClasses
 {
@@ -79,7 +79,7 @@ namespace LuaClasses
 			}
 
 			LuaEntity* le = (LuaEntity*)lua_newuserdata(L, sizeof(LuaEntity));
-			le->ent = entity;
+			new (le) LuaEntity{entity};
 
 			luaL_getmetatable(L, "Entity");
 			lua_setmetatable(L, -2);

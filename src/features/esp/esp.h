@@ -76,13 +76,18 @@ namespace ESP
 		helper::draw::TextShadow(top.x - (textw*0.5f), top.y - texth - 2, color, name);
 	}
 
+	inline void Init()
+	{
+		g_FontManager.CreateFont("esp font", "Arial", 16, 400, EFONTFLAG_CUSTOM | EFONTFLAG_ANTIALIAS);
+	}
+
 	inline void Run(CTFPlayer* pLocal)
 	{
 		if (!helper::engine::IsInMatch() || !g_Settings.esp.enabled)
 			return;
 
 		Color white {255, 255, 255, 255};
-		helper::draw::SetFont(fontManager.GetCurrentFont());
+		g_FontManager.SetFont("esp font");
 
 		for (auto& entry : EntityList::GetEntities())
 		{

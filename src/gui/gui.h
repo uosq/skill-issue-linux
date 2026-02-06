@@ -101,7 +101,7 @@ static void DrawAimbotTab()
 		if (ImGui::Selectable("Silent"))
 			g_Settings.aimbot.mode = AimbotMode::SILENT;
 
-		if (ImGui::Selectable("pSilent"))
+		if (ImGui::Selectable("Silent + Spectators"))
 			g_Settings.aimbot.mode = AimbotMode::PSILENT;
 
 		ImGui::EndCombo();
@@ -131,6 +131,10 @@ static void DrawAimbotTab()
 	ImGui::Checkbox("Hoovy", &g_Settings.aimbot.ignorehoovy);
 	ImGui::SameLine();
 	ImGui::Checkbox("Bonked", &g_Settings.aimbot.ignorebonked);
+
+	ImGui::Separator();
+
+	ImGui::Checkbox("Hold Minigun Spin", &g_Settings.aimbot.hold_minigun_spin);
 
 	ImGui::EndGroup();
 }
@@ -196,6 +200,10 @@ static void DrawMiscTab()
 	ImGui::Checkbox("Bhop", &g_Settings.misc.bhop);
 	ImGui::Checkbox("Backpack Expander", &g_Settings.misc.backpack_expander);
 	ImGui::Checkbox("Accept Item Drops", &g_Settings.misc.accept_item_drop);
+
+	ImGui::Checkbox("No Recoil", &g_Settings.misc.norecoil);
+	ImGui::SameLine();
+	ImGui::Checkbox("No Recoil Hide", &g_Settings.misc.norecoil_hide);
 
 	ImGui::Separator();
 
@@ -361,13 +369,14 @@ static void DrawLuaTab()
 			"globals", "engine",
 			"hooks", "Vector3",
 			"entities", "draw",
-			"render", "materials",
+			"render", "MaterialManager",
 			"client", "BitBuffer",
 			"clientstate", "ui",
 			"menu", "aimbot",
 			"radar", "colors",
+			"FontManager", 
 			#ifdef TRACY_ENABLE
-			"tracy"
+			"tracy",
 			#endif
 		};
 

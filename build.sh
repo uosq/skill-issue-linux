@@ -46,7 +46,10 @@ g++ -shared -fPIC \
 	src/features/entitylist/*.cpp \
 	src/features/aimbot/aimbot.cpp \
 	src/features/triggerbot/triggerbot.cpp \
-	src/features/MaterialManager/materialmanager.cpp \
+	src/sdk/MaterialManager/materialmanager.cpp \
+	src/features/lua/classes/*.cpp \
+	src/features/lua/libraries/*.cpp \
+	src/sdk/FontManager/fontmanager.cpp \
 	build/libplutostatic.a \
 	-o build/libvapo.so \
 	-O2 -std=c++17 -lSDL2 -lvulkan -lm -ldl \

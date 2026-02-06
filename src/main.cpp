@@ -1,4 +1,5 @@
 #include "features/chams/chams.h"
+#include "features/esp/esp.h"
 #include "features/glow/glow.h"
 #include "hooks/cinventorymanager_showitemspickedup.h"
 #include "hooks/clientmodeshared_createmove.h"
@@ -23,10 +24,10 @@
 #include "hooks/chlclient_levelpostentity.h"
 #include "hooks/dxvk.h"
 
+#include "sdk/FontManager/fontmanager.h"
 #include "sdk/interfaces/interfaces.h"
 #include <sys/types.h>
 #include <unistd.h>
-#include "sdk/helpers/fonts.h"
 #include "sdk/netvars/netvar.h"
 #include "features/lua/api.h"
 
@@ -36,8 +37,7 @@ void init(void)
 	if (!InitializeInterfaces())
 		return;
 
-	fontManager.Init();
-
+	ESP::Init();
 	Glow::Init();
 	Chams::Init();
 

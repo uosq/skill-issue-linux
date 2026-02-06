@@ -1,6 +1,6 @@
 #pragma once
 
-#include "funcs.h"
+#include "libraries.h"
 
 namespace Lua
 {

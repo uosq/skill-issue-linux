@@ -21,6 +21,9 @@ returns **string**
 ### > GetName( )
 returns **string**
 
+### > Delete( )
+Frees the Material from memory
+
 ## Examples
 
 ```lua

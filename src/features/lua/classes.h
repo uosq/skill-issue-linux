@@ -21,6 +21,7 @@ struct LuaEntity
 struct LuaMaterial
 {
 	IMaterial* mat;
+	std::string name;
 };
 
 struct LuaBuffer
@@ -40,6 +41,7 @@ struct LuaNetMessage
 struct LuaTexture
 {
 	ITexture* tex;
+	std::string name;
 };
 
 struct LuaNetChannel
@@ -163,7 +165,7 @@ namespace LuaClasses
 	{
 		extern const luaL_Reg methods[];
 		void luaopen_material(lua_State* L);
-		LuaMaterial* push_material(lua_State* L, IMaterial* mat);
+		LuaMaterial* push_material(lua_State* L, IMaterial* mat, const std::string& name);
 
 		int Index(lua_State* L);
 		int GC(lua_State* L);
@@ -177,6 +179,8 @@ namespace LuaClasses
 
 		int GetTextureGroupName(lua_State* L);
 		int GetName(lua_State* L);
+
+		int Delete(lua_State* L);
 	}
 
 	namespace BitBufferLua
@@ -235,7 +239,7 @@ namespace LuaClasses
 	{
 		extern const luaL_Reg methods[];
 		void luaopen_texture(lua_State* L);
-		LuaTexture* push_texture(lua_State* L, ITexture* tex);
+		LuaTexture* push_texture(lua_State* L, ITexture* tex, const std::string& name);
 
 		int Index(lua_State* L);
 		int GC(lua_State* L);

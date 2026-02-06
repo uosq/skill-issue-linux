@@ -125,7 +125,7 @@ namespace AimbotUtils
 			case AimbotMode::SMOOTH: return "Smooth";
 			case AimbotMode::ASSISTANCE: return "Assistance";
 			case AimbotMode::SILENT: return "Silent";
-			case AimbotMode::PSILENT: return "pSilent";
+			case AimbotMode::PSILENT: return "Silent + Spectators";
 			default: return "Invalid";
                 }
         }
@@ -172,13 +172,13 @@ namespace AimbotUtils
 		return false;
 	}
 
-	inline float GetAimbotFovScaled(CTFPlayer* pLocal)
+	inline float GetAimbotFovScaled()
 	{
 		float cameraFOV = g_Customfov.GetFov();
 
 		float radAimbotHalf = DEG2RAD(g_Settings.aimbot.fov / 2.0f);
 		float radPlayerHalf = DEG2RAD(cameraFOV / 2.0f);
-		float radBaseHalf   = DEG2RAD(90.0f / 2.0f);
+		constexpr float radBaseHalf = DEG2RAD(90.0f / 2.0f);
 
 		float scaledRad = atan(tan(radAimbotHalf) * (tan(radPlayerHalf) / tan(radBaseHalf)));
 

@@ -46,9 +46,10 @@ namespace EntityList
 				{
 					CTFPlayer* player = static_cast<CTFPlayer*>(entity);
 
+					// cant skip lp or else ESP, Chams and Glow don't highlight us
 					// skip localplayer
-					if (player == m_pLocalPlayer)
-						break;
+					//if (player == m_pLocalPlayer)
+						//break;
 
 					EntityListEntry entry;
 					entry.flags = EntityFlags::IsPlayer;

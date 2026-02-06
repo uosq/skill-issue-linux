@@ -1,4 +1,4 @@
-#include "classes.h"
+#include "../classes.h"
 
 namespace LuaClasses
 {
@@ -18,7 +18,7 @@ namespace LuaClasses
 		LuaViewSetup* push_viewsetup(lua_State* L, CViewSetup* view)
 		{
 			LuaViewSetup* lview = static_cast<LuaViewSetup*>(lua_newuserdata(L, sizeof(LuaViewSetup)));
-			lview->view = view;
+			new (lview) LuaViewSetup{view};
 
 			luaL_getmetatable(L, "ViewSetup");
 			lua_setmetatable(L, -2);

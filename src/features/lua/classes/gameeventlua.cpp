@@ -1,5 +1,5 @@
-#include "classes.h"
-#include "pluto/lauxlib.h"
+#include "../classes.h"
+#include "../pluto/lauxlib.h"
 
 namespace LuaClasses
 {
@@ -38,7 +38,7 @@ namespace LuaClasses
 		LuaGameEvent* push_gameevent(lua_State* L, IGameEvent* event)
 		{
 			LuaGameEvent* levent = static_cast<LuaGameEvent*>(lua_newuserdata(L, sizeof(LuaGameEvent)));
-			levent->event = event;
+			new (levent) LuaGameEvent{event};
 
 			luaL_getmetatable(L, "GameEvent");
 			lua_setmetatable(L, -2);
@@ -65,7 +65,10 @@ namespace LuaClasses
 		{
 			LuaGameEvent* levent = static_cast<LuaGameEvent*>(luaL_checkudata(L, 1, "GameEvent"));
 			if (levent->event == nullptr)
-				return 0;
+			{
+				lua_pushnil(L);
+				return 1;
+			}
 
 			lua_pushstring(L, levent->event->GetName());
 			return 1;
@@ -75,7 +78,10 @@ namespace LuaClasses
 		{
 			LuaGameEvent* levent = static_cast<LuaGameEvent*>(luaL_checkudata(L, 1, "GameEvent"));
 			if (levent->event == nullptr)
-				return 0;
+			{
+				lua_pushnil(L);
+				return 1;
+			}
 
 			lua_pushboolean(L, levent->event->IsReliable());
 			return 1;
@@ -85,7 +91,10 @@ namespace LuaClasses
 		{
 			LuaGameEvent* levent = static_cast<LuaGameEvent*>(luaL_checkudata(L, 1, "GameEvent"));
 			if (levent->event == nullptr)
-				return 0;
+			{
+				lua_pushnil(L);
+				return 1;
+			}
 
 			lua_pushboolean(L, levent->event->IsLocal());
 			return 1;
@@ -95,7 +104,10 @@ namespace LuaClasses
 		{
 			LuaGameEvent* levent = static_cast<LuaGameEvent*>(luaL_checkudata(L, 1, "GameEvent"));
 			if (levent->event == nullptr)
-				return 0;
+			{
+				lua_pushnil(L);
+				return 1;
+			}
 
 			const char* key = luaL_checkstring(L, 2);
 			lua_pushboolean(L, levent->event->IsEmpty(key));
@@ -106,7 +118,10 @@ namespace LuaClasses
 		{
 			LuaGameEvent* levent = static_cast<LuaGameEvent*>(luaL_checkudata(L, 1, "GameEvent"));
 			if (levent->event == nullptr)
-				return 0;
+			{
+				lua_pushnil(L);
+				return 1;
+			}
 
 			const char* key = luaL_checkstring(L, 2);
 			lua_pushboolean(L, levent->event->GetBool(key));
@@ -117,7 +132,10 @@ namespace LuaClasses
 		{
 			LuaGameEvent* levent = static_cast<LuaGameEvent*>(luaL_checkudata(L, 1, "GameEvent"));
 			if (levent->event == nullptr)
-				return 0;
+			{
+				lua_pushnil(L);
+				return 1;
+			}
 
 			const char* key = luaL_checkstring(L, 2);
 			lua_pushinteger(L, levent->event->GetInt(key));
@@ -128,7 +146,10 @@ namespace LuaClasses
 		{
 			LuaGameEvent* levent = static_cast<LuaGameEvent*>(luaL_checkudata(L, 1, "GameEvent"));
 			if (levent->event == nullptr)
-				return 0;
+			{
+				lua_pushnil(L);
+				return 1;
+			}
 
 			const char* key = luaL_checkstring(L, 2);
 			lua_pushnumber(L, levent->event->GetFloat(key));
@@ -139,7 +160,10 @@ namespace LuaClasses
 		{
 			LuaGameEvent* levent = static_cast<LuaGameEvent*>(luaL_checkudata(L, 1, "GameEvent"));
 			if (levent->event == nullptr)
-				return 0;
+			{
+				lua_pushnil(L);
+				return 1;
+			}
 
 			const char* key = luaL_checkstring(L, 2);
 			lua_pushstring(L, levent->event->GetString(key));
@@ -150,7 +174,10 @@ namespace LuaClasses
 		{
 			LuaGameEvent* levent = static_cast<LuaGameEvent*>(luaL_checkudata(L, 1, "GameEvent"));
 			if (levent->event == nullptr)
-				return 0;
+			{
+				lua_pushnil(L);
+				return 1;
+			}
 
 			const char* key = luaL_checkstring(L, 2);
 			bool val = luaL_checkinteger(L, 3);
@@ -162,7 +189,10 @@ namespace LuaClasses
 		{
 			LuaGameEvent* levent = static_cast<LuaGameEvent*>(luaL_checkudata(L, 1, "GameEvent"));
 			if (levent->event == nullptr)
-				return 0;
+			{
+				lua_pushnil(L);
+				return 1;
+			}
 
 			const char* key = luaL_checkstring(L, 2);
 			int val = luaL_checkinteger(L, 3);
@@ -174,7 +204,10 @@ namespace LuaClasses
 		{
 			LuaGameEvent* levent = static_cast<LuaGameEvent*>(luaL_checkudata(L, 1, "GameEvent"));
 			if (levent->event == nullptr)
-				return 0;
+			{
+				lua_pushnil(L);
+				return 1;
+			}
 
 			const char* key = luaL_checkstring(L, 2);
 			float val = luaL_checknumber(L, 3);
@@ -186,7 +219,10 @@ namespace LuaClasses
 		{
 			LuaGameEvent* levent = static_cast<LuaGameEvent*>(luaL_checkudata(L, 1, "GameEvent"));
 			if (levent->event == nullptr)
-				return 0;
+			{
+				lua_pushnil(L);
+				return 1;
+			}
 
 			const char* key = luaL_checkstring(L, 2);
 			const char* val = luaL_checkstring(L, 3);

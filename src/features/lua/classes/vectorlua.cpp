@@ -1,7 +1,7 @@
-#include "classes.h"
+#include "../classes.h"
 
 #include <string>
-#include "../../sdk/math.h"
+#include "../../../sdk/math.h"
 #include <cstring>
 
 namespace LuaClasses
@@ -73,7 +73,7 @@ namespace LuaClasses
 			float z = static_cast<float>(luaL_optnumber(L, 3, 0.0));
 
 			Vector* v = static_cast<Vector*>(lua_newuserdata(L, sizeof(Vector)));
-			v->Set(x, y, z);
+			new (v) Vector(x, y, z);
 
 			luaL_getmetatable(L, "Vector3");
 			lua_setmetatable(L, -2);
@@ -91,7 +91,7 @@ namespace LuaClasses
 		Vector* push_vector(lua_State* L, float x, float y, float z)
 		{
 			Vector* v = static_cast<Vector*>(lua_newuserdata(L, sizeof(Vector)));
-			v->Set(x, y, z);
+			new (v) Vector(x, y, z);
 
 			luaL_getmetatable(L, "Vector3");
 			lua_setmetatable(L, -2);
@@ -102,7 +102,7 @@ namespace LuaClasses
 		Vector* push_vector(lua_State* L, const Vector& vec)
 		{
 			Vector* v = static_cast<Vector*>(lua_newuserdata(L, sizeof(Vector)));
-			*v = vec;
+			new (v) Vector(vec.x, vec.y, vec.z);
 
 			luaL_getmetatable(L, "Vector3");
 			lua_setmetatable(L, -2);

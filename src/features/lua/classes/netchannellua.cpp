@@ -1,6 +1,6 @@
-#include "classes.h"
-#include "pluto/lauxlib.h"
-#include "pluto/lua.h"
+#include "../classes.h"
+#include "../pluto/lauxlib.h"
+#include "../pluto/lua.h"
 
 namespace LuaClasses
 {

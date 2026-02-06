@@ -7,7 +7,7 @@
 #include "../features/entitylist/entitylist.h"
 #include "../features/visuals/viewmodel_aim/viewmodel_aim.h"
 
-#include "../features/lua/hooks.h"
+#include "../features/lua/hookmgr.h"
 #include "../features/lua/api.h"
 #include "../features/lua/classes.h"
 

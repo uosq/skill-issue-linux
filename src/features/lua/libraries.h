@@ -88,8 +88,6 @@ namespace LuaFuncs
 		int GetTextSize(lua_State* L);
 		int OutlinedCircle(lua_State* L);
 		int Text(lua_State* L);
-		int CreateFont(lua_State* L);
-		int SetFont(lua_State* L);
 	}
 
 	namespace render
@@ -140,7 +138,8 @@ namespace LuaFuncs
 		int FindMaterial(lua_State* L);
 		int FindTexture(lua_State* L);
 		int CreateTextureRenderTarget(lua_State* L);
-		int Enumerate(lua_State* L);
+		int GetMaterial(lua_State* L);
+		int GetTexture(lua_State* L);
 	}
 
 	namespace client
@@ -243,5 +242,16 @@ namespace LuaFuncs
 		int GetRedTeamColor(lua_State* L);
 		int GetBluTeamColor(lua_State* L);
 		int GetWeaponColor(lua_State* L);
+	}
+
+	namespace fontmanager
+	{
+		extern const luaL_Reg fontmgrlib[];
+		void open(lua_State* L);
+
+		int CreateFont(lua_State* L);
+		int SetFont(lua_State* L);
+		int GetCurrentFontID(lua_State* L);
+		int GetAllFonts(lua_State* L);
 	}
 }

@@ -111,6 +111,7 @@ struct Settings_Aimbot
 	bool ignorehoovy = false;
 	bool ignorebonked = false;
 	bool waitforcharge = false;
+	bool hold_minigun_spin = false;
 	AimbotMode mode = AimbotMode::PLAIN;
 	MeleeMode melee = MeleeMode::NONE;
 	TeamMode teamMode = TeamMode::ONLYENEMY;
@@ -130,6 +131,9 @@ struct Settings_Misc
 	bool bhop = false;
 	bool accept_item_drop = false;
 	bool playerlist = false;
+
+	bool norecoil = false;
+	bool norecoil_hide = false;
 
 	float viewmodel_offset[3] = {0.0, 0.0, 0.0};
 	float viewmodel_interp = 0.0f;

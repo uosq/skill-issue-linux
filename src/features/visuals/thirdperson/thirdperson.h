@@ -4,9 +4,9 @@
 #include "../../../sdk/helpers/helper.h"
 #include "../../../settings.h"
 
-struct Thirdperson
+namespace Thirdperson
 {
-	void RunHotkey()
+	inline void RunHotkey()
 	{
 		if (g_Settings.misc.thirdperson_key == "")
 			return;
@@ -16,7 +16,7 @@ struct Thirdperson
 	}
 
 	// Call in FrameStageNotify -> FRAME_NET_UPDATE_END
-	void Run(CTFPlayer* pLocal)
+	inline void Run(CTFPlayer* pLocal)
 	{
 		RunHotkey();
 
@@ -30,5 +30,3 @@ struct Thirdperson
 			pLocal->m_nForceTauntCam() = 0;
 	}
 };
-
-inline Thirdperson g_Thirdperson;

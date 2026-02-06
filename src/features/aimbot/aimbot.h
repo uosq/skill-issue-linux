@@ -14,7 +14,7 @@
 
 namespace Aimbot
 {
-	extern AimbotState state;
+	extern AimbotState m_state;
 	Vector GetAngle();
 	bool IsRunning();
 	bool ShouldSilent();
@@ -22,5 +22,5 @@ namespace Aimbot
 	void DrawFOVIndicator();
 	void CleanTargetPath();
 	void DrawTargetPath();
-	void RunPaint(CTFPlayer* pLocal);
+	void RunPaint();
 };

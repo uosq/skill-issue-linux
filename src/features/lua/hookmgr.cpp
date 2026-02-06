@@ -1,4 +1,4 @@
-#include "hooks.h"
+#include "hookmgr.h"
 #include "../../gui/console.h"
 
 namespace LuaHookManager

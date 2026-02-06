@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../features/MaterialManager/materialmanager.h"
+#include "../../sdk/MaterialManager/materialmanager.h"
 #include "../../sdk/definitions/texture_group_names.h"
 #include "../../sdk/helpers/helper.h"
 #include "../../sdk/definitions/itexture.h"

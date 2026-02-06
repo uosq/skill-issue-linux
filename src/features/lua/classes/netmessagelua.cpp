@@ -1,4 +1,4 @@
-#include "classes.h"
+#include "../classes.h"
 
 namespace LuaClasses
 {
@@ -36,7 +36,7 @@ namespace LuaClasses
 		LuaNetMessage* push_netmessage(lua_State* L, INetMessage* msg)
 		{
 			LuaNetMessage* lnm = static_cast<LuaNetMessage*>(lua_newuserdata(L, sizeof(LuaNetMessage)));
-			lnm->msg = msg;
+			new (lnm) LuaNetMessage{msg};
 
 			luaL_getmetatable(L, "NetMessage");
 			lua_setmetatable(L, -2);

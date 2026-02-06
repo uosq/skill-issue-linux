@@ -11,10 +11,11 @@
 #include <string>
 
 #include "../features/lua/classes.h"
-#include "../features/lua/hooks.h"
+#include "../features/lua/hookmgr.h"
 #include "../features/lua/api.h"
 
 #include "../features/visuals/customfov/customfov.h"
+#include "../features/visuals/norecoil/norecoil.h"
 
 DECLARE_VTABLE_HOOK(OverrideView, void, (IClientMode *thisptr, CViewSetup *pView))
 {
@@ -36,6 +37,7 @@ DECLARE_VTABLE_HOOK(OverrideView, void, (IClientMode *thisptr, CViewSetup *pView
 		if (!pLocal->IsAlive())
 			return;
 
+		NoRecoil::Run(pLocal, pView);
 		g_Customfov.Run(pLocal, pView);
 	}
 }

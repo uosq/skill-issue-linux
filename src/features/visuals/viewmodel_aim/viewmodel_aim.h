@@ -7,6 +7,7 @@
 
 class ViewmodelAim
 {
+private:
 	float m_flStopTime = 0.0f;
 
 public:

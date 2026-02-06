@@ -16,7 +16,7 @@
 #include "../features/aimbot/aimbot.h"
 #include "../features/entitylist/entitylist.h"
 
-#include "../features/lua/hooks.h"
+#include "../features/lua/hookmgr.h"
 #include "../features/lua/api.h"
 
 DECLARE_VTABLE_HOOK(VGuiPaint, void, (IEngineVGui* thisptr, PaintMode_t paint))
@@ -31,18 +31,17 @@ DECLARE_VTABLE_HOOK(VGuiPaint, void, (IEngineVGui* thisptr, PaintMode_t paint))
 	if (paint & PAINT_UIPANELS)
 	{
 		interfaces::Surface->StartDrawing();
-
+		
 		if (LuaHookManager::HasHooks("Draw"))
 			LuaHookManager::Call(Lua::m_luaState, "Draw", 0);
 
-		HFont font = helper::draw::GetCurrentFont();
-		helper::draw::SetFont(font);
+		g_FontManager.SetFont("esp font");
 	
 		CTFPlayer* pLocal = EntityList::GetLocal();
 		if (pLocal)
 		{
 			ESP::Run(pLocal);
-			Aimbot::RunPaint(pLocal);
+			Aimbot::RunPaint();
 		}
 
 		// compile time

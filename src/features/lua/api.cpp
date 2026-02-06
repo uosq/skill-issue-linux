@@ -1,10 +1,12 @@
 #include "api.h"
 #include "../../gui/console.h"
 #include "classes.h"
-#include "funcs.h"
+#include "libraries.h"
 #include "constants.h"
 
+#ifdef TRACY_ENABLE
 #include "../../tracy/tracy/TracyLua.hpp"
+#endif
 
 namespace Lua
 {
@@ -37,6 +39,7 @@ namespace Lua
 		LuaFuncs::aimbot::luaopen_aimbot(m_luaState);
 		LuaFuncs::radar::luaopen_radar(m_luaState);
 		LuaFuncs::colors::luaopen_colors(m_luaState);
+		LuaFuncs::fontmanager::open(m_luaState);
 
 		// open classes
 		LuaClasses::VectorLua::luaopen_vector(m_luaState);

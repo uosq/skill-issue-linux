@@ -11,7 +11,7 @@
 #include "../libdetour/libdetour.h"
 #include "../sdk/definitions/inetchannel.h"
 
-#include "../features/lua/hooks.h"
+#include "../features/lua/hookmgr.h"
 #include "../features/lua/api.h"
 #include "../features/lua/classes.h"
 

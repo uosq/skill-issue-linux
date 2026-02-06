@@ -91,7 +91,7 @@ inline void AutoBackstab::Legit(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUser
 	Math::AngleVectors(viewAngles, &forward);
 
 	Vector start = pLocal->GetAbsOrigin() + pLocal->m_vecViewOffset();
-	Vector end = start + (forward * (48*2));
+	Vector end = start + (forward * 48);
 
 	int localTeam = pLocal->m_iTeamNum();
 
@@ -110,30 +110,29 @@ inline void AutoBackstab::Legit(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUser
 		return;
 
 	pCmd->buttons |= IN_ATTACK;
+	EntityList::m_pAimbotTarget = trace.m_pEnt;
 }
 
 inline void AutoBackstab::Rage(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd, bool* pSendPacket)
 {
 	Vector shootPos = pLocal->GetEyePos();
 
-	for (auto& entry : EntityList::GetEntities())
+	for (auto& entry : EntityList::GetEnemies())
 	{
-		if (!(entry.flags & (EntityFlags::IsEnemy | EntityFlags::IsPlayer)))
+		if (!(entry.flags & EntityFlags::IsPlayer))
 			continue;
 
 		CBaseEntity* enemy = entry.ptr;
-		if (!!AimbotUtils::IsValidEntity(enemy))
-			continue;
+		//if (!!AimbotUtils::IsValidEntity(enemy))
+			//continue;
 
 		CTFPlayer* pTarget = static_cast<CTFPlayer*>(enemy);
-		if (pTarget == nullptr)
-			continue;
 
 		Vector center = pTarget->GetCenter();
 		Vector dir = center - shootPos;
 		float distance = dir.Normalize();
 
-		if (distance > (48*2))
+		if (distance > 48)
 			continue;
 
 		if (IsBehindEntity(pLocal, pTarget))
@@ -150,6 +149,9 @@ inline void AutoBackstab::Rage(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserC
 				pCmd->viewangles = angle;
 				*pSendPacket = false;
 			}
+
+			EntityList::m_pAimbotTarget = pTarget;
+			break;
 		}
 	}
 }

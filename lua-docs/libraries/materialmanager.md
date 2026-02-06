@@ -1,8 +1,8 @@
-# Materials Library
+# Material Manager Library
 
 ## Methods
 
-### > Create( name: **string**, vmt: **string** )
+### > CreateMaterial( name: **string**, vmt: **string** )
 returns **Material**
 
 The **vmt** parameter must be valid
@@ -26,3 +26,21 @@ returns **Texture?**
 
 ### > CreateTextureRenderTarget( name: **string**, width: **int**, height: **int** )
 returns **Texture?**
+
+## Examples
+
+Create a material and use it
+```lua
+local mat = MaterialManager.CreateMaterial("myfirstmaterial",
+[[UnlitGeneric
+{
+	$basetexture "white"
+}]])
+
+hooks.Add("DrawModel", "lolo", function(ctx: DrawModelContext)
+	if ctx.entity and ctx.entity:IsPlayer() then
+		render.ForcedMaterialOverride(mat)
+		render.SetColorModulation(1, 0, 0)
+	end
+end)
+```

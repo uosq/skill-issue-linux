@@ -4,8 +4,8 @@
 #include "../../definitions/color.h"
 #include "../../classes/player.h"
 #include "../../classes/weaponbase.h"
-#include "../fonts.h"
 #include "../math.h"
+#include "../../FontManager/fontmanager.h"
 
 #include <cmath>
 #include <csignal>
@@ -16,20 +16,14 @@ namespace helper
 {
 	namespace draw
 	{
-		inline HFont CreateFont(const char* name, int height, int weight, int flags = 0)
+		inline HFont CreateFont(const std::string& id, const std::string& name, int height, int weight, int flags = 0)
 		{
-			return fontManager.CreateFont(name, height, weight, flags);
+			return g_FontManager.CreateFont(id, name, height, weight, flags);
 		}
 
-		inline void SetFont(HFont font)
+		inline void SetFont(const std::string& id)
 		{
-			fontManager.SetCurrentFont(font);
-			interfaces::Surface->DrawSetTextFont(font);
-		}
-
-		inline HFont GetCurrentFont()
-		{
-			return fontManager.GetCurrentFont();
+			g_FontManager.SetFont(id);
 		}
 
 		inline void FilledRect(int x0, int y0, int x1, int y1)
@@ -86,7 +80,11 @@ namespace helper
 		inline void GetTextSize(std::string text, int &width, int &height)
 		{
 			std::wstring wtext(text.begin(), text.end());
-			interfaces::Surface->GetTextSize(fontManager.GetCurrentFont(), wtext.c_str(), width, height);
+
+			std::string currentFontID = g_FontManager.GetCurrentFontID();
+			int font = g_FontManager.GetFont(currentFontID);
+
+			interfaces::Surface->GetTextSize(font, wtext.c_str(), width, height);
 		}
 
 		inline std::wstring ConvertStringToWChar(std::string text)

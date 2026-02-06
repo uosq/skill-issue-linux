@@ -4,7 +4,6 @@
 #include "../definitions/color.h"
 #include "../classes/player.h"
 #include "../classes/weaponbase.h"
-#include "fonts.h"
 #include "../math.h"
 
 #include <cmath>

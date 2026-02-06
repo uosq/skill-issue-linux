@@ -102,3 +102,29 @@ bool MaterialManager::TextureExists(const std::string& name)
 
 	return true;
 }
+
+IMaterial* MaterialManager::GetMaterial(const std::string& name)
+{
+	auto it = m_Materials.find(name);
+	if (it == m_Materials.end())
+		return nullptr;
+
+	IMaterial* mat = it->second;
+	if (mat == nullptr)
+		return nullptr;
+
+	return mat;
+}
+
+ITexture* MaterialManager::GetTexture(const std::string& name)
+{
+	auto it = m_Textures.find(name);
+	if (it == m_Textures.end())
+		return nullptr;
+
+	ITexture* tex = it->second;
+	if (tex == nullptr)
+		return nullptr;
+
+	return tex;
+}
