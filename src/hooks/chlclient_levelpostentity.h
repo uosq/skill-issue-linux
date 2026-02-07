@@ -1,7 +1,5 @@
 #pragma once
 
-#include "../tracy/tracy/Tracy.hpp"
-
 #include "../vtables.h"
 #include "../sdk/helpers/helper.h"
 #include "../features/entitylist/entitylist.h"
@@ -13,8 +11,6 @@
 
 DECLARE_VTABLE_HOOK(LevelInitPostEntity, void, (CHLClient* thisptr))
 {
-	ZoneScoped;
-
 	EntityList::Reserve();
 	g_ViewmodelAim.ResetStopTime();
 

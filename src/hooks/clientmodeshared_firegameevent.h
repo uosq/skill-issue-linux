@@ -1,7 +1,5 @@
 #pragma once
 
-#include "../tracy/tracy/Tracy.hpp"
-
 #include "../sdk/definitions/igameevents.h"
 #include "../sdk/interfaces/interfaces.h"
 #include "../sdk/classes/entity.h"
@@ -25,8 +23,6 @@ DETOUR_DECL_TYPE(void, original_FireGameEvent, void* self, IGameEvent* gameEvent
 
 inline void Hooked_FireGameEvent(void* self, IGameEvent* event)
 {
-	ZoneScoped;
-
 	if (event == nullptr)
 	{
 		DETOUR_ORIG_CALL(&firegameevent_ctx, original_FireGameEvent, self, event);

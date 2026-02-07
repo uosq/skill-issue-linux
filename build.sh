@@ -35,22 +35,9 @@ chmod +x build/attach.sh
 # but it doesn't attach without them
 # fuck my life
 g++ -shared -fPIC \
-	src/*.cpp \
-	src/libsigscan.c \
-	src/libdetour/libdetour.c \
-	src/imgui/*.cpp \
-	src/sdk/definitions/*.cpp \
-	src/features/lua/*.cpp \
-	src/sdk/interfaces/*.cpp \
-	src/gui/*.cpp \
-	src/features/entitylist/*.cpp \
-	src/features/aimbot/aimbot.cpp \
-	src/features/triggerbot/triggerbot.cpp \
-	src/sdk/MaterialManager/materialmanager.cpp \
-	src/features/lua/classes/*.cpp \
-	src/features/lua/libraries/*.cpp \
-	src/sdk/FontManager/fontmanager.cpp \
+	$(find src -name "*.c") \
+	$(find src -name "*.cpp") \
 	build/libplutostatic.a \
 	-o build/libvapo.so \
 	-O2 -std=c++17 -lSDL2 -lvulkan -lm -ldl \
-	-Werror -flto=auto -fno-exceptions -s -march=x86-64-v3
+	-Werror -fno-exceptions -s -march=x86-64-v3

@@ -1,7 +1,5 @@
 #pragma once
 
-#include "../tracy/tracy/Tracy.hpp"
-
 #include "../vtables.h"
 #include "../sdk/helpers/helper.h"
 #include "../features/entitylist/entitylist.h"
@@ -12,8 +10,6 @@
 
 DECLARE_VTABLE_HOOK(LevelInitPreEntity, void, (CHLClient* thisptr, const char* mapName))
 {
-	ZoneScoped;
-
 	if (LuaHookManager::HasHooks("LevelInitPreEntity"))
 	{
 		lua_pushstring(Lua::m_luaState, mapName);

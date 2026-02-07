@@ -1,7 +1,5 @@
 #pragma once
 
-#include "../tracy/tracy/Tracy.hpp"
-
 #include "../sdk/interfaces/interfaces.h"
 #include "../sdk/classes/entity.h"
 #include "../sdk/classes/player.h"
@@ -22,8 +20,6 @@ DETOUR_DECL_TYPE(bool, originalSendNetMsg, void* ptr, INetMessage& msg, bool bFo
 
 inline bool Hooked_SendNetMsg(void* ptr, INetMessage& msg, bool bForceReliable, bool bVoice)
 {
-	ZoneScoped;
-
 	if (LuaHookManager::HasHooks("SendNetMsg"))
 	{
 		LuaClasses::NetMessageLua::push_netmessage(Lua::m_luaState, &msg);

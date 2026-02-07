@@ -1,7 +1,5 @@
 #pragma once
 
-#include "../tracy/tracy/Tracy.hpp"
-
 #include "../sdk/MaterialManager/materialmanager.h"
 #include "../libdetour/libdetour.h"
 #include <cstdlib>

@@ -1,7 +1,5 @@
 #pragma once
 
-#include "../tracy/tracy/Tracy.hpp"
-
 #include "../sdk/definitions/ipanel.h"
 #include <cwchar>
 #include <string>
@@ -21,8 +19,6 @@
 
 DECLARE_VTABLE_HOOK(VGuiPaint, void, (IEngineVGui* thisptr, PaintMode_t paint))
 {
-	ZoneScoped;
-
 	originalVGuiPaint(thisptr, paint);
 
 	if (interfaces::Engine->IsTakingScreenshot())

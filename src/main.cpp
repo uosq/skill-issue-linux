@@ -24,7 +24,6 @@
 #include "hooks/chlclient_levelpostentity.h"
 #include "hooks/dxvk.h"
 
-#include "sdk/FontManager/fontmanager.h"
 #include "sdk/interfaces/interfaces.h"
 #include <sys/types.h>
 #include <unistd.h>

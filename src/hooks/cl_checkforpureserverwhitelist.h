@@ -1,7 +1,5 @@
 #pragma once
 
-#include "../tracy/tracy/Tracy.hpp"
-
 #include "../sdk/interfaces/interfaces.h"
 #include "../settings.h"
 #include "../libdetour/libdetour.h"
@@ -15,8 +13,6 @@ static detour_ctx_t CL_CheckForPureServerWhitelist_ctx;
 
 inline void Hooked_CL_CheckForPureServerWhitelist(void*& pFilesToReload)
 {
-	ZoneScoped;
-
 	if (g_Settings.misc.sv_pure_bypass)
 		return;
 

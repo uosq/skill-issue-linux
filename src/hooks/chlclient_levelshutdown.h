@@ -1,7 +1,5 @@
 #pragma once
 
-#include "../tracy/tracy/Tracy.hpp"
-
 #include "../vtables.h"
 #include "../sdk/helpers/helper.h"
 #include "../features/entitylist/entitylist.h"
@@ -11,8 +9,6 @@
 
 DECLARE_VTABLE_HOOK(LevelShutdown, void, (CHLClient* thisptr))
 {
-	ZoneScoped;
-
 	EntityList::Clear();
 
 	if (LuaHookManager::HasHooks("LevelShutdown"))

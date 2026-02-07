@@ -2,10 +2,14 @@
 
 #include "../../sdk/definitions/ipanel.h"
 #include "../../sdk/interfaces/interfaces.h"
-#include <utility>
+
+FontManager g_FontManager;
 
 int FontManager::CreateFont(const std::string& id, const std::string& fontName, int height, int weight, int flags)
 {
+	if (id.empty() || fontName.empty())
+		return 0;
+
 	auto it = m_Fonts.find(id);
 	if (it != m_Fonts.end())
 		return it->second;
@@ -13,7 +17,7 @@ int FontManager::CreateFont(const std::string& id, const std::string& fontName, 
 	HFont font = interfaces::Surface->CreateFont();
 	interfaces::Surface->SetFontGlyphSet(font, fontName.c_str(), height, weight, 0, 0, flags);
 
-	m_Fonts.emplace(std::pair<std::string, HFont>(id, font));
+	m_Fonts[id] = font;
 	return font;
 }
 
@@ -46,5 +50,3 @@ const std::unordered_map<std::string, unsigned long>& FontManager::GetAllFonts()
 {
 	return m_Fonts;
 }
-
-FontManager g_FontManager;

@@ -1,7 +1,5 @@
 #pragma once
 
-#include "../tracy/tracy/Tracy.hpp"
-
 #include "../sdk/interfaces/interfaces.h"
 #include "../sdk/classes/entity.h"
 #include "../sdk/classes/player.h"
@@ -15,8 +13,6 @@
 
 DECLARE_VTABLE_HOOK(DoPostScreenSpaceEffects, bool, (IClientMode* thisptr, CViewSetup* setup))
 {
-	ZoneScoped;
-
 	if (LuaHookManager::HasHooks("DoPostScreenSpaceEffects"))
 		LuaHookManager::Call(Lua::m_luaState, "DoPostScreenSpaceEffects", 0);
 

@@ -24,14 +24,8 @@ jobs:
       - name: Make build.sh executable
         run: chmod +x ./build.sh
 
-      - name: Make build-tracy.sh executable
-        run: chmod +x ./build-tracy.sh
-
       - name: Run build script
         run: ./build.sh
-
-      - name: Run build-tracy script
-        run: ./build-tracy.sh
 
       - name: Upload zip artifact
         uses: actions/upload-artifact@v4
