@@ -170,7 +170,7 @@ struct AimbotHitscan
 			}
 
 			float distance = (pos - shootPos).Normalize();
-			if (distance >= 2048.f)
+			if (distance >= 8192.f)
 				continue;
 
 			Vector angle = Math::CalcAngle(shootPos, pos);
@@ -277,7 +277,6 @@ struct AimbotHitscan
 				break;
 			}
 			case AimbotMode::SILENT:
-			case AimbotMode::PSILENT:
 			{
 				if (g_Settings.aimbot.autoshoot)
 					pCmd->buttons |= IN_ATTACK;

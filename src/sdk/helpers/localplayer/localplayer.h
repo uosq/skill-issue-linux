@@ -75,7 +75,7 @@ namespace helper
 					if (id == TF_WEAPON_KNIFE)
 						return CanShoot(pLocal, pWeapon, pCmd);
 					
-					return pWeapon->m_flSmackTime() != -1.0f && interfaces::GlobalVars->curtime >= pWeapon->m_flSmackTime();
+					return pWeapon->m_flSmackTime() != -1.0f && TICKS_TO_TIME(pLocal->GetTickBase()) >= pWeapon->m_flSmackTime();
 				}
 
 				case EWeaponType::UNKNOWN:

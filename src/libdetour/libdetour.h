@@ -21,6 +21,10 @@
 #ifndef LIBDETOUR_H_
 #define LIBDETOUR_H_ 1
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <stdint.h>
 #include <stdbool.h>
 
@@ -103,5 +107,9 @@ bool detour_disable(detour_ctx_t* ctx);
         OUT_VAR = ((libdetour_##FUNCNAME##_t)((CTX_PTR)->orig))(__VA_ARGS__);  \
         detour_enable(CTX_PTR);                                                \
     } while (0)
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* LIBDETOUR_H_ */

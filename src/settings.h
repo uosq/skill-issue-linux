@@ -49,7 +49,6 @@ enum class AimbotMode
 	SMOOTH,
 	ASSISTANCE,
 	SILENT,
-	PSILENT,
 	MAX
 };
 

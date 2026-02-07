@@ -352,7 +352,7 @@ struct AimbotProjectile
 			Vector center = entity->GetCenter();
 
 			float distance = (center - shootPos).Normalize();
-			if (distance >= 2048.f)
+			if (distance >= 4096.f)
 				continue;
 
 			Vector angle = Math::CalcAngle(shootPos, center);
@@ -460,7 +460,7 @@ struct AimbotProjectile
 
 				AimbotMode mode = g_Settings.aimbot.mode;
 
-				if (mode == AimbotMode::PSILENT)
+				if (mode == AimbotMode::SILENT)
 					state.shouldSilent = true;
 
 				if (mode == AimbotMode::PLAIN)

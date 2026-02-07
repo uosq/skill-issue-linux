@@ -20,6 +20,10 @@
 #ifndef LIBSIGSCAN_H_
 #define LIBSIGSCAN_H_ 1
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <stddef.h> /* NULL */
 
 enum ESigscanPidType {
@@ -98,5 +102,9 @@ static inline void* sigscan_module(const char* regex, const char* ida_pattern) {
 static inline void* sigscan(const char* ida_pattern) {
     return sigscan_pid_module(SIGSCAN_PID_SELF, NULL, ida_pattern);
 }
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* LIBSIGSCAN_H_ */

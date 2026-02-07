@@ -20,7 +20,7 @@ namespace Triggerbot
 		Math::AngleVectors(viewAngles, &forward);
 
 		Vector start = pLocal->GetAbsOrigin() + pLocal->m_vecViewOffset();
-		Vector end = start + (forward * 2048);
+		Vector end = start + (forward * 8192);
 
 		int localTeam = pLocal->m_iTeamNum();
 

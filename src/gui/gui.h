@@ -101,9 +101,6 @@ static void DrawAimbotTab()
 		if (ImGui::Selectable("Silent"))
 			g_Settings.aimbot.mode = AimbotMode::SILENT;
 
-		if (ImGui::Selectable("Silent + Spectators"))
-			g_Settings.aimbot.mode = AimbotMode::PSILENT;
-
 		ImGui::EndCombo();
 	}
 

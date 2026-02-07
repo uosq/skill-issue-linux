@@ -125,7 +125,6 @@ namespace AimbotUtils
 			case AimbotMode::SMOOTH: return "Smooth";
 			case AimbotMode::ASSISTANCE: return "Assistance";
 			case AimbotMode::SILENT: return "Silent";
-			case AimbotMode::PSILENT: return "Silent + Spectators";
 			default: return "Invalid";
                 }
         }

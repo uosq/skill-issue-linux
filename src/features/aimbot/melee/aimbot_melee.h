@@ -95,7 +95,9 @@ struct AimbotMelee
 			Vector angle = targetAngle;
 			state.angle = angle;
 			pCmd->viewangles = angle;
-			state.shouldSilent = true;
+
+			if (g_Settings.aimbot.mode == AimbotMode::SILENT)
+				state.shouldSilent = true;
 		}
 
 		EntityList::m_pAimbotTarget = target;
