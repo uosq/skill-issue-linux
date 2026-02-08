@@ -341,15 +341,12 @@ void DrawLuaTab()
 			"globals", "engine",
 			"hooks", "Vector3",
 			"entities", "draw",
-			"render", "MaterialManager",
+			"render", "materials",
 			"client", "BitBuffer",
 			"clientstate", "ui",
 			"menu", "aimbot",
 			"radar", "colors",
-			"FontManager", 
-			#ifdef TRACY_ENABLE
-			"tracy",
-			#endif
+			"fonts", 
 		};
 
 		auto def = TextEditor::LanguageDefinition::Lua();

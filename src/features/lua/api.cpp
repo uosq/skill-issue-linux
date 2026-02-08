@@ -47,6 +47,7 @@ namespace Lua
 		LuaClasses::NetChannelLua::luaopen_netchannel(m_luaState);
 		LuaClasses::GameEventLua::luaopen_gameevent(m_luaState);
 		LuaClasses::ViewSetupLua::luaopen_viewsetup(m_luaState);
+		LuaClasses::StringCmdLua::open(m_luaState);
 
 		luaregister_constants(m_luaState);
 

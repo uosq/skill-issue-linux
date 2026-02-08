@@ -21,7 +21,7 @@ namespace LuaFuncs
 		{
 			lua_newtable(L);
 			luaL_setfuncs(L, matslib, 0);
-			lua_setglobal(L, "MaterialManager");
+			lua_setglobal(L, "materials");
 		}
 
 		// materials.Create("name", "vmt")

@@ -18,7 +18,7 @@ namespace LuaFuncs
 		{
 			lua_newtable(L);
 			luaL_setfuncs(L, fontmgrlib, 0);
-			lua_setglobal(L, "FontManager");
+			lua_setglobal(L, "fonts");
 		}
 
 		int CreateFont(lua_State* L)

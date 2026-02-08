@@ -52,6 +52,9 @@ Called before drawing the localplayer's view
 ### GameShutdown ( )
 Called before the game closes so you can do stuff like saving settings or something else before closing
 
+### ExecStringCmd ( cmd: **StringCmd** )
+Called when trying to run a command in the console
+
 ## Examples
 
 CalcViewModelView
@@ -130,4 +133,12 @@ local function DrawModel(ctx: DrawModelContext)
 end
 
 hooks.Add("DrawModel", "beautiful", DrawModel)
+```
+
+ExecStringCmd
+```lua
+local function ExecStringCmd(cmd: StringCmd)
+	local text = cmd:Get()
+	if text == ""
+end
 ```

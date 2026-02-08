@@ -59,6 +59,12 @@ struct LuaViewSetup
 	CViewSetup* view;
 };
 
+struct LuaStringCmd
+{
+	std::string cmd;
+	bool valid;
+};
+
 namespace LuaClasses
 {
 	namespace VectorLua
@@ -332,5 +338,17 @@ namespace LuaClasses
 
 		int Index(lua_State* L);
 		int NewIndex(lua_State* L);
+	}
+
+	namespace StringCmdLua
+	{
+		extern const luaL_Reg methods[];
+		void open(lua_State* L);
+		LuaStringCmd* push(lua_State* L, std::string cmd);
+
+		int GC(lua_State* L);
+
+		int Get(lua_State* L);
+		int Set(lua_State* L);
 	}
 }

@@ -4,6 +4,7 @@
 #include "features/radar/radar.h"
 #include "features/visuals/viewmodel_aim/viewmodel_aim.h"
 #include "features/visuals/viewmodel_interp/viewmodel_interp.h"
+#include "hooks/cgameclient_executestringcommand.h"
 #include "hooks/cinventorymanager_showitemspickedup.h"
 #include "hooks/clientmodeshared_createmove.h"
 #include "hooks/clientmodeshared_firegameevent.h"
@@ -79,6 +80,7 @@ void init(void)
 	HookForcedMaterialOverride();
 	HookHost_Shutdown();
 	HookCMaterial_Uncache();
+	Hook_ExecuteStringCommand();
 
 	Lua::InitPluto();
 }

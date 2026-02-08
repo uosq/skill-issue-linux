@@ -67,6 +67,13 @@ enum
 	COMMAND_MAX_LENGTH = 512
 };
 
+enum cmd_source_t
+{
+	src_client,		// came in over a net connection as a clc_stringcmd
+					// host_client will be valid during this state.
+	src_command		// from the command buffer
+};
+
 class CCommand
 {
 public:
