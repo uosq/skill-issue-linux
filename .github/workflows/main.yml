@@ -34,4 +34,6 @@ jobs:
           path: |
             build/*.so
             build/*.sh
+            build/*.debug
             lua-docs
+            src

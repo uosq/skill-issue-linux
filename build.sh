@@ -69,4 +69,9 @@ g++ -shared -fPIC \
 	$(find build/imgui -name "*.a") \
 	-o build/libvapo.so \
 	-O2 -std=c++17 -lSDL2 -lvulkan -lm -ldl \
-	-Werror -fno-exceptions -s -march=x86-64-v3
+	-Werror -fno-exceptions -g -march=x86-64-v3
+
+# make .debug symbol file
+objcopy --only-keep-debug build/libvapo.so build/libvapo.debug
+strip --strip-unneeded build/libvapo.so
+objcopy --add-gnu-debuglink=build/libvapo.debug build/libvapo.so
