@@ -17,10 +17,6 @@ namespace Lua
 		m_luaState = luaL_newstate();
 		luaL_openlibs(m_luaState);
 
-		#ifdef TRACY_ENABLE
-		tracy::LuaRegister(m_luaState);
-		#endif
-
 		LuaFuncs::common::luaopen_commonfunctions(m_luaState);
 
 		// open libraries
@@ -39,7 +35,7 @@ namespace Lua
 		LuaFuncs::aimbot::luaopen_aimbot(m_luaState);
 		LuaFuncs::radar::luaopen_radar(m_luaState);
 		LuaFuncs::colors::luaopen_colors(m_luaState);
-		LuaFuncs::fontmanager::open(m_luaState);
+		LuaFuncs::fonts::open(m_luaState);
 
 		// open classes
 		LuaClasses::VectorLua::luaopen_vector(m_luaState);

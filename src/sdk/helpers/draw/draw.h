@@ -18,12 +18,12 @@ namespace helper
 	{
 		inline HFont CreateFont(const std::string& id, const std::string& name, int height, int weight, int flags = 0)
 		{
-			return g_FontManager.CreateFont(id, name, height, weight, flags);
+			return FontManager::CreateFont(id, name, height, weight, flags);
 		}
 
 		inline void SetFont(const std::string& id)
 		{
-			g_FontManager.SetFont(id);
+			FontManager::SetFont(id);
 		}
 
 		inline void FilledRect(int x0, int y0, int x1, int y1)
@@ -81,8 +81,8 @@ namespace helper
 		{
 			std::wstring wtext(text.begin(), text.end());
 
-			std::string currentFontID = g_FontManager.GetCurrentFontID();
-			int font = g_FontManager.GetFont(currentFontID);
+			std::string currentFontID = FontManager::GetCurrentFontID();
+			int font = FontManager::GetFont(currentFontID);
 
 			interfaces::Surface->GetTextSize(font, wtext.c_str(), width, height);
 		}

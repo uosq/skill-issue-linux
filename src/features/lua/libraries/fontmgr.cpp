@@ -3,7 +3,7 @@
 
 namespace LuaFuncs
 {
-	namespace fontmanager
+	namespace fonts
 	{
 		const luaL_Reg fontmgrlib[]
 		{
@@ -29,7 +29,7 @@ namespace LuaFuncs
 			int weight = luaL_checkinteger(L, 4);
 			int flags = luaL_optinteger(L, 5, EFONTFLAG_CUSTOM | EFONTFLAG_ANTIALIAS);
 
-			int font = g_FontManager.CreateFont(id, name, height, weight, flags);
+			int font = FontManager::CreateFont(id, name, height, weight, flags);
 			if (font == 0)
 			{
 				lua_pushboolean(L, false);
@@ -43,7 +43,7 @@ namespace LuaFuncs
 		int SetFont(lua_State* L)
 		{
 			const std::string id = luaL_checkstring(L, 1);
-			int font = g_FontManager.GetFont(id);
+			int font = FontManager::GetFont(id);
 			if (font == 0)
 			{
 				lua_pushboolean(L, false);
@@ -57,7 +57,7 @@ namespace LuaFuncs
 
 		int GetCurrentFontID(lua_State* L)
 		{
-			std::string id = g_FontManager.GetCurrentFontID();
+			std::string id = FontManager::GetCurrentFontID();
 			if (id.empty())
 			{
 				lua_pushnil(L);
@@ -70,7 +70,7 @@ namespace LuaFuncs
 
 		int GetAllFonts(lua_State* L)
 		{
-			auto fonts = g_FontManager.GetAllFonts();
+			auto fonts = FontManager::GetAllFonts();
 			lua_newtable(L);
 
 			int i = 1;

@@ -13,23 +13,20 @@
 
 typedef struct IDirect3DDevice9 *LPDIRECT3DDEVICE9;
 
-static LPDIRECT3DDEVICE9 g_pd3dDevice = nullptr;
-static D3DPRESENT_PARAMETERS g_d3dpp = {};
-static bool g_ImGuiInitialized = false;
+inline LPDIRECT3DDEVICE9 g_pd3dDevice = nullptr;
+inline D3DPRESENT_PARAMETERS g_d3dpp = {};
+inline bool g_ImGuiInitialized = false;
 
 typedef HRESULT(__stdcall* Present_t)(IDirect3DDevice9*, CONST RECT*, CONST RECT*, HWND, CONST RGNDATA*);
 typedef HRESULT(__stdcall* Reset_t)(IDirect3DDevice9*, D3DPRESENT_PARAMETERS*);
 
-static Present_t original_Present = nullptr;
-static Reset_t original_Reset = nullptr;
-
 DETOUR_DECL_TYPE(HRESULT, original_Present, IDirect3DDevice9*, CONST RECT*, CONST RECT*, HWND, CONST RGNDATA*);
 DETOUR_DECL_TYPE(HRESULT, original_Reset, IDirect3DDevice9*, D3DPRESENT_PARAMETERS*);
 
-static detour_ctx_t present_ctx;
-static detour_ctx_t reset_ctx;
+inline detour_ctx_t present_ctx;
+inline detour_ctx_t reset_ctx;
 
-static void InitImGui()
+inline void InitImGui()
 {
 	if (g_ImGuiInitialized || !g_pd3dDevice)
 		return;
@@ -54,7 +51,7 @@ static void InitImGui()
 	g_ImGuiInitialized = true;
 }
 
-static void CleanupImGui()
+inline void CleanupImGui()
 {
 	if (!g_ImGuiInitialized)
 		return;
@@ -65,7 +62,7 @@ static void CleanupImGui()
 	g_ImGuiInitialized = false;
 }
 
-static D3DFORMAT GetBackBufferFormat(IDirect3DDevice9* device)
+inline D3DFORMAT GetBackBufferFormat(IDirect3DDevice9* device)
 {
 	IDirect3DSurface9* pBackBuffer = nullptr;
 	device->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &pBackBuffer);
@@ -83,7 +80,7 @@ static D3DFORMAT GetBackBufferFormat(IDirect3DDevice9* device)
 	return D3DFMT_UNKNOWN;
 }
 
-static void RenderImGui()
+inline void RenderImGui()
 {
 	if (!g_pd3dDevice || !g_ImGuiInitialized)
 		return;
@@ -111,14 +108,14 @@ static void RenderImGui()
 
 	if (ImGui::IsKeyPressed(ImGuiKey_Insert, false) || ImGui::IsKeyPressed(ImGuiKey_F11, false))
 	{
-		g_Settings.menu_open = !g_Settings.menu_open;
-		interfaces::Surface->SetCursorAlwaysVisible(g_Settings.menu_open);
+		Settings::menu_open = !Settings::menu_open;
+		interfaces::Surface->SetCursorAlwaysVisible(Settings::menu_open);
 	}
 
 	if (ImGui::IsKeyPressed(ImGuiKey_Escape, false))
 	{
-		g_Settings.menu_open = false;
-		interfaces::Surface->SetCursorAlwaysVisible(g_Settings.menu_open);
+		Settings::menu_open = false;
+		interfaces::Surface->SetCursorAlwaysVisible(Settings::menu_open);
 	}
 
 	cursor = ImGui::GetMouseCursor();
@@ -126,17 +123,17 @@ static void RenderImGui()
 	if (LuaHookManager::HasHooks("ImGui"))
 		LuaHookManager::Call(Lua::m_luaState, "ImGui", 0);
 
-	if (g_Settings.radar.enabled)
-		g_Radar.Run();
+	if (Settings::radar.enabled)
+		Radar::Run();
 
-	if (g_Settings.misc.spectatorlist)
-		DrawSpectatorList();
+	if (Settings::misc.spectatorlist)
+		GUI::RunSpectatorList();
 
-	if (g_Settings.misc.playerlist)
-		DrawPlayerList();
+	if (Settings::misc.playerlist)
+		GUI::RunPlayerList();
 
-	if (g_Settings.menu_open)
-		DrawMainWindow();
+	if (Settings::menu_open)
+		GUI::RunMainWindow();
 
 	ImGui::EndFrame();
 	ImGui::Render();
@@ -146,7 +143,7 @@ static void RenderImGui()
 		g_pd3dDevice->SetRenderState(D3DRS_SRGBWRITEENABLE, TRUE);
 }
 
-static HRESULT __stdcall Hooked_Present(IDirect3DDevice9* pDevice, const RECT* pSourceRect, const RECT* pDestRect, HWND hDestWindowOverride, const RGNDATA* pDirtyRegion)
+inline HRESULT __stdcall Hooked_Present(IDirect3DDevice9* pDevice, const RECT* pSourceRect, const RECT* pDestRect, HWND hDestWindowOverride, const RGNDATA* pDirtyRegion)
 {
 	if (!g_pd3dDevice)
 		g_pd3dDevice = pDevice;
@@ -159,7 +156,7 @@ static HRESULT __stdcall Hooked_Present(IDirect3DDevice9* pDevice, const RECT* p
 	return ret;
 }
 
-static HRESULT __stdcall Hooked_Reset(IDirect3DDevice9* pDevice, D3DPRESENT_PARAMETERS* pPresentationParameters)
+inline HRESULT __stdcall Hooked_Reset(IDirect3DDevice9* pDevice, D3DPRESENT_PARAMETERS* pPresentationParameters)
 {
 	// ImGui needs to be cleaned up before device reset
 	CleanupImGui();
@@ -176,7 +173,7 @@ static HRESULT __stdcall Hooked_Reset(IDirect3DDevice9* pDevice, D3DPRESENT_PARA
 	return ret;
 }
 
-static void* GetModuleBaseAddress(const char* module_name)
+inline void* GetModuleBaseAddress(const char* module_name)
 {
 	std::ifstream file("/proc/self/maps");
 	if (!file.is_open())
@@ -199,7 +196,7 @@ static void* GetModuleBaseAddress(const char* module_name)
 	return nullptr;
 }
 
-static bool HookD3D9VTable()
+inline bool HookD3D9VTable()
 {
 	// DXVK creates a D3D9 device, we need to get the vtable
 	void* dxvk_base = GetModuleBaseAddress("libdxvk_d3d9.so");
@@ -263,15 +260,15 @@ static bool HookD3D9VTable()
 
 	void** vtable = *(void***)pDummyDevice;
 
-	original_Present = (Present_t)vtable[17];
-	original_Reset = (Reset_t)vtable[16];
+	void* original_Present = vtable[17];
+	void* original_Reset = vtable[16];
 	//original_EndScene = (EndScene_t)vtable[42];
 
 	//interfaces::Cvar->ConsolePrintf("D3D9 VTable:\n");
 	//interfaces::Cvar->ConsolePrintf("Present:%p\n", original_Present);
 	//interfaces::Cvar->ConsolePrintf("Reset:%p\n", original_Reset);
 
-	detour_init(&present_ctx, (void*)original_Present, (void*)&Hooked_Present);
+	detour_init(&present_ctx, original_Present, (void*)&Hooked_Present);
 	if (!detour_enable(&present_ctx))
 	{
 		interfaces::Cvar->ConsolePrintf("Failed to hook Present\n");
@@ -280,7 +277,7 @@ static bool HookD3D9VTable()
 		return false;
 	}
 
-	detour_init(&reset_ctx, (void*)original_Reset, (void*)&Hooked_Reset);
+	detour_init(&reset_ctx, original_Reset, (void*)&Hooked_Reset);
 	if (!detour_enable(&reset_ctx))
 	{
 		interfaces::Cvar->ConsolePrintf("Failed to hook Reset\n");
@@ -298,7 +295,7 @@ static bool HookD3D9VTable()
 	return true;
 }
 
-static void HookDXVK()
+inline void HookDXVK()
 {
 	if (GetModuleBaseAddress("libdxvk_d3d9.so") == nullptr)
 		return interfaces::Cvar->ConsolePrintf("DXVK not loaded\n");

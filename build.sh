@@ -38,6 +38,19 @@ if [ ! -f build/libdetour.a ]; then
 	ar rcs build/libdetour.a build/libdetour.o
 fi
 
+if [ ! -f build/libimgui.a ]; then
+	echo "Compiling ImGui"
+
+	mkdir -p build/imgui
+
+	# compile each .cpp into its own .o
+	for f in src/imgui/*.cpp; do
+		gcc -c "$f" -O2 -I src/imgui -o "build/imgui/$(basename "$f" .cpp).o"
+	done
+
+	ar rcs build/libimgui.a build/imgui/*.o
+fi
+
 # copy our p100 attach script
 cp attach.sh build/
 
@@ -52,9 +65,8 @@ echo "Compiling skill issue"
 # fuck my life
 g++ -shared -fPIC \
 	$(find src -name "*.cpp") \
-	build/libdetour.a \
-	build/libsigscan.a \
-	build/libplutostatic.a \
+	$(find build -name "*.a") \
+	$(find build/imgui -name "*.a") \
 	-o build/libvapo.so \
 	-O2 -std=c++17 -lSDL2 -lvulkan -lm -ldl \
 	-Werror -fno-exceptions -s -march=x86-64-v3

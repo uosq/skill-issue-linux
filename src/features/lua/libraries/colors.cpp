@@ -25,16 +25,16 @@ namespace LuaFuncs
 		{
 			lua_newtable(L);
 
-			lua_pushinteger(L, g_Settings.colors.aimbot_target.r());
+			lua_pushinteger(L, Settings::colors.aimbot_target.r());
 			lua_setfield(L, -2, "r");
 
-			lua_pushinteger(L, g_Settings.colors.aimbot_target.g());
+			lua_pushinteger(L, Settings::colors.aimbot_target.g());
 			lua_setfield(L, -2, "g");
 
-			lua_pushinteger(L, g_Settings.colors.aimbot_target.b());
+			lua_pushinteger(L, Settings::colors.aimbot_target.b());
 			lua_setfield(L, -2, "b");
 
-			lua_pushinteger(L, g_Settings.colors.aimbot_target.a());
+			lua_pushinteger(L, Settings::colors.aimbot_target.a());
 			lua_setfield(L, -2, "a");
 
 			return 1;
@@ -44,16 +44,16 @@ namespace LuaFuncs
 		{
 			lua_newtable(L);
 
-			lua_pushinteger(L, g_Settings.colors.red_team.r());
+			lua_pushinteger(L, Settings::colors.red_team.r());
 			lua_setfield(L, -2, "r");
 
-			lua_pushinteger(L, g_Settings.colors.red_team.g());
+			lua_pushinteger(L, Settings::colors.red_team.g());
 			lua_setfield(L, -2, "g");
 
-			lua_pushinteger(L, g_Settings.colors.red_team.b());
+			lua_pushinteger(L, Settings::colors.red_team.b());
 			lua_setfield(L, -2, "b");
 
-			lua_pushinteger(L, g_Settings.colors.red_team.a());
+			lua_pushinteger(L, Settings::colors.red_team.a());
 			lua_setfield(L, -2, "a");
 
 			return 1;
@@ -63,16 +63,16 @@ namespace LuaFuncs
 		{
 			lua_newtable(L);
 
-			lua_pushinteger(L, g_Settings.colors.blu_team.r());
+			lua_pushinteger(L, Settings::colors.blu_team.r());
 			lua_setfield(L, -2, "r");
 
-			lua_pushinteger(L, g_Settings.colors.blu_team.g());
+			lua_pushinteger(L, Settings::colors.blu_team.g());
 			lua_setfield(L, -2, "g");
 
-			lua_pushinteger(L, g_Settings.colors.blu_team.b());
+			lua_pushinteger(L, Settings::colors.blu_team.b());
 			lua_setfield(L, -2, "b");
 
-			lua_pushinteger(L, g_Settings.colors.blu_team.a());
+			lua_pushinteger(L, Settings::colors.blu_team.a());
 			lua_setfield(L, -2, "a");
 
 			return 1;
@@ -82,16 +82,16 @@ namespace LuaFuncs
 		{
 			lua_newtable(L);
 
-			lua_pushinteger(L, g_Settings.colors.weapon.r());
+			lua_pushinteger(L, Settings::colors.weapon.r());
 			lua_setfield(L, -2, "r");
 
-			lua_pushinteger(L, g_Settings.colors.weapon.g());
+			lua_pushinteger(L, Settings::colors.weapon.g());
 			lua_setfield(L, -2, "g");
 
-			lua_pushinteger(L, g_Settings.colors.weapon.b());
+			lua_pushinteger(L, Settings::colors.weapon.b());
 			lua_setfield(L, -2, "b");
 
-			lua_pushinteger(L, g_Settings.colors.weapon.a());
+			lua_pushinteger(L, Settings::colors.weapon.a());
 			lua_setfield(L, -2, "a");
 
 			return 1;

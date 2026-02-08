@@ -1,6 +1,9 @@
 #include "features/chams/chams.h"
 #include "features/esp/esp.h"
 #include "features/glow/glow.h"
+#include "features/radar/radar.h"
+#include "features/visuals/viewmodel_aim/viewmodel_aim.h"
+#include "features/visuals/viewmodel_interp/viewmodel_interp.h"
 #include "hooks/cinventorymanager_showitemspickedup.h"
 #include "hooks/clientmodeshared_createmove.h"
 #include "hooks/clientmodeshared_firegameevent.h"
@@ -24,6 +27,8 @@
 #include "hooks/chlclient_levelpostentity.h"
 #include "hooks/dxvk.h"
 
+#include "sdk/FontManager/fontmanager.h"
+#include "sdk/MaterialManager/materialmanager.h"
 #include "sdk/interfaces/interfaces.h"
 #include <sys/types.h>
 #include <unistd.h>
@@ -36,6 +41,13 @@ void init(void)
 	if (!InitializeInterfaces())
 		return;
 
+	MaterialManager::Init();
+	FontManager::Init();
+	Settings::RegisterOptions();
+
+	ViewmodelInterp::Init();
+	ViewmodelAim::Init();
+	Radar::Init();
 	ESP::Init();
 	Glow::Init();
 	Chams::Init();

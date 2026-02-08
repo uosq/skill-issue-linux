@@ -41,7 +41,7 @@ namespace LuaFuncs
 				return 1;
 			}
 
-			IMaterial* mat = g_MaterialManager.CreateMaterial(name, vmt);
+			IMaterial* mat = MaterialManager::CreateMaterial(name, vmt);
 			if (mat == nullptr)
 			{
 				lua_pushnil(L);
@@ -91,7 +91,7 @@ namespace LuaFuncs
 			int w = luaL_checkinteger(L, 2);
 			int h = luaL_checkinteger(L, 3);
 
-			ITexture* tex = g_MaterialManager.CreateTextureNamedRenderTarget(name, w, h);
+			ITexture* tex = MaterialManager::CreateTextureNamedRenderTarget(name, w, h);
 			if (tex != nullptr)
 			{
 				LuaClasses::TextureLua::push_texture(L, tex, name);
@@ -105,7 +105,7 @@ namespace LuaFuncs
 		int GetMaterial(lua_State *L)
 		{
 			const char* name = luaL_checkstring(L, 1);
-			IMaterial* mat = g_MaterialManager.GetMaterial(name);
+			IMaterial* mat = MaterialManager::GetMaterial(name);
 			if (mat == nullptr)
 			{
 				lua_pushnil(L);
@@ -119,7 +119,7 @@ namespace LuaFuncs
 		int GetTexture(lua_State *L)
 		{
 			const char* name = luaL_checkstring(L, 1);
-			ITexture* tex = g_MaterialManager.GetTexture(name);
+			ITexture* tex = MaterialManager::GetTexture(name);
 			if (tex == nullptr)
 			{
 				lua_pushnil(L);

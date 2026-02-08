@@ -1,6 +1,7 @@
 #include "materialmanager.h"
 
-MaterialManager g_MaterialManager;
+std::unordered_map<std::string, IMaterial*> MaterialManager::m_Materials;
+std::unordered_map<std::string, ITexture*> MaterialManager::m_Textures;
 
 IMaterial* MaterialManager::CreateMaterial(const std::string& name, const std::string& vmt)
 {
@@ -127,4 +128,22 @@ ITexture* MaterialManager::GetTexture(const std::string& name)
 		return nullptr;
 
 	return tex;
+}
+
+void MaterialManager::Init(void)
+{
+	m_Materials.reserve(10);
+	m_Textures.reserve(10);
+}
+
+void MaterialManager::Unitialize(void)
+{
+	while (!m_Materials.empty())
+		FreeMaterial(m_Materials.begin()->first);
+
+	while (!m_Textures.empty())
+		FreeTexture(m_Textures.begin()->first);
+
+	m_Materials.clear();
+	m_Textures.clear();
 }

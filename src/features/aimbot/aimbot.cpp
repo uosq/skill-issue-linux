@@ -25,13 +25,13 @@ namespace Aimbot
 	{
 		ClearAimbotState(m_state);
 
-		if (!g_Settings.aimbot.enabled)
+		if (!Settings::aimbot.enabled)
 			return;
 
 		if (helper::engine::IsConsoleVisible() || helper::engine::IsGameUIVisible() || helper::engine::IsTakingScreenshot())
 			return;
 
-		ButtonCode_t key = interfaces::InputSystem->StringToButtonCode(g_Settings.aimbot.key.c_str());
+		ButtonCode_t key = interfaces::InputSystem->StringToButtonCode(Settings::aimbot.key.c_str());
 
 		if (key != BUTTON_CODE_INVALID && !interfaces::InputSystem->IsButtonDown(key))
 			return;
@@ -40,14 +40,12 @@ namespace Aimbot
 		{
 			case EWeaponType::HITSCAN:
 			{
-				static AimbotHitscan hitscan;
-				hitscan.Run(pLocal, pWeapon, pCmd, m_state);
+				AimbotHitscan::Run(pLocal, pWeapon, pCmd, m_state);
 			} break;
 			
 			case EWeaponType::PROJECTILE:
 			{
-				static AimbotProjectile projectile;
-				projectile.Run(pLocal, pWeapon, pCmd, m_state);
+				AimbotProjectile::Run(pLocal, pWeapon, pCmd, m_state);
 
 				if (m_state.shouldSilent)
 					*bSendPacket = false;
@@ -55,8 +53,7 @@ namespace Aimbot
 
 			case EWeaponType::MELEE:
 			{
-				static AimbotMelee melee;
-				melee.Run(pLocal, pWeapon, pCmd, m_state);
+				AimbotMelee::Run(pLocal, pWeapon, pCmd, m_state);
 
 				if (m_state.shouldSilent)
 					*bSendPacket = false;
@@ -67,12 +64,12 @@ namespace Aimbot
 
 	void DrawFOVIndicator()
 	{
-		if (g_Settings.aimbot.fov >= 90 || !g_Settings.aimbot.draw_fov_indicator)
+		if (Settings::aimbot.fov >= 90 || !Settings::aimbot.draw_fov_indicator)
 			return;
 
-		//float aimFov = DEG2RAD(g_Settings.aimbot.fov);
+		//float aimFov = DEG2RAD(Settings::aimbot.fov);
 		float aimFov = DEG2RAD(AimbotUtils::GetAimbotFovScaled());
-		float camFov = DEG2RAD(g_Customfov.GetFov() * 0.5f);
+		float camFov = DEG2RAD(CustomFov::GetFov() * 0.5f);
 
 		int w, h;
 		helper::draw::GetScreenSize(w, h);
@@ -126,7 +123,7 @@ namespace Aimbot
 
 	void RunPaint()
 	{
-		if (!g_Settings.aimbot.enabled)
+		if (!Settings::aimbot.enabled)
 			return;
 
 		//DrawTargetPath();

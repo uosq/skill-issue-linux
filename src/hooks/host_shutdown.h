@@ -9,12 +9,8 @@
 #include "../features/lua/api.h"
 #include "../features/lua/classes.h"
 
-using Host_ShutdownFn = bool(*)(void);
-static Host_ShutdownFn originalHost_ShutdownFn = nullptr;
-
+inline detour_ctx_t shutdownctx;
 DETOUR_DECL_TYPE(void, originalHost_ShutdownFn, void);
-
-static detour_ctx_t shutdownctx;
 
 static void HookedHost_ShutdownFn(void)
 {
@@ -26,8 +22,8 @@ static void HookedHost_ShutdownFn(void)
 
 static void HookHost_Shutdown()
 {
-	originalHost_ShutdownFn = reinterpret_cast<Host_ShutdownFn>(sigscan_module("engine.so", "80 3D ? ? ? ? 00 0F 85 ? ? ? ? 55 31 F6"));
-	detour_init(&shutdownctx, (void*)originalHost_ShutdownFn, (void*)&HookedHost_ShutdownFn);
+	void* original = sigscan_module("engine.so", "80 3D ? ? ? ? 00 0F 85 ? ? ? ? 55 31 F6");
+	detour_init(&shutdownctx, original, (void*)&HookedHost_ShutdownFn);
 	detour_enable(&shutdownctx);
 
 	interfaces::Cvar->ConsolePrintf("Host_Shutdown hooked\n");

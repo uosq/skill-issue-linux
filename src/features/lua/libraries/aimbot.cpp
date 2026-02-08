@@ -65,7 +65,7 @@ namespace LuaFuncs
 
 		int GetMode(lua_State* L)
 		{
-			lua_pushinteger(L, int(g_Settings.aimbot.mode));
+			lua_pushinteger(L, int(Settings::aimbot.mode));
 			lua_pushstring(L, AimbotUtils::GetAimbotModeName().c_str());
 			return 2;
 		}
@@ -79,7 +79,7 @@ namespace LuaFuncs
 				return 0;
 			}
 
-			g_Settings.aimbot.mode = AimbotMode(mode);
+			Settings::aimbot.mode = AimbotMode(mode);
 			return 0;
 		}
 
@@ -135,7 +135,7 @@ namespace LuaFuncs
 
 		int GetKey(lua_State* L)
 		{
-			const std::string& key = g_Settings.aimbot.key;
+			const std::string& key = Settings::aimbot.key;
 			ButtonCode_t btn = interfaces::InputSystem->StringToButtonCode(key.c_str());
 
 			if (!helper::input::IsButtonValid(btn))
@@ -161,7 +161,7 @@ namespace LuaFuncs
 				ButtonCode_t btn = interfaces::InputSystem->StringToButtonCode(str);
 
 				if (helper::input::IsButtonValid(btn))
-					g_Settings.aimbot.key = str;
+					Settings::aimbot.key = str;
 
 				return 0;
 			}
@@ -172,7 +172,7 @@ namespace LuaFuncs
 				ButtonCode_t btn = interfaces::InputSystem->VirtualKeyToButtonCode(key);
 				
 				if (helper::input::IsButtonValid(btn))
-					g_Settings.aimbot.key = interfaces::InputSystem->ButtonCodeToString(btn);
+					Settings::aimbot.key = interfaces::InputSystem->ButtonCodeToString(btn);
 
 				return 0;
 			}

@@ -31,7 +31,7 @@ DECLARE_VTABLE_HOOK(VGuiPaint, void, (IEngineVGui* thisptr, PaintMode_t paint))
 		if (LuaHookManager::HasHooks("Draw"))
 			LuaHookManager::Call(Lua::m_luaState, "Draw", 0);
 
-		g_FontManager.SetFont("esp font");
+		FontManager::SetFont("esp font");
 	
 		CTFPlayer* pLocal = EntityList::GetLocal();
 		if (pLocal)
@@ -41,7 +41,7 @@ DECLARE_VTABLE_HOOK(VGuiPaint, void, (IEngineVGui* thisptr, PaintMode_t paint))
 		}
 
 		// compile time
-		if (g_Settings.menu_open)
+		if (Settings::menu_open)
 		{
 			Color color = {255, 255, 255, 255};
 			

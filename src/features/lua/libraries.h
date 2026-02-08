@@ -244,7 +244,7 @@ namespace LuaFuncs
 		int GetWeaponColor(lua_State* L);
 	}
 
-	namespace fontmanager
+	namespace fonts
 	{
 		extern const luaL_Reg fontmgrlib[];
 		void open(lua_State* L);

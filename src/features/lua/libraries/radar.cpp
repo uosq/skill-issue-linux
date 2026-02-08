@@ -23,13 +23,13 @@ namespace LuaFuncs
 
 		int GetRange(lua_State* L)
 		{
-			lua_pushinteger(L, g_Radar.GetRange());
+			lua_pushinteger(L, Radar::GetRange());
 			return 1;
 		}
 
 		int GetRadius(lua_State* L)
 		{
-			lua_pushnumber(L, g_Radar.GetRadius());
+			lua_pushnumber(L, Radar::GetRadius());
 			return 1;
 		}
 
@@ -61,7 +61,7 @@ namespace LuaFuncs
 				viewAnglesYaw = luaL_checknumber(L, 3);
 			}
 
-			Vec2 pos = g_Radar.WorldToRadar(*localPos, *enemyPos, viewAnglesYaw - 90.0f);
+			Vec2 pos = Radar::WorldToRadar(*localPos, *enemyPos, viewAnglesYaw - 90.0f);
 			Vector ret = {pos.x, pos.y, 0.0f}; // dont implicitly convert
 			LuaClasses::VectorLua::push_vector(L, ret);
 			return 1;

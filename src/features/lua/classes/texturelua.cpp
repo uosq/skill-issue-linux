@@ -84,7 +84,7 @@ namespace LuaClasses
 				return 1;
 			}
 
-			g_MaterialManager.FreeTexture(ltex->name);
+			MaterialManager::FreeTexture(ltex->name);
 			ltex->name.clear();
 			ltex->tex = nullptr;
 			return 0;

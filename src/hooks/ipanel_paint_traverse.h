@@ -10,7 +10,7 @@ DECLARE_VTABLE_HOOK(PaintTraverse, void, (IPanel* thisptr, VPANEL vguiPanel, boo
 	const char* panelName = interfaces::VGui->GetName(vguiPanel);
 
 	// https://github.com/rei-2/Amalgam/blob/master/Amalgam/src/Hooks/IPanel_PaintTraverse.cpp
-	if (g_Settings.misc.streamer_mode)
+	if (Settings::misc.streamer_mode)
 	{
 		switch (fnv::Hash(panelName))
 		{

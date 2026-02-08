@@ -1,0 +1,278 @@
+#include "aimbot_hitscan.h"
+
+namespace AimbotHitscan
+{
+	HitscanOffset GetInitialOffset(CTFPlayer* pLocal, CTFWeaponBase* pWeapon)
+	{
+		if (pWeapon == nullptr)
+			return HitscanOffset::CHEST;
+
+		switch(pWeapon->GetWeaponID())
+		{
+			case TF_WEAPON_REVOLVER:
+			{
+				if (pWeapon->CanAmbassadorHeadshot())
+					return HitscanOffset::HEAD;
+
+				return HitscanOffset::CHEST;
+			}
+
+			case TF_WEAPON_SNIPERRIFLE:
+			case TF_WEAPON_SNIPERRIFLE_DECAP:
+			case TF_WEAPON_SNIPERRIFLE_CLASSIC:
+			{
+				if (!pLocal->InCond(TF_COND_ZOOMED))
+					return HitscanOffset::CHEST;
+
+				if (static_cast<CTFSniperRifle*>(pWeapon)->m_flChargedDamage() < 50.0f)
+					return HitscanOffset::CHEST;
+
+				return HitscanOffset::HEAD;
+			}
+
+		}
+		
+		return HitscanOffset::CHEST;
+	}
+
+	bool GetShotPosition(CTFPlayer* pLocal, CBaseEntity* pTarget, CTFWeaponBase* pWeapon, Vector eyePos, Vector& shotPosition)
+	{
+		matrix3x4 bones[MAXSTUDIOBONES];
+		if (!pTarget->SetupBones(bones, MAXSTUDIOBONES, BONE_USED_BY_ANYTHING, interfaces::GlobalVars->curtime))
+			return false;
+
+		CGameTrace trace;
+		CTraceFilterHitscan filter;
+		filter.pSkip = pLocal;
+
+		auto initialOffset = GetInitialOffset(pLocal, pWeapon);
+		switch(initialOffset)
+		{
+			case HitscanOffset::HEAD:
+			{
+				Vector boneCenter;
+				static_cast<CBaseAnimating*>(pTarget)->GetHitboxCenter(bones, HITBOX_HEAD, boneCenter);
+
+				helper::engine::Trace(eyePos, boneCenter, MASK_SHOT | CONTENTS_HITBOX, &filter, &trace);
+				if (!trace.DidHit() || trace.m_pEnt != pTarget)
+					break;
+
+				shotPosition = boneCenter;
+				return true;
+			}
+			case HitscanOffset::CHEST:
+			{
+				Vector boneCenter;
+				static_cast<CBaseAnimating*>(pTarget)->GetHitboxCenter(bones, HITBOX_SPINE0, boneCenter);
+
+				helper::engine::Trace(eyePos, boneCenter, MASK_SHOT | CONTENTS_HITBOX, &filter, &trace);
+				if (!trace.DidHit() || trace.m_pEnt != pTarget)
+					break;
+
+				shotPosition = boneCenter;
+				return true;
+			}
+                }
+
+                for (int i = 0; i < HITBOX_LEFT_UPPERARM; i++)
+		{
+			Vector bonePos;
+			if (!static_cast<CBaseAnimating*>(pTarget)->GetHitboxCenter(bones, i, bonePos))
+				continue;
+
+			helper::engine::Trace(eyePos, bonePos, MASK_SHOT | CONTENTS_HITBOX, &filter, &trace);
+			if (!trace.DidHit() || trace.m_pEnt != pTarget)
+				continue;
+
+			shotPosition = bonePos;
+			return true;
+		}
+
+		helper::engine::Trace(eyePos, pTarget->GetCenter(), MASK_SHOT | CONTENTS_HITBOX, &filter, &trace);
+		if (!trace.DidHit() || trace.m_pEnt != pTarget)
+			return false;
+
+		shotPosition = pTarget->GetCenter();
+		return true;
+	}
+
+	void Run(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd, AimbotState& state)
+	{
+		if (Settings::aimbot.waitforcharge && pWeapon->IsAmbassador())
+			if (!pWeapon->CanAmbassadorHeadshot())
+				return;
+
+		if (Settings::aimbot.hold_minigun_spin && pWeapon->GetWeaponID() == TF_WEAPON_MINIGUN)
+			pCmd->buttons |= IN_ATTACK2;
+
+		std::vector<PotentialTarget> targets;
+
+		int localTeam = pLocal->m_iTeamNum();
+		Vector shootPos = pLocal->GetEyePos();
+
+		Vector viewAngles;
+		interfaces::Engine->GetViewAngles(viewAngles);
+
+		Vector viewForward;
+		Math::AngleVectors(viewAngles, &viewForward);
+		viewForward.Normalize();
+
+		CGameTrace trace;
+		CTraceFilterHitscan filter;
+		filter.pSkip = pLocal;
+		
+		bool bIsSniperRifle = pWeapon->IsSniperRifle();
+		bool bIsZoomed = pLocal->InCond(TF_COND_ZOOMED);
+		
+		float maxFov = AimbotUtils::GetAimbotFovScaled(); //settings.aimbot.fov;
+		bool bNoFovLimit = Settings::aimbot.fov >= 180.0f;
+
+		bool bCanHitTeammates = pWeapon->CanHitTeammates();
+
+		for (EntityListEntry entry : AimbotUtils::GetTargets(bCanHitTeammates, localTeam))
+		{
+			CBaseEntity* entity = entry.ptr;
+
+			Vector pos;
+			{
+				if (entity->IsPlayer())
+				{
+					if (!GetShotPosition(pLocal, entity, pWeapon, shootPos, pos))
+						continue;
+				}
+				else pos = entity->GetCenter();
+			}
+
+			float distance = (pos - shootPos).Normalize();
+			if (distance >= 8192.f)
+				continue;
+
+			Vector angle = Math::CalcAngle(shootPos, pos);
+			float fov = Math::CalcFov(viewAngles, angle);
+
+			if (!bNoFovLimit && fov > maxFov)
+				continue;
+
+			if (Settings::aimbot.waitforcharge && bIsZoomed && bIsSniperRifle && !AimbotUtils::CanDamageWithSniperRifle(pLocal, entity, pWeapon))
+				continue;
+
+			// GetShotPosition already checks if its visible
+			if (!entity->IsPlayer())
+			{
+				helper::engine::Trace(shootPos, pos, MASK_SHOT | CONTENTS_HITBOX, &filter, &trace);
+				if (!trace.DidHit() || trace.m_pEnt != entity)
+					continue;
+			}
+
+			targets.emplace_back(PotentialTarget{angle, pos, distance, fov, entity});
+		}
+
+		if (targets.empty())
+			return;
+
+		std::sort(targets.begin(), targets.end(), [&](PotentialTarget a, PotentialTarget b){
+			return a.fov < b.fov;
+		});
+
+		AimbotMode mode = Settings::aimbot.mode;
+
+		switch(mode)
+		{
+			case AimbotMode::PLAIN:
+			{
+				if (Settings::aimbot.autoshoot)
+					pCmd->buttons |= IN_ATTACK;
+
+				auto target = targets.front();
+				Vector angle = target.dir;
+
+				pCmd->viewangles = angle;
+				interfaces::Engine->SetViewAngles(angle);
+				break;
+			}
+			case AimbotMode::SMOOTH:
+			{
+				auto target = targets.front();
+				Vector targetAngle = target.dir;
+				
+				Vector delta = targetAngle - viewAngles;
+				Vector smoothedAngle = viewAngles + (delta * (100.0f - Settings::aimbot.smoothness) * 0.01f);
+				state.angle = smoothedAngle;
+
+				interfaces::Engine->SetViewAngles(smoothedAngle);
+				pCmd->viewangles = smoothedAngle;
+				
+				state.running = true;
+
+				CGameTrace trace;
+				CTraceFilterHitscan filter;
+				filter.pSkip = pLocal;
+				helper::engine::Trace(shootPos, shootPos + (viewForward * 2048), 
+							MASK_SHOT | CONTENTS_HITBOX, &filter, &trace);
+
+				if (!trace.DidHit() || trace.m_pEnt != target.entity)
+					break;
+
+				if (Settings::aimbot.autoshoot)
+					pCmd->buttons |= IN_ATTACK;
+				break;
+			}
+			case AimbotMode::ASSISTANCE:
+			{
+				// this sh dont work right
+				// gotta think of something else
+				// not moving the mouse, dont do anything
+				if (pCmd->mousedx == 0 && pCmd->mousedy == 0)
+					break;
+				
+				auto target = targets.front();
+				Vector targetAngle = target.dir;
+
+				Vector delta = targetAngle - viewAngles;
+				Vector smoothedAngle = viewAngles + (delta * (100.0f - Settings::aimbot.smoothness) * 0.01f);
+
+				interfaces::Engine->SetViewAngles(smoothedAngle);
+				pCmd->viewangles = smoothedAngle;
+				state.angle = smoothedAngle;
+				
+				state.running = true;
+
+				CGameTrace trace;
+				CTraceFilterHitscan filter;
+				filter.pSkip = pLocal;
+				helper::engine::Trace(shootPos, shootPos + (viewForward * 2048), 
+							MASK_SHOT | CONTENTS_HITBOX, &filter, &trace);
+
+				if (!trace.DidHit() || trace.m_pEnt != target.entity)
+					break;
+
+				if (Settings::aimbot.autoshoot)
+					pCmd->buttons |= IN_ATTACK;
+				break;
+			}
+			case AimbotMode::SILENT:
+			{
+				if (Settings::aimbot.autoshoot)
+					pCmd->buttons |= IN_ATTACK;
+
+				if (helper::localplayer::IsAttacking(pLocal, pWeapon, pCmd))
+				{
+					auto target = targets.front();
+					Vector angle = target.dir;
+					pCmd->viewangles = angle;
+					state.angle = angle;
+					state.running = true;
+				}
+
+				break;
+			}
+
+                        case AimbotMode::INVALID:
+                        case AimbotMode::MAX:
+                        	break;
+                        }
+
+                if (targets.front().entity != nullptr)
+			EntityList::m_pAimbotTarget = targets.front().entity;
+	}
+};

@@ -3,7 +3,8 @@
 #include "../../sdk/definitions/ipanel.h"
 #include "../../sdk/interfaces/interfaces.h"
 
-FontManager g_FontManager;
+std::unordered_map<std::string, unsigned long> FontManager::m_Fonts;
+std::string FontManager::m_currentFontID = "";
 
 int FontManager::CreateFont(const std::string& id, const std::string& fontName, int height, int weight, int flags)
 {
@@ -49,4 +50,16 @@ const std::string& FontManager::GetCurrentFontID()
 const std::unordered_map<std::string, unsigned long>& FontManager::GetAllFonts()
 {
 	return m_Fonts;
+}
+
+void FontManager::Init()
+{
+	m_Fonts.reserve(10);
+	m_currentFontID = "";
+}
+
+void FontManager::Unitialize()
+{
+	m_Fonts.clear();
+	m_currentFontID.clear();
 }

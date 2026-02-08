@@ -15,7 +15,7 @@ DECLARE_VTABLE_HOOK(FrameStageNotify, void, (CHLClient* thisptr, int stage))
 	{
 		case FRAME_RENDER_START:
 		{
-			if (g_Settings.misc.thirdperson)
+			if (Settings::misc.thirdperson)
 			{
 				CTFPlayer* pLocal = EntityList::GetLocal();
 				if (pLocal == nullptr || !pLocal->IsAlive())

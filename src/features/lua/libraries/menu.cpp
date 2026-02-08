@@ -19,8 +19,8 @@ namespace LuaFuncs
 		int SetValue(lua_State* L)
 		{
 			const char* key = luaL_checkstring(L, 1);
-			auto it = g_SettingsMap.find(key);
-			if (it == g_SettingsMap.end())
+			auto it = Settings::m_optionMap.find(key);
+			if (it == Settings::m_optionMap.end())
 				return 0;
 
 			SettingEntry& e = it->second;
@@ -50,8 +50,8 @@ namespace LuaFuncs
 		int GetValue(lua_State* L)
 		{
 			const char* key = luaL_checkstring(L, 1);
-			auto it = g_SettingsMap.find(key);
-			if (it == g_SettingsMap.end())
+			auto it = Settings::m_optionMap.find(key);
+			if (it == Settings::m_optionMap.end())
 				return 0;
 
 			SettingEntry& e = it->second;
@@ -83,20 +83,18 @@ namespace LuaFuncs
 			lua_newtable(L);
 			luaL_setfuncs(L, menulib, 0);
 			lua_setglobal(L, "menu");
-
-			RegisterSettings();
 		}
 
 		int IsOpen(lua_State* L)
 		{
-			lua_pushboolean(L, g_Settings.menu_open);
+			lua_pushboolean(L, Settings::menu_open);
 			return 1;
 		}
 
 		int SetOpen(lua_State* L)
 		{
 			int open = luaL_checkinteger(L, 1);
-			g_Settings.menu_open = open;
+			Settings::menu_open = open;
 			interfaces::Surface->SetCursorAlwaysVisible(open);
 			return 0;
 		}

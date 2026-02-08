@@ -3,24 +3,13 @@
 #include <string>
 #include <unordered_map>
 
-class FontManager
+namespace FontManager
 {
-private:
-	std::unordered_map<std::string, unsigned long> m_Fonts;
-	std::string m_currentFontID;
+	extern std::unordered_map<std::string, unsigned long> m_Fonts;
+	extern std::string m_currentFontID;
 
-public:
-	FontManager()
-	{
-		m_Fonts.reserve(10);
-		m_currentFontID = "";
-	}
-
-	~FontManager()
-	{
-		m_Fonts.clear();
-		m_currentFontID.clear();
-	}
+	void Init(void);
+	void Unitialize(void);
 
 	int CreateFont(const std::string& id, const std::string& fontName, int height, int weight, int flags);
 	int GetFont(const std::string& id);
@@ -28,5 +17,3 @@ public:
 	const std::string& GetCurrentFontID();
 	const std::unordered_map<std::string, unsigned long>& GetAllFonts();
 };
-
-extern FontManager g_FontManager;

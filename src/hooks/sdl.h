@@ -18,23 +18,15 @@
 
 #include "../features/radar/radar.h"
 
-using SwapWindowFn = void(*)(SDL_Window* window);
-static SwapWindowFn original_SwapWindow = nullptr;
 DETOUR_DECL_TYPE(void, original_SwapWindow, SDL_Window* window);
-
-using PollEventFn = int(*)(SDL_Event* event);
-static PollEventFn original_PollEvent = nullptr;
 DETOUR_DECL_TYPE(int, original_PollEvent, SDL_Event* event);
-
-using GetWindowSizeFn = int(*)(SDL_Window* window, int* w, int* h);
-static GetWindowSizeFn original_GetWindowSize = nullptr;
 DETOUR_DECL_TYPE(int, original_GetWindowSize, SDL_Window* window, int* w, int* h);
 
-static detour_ctx_t swapdetour;
-static detour_ctx_t polldetour;
-static detour_ctx_t windowsizedetour;
+inline detour_ctx_t swapdetour;
+inline detour_ctx_t polldetour;
+inline detour_ctx_t windowsizedetour;
 
-static inline SDL_Window* tfwindow;
+inline SDL_Window* tfwindow;
 
 static void SetupImGuiStyle()
 {
@@ -148,14 +140,14 @@ inline void Hooked_SwapWindow(SDL_Window* window)
 
 	if (ImGui::IsKeyPressed(ImGuiKey_Insert, false) || ImGui::IsKeyPressed(ImGuiKey_F11, false))
 	{
-		g_Settings.menu_open = !g_Settings.menu_open;
-		interfaces::Surface->SetCursorAlwaysVisible(g_Settings.menu_open);
+		Settings::menu_open = !Settings::menu_open;
+		interfaces::Surface->SetCursorAlwaysVisible(Settings::menu_open);
 	}
 
 	if (ImGui::IsKeyPressed(ImGuiKey_Escape, false))
 	{
-		g_Settings.menu_open = false;
-		interfaces::Surface->SetCursorAlwaysVisible(g_Settings.menu_open);
+		Settings::menu_open = false;
+		interfaces::Surface->SetCursorAlwaysVisible(Settings::menu_open);
 	}
 
 	ImGui_ImplOpenGL3_NewFrame();
@@ -167,17 +159,17 @@ inline void Hooked_SwapWindow(SDL_Window* window)
 	if (LuaHookManager::HasHooks("ImGui"))
 		LuaHookManager::Call(Lua::m_luaState, "ImGui");
 
-	if (g_Settings.radar.enabled)
-		g_Radar.Run();
+	if (Settings::radar.enabled)
+		Radar::Run();
 
-	if (g_Settings.misc.spectatorlist)
-		DrawSpectatorList();
+	if (Settings::misc.spectatorlist)
+		GUI::RunSpectatorList();
 
-	if (g_Settings.misc.playerlist)
-		DrawPlayerList();
+	if (Settings::misc.playerlist)
+		GUI::RunPlayerList();
 
-	if (g_Settings.menu_open)
-		DrawMainWindow();
+	if (Settings::menu_open)
+		GUI::RunMainWindow();
 
 	ImGui::Render();
   	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -198,7 +190,7 @@ inline int Hooked_PollEvent(SDL_Event* event)
 	if (tfwindow && ImGui::GetCurrentContext())
 		ImGui_ImplSDL2_ProcessEvent(event);
 
-	if (g_Settings.menu_open)
+	if (Settings::menu_open)
 		event->type = 0;
 
 	return ret;
@@ -221,27 +213,27 @@ inline void HookSDL()
 	if (sdl == nullptr)
 		return interfaces::Cvar->ConsolePrintf("Couldn't load SDL2\n");
 
-	original_SwapWindow = (SwapWindowFn)dlsym(sdl, "SDL_GL_SwapWindow");
+	void* original_SwapWindow = dlsym(sdl, "SDL_GL_SwapWindow");
 	if (original_SwapWindow == nullptr)
 		return interfaces::Cvar->ConsolePrintf("Couldn't get SwapWindow\n");
 
-	original_PollEvent = (PollEventFn)dlsym(sdl, "SDL_PollEvent");
+	void* original_PollEvent = dlsym(sdl, "SDL_PollEvent");
 	if (original_PollEvent == nullptr)
 		return interfaces::Cvar->ConsolePrintf("Couldn't get PollEvent\n");
 
-	original_GetWindowSize = (GetWindowSizeFn)dlsym(sdl, "SDL_GetWindowSize");
+	void* original_GetWindowSize = dlsym(sdl, "SDL_GetWindowSize");
 	if (original_GetWindowSize == nullptr)
 		return interfaces::Cvar->ConsolePrintf("Couldn't get GetWindowSize\n");
 
-	detour_init(&swapdetour, (void*)original_SwapWindow, (void*)&Hooked_SwapWindow);
+	detour_init(&swapdetour, original_SwapWindow, (void*)&Hooked_SwapWindow);
 	if (!detour_enable(&swapdetour))
 		return interfaces::Cvar->ConsolePrintf("Couldn't hook SwapWindow\n");
 
-	detour_init(&polldetour, (void*)original_PollEvent, (void*)&Hooked_PollEvent);
+	detour_init(&polldetour, original_PollEvent, (void*)&Hooked_PollEvent);
 	if (!detour_enable(&polldetour))
 		return interfaces::Cvar->ConsolePrintf("Couldn't hook PollEvent\n");
 
-	detour_init(&windowsizedetour, (void*)original_GetWindowSize, (void*)&Hooked_GetWindowSize);
+	detour_init(&windowsizedetour, original_GetWindowSize, (void*)&Hooked_GetWindowSize);
 	if (!detour_enable(&windowsizedetour))
 		return interfaces::Cvar->ConsolePrintf("Couldn't hook GetWindowSize\n");
 

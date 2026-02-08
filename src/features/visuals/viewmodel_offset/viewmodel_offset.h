@@ -6,17 +6,5 @@
 
 namespace ViewmodelOffset
 {
-	inline void Run(Vector& position, Vector& angle)
-	{
-		Vector offset = {g_Settings.misc.viewmodel_offset[0], g_Settings.misc.viewmodel_offset[1], g_Settings.misc.viewmodel_offset[2]};
-		if (offset.IsZero())
-			return;
-
-		Vector forward, right, up;
-		Math::AngleVectors(angle, &forward, &right, &up);
-
-		position += forward * offset.x;
-		position += right * offset.y;
-		position += up * offset.z;
-	}
+	void Run(Vector& position, Vector& angle);
 };

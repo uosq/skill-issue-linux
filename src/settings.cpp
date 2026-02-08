@@ -1,13 +1,22 @@
 #include "settings.h"
 
-Settings g_Settings = {};
-std::unordered_map<std::string, SettingEntry> g_SettingsMap = {};
+std::unordered_map<std::string, SettingEntry> Settings::m_optionMap = {};
+
+Settings_Misc Settings::misc;
+Settings_Aimbot Settings::aimbot;
+Settings_ESP Settings::esp;
+Settings_Triggerbot Settings::triggerbot;
+Settings_Antiaim Settings::antiaim;
+Settings_Colors Settings::colors;
+Settings_Radar Settings::radar;
+
+bool Settings::menu_open = false;
 
 #define REG_SETTING(path, field, type) \
-    g_SettingsMap[#path "." #field] = { &g_Settings.path.field, type };
+    Settings::m_optionMap[#path "." #field] = { &Settings::path.field, type };
 
 // probably not very efficient code, but it works so fuck it ig
-void RegisterSettings(void)
+void Settings::RegisterOptions()
 {
 	// aimbot
 	REG_SETTING(aimbot, enabled, SettingType::BOOL)

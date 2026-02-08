@@ -172,8 +172,8 @@ namespace LuaClasses
 			LuaMaterial* lmat = static_cast<LuaMaterial*>(luaL_checkudata(L, 1, "Material"));
 			const std::string& name = lmat->name;
 
-			if (g_MaterialManager.MaterialExists(name))
-				g_MaterialManager.FreeMaterial(name);
+			if (MaterialManager::MaterialExists(name))
+				MaterialManager::FreeMaterial(name);
 
 			lmat->mat = nullptr;
 			lmat->~LuaMaterial();

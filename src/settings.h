@@ -167,20 +167,18 @@ struct Settings_Radar
 	bool projectiles = false;
 };
 
-struct Settings
+namespace Settings
 {
-	Settings_Misc misc;
-	Settings_Aimbot aimbot;
-	Settings_ESP esp;
-	Settings_Triggerbot triggerbot;
-	Settings_Antiaim antiaim;
-	Settings_Colors colors;
-	Settings_Radar radar;
+	extern Settings_Misc misc;
+	extern Settings_Aimbot aimbot;
+	extern Settings_ESP esp;
+	extern Settings_Triggerbot triggerbot;
+	extern Settings_Antiaim antiaim;
+	extern Settings_Colors colors;
+	extern Settings_Radar radar;
 
-	bool menu_open = false;
+	extern bool menu_open;
+	extern std::unordered_map<std::string, SettingEntry> m_optionMap;
+
+	void RegisterOptions(void);
 };
-
-extern Settings g_Settings;
-extern std::unordered_map<std::string, SettingEntry> g_SettingsMap;
-
-void RegisterSettings(void);

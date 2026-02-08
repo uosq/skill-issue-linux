@@ -8,7 +8,7 @@ namespace Triggerbot
 		if (pLocal == nullptr || pWeapon == nullptr)
 			return;
 
-		if (!g_Settings.triggerbot.hitscan)
+		if (!Settings::triggerbot.hitscan)
 			return;
 
 		CGameTrace trace;
@@ -44,20 +44,20 @@ namespace Triggerbot
 		if (pLocal == nullptr || pWeapon == nullptr || pCmd == nullptr)
 			return;
 
-		if (!g_Settings.triggerbot.enabled)
+		if (!Settings::triggerbot.enabled)
 			return;
 
-		ButtonCode_t key = interfaces::InputSystem->StringToButtonCode(g_Settings.triggerbot.key.c_str());
+		ButtonCode_t key = interfaces::InputSystem->StringToButtonCode(Settings::triggerbot.key.c_str());
 		if (key != BUTTON_CODE_INVALID && !interfaces::InputSystem->IsButtonDown(key))
 			return;
 
-		if (g_Settings.triggerbot.hitscan && pWeapon->IsHitscan())
+		if (Settings::triggerbot.hitscan && pWeapon->IsHitscan())
 			Hitscan(pLocal, pWeapon, pCmd);
 
-                if (g_Settings.triggerbot.autobackstab != AutoBackstabMode::NONE && pWeapon->IsMelee())
-			g_Autobackstab.Run(pLocal, pWeapon, pCmd, pSendPacket);
+                if (Settings::triggerbot.autobackstab != AutoBackstabMode::NONE && pWeapon->IsMelee())
+			AutoBackstab::Run(pLocal, pWeapon, pCmd, pSendPacket);
 
-		if (g_Settings.triggerbot.autoairblast != AutoAirblastMode::NONE && pWeapon->GetWeaponID() == TF_WEAPON_FLAMETHROWER)
-			g_AutoAirblast.Run(pLocal, pWeapon, pCmd, pSendPacket);
+		if (Settings::triggerbot.autoairblast != AutoAirblastMode::NONE && pWeapon->GetWeaponID() == TF_WEAPON_FLAMETHROWER)
+			AutoAirblast::Run(pLocal, pWeapon, pCmd, pSendPacket);
 	}
 }
