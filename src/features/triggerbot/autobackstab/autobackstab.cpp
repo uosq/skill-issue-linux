@@ -99,20 +99,18 @@ void RageBackstab(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd, boo
 		if (!(entry.flags & EntityFlags::IsPlayer))
 			continue;
 
-		CBaseEntity* enemy = entry.ptr;
-		//if (!!AimbotUtils::IsValidEntity(enemy))
-			//continue;
+		CTFPlayer* enemy = static_cast<CTFPlayer*>(entry.ptr);
+		if (!AimbotUtils::IsValidEntity(enemy))
+			continue;
 
-		CTFPlayer* pTarget = static_cast<CTFPlayer*>(enemy);
-
-		Vector center = pTarget->GetCenter();
+		Vector center = enemy->GetCenter();
 		Vector dir = center - shootPos;
 		float distance = dir.Normalize();
 
-		if (distance > 48)
+		if (distance > (48*2))
 			continue;
 
-		if (AutoBackstab::IsBehindEntity(pLocal, pTarget))
+		if (AutoBackstab::IsBehindEntity(pLocal, enemy))
 		{
 			pCmd->buttons |= IN_ATTACK;
 
@@ -127,7 +125,7 @@ void RageBackstab(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd, boo
 				*pSendPacket = false;
 			}
 
-			EntityList::m_pAimbotTarget = pTarget;
+			EntityList::m_pAimbotTarget = enemy;
 			break;
 		}
 	}
