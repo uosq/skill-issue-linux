@@ -8,7 +8,6 @@ This is made for Linux, so trying to build it on Windows or non Unix-like system
 
 [Click me to join the discord server](https://discord.com/invite/dA4nYDBZzu)
 
-
 ## Credits
 
 8dcc - [libdetour](https://github.com/8dcc/libdetour)
@@ -16,8 +15,6 @@ This is made for Linux, so trying to build it on Windows or non Unix-like system
 8dcc - [libsigscan](https://github.com/8dcc/libsigscan)
 
 ocornut - [imgui](https://github.com/ocornut/imgui)
-
-wolfpld - [tracy](github.com/wolfpld/tracy)
 
 ## How to attach
 
@@ -34,7 +31,6 @@ sudo ./attach.sh
 * Requirements
   * Linux
   * GCC/G++ (compiled with atleast standard C++17)
-  * Pluto 0.12.2
 
 Run `build.sh` to build the .so file
 
