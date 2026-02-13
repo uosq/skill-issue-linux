@@ -31,7 +31,7 @@ public:
 	NETVAR(m_flFadeScale, "CBaseAnimating->m_flFadeScale", float)
 	inline std::array<float, 24>& m_flPoseParameter()
 	{
-		static int nOffset = netvars[fnv::Hash("CBaseAnimating->m_flPoseParameter")];
+		static int nOffset = Netvars::m_netvarMap[fnv::Hash("CBaseAnimating->m_flPoseParameter")];
 		return *reinterpret_cast<std::array<float, 24>*>(uintptr_t(this) + nOffset);
 	}
 

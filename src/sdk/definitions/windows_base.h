@@ -24,7 +24,7 @@ typedef int32_t INT;
 typedef uint32_t UINT;
 
 typedef int32_t LONG;
-typedef uint32_t ULONG;
+//typedef uint32_t ULONG;
 
 typedef int32_t HRESULT;
 
@@ -177,8 +177,8 @@ typedef struct RGNDATA {
 #define CONST const
 #define CONST_VTBL const
 
-#define TRUE 1
-#define FALSE 0
+//#define TRUE 1
+//#define FALSE 0
 
 #define interface struct
 #define MIDL_INTERFACE(x) struct

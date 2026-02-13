@@ -13,8 +13,8 @@ public:
 
   virtual HRESULT QueryInterface(REFIID riid, void** ppvObject) = 0;
 
-  virtual ULONG AddRef()  = 0;
-  virtual ULONG Release() = 0;
+  virtual uint32_t AddRef()  = 0;
+  virtual uint32_t Release() = 0;
 
 };
 #else
@@ -27,8 +27,8 @@ BEGIN_INTERFACE
     REFIID riid,
     void **ppvObject
   );
-  ULONG (STDMETHODCALLTYPE *AddRef)(IUnknown *This);
-  ULONG (STDMETHODCALLTYPE *Release)(IUnknown *This);
+  uint32_t (STDMETHODCALLTYPE *AddRef)(IUnknown *This);
+  uint32_t (STDMETHODCALLTYPE *Release)(IUnknown *This);
 
 END_INTERFACE
 } IUnknownVtbl;

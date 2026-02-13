@@ -14,5 +14,5 @@ namespace Antiaim
 	std::string GetYawModeName(YawMode mode);
 	float GetPitch(CUserCmd* pCmd);
 	float GetYaw(CUserCmd* pCmd, YawMode mode);
-	void Run(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd, bool* bSendPacket);
+	void Run(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd);
 }

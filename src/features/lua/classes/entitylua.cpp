@@ -192,8 +192,8 @@ namespace LuaClasses
 
 			std::string str = std::string(className) + "->" + std::string(varName);
 
-			auto it = netvars.find(fnv::Hash(str.c_str()));
-			if (it != netvars.end())
+			auto it = Netvars::m_netvarMap.find(fnv::Hash(str.c_str()));
+			if (it != Netvars::m_netvarMap.end())
 			{
 				auto& offset = it->second;
 				uintptr_t entityPtr = reinterpret_cast<uintptr_t>(le->ent);
@@ -220,8 +220,8 @@ namespace LuaClasses
 
 			std::string str = std::string(className) + "->" + std::string(varName);
 
-			auto it = netvars.find(fnv::Hash(str.c_str()));
-			if (it != netvars.end())
+			auto it = Netvars::m_netvarMap.find(fnv::Hash(str.c_str()));
+			if (it != Netvars::m_netvarMap.end())
 			{
 				auto& offset = it->second;
 				uintptr_t entityPtr = reinterpret_cast<uintptr_t>(le->ent);
@@ -248,8 +248,8 @@ namespace LuaClasses
 
 			std::string str = std::string(className) + "->" + std::string(varName);
 
-			auto it = netvars.find(fnv::Hash(str.c_str()));
-			if (it != netvars.end())
+			auto it = Netvars::m_netvarMap.find(fnv::Hash(str.c_str()));
+			if (it != Netvars::m_netvarMap.end())
 			{
 				auto& offset = it->second;
 				uintptr_t entityPtr = reinterpret_cast<uintptr_t>(le->ent);
@@ -276,8 +276,8 @@ namespace LuaClasses
 
 			std::string str = std::string(className) + "->" + std::string(varName);
 
-			auto it = netvars.find(fnv::Hash(str.c_str()));
-			if (it != netvars.end())
+			auto it = Netvars::m_netvarMap.find(fnv::Hash(str.c_str()));
+			if (it != Netvars::m_netvarMap.end())
 			{
 				auto& offset = it->second;
 				uintptr_t entityPtr = reinterpret_cast<uintptr_t>(le->ent);
@@ -500,8 +500,8 @@ namespace LuaClasses
 			int number = luaL_checkinteger(L, 4);
 			
 			std::string str = std::string(className) + "->" + std::string(varName);
-			auto it = netvars.find(fnv::Hash(str.c_str()));
-			if (it != netvars.end())
+			auto it = Netvars::m_netvarMap.find(fnv::Hash(str.c_str()));
+			if (it != Netvars::m_netvarMap.end())
 			{
 				auto& offset = it->second;
 				uintptr_t entityPtr = reinterpret_cast<uintptr_t>(le->ent);
@@ -527,8 +527,8 @@ namespace LuaClasses
 			float number = luaL_checknumber(L, 4);
 			
 			std::string str = std::string(className) + "->" + std::string(varName);
-			auto it = netvars.find(fnv::Hash(str.c_str()));
-			if (it != netvars.end())
+			auto it = Netvars::m_netvarMap.find(fnv::Hash(str.c_str()));
+			if (it != Netvars::m_netvarMap.end())
 			{
 				auto& offset = it->second;
 				uintptr_t entityPtr = reinterpret_cast<uintptr_t>(le->ent);
@@ -556,8 +556,8 @@ namespace LuaClasses
 				return 0;
 			
 			std::string str = std::string(className) + "->" + std::string(varName);
-			auto it = netvars.find(fnv::Hash(str.c_str()));
-			if (it != netvars.end())
+			auto it = Netvars::m_netvarMap.find(fnv::Hash(str.c_str()));
+			if (it != Netvars::m_netvarMap.end())
 			{
 				auto& offset = it->second;
 				uintptr_t entityPtr = reinterpret_cast<uintptr_t>(le->ent);
@@ -588,8 +588,8 @@ namespace LuaClasses
 			const char* varName = luaL_checkstring(L, 3);
 
 			std::string str = std::string(className) + "->" + std::string(varName);
-			auto it = netvars.find(fnv::Hash(str.c_str()));
-			if (it != netvars.end())
+			auto it = Netvars::m_netvarMap.find(fnv::Hash(str.c_str()));
+			if (it != Netvars::m_netvarMap.end())
 			{
 				auto& offset = it->second;
 				uintptr_t entityPtr = reinterpret_cast<uintptr_t>(le->ent);

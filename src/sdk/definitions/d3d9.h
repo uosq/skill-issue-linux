@@ -179,8 +179,8 @@ DECLARE_INTERFACE_(IDirect3D9,IUnknown)
 {
     /*** IUnknown methods ***/
     STDMETHOD_(HRESULT,QueryInterface)(THIS_ REFIID riid, void** ppvObject) PURE;
-    STDMETHOD_(ULONG,AddRef)(THIS) PURE;
-    STDMETHOD_(ULONG,Release)(THIS) PURE;
+    STDMETHOD_(uint32_t,AddRef)(THIS) PURE;
+    STDMETHOD_(uint32_t,Release)(THIS) PURE;
     /*** IDirect3D9 methods ***/
     STDMETHOD(RegisterSoftwareDevice)(THIS_ void* pInitializeFunction) PURE;
     STDMETHOD_(UINT, GetAdapterCount)(THIS) PURE;
@@ -253,8 +253,8 @@ DECLARE_INTERFACE_(IDirect3DVolume9,IUnknown)
 {
     /*** IUnknown methods ***/
     STDMETHOD_(HRESULT,QueryInterface)(THIS_ REFIID riid, void** ppvObject) PURE;
-    STDMETHOD_(ULONG,AddRef)(THIS) PURE;
-    STDMETHOD_(ULONG,Release)(THIS) PURE;
+    STDMETHOD_(uint32_t,AddRef)(THIS) PURE;
+    STDMETHOD_(uint32_t,Release)(THIS) PURE;
     /*** IDirect3DVolume9 methods ***/
     STDMETHOD(GetDevice)(THIS_ struct IDirect3DDevice9** ppDevice) PURE;
     STDMETHOD(SetPrivateData)(THIS_ REFGUID guid, const void *data, DWORD data_size, DWORD flags) PURE;
@@ -309,8 +309,8 @@ DECLARE_INTERFACE_(IDirect3DSwapChain9,IUnknown)
 {
     /*** IUnknown methods ***/
     STDMETHOD_(HRESULT,QueryInterface)(THIS_ REFIID riid, void **ppvObject) PURE;
-    STDMETHOD_(ULONG,AddRef)(THIS) PURE;
-    STDMETHOD_(ULONG,Release)(THIS) PURE;
+    STDMETHOD_(uint32_t,AddRef)(THIS) PURE;
+    STDMETHOD_(uint32_t,Release)(THIS) PURE;
     /*** IDirect3DSwapChain9 methods ***/
     STDMETHOD(Present)(THIS_ const RECT *src_rect, const RECT *dst_rect, HWND dst_window_override,
             const RGNDATA *dirty_region, DWORD flags) PURE;
@@ -363,8 +363,8 @@ DECLARE_INTERFACE_(IDirect3DResource9,IUnknown)
 {
     /*** IUnknown methods ***/
     STDMETHOD_(HRESULT,QueryInterface)(THIS_ REFIID riid, void** ppvObject) PURE;
-    STDMETHOD_(ULONG,AddRef)(THIS) PURE;
-    STDMETHOD_(ULONG,Release)(THIS) PURE;
+    STDMETHOD_(uint32_t,AddRef)(THIS) PURE;
+    STDMETHOD_(uint32_t,Release)(THIS) PURE;
     /*** IDirect3DResource9 methods ***/
     STDMETHOD(GetDevice)(THIS_ struct IDirect3DDevice9** ppDevice) PURE;
     STDMETHOD(SetPrivateData)(THIS_ REFGUID guid, const void *data, DWORD data_size, DWORD flags) PURE;
@@ -419,8 +419,8 @@ DECLARE_INTERFACE_(IDirect3DSurface9,IDirect3DResource9)
 {
     /*** IUnknown methods ***/
     STDMETHOD_(HRESULT,QueryInterface)(THIS_ REFIID riid, void** ppvObject) PURE;
-    STDMETHOD_(ULONG,AddRef)(THIS) PURE;
-    STDMETHOD_(ULONG,Release)(THIS) PURE;
+    STDMETHOD_(uint32_t,AddRef)(THIS) PURE;
+    STDMETHOD_(uint32_t,Release)(THIS) PURE;
     /*** IDirect3DResource9 methods ***/
     STDMETHOD(GetDevice)(THIS_ struct IDirect3DDevice9** ppDevice) PURE;
     STDMETHOD(SetPrivateData)(THIS_ REFGUID guid, const void *data, DWORD data_size, DWORD flags) PURE;
@@ -496,8 +496,8 @@ DECLARE_INTERFACE_(IDirect3DVertexBuffer9,IDirect3DResource9)
 {
     /*** IUnknown methods ***/
     STDMETHOD_(HRESULT,QueryInterface)(THIS_ REFIID riid, void** ppvObject) PURE;
-    STDMETHOD_(ULONG,AddRef)(THIS) PURE;
-    STDMETHOD_(ULONG,Release)(THIS) PURE;
+    STDMETHOD_(uint32_t,AddRef)(THIS) PURE;
+    STDMETHOD_(uint32_t,Release)(THIS) PURE;
     /*** IDirect3DResource9 methods ***/
     STDMETHOD(GetDevice)(THIS_ struct IDirect3DDevice9** ppDevice) PURE;
     STDMETHOD(SetPrivateData)(THIS_ REFGUID guid, const void *data, DWORD data_size, DWORD flags) PURE;
@@ -564,8 +564,8 @@ DECLARE_INTERFACE_(IDirect3DIndexBuffer9,IDirect3DResource9)
 {
     /*** IUnknown methods ***/
     STDMETHOD_(HRESULT,QueryInterface)(THIS_ REFIID riid, void** ppvObject) PURE;
-    STDMETHOD_(ULONG,AddRef)(THIS) PURE;
-    STDMETHOD_(ULONG,Release)(THIS) PURE;
+    STDMETHOD_(uint32_t,AddRef)(THIS) PURE;
+    STDMETHOD_(uint32_t,Release)(THIS) PURE;
     /*** IDirect3DResource9 methods ***/
     STDMETHOD(GetDevice)(THIS_ struct IDirect3DDevice9** ppDevice) PURE;
     STDMETHOD(SetPrivateData)(THIS_ REFGUID guid, const void *data, DWORD data_size, DWORD flags) PURE;
@@ -632,8 +632,8 @@ DECLARE_INTERFACE_(IDirect3DBaseTexture9,IDirect3DResource9)
 {
     /*** IUnknown methods ***/
     STDMETHOD_(HRESULT,QueryInterface)(THIS_ REFIID riid, void** ppvObject) PURE;
-    STDMETHOD_(ULONG,AddRef)(THIS) PURE;
-    STDMETHOD_(ULONG,Release)(THIS) PURE;
+    STDMETHOD_(uint32_t,AddRef)(THIS) PURE;
+    STDMETHOD_(uint32_t,Release)(THIS) PURE;
     /*** IDirect3DResource9 methods ***/
     STDMETHOD(GetDevice)(THIS_ struct IDirect3DDevice9** ppDevice) PURE;
     STDMETHOD(SetPrivateData)(THIS_ REFGUID guid, const void *data, DWORD data_size, DWORD flags) PURE;
@@ -709,8 +709,8 @@ DECLARE_INTERFACE_(IDirect3DCubeTexture9,IDirect3DBaseTexture9)
 {
     /*** IUnknown methods ***/
     STDMETHOD_(HRESULT,QueryInterface)(THIS_ REFIID riid, void** ppvObject) PURE;
-    STDMETHOD_(ULONG,AddRef)(THIS) PURE;
-    STDMETHOD_(ULONG,Release)(THIS) PURE;
+    STDMETHOD_(uint32_t,AddRef)(THIS) PURE;
+    STDMETHOD_(uint32_t,Release)(THIS) PURE;
     /*** IDirect3DResource9 methods ***/
     STDMETHOD(GetDevice)(THIS_ struct IDirect3DDevice9** ppDevice) PURE;
     STDMETHOD(SetPrivateData)(THIS_ REFGUID guid, const void *data, DWORD data_size, DWORD flags) PURE;
@@ -805,8 +805,8 @@ DECLARE_INTERFACE_(IDirect3DTexture9,IDirect3DBaseTexture9)
 {
     /*** IUnknown methods ***/
     STDMETHOD_(HRESULT,QueryInterface)(THIS_ REFIID riid, void** ppvObject) PURE;
-    STDMETHOD_(ULONG,AddRef)(THIS) PURE;
-    STDMETHOD_(ULONG,Release)(THIS) PURE;
+    STDMETHOD_(uint32_t,AddRef)(THIS) PURE;
+    STDMETHOD_(uint32_t,Release)(THIS) PURE;
     /*** IDirect3DResource9 methods ***/
     STDMETHOD(GetDevice)(THIS_ struct IDirect3DDevice9** ppDevice) PURE;
     STDMETHOD(SetPrivateData)(THIS_ REFGUID guid, const void *data, DWORD data_size, DWORD flags) PURE;
@@ -900,8 +900,8 @@ DECLARE_INTERFACE_(IDirect3DVolumeTexture9,IDirect3DBaseTexture9)
 {
     /*** IUnknown methods ***/
     STDMETHOD_(HRESULT,QueryInterface)(THIS_ REFIID riid, void** ppvObject) PURE;
-    STDMETHOD_(ULONG,AddRef)(THIS) PURE;
-    STDMETHOD_(ULONG,Release)(THIS) PURE;
+    STDMETHOD_(uint32_t,AddRef)(THIS) PURE;
+    STDMETHOD_(uint32_t,Release)(THIS) PURE;
     /*** IDirect3DResource9 methods ***/
     STDMETHOD(GetDevice)(THIS_ struct IDirect3DDevice9** ppDevice) PURE;
     STDMETHOD(SetPrivateData)(THIS_ REFGUID guid, const void *data, DWORD data_size, DWORD flags) PURE;
@@ -995,8 +995,8 @@ DECLARE_INTERFACE_(IDirect3DVertexDeclaration9,IUnknown)
 {
     /*** IUnknown methods ***/
     STDMETHOD_(HRESULT,QueryInterface)(THIS_ REFIID riid, void** ppvObject) PURE;
-    STDMETHOD_(ULONG,AddRef)(THIS) PURE;
-    STDMETHOD_(ULONG,Release)(THIS) PURE;
+    STDMETHOD_(uint32_t,AddRef)(THIS) PURE;
+    STDMETHOD_(uint32_t,Release)(THIS) PURE;
     /*** IDirect3DVertexDeclaration9 methods ***/
     STDMETHOD(GetDevice)(THIS_ struct IDirect3DDevice9** ppDevice) PURE;
     STDMETHOD(GetDeclaration)(THIS_ D3DVERTEXELEMENT9*, UINT* pNumElements) PURE;
@@ -1033,8 +1033,8 @@ DECLARE_INTERFACE_(IDirect3DVertexShader9,IUnknown)
 {
     /*** IUnknown methods ***/
     STDMETHOD_(HRESULT,QueryInterface)(THIS_ REFIID riid, void** ppvObject) PURE;
-    STDMETHOD_(ULONG,AddRef)(THIS) PURE;
-    STDMETHOD_(ULONG,Release)(THIS) PURE;
+    STDMETHOD_(uint32_t,AddRef)(THIS) PURE;
+    STDMETHOD_(uint32_t,Release)(THIS) PURE;
     /*** IDirect3DVertexShader9 methods ***/
     STDMETHOD(GetDevice)(THIS_ struct IDirect3DDevice9** ppDevice) PURE;
     STDMETHOD(GetFunction)(THIS_ void*, UINT* pSizeOfData) PURE;
@@ -1071,8 +1071,8 @@ DECLARE_INTERFACE_(IDirect3DPixelShader9,IUnknown)
 {
     /*** IUnknown methods ***/
     STDMETHOD_(HRESULT,QueryInterface)(THIS_ REFIID riid, void** ppvObject) PURE;
-    STDMETHOD_(ULONG,AddRef)(THIS) PURE;
-    STDMETHOD_(ULONG,Release)(THIS) PURE;
+    STDMETHOD_(uint32_t,AddRef)(THIS) PURE;
+    STDMETHOD_(uint32_t,Release)(THIS) PURE;
     /*** IDirect3DPixelShader9 methods ***/
     STDMETHOD(GetDevice)(THIS_ struct IDirect3DDevice9** ppDevice) PURE;
     STDMETHOD(GetFunction)(THIS_ void*, UINT* pSizeOfData) PURE;
@@ -1109,8 +1109,8 @@ DECLARE_INTERFACE_(IDirect3DStateBlock9,IUnknown)
 {
     /*** IUnknown methods ***/
     STDMETHOD_(HRESULT,QueryInterface)(THIS_ REFIID riid, void** ppvObject) PURE;
-    STDMETHOD_(ULONG,AddRef)(THIS) PURE;
-    STDMETHOD_(ULONG,Release)(THIS) PURE;
+    STDMETHOD_(uint32_t,AddRef)(THIS) PURE;
+    STDMETHOD_(uint32_t,Release)(THIS) PURE;
     /*** IDirect3DStateBlock9 methods ***/
     STDMETHOD(GetDevice)(THIS_ struct IDirect3DDevice9** ppDevice) PURE;
     STDMETHOD(Capture)(THIS) PURE;
@@ -1150,8 +1150,8 @@ DECLARE_INTERFACE_(IDirect3DQuery9,IUnknown)
 {
     /*** IUnknown methods ***/
     STDMETHOD_(HRESULT,QueryInterface)(THIS_ REFIID riid, void** ppvObject) PURE;
-    STDMETHOD_(ULONG,AddRef)(THIS) PURE;
-    STDMETHOD_(ULONG,Release)(THIS) PURE;
+    STDMETHOD_(uint32_t,AddRef)(THIS) PURE;
+    STDMETHOD_(uint32_t,Release)(THIS) PURE;
     /*** IDirect3DQuery9 methods ***/
     STDMETHOD(GetDevice)(THIS_ struct IDirect3DDevice9** ppDevice) PURE;
     STDMETHOD_(D3DQUERYTYPE, GetType)(THIS) PURE;
@@ -1197,8 +1197,8 @@ DECLARE_INTERFACE_(IDirect3DDevice9,IUnknown)
 {
     /*** IUnknown methods ***/
     STDMETHOD_(HRESULT,QueryInterface)(THIS_ REFIID riid, void** ppvObject) PURE;
-    STDMETHOD_(ULONG,AddRef)(THIS) PURE;
-    STDMETHOD_(ULONG,Release)(THIS) PURE;
+    STDMETHOD_(uint32_t,AddRef)(THIS) PURE;
+    STDMETHOD_(uint32_t,Release)(THIS) PURE;
     /*** IDirect3DDevice9 methods ***/
     STDMETHOD(TestCooperativeLevel)(THIS) PURE;
     STDMETHOD_(UINT, GetAvailableTextureMem)(THIS) PURE;
@@ -1593,8 +1593,8 @@ DECLARE_INTERFACE_(IDirect3D9Ex, IDirect3D9)
 {
     /* IUnknown */
     STDMETHOD_(HRESULT, QueryInterface)(THIS_ REFIID iid, void **out) PURE;
-    STDMETHOD_(ULONG, AddRef)(THIS) PURE;
-    STDMETHOD_(ULONG, Release)(THIS) PURE;
+    STDMETHOD_(uint32_t, AddRef)(THIS) PURE;
+    STDMETHOD_(uint32_t, Release)(THIS) PURE;
     /* IDirect3D9 */
     STDMETHOD(RegisterSoftwareDevice)(THIS_ void *init) PURE;
     STDMETHOD_(UINT, GetAdapterCount)(THIS) PURE;
@@ -1692,8 +1692,8 @@ DECLARE_INTERFACE_(IDirect3DSwapChain9Ex, IDirect3DSwapChain9)
 {
     /* IUnknown */
     STDMETHOD_(HRESULT, QueryInterface)(THIS_ REFIID iid, void **out) PURE;
-    STDMETHOD_(ULONG, AddRef)(THIS) PURE;
-    STDMETHOD_(ULONG, Release)(THIS) PURE;
+    STDMETHOD_(uint32_t, AddRef)(THIS) PURE;
+    STDMETHOD_(uint32_t, Release)(THIS) PURE;
     /* IDirect3DSwapChain9 */
     STDMETHOD(Present)(THIS_ const RECT *src_rect, const RECT *dst_rect, HWND dst_window_override,
             const RGNDATA *dirty_region, DWORD flags) PURE;
@@ -1757,8 +1757,8 @@ DECLARE_INTERFACE_(IDirect3DDevice9Ex, IDirect3DDevice9)
 {
     /* IUnknown */
     STDMETHOD_(HRESULT, QueryInterface)(THIS_ REFIID iid, void **out) PURE;
-    STDMETHOD_(ULONG, AddRef)(THIS) PURE;
-    STDMETHOD_(ULONG, Release)(THIS) PURE;
+    STDMETHOD_(uint32_t, AddRef)(THIS) PURE;
+    STDMETHOD_(uint32_t, Release)(THIS) PURE;
     /* IDirect3DDevice9 */
     STDMETHOD(TestCooperativeLevel)(THIS) PURE;
     STDMETHOD_(UINT, GetAvailableTextureMem)(THIS) PURE;

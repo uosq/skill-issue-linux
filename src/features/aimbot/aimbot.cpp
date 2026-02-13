@@ -1,6 +1,7 @@
 #include "aimbot.h"
 #include "utils/utils.h"
 //#include "../visuals/customfov/customfov.h"
+#include "../network/network.h"
 
 namespace Aimbot
 {
@@ -21,7 +22,7 @@ namespace Aimbot
 		return m_state.shouldSilent;
 	}
 
-	void Run(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd, bool* bSendPacket)
+	void Run(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd)
 	{
 		ClearAimbotState(m_state);
 
@@ -48,7 +49,7 @@ namespace Aimbot
 				AimbotProjectile::Run(pLocal, pWeapon, pCmd, m_state);
 
 				if (m_state.shouldSilent)
-					*bSendPacket = false;
+					g_bSendPacket = false;
 			} break;
 
 			case EWeaponType::MELEE:
@@ -56,7 +57,7 @@ namespace Aimbot
 				AimbotMelee::Run(pLocal, pWeapon, pCmd, m_state);
 
 				if (m_state.shouldSilent)
-					*bSendPacket = false;
+					g_bSendPacket = false;
 			} break;
 			default: break;
 		}

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "bitbuf.h"
 #include <cstdint>
 typedef unsigned int CRC32_t;
 
@@ -21,7 +22,6 @@ inline CRC32_t CRC32_ProcessSingleBuffer( const void *p, int len )
 
 #define CRC32_INIT_VALUE 0xFFFFFFFFUL
 #define CRC32_XOR_VALUE  0xFFFFFFFFUL
-#define LittleLong( val )( val )
 
 #define NUM_BYTES 256
 static const CRC32_t pulCRCTable[NUM_BYTES] =

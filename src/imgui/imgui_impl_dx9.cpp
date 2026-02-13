@@ -87,6 +87,9 @@ static ImGui_ImplDX9_Data* ImGui_ImplDX9_GetBackendData()
     return ImGui::GetCurrentContext() ? (ImGui_ImplDX9_Data*)ImGui::GetIO().BackendRendererUserData : nullptr;
 }
 
+#define TRUE 1
+#define FALSE 0
+
 // Functions
 static void ImGui_ImplDX9_SetupRenderState(ImDrawData* draw_data)
 {

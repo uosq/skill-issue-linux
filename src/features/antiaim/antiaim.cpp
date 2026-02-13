@@ -1,4 +1,5 @@
 #include "antiaim.h"
+#include "../network/network.h"
 
 namespace Antiaim
 {
@@ -68,7 +69,7 @@ namespace Antiaim
 		return 0;
 	}
 
-	void Run(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd, bool* bSendPacket)
+	void Run(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd)
 	{
 		if (!Settings::antiaim.enabled)
 			return;
@@ -82,10 +83,10 @@ namespace Antiaim
 		constexpr int maxChoke = 2; // fake on 2 ticks, real on 1
 		int choke = static_cast<CClientState*>(interfaces::ClientState)->chokedcommands;
 
-		if (choke < maxChoke) *bSendPacket = false; // real
-		else *bSendPacket = true; // fake
+		if (choke < maxChoke) g_bSendPacket = false; // real
+		else g_bSendPacket = true; // fake
 
-		bool isFake = *bSendPacket;
+		bool isFake = g_bSendPacket;
 		
 		if (Settings::antiaim.pitch_mode != PitchMode::NONE)
 		{

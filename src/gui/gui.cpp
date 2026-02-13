@@ -434,7 +434,7 @@ void DrawParsedNetvarData(const std::vector<NetvarClassEntry>& classes)
 void DrawNetVarsTab()
 {
 	if (ImGui::BeginChild("NetvarContent"))
-		DrawParsedNetvarData(netvarUI);
+		DrawParsedNetvarData(Netvars::m_netvarUIVector);
 	ImGui::EndChild();
 }
 

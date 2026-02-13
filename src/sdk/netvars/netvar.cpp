@@ -5,19 +5,19 @@ Used this tutorial for the netvar manager
 https://www.youtube.com/watch?v=VCsNZ0GRVzo
 */
 
-std::vector<NetvarClassEntry> netvarUI;
-std::unordered_map<uint32_t, uint32_t> netvars;
+std::vector<NetvarClassEntry> Netvars::m_netvarUIVector;
+std::unordered_map<uint32_t, uint32_t> Netvars::m_netvarMap;
 
-void Dump(const char* baseClass, RecvTable* table, uint32_t offset)
+void Netvars::Dump(const char* baseClass, RecvTable* table, uint32_t offset)
 {
 	// find or create class entry
-	auto it = std::find_if(netvarUI.begin(), netvarUI.end(),
+	auto it = std::find_if(m_netvarUIVector.begin(), m_netvarUIVector.end(),
 		[&](const NetvarClassEntry& e) { return e.className == baseClass; });
 
-	if (it == netvarUI.end())
+	if (it == m_netvarUIVector.end())
 	{
-		netvarUI.push_back({ baseClass, {} });
-		it = std::prev(netvarUI.end());
+		m_netvarUIVector.push_back({ baseClass, {} });
+		it = std::prev(m_netvarUIVector.end());
 	}
 
 	for (int i = 0; i < table->propsCount; ++i)
@@ -36,14 +36,14 @@ void Dump(const char* baseClass, RecvTable* table, uint32_t offset)
 		uint32_t finalOffset = offset + prop->offset;
 
 		// for the netvar macro
-		netvars[fnv::Hash(netvarName.c_str())] = finalOffset;
+		m_netvarMap[fnv::Hash(netvarName.c_str())] = finalOffset;
 
 		// for imgui
 		it->members.push_back(prop->varName + std::string(" = 0x") + std::to_string(finalOffset));
 	}
 }
 
-void DumpToFile(const char* baseClass, RecvTable* table, std::ofstream& file, uint32_t offset)
+void Netvars::DumpToFile(const char* baseClass, RecvTable* table, std::ofstream& file, uint32_t offset)
 {
 	for (int i = 0; i < table->propsCount; ++i)
 	{
@@ -65,7 +65,7 @@ void DumpToFile(const char* baseClass, RecvTable* table, std::ofstream& file, ui
 		uint32_t finalOffset = offset + prop->offset;
 
 		// Store for NETVAR macro
-		netvars[fnv::Hash(netvarName.c_str())] = finalOffset;
+		m_netvarMap[fnv::Hash(netvarName.c_str())] = finalOffset;
 
 		// Dump to file
 		file << netvarName
@@ -75,15 +75,15 @@ void DumpToFile(const char* baseClass, RecvTable* table, std::ofstream& file, ui
 	}
 }
 
-// Use this to dump the netvars to netvars.txt in TF2's root folder!
-void SetupNetVarsToFile()
+// Use this to dump the the netvars to TF2's root folder!
+void Netvars::SetupToFile(const char* fileName)
 {
 	interfaces::Cvar->ConsoleColorPrintf(
 		Color_t{0, 255, 255, 255},
 		"Dumping netvars...\n"
 	);
 
-	std::ofstream file("netvars.txt");
+	std::ofstream file(fileName);
 	if (!file.is_open())
 	{
 		interfaces::Cvar->ConsoleColorPrintf(
@@ -108,11 +108,11 @@ void SetupNetVarsToFile()
 
 	interfaces::Cvar->ConsoleColorPrintf(
 		Color_t{150, 255, 150, 255},
-		"Netvars dumped to netvars.txt\n"
+		"Netvars dumped to file!\n"
 	);
 }
 
-void SetupNetVars()
+void Netvars::Setup()
 {
 	//interfaces::cvar->ConsoleColorPrintf(Color_t{0, 255, 255, 255}, "Dumping netvars...\n");
 
@@ -122,4 +122,9 @@ void SetupNetVars()
 			Dump(clientClass->networkName, clientClass->recvTable);
 
 	//interfaces::cvar->ConsoleColorPrintf(Color_t{150, 255, 150, 255}, "Netvars dumped!\n");
+}
+
+uint32_t Netvars::GetNetvarOffset(std::string name)
+{
+	return m_netvarMap[fnv::Hash(name.c_str())];
 }

@@ -50,20 +50,6 @@ public:
 	virtual ~INetworkMessageHandler() {}
 };
 
-class INetChannelHandler
-{
-public:
-	virtual	~INetChannelHandler(void) {};
-	virtual void ConnectionStart(INetChannel* chan) = 0;
-	virtual void ConnectionClosing(const char* reason) = 0;
-	virtual void ConnectionCrashed(const char* reason) = 0;
-	virtual void PacketStart(int incoming_sequence, int outgoing_acknowledged) = 0;
-	virtual void PacketEnd(void) = 0;
-	virtual void FileRequested(const char* fileName, unsigned int transferID) = 0;
-	virtual void FileReceived(const char* fileName, unsigned int transferID) = 0;
-	virtual void FileDenied(const char* fileName, unsigned int transferID) = 0;
-};
-
 class CNetPacket;
 //{
 //	DECLARE_FIXEDSIZE_ALLOCATOR(CNetPacket);
@@ -79,13 +65,6 @@ class CNetPacket;
 //private:
 //	int m_nRefCount;
 //};
-
-class IConnectionlessPacketHandler
-{
-public:
-	virtual bool ProcessConnectionlessPacket(CNetPacket* packet) = 0;
-	virtual	~IConnectionlessPacketHandler(void) {};
-};
 
 class ILookupChannel
 {

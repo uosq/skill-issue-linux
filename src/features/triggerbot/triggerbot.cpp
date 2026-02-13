@@ -1,6 +1,8 @@
 #include "triggerbot.h"
 #include "autoairblast/autoairblast.h"
 
+#include "../network/network.h"
+
 namespace Triggerbot
 {
 	void Hitscan(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd)
@@ -39,7 +41,7 @@ namespace Triggerbot
 		pCmd->buttons |= IN_ATTACK;
 	}
 
-	void Run(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd, bool* pSendPacket)
+	void Run(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd)
 	{
 		if (pLocal == nullptr || pWeapon == nullptr || pCmd == nullptr)
 			return;
@@ -55,9 +57,9 @@ namespace Triggerbot
 			Hitscan(pLocal, pWeapon, pCmd);
 
                 if (Settings::triggerbot.autobackstab != AutoBackstabMode::NONE && pWeapon->IsMelee())
-			AutoBackstab::Run(pLocal, pWeapon, pCmd, pSendPacket);
+			AutoBackstab::Run(pLocal, pWeapon, pCmd, &g_bSendPacket);
 
 		if (Settings::triggerbot.autoairblast != AutoAirblastMode::NONE && pWeapon->GetWeaponID() == TF_WEAPON_FLAMETHROWER)
-			AutoAirblast::Run(pLocal, pWeapon, pCmd, pSendPacket);
+			AutoAirblast::Run(pLocal, pWeapon, pCmd, &g_bSendPacket);
 	}
 }

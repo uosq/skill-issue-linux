@@ -10,6 +10,7 @@
 #include "inputenums.h"
 #include "clientframestage_t.h"
 #include "inetchannelinfo.h"
+#include "basetypes.h"
 
 class KeyValues;
 class IMaterial;
@@ -25,7 +26,6 @@ class IMaterialSystem;
 class AudioState_t;
 class vmode_s;
 class CPhysCollide;
-class color32;
 class OcclusionParams_t;
 class SurfInfo;
 class SkyboxVisibility_t;
@@ -39,7 +39,6 @@ class bf_read;
 class bf_write;
 class CEngineSprite;
 class CSaveRestoreData;
-class qboolean;
 class datamap_t;
 class typedescription_t;
 class CStandardRecvProxies;

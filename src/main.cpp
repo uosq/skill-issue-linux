@@ -5,8 +5,10 @@
 #include "features/visuals/viewmodel_aim/viewmodel_aim.h"
 #include "features/visuals/viewmodel_interp/viewmodel_interp.h"
 #include "hooks/cgameclient_executestringcommand.h"
+#include "hooks/cinput_getusercmd.h"
+#include "hooks/cinput_validadeusercmd.h"
 #include "hooks/cinventorymanager_showitemspickedup.h"
-#include "hooks/clientmodeshared_createmove.h"
+#include "hooks/cl_move.h"
 #include "hooks/clientmodeshared_firegameevent.h"
 #include "hooks/cmaterial_uncache.h"
 #include "hooks/ctfplayer_getmaxitemcount.h"
@@ -57,10 +59,11 @@ void init(void)
 	//HookVulkan();
 	HookDXVK();
 
-	SetupNetVars();
+	Netvars::Setup();
 	//SetupNetVarsToFile();
 
-	HookCreateMove();
+	Lua::InitPluto();
+
 	HookEngineVGuiPaint();
 	HookFrameStageNotify();
 	HookOverrideView();
@@ -81,8 +84,10 @@ void init(void)
 	HookHost_Shutdown();
 	HookCMaterial_Uncache();
 	Hook_ExecuteStringCommand();
-
-	Lua::InitPluto();
+	Hook_GetUserCmd();
+	Hook_ValidateUserCmd();
+	HookCL_Move();
+	//Hook_CreateMove();
 }
 
 __attribute__((destructor))

@@ -18,7 +18,7 @@ namespace Aimbot
 	Vector GetAngle();
 	bool IsRunning();
 	bool ShouldSilent();
-	void Run(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd, bool* bSendPacket);
+	void Run(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd);
 	void DrawFOVIndicator();
 	void CleanTargetPath();
 	void DrawTargetPath();

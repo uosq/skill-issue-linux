@@ -181,7 +181,7 @@ bool InitializeInterfaces()
 	if (!GetInterface(interfaces::ModelInfoClient, factories::engine, "VModelInfoClient006"))
 		return false;
 
-	{ // ClientModeShared
+	{ // ClientModeShared?
 		uintptr_t leaInstr = (uintptr_t)sigscan_module("client.so", "48 8D 05 ? ? ? ? 40 0F B6 F6 48 8B 38");
 		uintptr_t g_pClientMode_addr = vtable::ResolveRIP(leaInstr, 3, 7); // lea rax, [g_pClientMode]
 		interfaces::ClientMode = *reinterpret_cast<IClientMode**>(g_pClientMode_addr);;
@@ -214,6 +214,7 @@ bool InitializeInterfaces()
 	}
 
 	{ // CInput
+		// i dont remember how I got ts
 		uintptr_t leaInstr = (uintptr_t)(sigscan_module("client.so", "48 8D 05 ? ? ? ? 48 8B 38 48 8B 07 FF 90 ? ? ? ? 48 8D 15 ? ? ? ? 84 C0"));
 		uintptr_t g_Input_addr = vtable::ResolveRIP(leaInstr, 3, 7);
 		interfaces::CInput = *reinterpret_cast<CInput**>(g_Input_addr);
@@ -222,6 +223,7 @@ bool InitializeInterfaces()
 	}
 
 	{ // ClientState
+		// yes this is wrong
 		// xref: Setting rcon_address %s:%d\n
 		// then scroll down a bit until you find
 		// 4C 8B 40 20     MOV        R8,qword ptr [RAX + 0x20]=>clientstate_cl

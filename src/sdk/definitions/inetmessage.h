@@ -3,8 +3,15 @@
 #include "utlvector.h"
 #include "types.h"
 #include <cstring>
+#include "inetmessagehandler.h"
 
 #define	MAX_OSPATH 260 // max length of a filesystem pathname
+
+#define NETMSG_TYPE_BITS 6
+#define NUM_NEW_COMMAND_BITS 4
+#define NUM_BACKUP_COMMAND_BITS 3
+
+#define NET_TICK_SCALEUP	100000.0f
 
 // shared commands used by all streams, handled by stream layer
 #define	net_NOP 				0	// nop command used for padding
@@ -78,6 +85,24 @@
 
 class INetChannel;
 
+#define DECLARE_BASE_MESSAGE( msgtype )						\
+	public:													\
+		bool			ReadFromBuffer( bf_read &buffer );	\
+		bool			WriteToBuffer( bf_write &buffer );	\
+		const char		*ToString() const;					\
+		int				GetType() const { return msgtype; } \
+		const char		*GetName() const { return #msgtype;}
+			
+#define DECLARE_NET_MESSAGE( name )			\
+	DECLARE_BASE_MESSAGE( net_##name );		\
+	INetMessageHandler *m_pMessageHandler;	\
+	bool Process() { return m_pMessageHandler->Process##name( this ); }\
+
+#define DECLARE_CLC_MESSAGE( name )		\
+	DECLARE_BASE_MESSAGE( clc_##name );	\
+	IClientMessageHandler *m_pMessageHandler;\
+	bool Process() { return m_pMessageHandler->Process##name( this ); }\
+
 enum
 {
 	GENERIC = 0,	// must be first and is default group
@@ -99,65 +124,65 @@ enum
 class INetMessage
 {
 public:
-	virtual ~INetMessage() {};
-	virtual void SetNetChannel(INetChannel* netchan) = 0; // netchannel this message is from/for
-	virtual void SetReliable(bool state) = 0;             // set to true if it's a reliable message
-	virtual bool Process(void) = 0; // calles the recently set handler to process this message
-	virtual bool ReadFromBuffer(bf_read& buffer) = 0; // returns true if parsing was OK
-	virtual bool WriteToBuffer(bf_write& buffer) = 0; // returns true if writing was OK
-	virtual bool IsReliable(void) const = 0; // true, if message needs reliable handling
-	virtual int GetType(void) const = 0;         // returns module specific header tag eg svc_serverinfo
-	virtual int GetGroup(void) const = 0;        // returns net message group of this message
-	virtual const char* GetName(void) const = 0; // returns network message name, eg "svc_serverinfo"
-	virtual INetChannel* GetNetChannel(void) const = 0;
-	virtual const char* ToString(void) const = 0; // returns a human readable string about message content
+	virtual	~INetMessage() {};
+
+	// Use these to setup who can hear whose voice.
+	// Pass in client indices (which are their ent indices - 1).
+	
+	virtual void	SetNetChannel(INetChannel * netchan) = 0; // netchannel this message is from/for
+	virtual void	SetReliable( bool state ) = 0;	// set to true if it's a reliable message
+	
+	virtual bool	Process( void ) = 0; // calles the recently set handler to process this message
+	
+	virtual	bool	ReadFromBuffer( bf_read &buffer ) = 0; // returns true if parsing was OK
+	virtual	bool	WriteToBuffer( bf_write &buffer ) = 0;	// returns true if writing was OK
+		
+	virtual bool	IsReliable( void ) const = 0;  // true, if message needs reliable handling
+	
+	virtual int				GetType( void ) const = 0; // returns module specific header tag eg svc_serverinfo
+	virtual int				GetGroup( void ) const = 0;	// returns net message group of this message
+	virtual const char		*GetName( void ) const = 0;	// returns network message name, eg "svc_serverinfo"
+	virtual INetChannel		*GetNetChannel( void ) const = 0;
+	virtual const char		*ToString( void ) const = 0; // returns a human readable string about message content
 };
 
 class CNetMessage : public INetMessage
 {
 public:
-	CNetMessage()
-	{
-		m_bReliable = true;
-		m_NetChannel = nullptr;
-	}
+	CNetMessage() {	m_bReliable = true;
+					m_NetChannel = NULL; }
 
 	virtual ~CNetMessage() {};
 
-	virtual int GetGroup() const { return GENERIC; }
-	INetChannel* GetNetChannel() const { return m_NetChannel; }
-
-	virtual void SetReliable(bool state) { m_bReliable = state; };
-	virtual bool IsReliable() const { return m_bReliable; };
-	virtual void SetNetChannel(INetChannel* netchan) { m_NetChannel = netchan; }
-	virtual bool Process() { return false; }; // no handler set
+	virtual int		GetGroup() const { return GENERIC; }
+	INetChannel		*GetNetChannel() const { return m_NetChannel; }
+		
+	virtual void	SetReliable( bool state) {m_bReliable = state;};
+	virtual bool	IsReliable() const { return m_bReliable; };
+	virtual void    SetNetChannel(INetChannel * netchan) { m_NetChannel = netchan; }	
+	virtual bool	Process() { return false; };	// no handler set
 
 protected:
-	bool m_bReliable;          // true if message should be send reliable
-	INetChannel* m_NetChannel; // netchannel this message is from/for
-	byte pad0[8];
+	bool				m_bReliable;	// true if message should be send reliable
+	INetChannel			*m_NetChannel;	// netchannel this message is from/for
 };
 
 class CLC_Move : public CNetMessage
 {
-public:
-	bool ReadFromBuffer(bf_read& buffer);
-	bool WriteToBuffer(bf_write& buffer);
-	const char* ToString() const;
-	int GetType() const { return clc_Move; }
-	const char* GetName() const { return "clc_Move"; }
-	void* m_pMessageHandler;
-	int GetGroup() const { return MOVE; }
+	DECLARE_CLC_MESSAGE( Move );
+
+	int	GetGroup() const { return MOVE; }
 
 	CLC_Move() { m_bReliable = false; }
 
 public:
-	int m_nBackupCommands;
-	int m_nNewCommands;
-	int m_nLength;
-	bf_read m_DataIn;
-	bf_write m_DataOut;
+	int				m_nBackupCommands;
+	int				m_nNewCommands;
+	int				m_nLength;
+	bf_read			m_DataIn;
+	bf_write		m_DataOut;
 };
+
 
 class NET_SetConVar : public CNetMessage
 {
@@ -211,32 +236,27 @@ public:
 
 class NET_Tick : public CNetMessage
 {
-public:
-	bool ReadFromBuffer(bf_read& buffer);
-	bool WriteToBuffer(bf_write& buffer);
-	const char* ToString() const;
-	int GetType() const { return net_Tick; }
-	const char* GetName() const { return "net_Tick"; }
-	void* m_pMessageHandler;
+	DECLARE_NET_MESSAGE( Tick );
 
-	NET_Tick()
-	{
-		m_bReliable = false;
-		m_flHostFrameTime = 0;
-		m_flHostFrameTimeStdDeviation = 0;
-	};
-	NET_Tick(int tick, float hostFrametime, float hostFrametime_stddeviation)
-	{
-		m_bReliable = false;
-		m_nTick = tick;
-		m_flHostFrameTime = hostFrametime;
-		m_flHostFrameTimeStdDeviation = hostFrametime_stddeviation;
+	NET_Tick() 
+	{ 
+		m_bReliable = false; 
+		m_flHostFrameTime				= 0;
+		m_flHostFrameTimeStdDeviation	= 0;
 	};
 
+	NET_Tick( int tick, float hostFrametime, float hostFrametime_stddeviation ) 
+	{ 
+		m_bReliable = false; 
+		m_nTick = tick; 
+		m_flHostFrameTime			= hostFrametime;
+		m_flHostFrameTimeStdDeviation	= hostFrametime_stddeviation;
+	};
+	
 public:
-	int m_nTick;
-	float m_flHostFrameTime;
-	float m_flHostFrameTimeStdDeviation;
+	int			m_nTick; 
+	float		m_flHostFrameTime;
+	float		m_flHostFrameTimeStdDeviation;
 };
 
 class CLC_VoiceData : public CNetMessage
