@@ -1,15 +1,21 @@
 #pragma once
 
 #include <dlfcn.h>
+
 #include "../imgui/imgui.h"
 #include "../imgui/imgui_impl_dx9.h"
 #include "../imgui/imgui_impl_sdl2.h"
-#include "../sdk/interfaces/interfaces.h"
+
+#include "../libdetour/libdetour.h"
+
 #include "../gui/gui.h"
 #include "sdl.h"
-#include "../libdetour/libdetour.h"
+
+#include "../sdk/interfaces/interfaces.h"
 #include "../sdk/definitions/d3d9.h"
+
 #include "../features/radar/radar.h"
+#include "../features/warp/warp.h"
 
 typedef struct IDirect3DDevice9 *LPDIRECT3DDEVICE9;
 
@@ -122,6 +128,9 @@ inline void RenderImGui()
 
 	if (LuaHookManager::HasHooks("ImGui"))
 		LuaHookManager::Call(Lua::m_luaState, "ImGui", 0);
+
+	if (Settings::antiaim.warp_enabled)
+		Warp::RunWindow();
 
 	if (Settings::radar.enabled)
 		Radar::Run();

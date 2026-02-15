@@ -7,6 +7,7 @@
 #include "../settings.h"
 #include "../libdetour/libdetour.h"
 #include "../sdk/definitions/inetchannel.h"
+#include "../features/warp/warp.h"
 
 #include "../features/lua/hookmgr.h"
 #include "../features/lua/api.h"
@@ -17,21 +18,6 @@ DETOUR_DECL_TYPE(bool, originalSendNetMsg, void* ptr, INetMessage& msg, bool bFo
 
 inline bool Hooked_SendNetMsg(void* ptr, INetMessage& msg, bool bForceReliable, bool bVoice)
 {
-	/*if (msg.GetType() == net_Tick)
-	{
-		unsigned char bf[4096];
-		bf_write write(bf, sizeof(bf));
-		msg.WriteToBuffer(write);
-
-		bf_read reader(bf, sizeof(bf));
-		reader.Seek(NETMSG_TYPE_BITS);
-		int m_nTick = reader.ReadLong();
-		float m_flHostFrameTime = (float)reader.ReadUBitLong(16) / NET_TICK_SCALEUP;
-		float m_flHostFrameTimeStdDeviation = (float)reader.ReadUBitLong(16) / NET_TICK_SCALEUP;
-		//interfaces::Cvar->ConsolePrintf("SendNetNest ToString - %s\n", msg.ToString());
-		interfaces::Cvar->ConsolePrintf("SendNetMsg - tick: %i, frametime: %f, deviation: %f\n", m_nTick, m_flHostFrameTime, m_flHostFrameTimeStdDeviation);
-	}*/
-
 	if (LuaHookManager::HasHooks("SendNetMsg"))
 	{
 		LuaClasses::NetMessageLua::push_netmessage(Lua::m_luaState, &msg);

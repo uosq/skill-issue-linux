@@ -254,4 +254,15 @@ namespace LuaFuncs
 		int GetCurrentFontID(lua_State* L);
 		int GetAllFonts(lua_State* L);
 	}
+
+	namespace warp
+	{
+		extern const luaL_Reg warplib[];
+		void open(lua_State* L);
+
+		int IsShifting(lua_State* L);
+		int IsRecharging(lua_State* L);
+		int GetTicks(lua_State* L);
+		int GetMaxTicks(lua_State* L);
+	}
 }

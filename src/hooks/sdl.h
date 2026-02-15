@@ -4,9 +4,12 @@
 #include "SDL2/SDL_main.h"
 #include <SDL2/SDL_events.h>
 #include <SDL2/SDL_video.h>
+
 #include <dlfcn.h>
+
 #include "../sdk/interfaces/interfaces.h"
 #include "../libdetour/libdetour.h"
+
 #include "../imgui/imgui.h"
 #include "../imgui/imgui_impl_sdl2.h"
 #include "../imgui/imgui_impl_opengl3.h"
@@ -17,6 +20,7 @@
 #include "../features/lua/hookmgr.h"
 
 #include "../features/radar/radar.h"
+#include "../features/warp/warp.h"
 
 DETOUR_DECL_TYPE(void, original_SwapWindow, SDL_Window* window);
 DETOUR_DECL_TYPE(int, original_PollEvent, SDL_Event* event);
@@ -158,6 +162,9 @@ inline void Hooked_SwapWindow(SDL_Window* window)
 
 	if (LuaHookManager::HasHooks("ImGui"))
 		LuaHookManager::Call(Lua::m_luaState, "ImGui");
+
+	if (Settings::antiaim.warp_enabled)
+		Warp::RunWindow();
 
 	if (Settings::radar.enabled)
 		Radar::Run();

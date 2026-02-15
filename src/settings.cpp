@@ -66,7 +66,6 @@ void Settings::RegisterOptions()
 	REG_SETTING(misc, viewmodel_offset[2], SettingType::FLOAT)
 	REG_SETTING(misc, viewmodel_interp, SettingType::FLOAT)
 	REG_SETTING(misc, norecoil, SettingType::BOOL)
-	REG_SETTING(misc, norecoil_hide, SettingType::BOOL)
 
 	//triggerbot
 	REG_SETTING(triggerbot, enabled, SettingType::BOOL)
@@ -99,6 +98,11 @@ void Settings::RegisterOptions()
 	REG_SETTING(antiaim, real_yaw_mode, SettingType::INT)
 	REG_SETTING(antiaim, fake_yaw_mode, SettingType::INT)
 	REG_SETTING(antiaim, spin_speed, SettingType::FLOAT)
+	REG_SETTING(antiaim, warp_enabled, SettingType::BOOL)
+	REG_SETTING(antiaim, warp_speed, SettingType::INT)
+	REG_SETTING(antiaim, warp_key, SettingType::STRING)
+	REG_SETTING(antiaim, warp_recharge_key, SettingType::STRING)
+	REG_SETTING(antiaim, warp_dt_key, SettingType::STRING)
 
 	// radar
 	REG_SETTING(radar, enabled, SettingType::BOOL)

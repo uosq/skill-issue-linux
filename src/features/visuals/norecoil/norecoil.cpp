@@ -20,7 +20,7 @@ void NoRecoil::RunCreateMove(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd
 	if (!Settings::misc.norecoil)
 		return;
 
-	if (Settings::misc.norecoil_hide && !helper::localplayer::IsAttacking(pLocal, pWeapon, pCmd))
+	if (!helper::localplayer::IsAttacking(pLocal, pWeapon, pCmd))
 		return;
 
 	Vector punchAngle = pLocal->m_vecPunchAngle();

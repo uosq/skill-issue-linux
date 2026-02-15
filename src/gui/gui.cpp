@@ -174,8 +174,6 @@ void DrawMiscTab()
 	ImGui::Checkbox("Accept Item Drops", &Settings::misc.accept_item_drop);
 
 	ImGui::Checkbox("No Recoil", &Settings::misc.norecoil);
-	ImGui::SameLine();
-	ImGui::Checkbox("No Recoil Hide", &Settings::misc.norecoil_hide);
 
 	ImGui::Separator();
 
@@ -318,6 +316,14 @@ void DrawAntiaimTab()
 
 	ImGui::SliderFloat("Spin Speed", &Settings::antiaim.spin_speed, 0.0f, 10.0f);
 
+	ImGui::Separator();
+
+	ImGui::Checkbox("Warp", &Settings::antiaim.warp_enabled);
+	ImGui::SliderInt("Speed", &Settings::antiaim.warp_speed, 1, 24);
+	ImGui::InputText("Warp Key", &Settings::antiaim.warp_key);
+	ImGui::InputText("Warp Recharge Key", &Settings::antiaim.warp_recharge_key);
+	ImGui::InputText("Warp DoubleTap Key", &Settings::antiaim.warp_dt_key);
+
 	ImGui::EndGroup();
 }
 
@@ -346,7 +352,7 @@ void DrawLuaTab()
 			"clientstate", "ui",
 			"menu", "aimbot",
 			"radar", "colors",
-			"fonts", 
+			"fonts", "warp",
 		};
 
 		auto def = TextEditor::LanguageDefinition::Lua();

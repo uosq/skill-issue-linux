@@ -7,6 +7,7 @@
 #include "../antiaim/antiaim.h"
 #include "../bhop/bhop.h"
 #include "../triggerbot/triggerbot.h"
+#include "../warp/warp.h"
 
 #include "../lua/api.h"
 #include "../lua/hookmgr.h"
@@ -154,6 +155,8 @@ void PostCreateMove(int sequence_number)
 
 	if (g_bSendPacket)
 		helper::localplayer::LastAngle = pCmd->viewangles;
+
+	Warp::RunCreateMove(pLocal, pWeapon, pCmd);
 
 	helper::engine::FixMovement(pCmd, originalAngles, pCmd->viewangles);
 }

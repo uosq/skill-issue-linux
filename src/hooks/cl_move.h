@@ -23,6 +23,7 @@
 #include "../features/aimbot/aimbot.h"
 #include "../features/bhop/bhop.h"
 #include "../features/triggerbot/triggerbot.h"
+#include "../features/warp/warp.h"
 
 #include "../sdk/definitions/host.h"
 #include "../sdk/definitions/protocol.h"
@@ -38,11 +39,7 @@
 using Host_ShouldRunFn = bool(*)(void);
 inline Host_ShouldRunFn originalHost_ShouldRun = nullptr;
 
-using CL_SendMoveFn = void(*)(void);
-inline CL_SendMoveFn originalCL_SendMove = nullptr;
-
 //DETOUR_DECL_TYPE(void, CL_Move, float accumulated_extra_samples, bool bFinalTick);
-using libdetour_CL_Move_t = void(*)(float accumulated_extra_samples, bool bFinalTick);
 inline detour_ctx_t move_ctx;
 
 inline void CL_SendMove( void )
@@ -58,16 +55,16 @@ inline void CL_SendMove( void )
 	CLC_Move moveMsg;
 	moveMsg.m_DataOut.StartWriting( data, sizeof( data ) );
 
-	// Determine number of backup commands to send along
-	int cl_cmdbackup = 2;
-	moveMsg.m_nBackupCommands = std::clamp( cl_cmdbackup, 0, MAX_BACKUP_COMMANDS );
-
-	// How many real new commands have queued up
+	// How many real new commands have queued up	
 	moveMsg.m_nNewCommands = 1 + cl->chokedcommands;
 	moveMsg.m_nNewCommands = std::clamp( moveMsg.m_nNewCommands, 0, MAX_NEW_COMMANDS );
 
-	int numcmds = moveMsg.m_nNewCommands + moveMsg.m_nBackupCommands;
+	// Determine number of backup commands to send along
+	int extracmds = cl->chokedcommands + 1 - moveMsg.m_nNewCommands;
+	int backupcmds = std::max(2, extracmds);
+	moveMsg.m_nBackupCommands = std::clamp(0, backupcmds, MAX_BACKUP_COMMANDS);
 
+	int numcmds = moveMsg.m_nNewCommands + moveMsg.m_nBackupCommands;
 	int from = -1;	// first command is deltaed against zeros 
 
 	bool bOK = true;
@@ -83,12 +80,15 @@ inline void CL_SendMove( void )
 
 	if ( bOK )
 	{
+		if (extracmds)
+			static_cast<CNetChannel*>(cl->m_NetChannel)->m_nChokedPackets -= extracmds;
+
 		// only write message if all usercmds were written correctly, otherwise parsing would fail
 		cl->m_NetChannel->SendNetMsg( moveMsg );
 	}
 }
 
-inline void HookedCL_Move(float accumulated_extra_samples, bool bFinalTick)
+inline void CL_Move(float accumulated_extra_samples, bool bFinalTick)
 {
 	CClientState* cl = static_cast<CClientState*>(interfaces::ClientState);
 
@@ -201,9 +201,58 @@ inline void HookedCL_Move(float accumulated_extra_samples, bool bFinalTick)
 	}
 }
 
+inline void HookedCL_Move(float accumulated_extra_samples, bool bFinalTick)
+{
+	Warp::m_bShifting = false;
+	Warp::m_bRecharging = false;
+
+	if (Warp::m_iDesiredState == WarpState::RECHARGING && Warp::m_iStoredTicks < Warp::GetMaxTicks())
+	{
+		Warp::m_iStoredTicks++;
+		Warp::m_bRecharging = true;
+		return;	
+	}
+
+	CL_Move(accumulated_extra_samples, bFinalTick);
+
+	if (Warp::m_iDesiredState == WarpState::RUNNING && Warp::m_iStoredTicks > 0)
+	{
+		Warp::m_bShifting = true;
+		Warp::m_iShiftAmount = Settings::antiaim.warp_speed + 1;
+
+		for (int n = 0; n < (Settings::antiaim.warp_speed + 1); n++)
+		{
+			if (Warp::m_iStoredTicks <= 0)
+				break;
+
+			CL_Move(accumulated_extra_samples, n == Settings::antiaim.warp_speed);
+			Warp::m_iStoredTicks--;
+		}
+
+		Warp::m_iDesiredState = WarpState::WAITING;
+		Warp::m_bShifting = false;
+		return;
+	}
+
+	if (Warp::m_iDesiredState == WarpState::DT && Warp::m_iStoredTicks >= Warp::GetMaxTicks())
+	{
+		const int ticks = Warp::m_iStoredTicks;
+
+		Warp::m_bShifting = true;
+		Warp::m_iShiftAmount = ticks;
+
+		for (int n = 0; n < ticks; n++)
+			CL_Move(accumulated_extra_samples, n == ticks - 1);
+		
+		Warp::m_iStoredTicks = 0;
+		Warp::m_iDesiredState = WarpState::WAITING;
+		Warp::m_bShifting = false;
+		return;
+	}
+}
+
 inline void HookCL_Move(void)
 {
-	originalCL_SendMove = reinterpret_cast<CL_SendMoveFn>(sigscan_module("engine.so", "55 66 0F EF C0 48 89 E5 41 57 41 56 48 8D BD E8 EF FF FF"));
 	originalHost_ShouldRun = reinterpret_cast<Host_ShouldRunFn>(sigscan_module("engine.so", "48 8B 15 ? ? ? ? B8 01 00 00 00 8B 72 58"));
 
 	void* original_Move = sigscan_module("engine.so", "55 48 89 E5 41 57 41 56 41 55 41 54 53 48 83 EC 78 83 3D ? ? ? ? 01");

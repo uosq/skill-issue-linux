@@ -79,7 +79,13 @@ struct Settings_Antiaim
 	PitchMode pitch_mode = PitchMode::NONE;
 	YawMode real_yaw_mode = YawMode::NONE;
 	YawMode fake_yaw_mode = YawMode::NONE;
-	float spin_speed = 0;
+	float spin_speed = 1.0f;
+
+	bool warp_enabled = false;
+	std::string warp_key = "";
+	std::string warp_recharge_key = "";
+	std::string warp_dt_key = "";
+	int warp_speed = 1;
 };
 
 struct Settings_ESP
@@ -132,7 +138,6 @@ struct Settings_Misc
 	bool playerlist = false;
 
 	bool norecoil = false;
-	bool norecoil_hide = false;
 
 	float viewmodel_offset[3] = {0.0, 0.0, 0.0};
 	float viewmodel_interp = 0.0f;

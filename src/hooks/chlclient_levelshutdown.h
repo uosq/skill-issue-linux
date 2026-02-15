@@ -6,10 +6,12 @@
 #include "../features/lua/hookmgr.h"
 #include "../features/lua/api.h"
 #include "../features/lua/classes.h"
+#include "../features/warp/warp.h"
 
 DECLARE_VTABLE_HOOK(LevelShutdown, void, (CHLClient* thisptr))
 {
 	EntityList::Clear();
+	Warp::Reset();
 
 	if (LuaHookManager::HasHooks("LevelShutdown"))
 		LuaHookManager::Call(Lua::m_luaState, "LevelShutdown");
