@@ -10,6 +10,7 @@ namespace Warp
 	bool m_bShifting = false;
 	bool m_bRecharging = false;
 	int m_iShiftAmount = 0;
+	bool m_bDoubleTap = false;
 
 	void Reset()
 	{
@@ -18,6 +19,7 @@ namespace Warp
 		m_bShifting = false;
 		m_bRecharging = false;
 		m_iShiftAmount = 0;
+		m_bDoubleTap = false;
 	}
 
 	int GetMaxTicks()
@@ -39,17 +41,29 @@ namespace Warp
 		if (interfaces::EngineVGui->IsGameUIVisible() || interfaces::EngineVGui->IsConsoleVisible())
 			return;
 
-		if (!IsValidWeapon(pWeapon))
-			return;
-
-		if (m_bShifting && Warp::m_iDesiredState == WarpState::DT)
+		// this shit does not work
+		// honestly im debating whether I should make a
+		// state machine just for this
+		/*if (m_bDoubleTap)
 		{
-			// TODO: make anti warp / fast stop here
-		}
+			const Vector vecVelocity = pLocal->GetVelocity();
+    
+			Vector vecForward, vecRight;
+			Math::AngleVectors(pCmd->viewangles, &vecForward, &vecRight);
+			
+			const float forwardVel = vecVelocity.Dot(vecForward);
+			const float sideVel = vecVelocity.Dot(vecRight);
+			
+			pCmd->forwardmove = -forwardVel;
+			pCmd->sidemove = -sideVel;
+		}*/
 
 		ButtonCode_t key = interfaces::InputSystem->StringToButtonCode(Settings::antiaim.warp_dt_key.c_str());
 		if (key != BUTTON_CODE_INVALID && interfaces::InputSystem->IsButtonDown(key) && Warp::m_iStoredTicks >= Warp::GetMaxTicks())
 		{
+			if (!IsValidWeapon(pWeapon))
+				return;
+
 			if (helper::localplayer::IsAttacking(pLocal, pWeapon, pCmd))
 			{
 				Warp::m_iDesiredState = WarpState::DT;

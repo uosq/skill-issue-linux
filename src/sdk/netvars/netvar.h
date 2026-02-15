@@ -35,25 +35,25 @@ namespace Netvars
 	uint32_t GetNetvarOffset(std::string name);
 }
 
-#define NETVAR(func_name, netvar, type) type& func_name() \
+#define NETVAR(func_name, netvar, type) inline type& func_name() \
 { \
 	static auto offset = Netvars::m_netvarMap[fnv::HashConst(netvar)]; \
 	return *reinterpret_cast<type*>(reinterpret_cast<uintptr_t>(this) + offset); \
 }
 
-#define NETVAR_OFFSET(func_name, netvar, type, offset) type& func_name() \
+#define NETVAR_OFFSET(func_name, netvar, type, offset) inline type& func_name() \
 { \
 	static auto m_offset = Netvars::m_netvarMap[fnv::HashConst(netvar)] + offset; \
 	return *reinterpret_cast<type*>(reinterpret_cast<uintptr_t>(this) + m_offset); \
 }
 
-#define NETVAR_ARRAY(func_name, netvar, type) type& func_name(int iIndex) \
+#define NETVAR_ARRAY(func_name, netvar, type) inline type& func_name(int iIndex) \
 { \
 	static auto offset = Netvars::m_netvarMap[fnv::HashConst(netvar)]; \
 	return *reinterpret_cast<type*>(uintptr_t(this) + offset + iIndex * sizeof(type)); \
 }
 
-#define NETVAR_ARRAY_OFF(func_name, netvar, typeoffset) type& func_name(int iIndex) \
+#define NETVAR_ARRAY_OFF(func_name, netvar, typeoffset) inline type& func_name(int iIndex) \
 { \
 	static int nOffset = Netvars::m_netvarMap[fnv::HashConst(netvar)] + offset; \
 	return *reinterpret_cast<type*>(uintptr_t(this) + nOffset + iIndex * sizeof(type)); \

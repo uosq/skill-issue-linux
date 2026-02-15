@@ -203,7 +203,6 @@ inline void CL_Move(float accumulated_extra_samples, bool bFinalTick)
 
 inline void HookedCL_Move(float accumulated_extra_samples, bool bFinalTick)
 {
-	Warp::m_bShifting = false;
 	Warp::m_bRecharging = false;
 
 	if (Warp::m_iDesiredState == WarpState::RECHARGING && Warp::m_iStoredTicks < Warp::GetMaxTicks())
@@ -218,9 +217,9 @@ inline void HookedCL_Move(float accumulated_extra_samples, bool bFinalTick)
 	if (Warp::m_iDesiredState == WarpState::RUNNING && Warp::m_iStoredTicks > 0)
 	{
 		Warp::m_bShifting = true;
-		Warp::m_iShiftAmount = Settings::antiaim.warp_speed + 1;
+		Warp::m_iShiftAmount = Settings::antiaim.warp_speed;
 
-		for (int n = 0; n < (Settings::antiaim.warp_speed + 1); n++)
+		for (int n = 0; n < (Settings::antiaim.warp_speed); n++)
 		{
 			if (Warp::m_iStoredTicks <= 0)
 				break;
@@ -239,6 +238,7 @@ inline void HookedCL_Move(float accumulated_extra_samples, bool bFinalTick)
 		const int ticks = Warp::m_iStoredTicks;
 
 		Warp::m_bShifting = true;
+		Warp::m_bDoubleTap = true;
 		Warp::m_iShiftAmount = ticks;
 
 		for (int n = 0; n < ticks; n++)
@@ -247,6 +247,7 @@ inline void HookedCL_Move(float accumulated_extra_samples, bool bFinalTick)
 		Warp::m_iStoredTicks = 0;
 		Warp::m_iDesiredState = WarpState::WAITING;
 		Warp::m_bShifting = false;
+		Warp::m_bDoubleTap = false;
 		return;
 	}
 }

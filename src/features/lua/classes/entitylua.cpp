@@ -50,6 +50,7 @@ namespace LuaClasses
 			{"EstimateAbsVelocity", EstimateAbsVelocity},
 			{"ShouldDraw", ShouldDraw},
 			{"SetupBones", SetupBones},
+			{"GetMoveType", GetMoveType},
 			{nullptr, nullptr}
 		};
 
@@ -976,6 +977,25 @@ namespace LuaClasses
 				lua_rawseti(L, -2, i + 1);
 			}
 
+			return 1;
+		}
+
+		int GetMoveType(lua_State *L)
+		{
+			LuaEntity* le = static_cast<LuaEntity*>(luaL_checkudata(L, 1, "Entity"));
+			if (le->ent == nullptr)
+			{
+				lua_pushnil(L);
+				return 1;
+			}
+
+			if (!le->ent->IsPlayer())
+			{
+				lua_pushnil(L);
+				return 1;
+			}
+
+			lua_pushinteger(L, static_cast<CTFPlayer*>(le->ent)->GetMoveType());
 			return 1;
 		}
 	}

@@ -165,6 +165,8 @@ namespace LuaClasses
 		int ShouldDraw(lua_State* L);
 
 		int SetupBones(lua_State* L);
+
+		int GetMoveType(lua_State* L);
 	};
 
 	namespace MaterialLua

@@ -93,114 +93,16 @@ public:
 
 	NETVAR(m_vecPunchAngle, "CBasePlayer->m_vecPunchAngle", Vector)
 
-	inline bool IsAlive()
-	{
-		return m_lifeState() == LIFE_ALIVE;
-	}
-
-	inline bool InCond(ETFCond cond)
-	{
-		switch ((int)(cond/32))
-		{
-			case 0: return m_nPlayerCond() & (1 << cond) || m_condition_bits() & (1 << cond);
-			case 1: return m_nPlayerCondEx() & (1 << (cond - 32));
-			case 2: return m_nPlayerCondEx2() & (1 << (cond - 64));
-			case 3: return m_nPlayerCondEx3() & (1 << (cond - 96));
-			case 4: return m_nPlayerCondEx4() & (1 << (cond - 128));
-			default: return false;
-		}
-
-		return false;
-	}
-
-	inline Vector GetCenter()
-	{
-		return GetAbsOrigin() + ((m_vecMins() + m_vecMaxs()) * 0.5f);
-	}
-
-	inline Vector GetEyePos()
-	{
-		return GetAbsOrigin() + m_vecViewOffset();
-	}
-
-	inline bool IsGhost()
-	{
-		return InCond(ETFCond::TF_COND_HALLOWEEN_GHOST_MODE);
-	}
-
-	inline bool IsTaunting()
-	{
-		return InCond(ETFCond::TF_COND_TAUNTING);
-	}
-
-	inline bool IsUbercharged()
-	{
-		return InCond(ETFCond::TF_COND_INVULNERABLE);
-	}
-
-	inline std::string GetName()
-	{
-		player_info_t info{};
-		if (!interfaces::Engine->GetPlayerInfo(GetIndex(), &info))
-			return "";
-
-		return info.name;
-	}
-
-	inline void UpdateClientSideAnimation()
-	{
-		using C_BaseAnimating_UpdateClientSideAnimationFn = void(*)(void*);
-		static auto orig = (C_BaseAnimating_UpdateClientSideAnimationFn)sigscan_module("client.so", "80 BF D0 0A 00 00 00 75");
-		if (!orig)
-			return;
-
-		orig((void*)this);
-	}
-
-	inline int GetWaterLevel()
-	{
-		int level = WL_NotInWater;
-		Vector point = {};
-		int cont = 0;
-
-		Vector mins = m_vecMins();
-		Vector maxs = m_vecMaxs();
-		Vector origin = GetAbsOrigin();
-
-		point.x = origin.x + (mins.x + maxs.x) * 0.5f;
-		point.y = origin.y + (mins.y + maxs.y) * 0.5f;
-		point.z = origin.z + mins.z + 1;
-
-		cont = interfaces::EngineTrace->GetPointContents(point);
-		if (cont & MASK_WATER)
-		{
-			level = WL_Feet;
-
-			point.z = origin.z + (mins.z + maxs.z)*0.5f;
-			cont = interfaces::EngineTrace->GetPointContents(point);
-			if (cont & MASK_WATER)
-			{
-				level = WL_Waist;
-
-				point.z = origin.z + m_vecViewOffset().z;
-				cont = interfaces::EngineTrace->GetPointContents(point);
-				if (cont & MASK_WATER)
-					level = WL_Eyes;
-			}
-		}
-
-		return level;
-	}
-
-	inline float GetEffectiveInvisibilityLevel()
-	{
-		// xref: taunt_attr_player_invis_percent
-		using GetEffectiveInvisibilityLevelFn = float(*)(void* thisptr);
-		static auto orig = reinterpret_cast<GetEffectiveInvisibilityLevelFn>(sigscan_module("client.so", "55 48 89 E5 41 56 41 55 4C 8D AF 78 1E 00 00 41 54 49 89 FC 4C 89 EF 53 E8"));
-
-		if (orig == nullptr)
-			return -1;
-
-		return orig(this);
-	}
+	bool IsAlive();
+	bool InCond(ETFCond cond);
+	Vector GetCenter();
+	Vector GetEyePos();
+	bool IsGhost();
+	bool IsTaunting();
+	bool IsUbercharged();
+	std::string GetName();
+	void UpdateClientSideAnimation();
+	int GetWaterLevel();
+	float GetEffectiveInvisibilityLevel();
+	uint8_t GetMoveType();
 };
