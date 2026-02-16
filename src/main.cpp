@@ -2,6 +2,7 @@
 #include "features/esp/esp.h"
 #include "features/glow/glow.h"
 #include "features/radar/radar.h"
+#include "features/ticks/ticks.h"
 #include "features/visuals/viewmodel_aim/viewmodel_aim.h"
 #include "features/visuals/viewmodel_interp/viewmodel_interp.h"
 #include "hooks/cbaseentity_baseinterpolatepart1.h"
@@ -46,6 +47,7 @@ void init(void)
 	if (!InitializeInterfaces())
 		return;
 
+	TickManager::Init();
 	MaterialManager::Init();
 	FontManager::Init();
 	Settings::RegisterOptions();

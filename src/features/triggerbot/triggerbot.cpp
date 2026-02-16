@@ -1,7 +1,7 @@
 #include "triggerbot.h"
 #include "autoairblast/autoairblast.h"
 
-#include "../network/network.h"
+#include "../ticks/ticks.h"
 
 namespace Triggerbot
 {
@@ -57,9 +57,9 @@ namespace Triggerbot
 			Hitscan(pLocal, pWeapon, pCmd);
 
                 if (Settings::triggerbot.autobackstab != AutoBackstabMode::NONE && pWeapon->IsMelee())
-			AutoBackstab::Run(pLocal, pWeapon, pCmd, &g_bSendPacket);
+			AutoBackstab::Run(pLocal, pWeapon, pCmd, &TickManager::m_bSendPacket);
 
 		if (Settings::triggerbot.autoairblast != AutoAirblastMode::NONE && pWeapon->GetWeaponID() == TF_WEAPON_FLAMETHROWER)
-			AutoAirblast::Run(pLocal, pWeapon, pCmd, &g_bSendPacket);
+			AutoAirblast::Run(pLocal, pWeapon, pCmd, &TickManager::m_bSendPacket);
 	}
 }

@@ -1,5 +1,5 @@
 #include "antiaim.h"
-#include "../network/network.h"
+#include "../ticks/ticks.h"
 
 namespace Antiaim
 {
@@ -83,10 +83,10 @@ namespace Antiaim
 		constexpr int maxChoke = 2; // fake on 2 ticks, real on 1
 		int choke = static_cast<CClientState*>(interfaces::ClientState)->chokedcommands;
 
-		if (choke < maxChoke) g_bSendPacket = false; // real
-		else g_bSendPacket = true; // fake
+		if (choke < maxChoke) TickManager::m_bSendPacket = false; // real
+		else TickManager::m_bSendPacket = true; // fake
 
-		bool isFake = g_bSendPacket;
+		bool isFake = TickManager::m_bSendPacket;
 		
 		if (Settings::antiaim.pitch_mode != PitchMode::NONE)
 		{

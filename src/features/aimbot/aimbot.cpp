@@ -1,7 +1,7 @@
 #include "aimbot.h"
 #include "utils/utils.h"
 //#include "../visuals/customfov/customfov.h"
-#include "../network/network.h"
+#include "../ticks/ticks.h"
 
 namespace Aimbot
 {
@@ -49,7 +49,7 @@ namespace Aimbot
 				AimbotProjectile::Run(pLocal, pWeapon, pCmd, m_state);
 
 				if (m_state.shouldSilent)
-					g_bSendPacket = false;
+					TickManager::m_bSendPacket = false;
 			} break;
 
 			case EWeaponType::MELEE:
@@ -57,7 +57,7 @@ namespace Aimbot
 				AimbotMelee::Run(pLocal, pWeapon, pCmd, m_state);
 
 				if (m_state.shouldSilent)
-					g_bSendPacket = false;
+					TickManager::m_bSendPacket = false;
 			} break;
 			default: break;
 		}
