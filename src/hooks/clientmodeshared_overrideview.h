@@ -5,7 +5,7 @@
 #include "../sdk/classes/entity.h"
 #include "../sdk/classes/player.h"
 #include "../sdk/helpers/helper.h"
-#include "../settings.h"
+#include "../settings/settings.h"
 #include <string>
 
 #include "../features/lua/classes.h"
@@ -42,6 +42,8 @@ inline void HookOverrideView()
 {
 	INSTALL_VTABLE_HOOK(OverrideView, interfaces::ClientMode, 17);
 
+	#ifdef DEBUG
 	constexpr Color_t color = {100, 255, 100, 255};
 	helper::console::ColoredPrint("ClientModeShared::OverrideView hooked\n", color);
+	#endif
 }

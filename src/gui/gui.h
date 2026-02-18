@@ -2,7 +2,7 @@
 
 #include "../imgui/imgui.h"
 #include "../imgui/imgui_stdlib.h"
-#include "../settings.h"
+#include "../settings/settings.h"
 #include "../sdk/helpers/helper.h"
 #include "../features/antiaim/antiaim.h"
 #include "../imgui/TextEditor.h"
@@ -24,13 +24,22 @@ enum TabMenu
 	TAB_LUA,
 	TAB_NETVARS,
 	TAB_RADAR,
+	TAB_CONFIG
 };
 
 namespace GUI
 {
 	extern int tab;
 	extern TextEditor editor;
+
+	extern int selectedIndex;
+	extern std::vector<std::string> configs;
+	extern std::string newConfigName;
+	extern bool firstOpenConfigTab;
+	extern bool openDeletePopup;
+
 	void RunMainWindow();
 	void RunPlayerList();
 	void RunSpectatorList();
+	void Init();
 }

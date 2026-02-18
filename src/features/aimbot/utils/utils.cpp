@@ -24,16 +24,16 @@ namespace AimbotUtils
 			if (player->IsGhost())
 				return false;
 
-			if (Settings::aimbot.ignorecloaked && player->InCond(ETFCond::TF_COND_CLOAKED))
+			if (Settings::Aimbot::ignorecloaked && player->InCond(ETFCond::TF_COND_CLOAKED))
 				return false;
 
-			if (Settings::aimbot.ignorebonked && player->InCond(ETFCond::TF_COND_BONKED))
+			if (Settings::Aimbot::ignorebonked && player->InCond(ETFCond::TF_COND_BONKED))
 				return false;
 
-			if (Settings::aimbot.ignoreubered && player->InCond(ETFCond::TF_COND_INVULNERABLE))
+			if (Settings::Aimbot::ignoreubered && player->InCond(ETFCond::TF_COND_INVULNERABLE))
 				return false;
 
-			if (Settings::aimbot.ignorehoovy && player->m_iClass() == ETFClass::TF_CLASS_HEAVYWEAPONS && (player->GetFlags() & FL_DUCKING))
+			if (Settings::Aimbot::ignorehoovy && player->m_iClass() == ETFClass::TF_CLASS_HEAVYWEAPONS && (player->GetFlags() & FL_DUCKING))
 				return false;
 
 			return true;
@@ -85,7 +85,7 @@ namespace AimbotUtils
 
 	std::string GetAimbotModeName()
 	{
-		switch(Settings::aimbot.mode)
+		switch(static_cast<AimbotMode>(Settings::Aimbot::mode))
 		{
 			case AimbotMode::PLAIN: return "Plain";
 			case AimbotMode::SMOOTH: return "Smooth";
@@ -97,7 +97,7 @@ namespace AimbotUtils
 
 	std::string GetTeamModeName()
 	{
-		switch(Settings::aimbot.teamMode)
+		switch(static_cast<TeamMode>(Settings::Aimbot::teamMode))
 		{
 			case TeamMode::ONLYENEMY: return "Only Enemy";
 			case TeamMode::ONLYTEAMMATE: return "Only Teammate";
@@ -141,7 +141,7 @@ namespace AimbotUtils
 	{
 		float cameraFOV = CustomFov::GetFov();
 
-		float radAimbotHalf = DEG2RAD(Settings::aimbot.fov / 2.0f);
+		float radAimbotHalf = DEG2RAD(Settings::Aimbot::fov / 2.0f);
 		float radPlayerHalf = DEG2RAD(cameraFOV / 2.0f);
 		constexpr float radBaseHalf = DEG2RAD(90.0f / 2.0f);
 
@@ -168,7 +168,7 @@ namespace AimbotUtils
 			if (!IsValidEntity(entry.ptr))
 				continue;
 
-			TeamMode teamMode = Settings::aimbot.teamMode;
+			TeamMode teamMode = static_cast<TeamMode>(Settings::Aimbot::teamMode);
 			int teamNum = entry.ptr->m_iTeamNum();
 
 			if (!bCanHitTeammates || teamMode == TeamMode::ONLYENEMY)

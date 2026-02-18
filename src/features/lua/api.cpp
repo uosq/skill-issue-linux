@@ -39,7 +39,6 @@ namespace Lua
 		LuaFuncs::warp::open(m_luaState);
 
 		// open classes
-		LuaClasses::VectorLua::luaopen_vector(m_luaState);
 		LuaClasses::EntityLua::luaopen_entity(m_luaState);
 		LuaClasses::MaterialLua::luaopen_material(m_luaState);
 		LuaClasses::BitBufferLua::luaopen_buffer(m_luaState);
@@ -48,7 +47,9 @@ namespace Lua
 		LuaClasses::NetChannelLua::luaopen_netchannel(m_luaState);
 		LuaClasses::GameEventLua::luaopen_gameevent(m_luaState);
 		LuaClasses::ViewSetupLua::luaopen_viewsetup(m_luaState);
-		LuaClasses::StringCmdLua::open(m_luaState);
+		LuaClasses::StringCmd::open(m_luaState);
+		LuaClasses::UserCmd::open(m_luaState);
+		LuaClasses::Vector3::open(m_luaState);
 
 		luaregister_constants(m_luaState);
 

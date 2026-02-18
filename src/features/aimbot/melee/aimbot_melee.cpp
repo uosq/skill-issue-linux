@@ -4,7 +4,7 @@ namespace AimbotMelee
 {
 	void Run(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd, AimbotState& state)
 	{
-		if (Settings::aimbot.melee == MeleeMode::NONE || pWeapon->GetWeaponID() == TF_WEAPON_KNIFE)
+		if (Settings::Aimbot::melee == static_cast<int>(MeleeMode::NONE) || pWeapon->GetWeaponID() == TF_WEAPON_KNIFE)
 			return;
 		
 		std::vector<PotentialTarget> targets;
@@ -28,7 +28,7 @@ namespace AimbotMelee
 		CBaseEntity* target = nullptr;
 		float highestDot = -1.0f;
 
-		MeleeMode mode = Settings::aimbot.melee;
+		MeleeMode mode = static_cast<MeleeMode>(Settings::Aimbot::melee);
 		float maxFov = mode == MeleeMode::LEGIT ? 90.0f : 180.0f;
 		float smallestFov = maxFov;
 
@@ -71,7 +71,7 @@ namespace AimbotMelee
 		if (target == nullptr)
 			return;
 
-		if (Settings::aimbot.autoshoot)
+		if (Settings::Aimbot::autoshoot)
 			pCmd->buttons |= IN_ATTACK;
 
 		if (helper::localplayer::IsAttacking(pLocal, pWeapon, pCmd))
@@ -80,7 +80,7 @@ namespace AimbotMelee
 			state.angle = angle;
 			pCmd->viewangles = angle;
 
-			if (Settings::aimbot.mode == AimbotMode::SILENT)
+			if (Settings::Aimbot::mode == static_cast<int>(AimbotMode::SILENT))
 				state.shouldSilent = true;
 		}
 
@@ -90,7 +90,7 @@ namespace AimbotMelee
 
 	std::string GetMeleeModeName()
 	{
-		switch(Settings::aimbot.melee)
+		switch(static_cast<MeleeMode>(Settings::Aimbot::melee))
 		{
 			case MeleeMode::NONE: return "None";
 			case MeleeMode::LEGIT: return "Legit";

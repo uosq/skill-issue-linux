@@ -302,8 +302,8 @@ namespace AimbotProjectile
 
 		std::vector<PotentialTarget> targets;
 
-		float maxFov = AimbotUtils::GetAimbotFovScaled(); //Settings::aimbot.fov;
-		bool bNoFovLimit = Settings::aimbot.fov >= 180.0f;
+		float maxFov = AimbotUtils::GetAimbotFovScaled(); //Settings::Aimbot::fov;
+		bool bNoFovLimit = Settings::Aimbot::fov >= 180.0f;
 
 		CGameTrace trace;
 		CTraceFilterHitscan filter;
@@ -346,7 +346,7 @@ namespace AimbotProjectile
 		{
 			float time = (target.distance/info.speed);
 
-			if (time > Settings::aimbot.max_sim_time)
+			if (time > Settings::Aimbot::max_sim_time)
 				continue;
 
 			Vector lastPos;
@@ -398,7 +398,7 @@ namespace AimbotProjectile
 					continue;
 			}
 
-			if (Settings::aimbot.autoshoot)
+			if (Settings::Aimbot::autoshoot)
 				pCmd->buttons |= IN_ATTACK;
 
 			if (helper::localplayer::CanShoot(pLocal, pWeapon, pCmd))
@@ -430,7 +430,7 @@ namespace AimbotProjectile
 				pCmd->viewangles = angle;
 				state.angle = angle;
 
-				AimbotMode mode = Settings::aimbot.mode;
+				AimbotMode mode = static_cast<AimbotMode>(Settings::Aimbot::mode);
 
 				if (mode == AimbotMode::SILENT)
 					state.shouldSilent = true;

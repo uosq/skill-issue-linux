@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../sdk/interfaces/interfaces.h"
-#include "../settings.h"
+#include "../settings/settings.h"
 #include "../libdetour/libdetour.h"
 #include <cstdlib>
 
@@ -26,5 +26,7 @@ static void HookHost_Shutdown()
 	detour_init(&shutdownctx, original, (void*)&HookedHost_ShutdownFn);
 	detour_enable(&shutdownctx);
 
+	#ifdef DEBUG
 	interfaces::Cvar->ConsolePrintf("Host_Shutdown hooked\n");
+	#endif
 }

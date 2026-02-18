@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../../../sdk/helpers/helper.h"
-#include "../../../settings.h"
+#include "../../../settings/settings.h"
 
 namespace NoRecoil
 {

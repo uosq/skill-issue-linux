@@ -20,9 +20,9 @@ namespace Radar
 
 void Radar::Run()
 {
-	int size = Settings::radar.size;
+	int size = Settings::Radar::size;
 
-	m_iRange = Settings::radar.range;
+	m_iRange = Settings::Radar::range;
 	m_flRadius = size * 0.5f;
 
 	// Shouldn't be possible without Lua
@@ -82,7 +82,7 @@ int Radar::GetRange()
 
 void Radar::DrawContents()
 {
-	int size = Settings::radar.size;
+	int size = Settings::Radar::size;
 	ImVec2 pos = ImGui::GetCursorScreenPos();
 	ImVec2 center = {pos.x + m_flRadius, pos.y + m_flRadius};
 	ImDrawList* draw = ImGui::GetWindowDrawList();
@@ -104,20 +104,20 @@ void Radar::DrawContents()
 	Vector viewAngles; interfaces::Engine->GetViewAngles(viewAngles);
 	float viewYaw = viewAngles.y - 90.0f;
 
-	int iconSize = Settings::radar.icon_size;
+	int iconSize = Settings::Radar::icon_size;
 
 	for (const auto& entry : EntityList::GetEntities())
 	{
 		if (entry.ptr == EntityList::GetLocal())
 			continue;
 
-		if (entry.flags & EntityFlags::IsBuilding && !Settings::radar.buildings)
+		if (entry.flags & EntityFlags::IsBuilding && !Settings::Radar::buildings)
 			continue;
 
-		if (entry.flags & EntityFlags::IsPlayer && (!Settings::radar.players || !static_cast<CTFPlayer*>(entry.ptr)->IsAlive()))
+		if (entry.flags & EntityFlags::IsPlayer && (!Settings::Radar::players || !static_cast<CTFPlayer*>(entry.ptr)->IsAlive()))
 			continue;
 
-		if (entry.flags & EntityFlags::IsProjectile && !Settings::radar.projectiles)
+		if (entry.flags & EntityFlags::IsProjectile && !Settings::Radar::projectiles)
 			continue;
 
 		Vec2 p = WorldToRadar(localPos, entry.ptr->GetAbsOrigin(), viewYaw);

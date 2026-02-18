@@ -24,6 +24,8 @@ static void HookLevelInitPostEntity()
 {
 	INSTALL_VTABLE_HOOK(LevelInitPostEntity, interfaces::ClientDLL, 6);
 
+	#ifdef DEBUG
 	constexpr Color_t color = {100, 255, 100, 255};
 	helper::console::ColoredPrint("BaseClientDll::LevelInitPostEntity hooked\n", color);
+	#endif
 }

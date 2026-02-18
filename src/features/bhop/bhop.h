@@ -2,7 +2,7 @@
 
 #include "../../sdk/definitions/cusercmd.h"
 #include "../../sdk/classes/player.h"
-#include "../../settings.h"
+#include "../../settings/settings.h"
 
 namespace Bhop
 {

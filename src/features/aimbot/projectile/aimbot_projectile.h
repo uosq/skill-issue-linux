@@ -10,7 +10,7 @@
 #include "../../../sdk/definitions/cgametrace.h"
 #include "../../../sdk/definitions/ctracefilters.h"
 #include "../../../sdk/definitions/bspflags.h"
-#include "../../../settings.h"
+#include "../../../settings/settings.h"
 #include "../../prediction/prediction.h"
 #include "../../entitylist/entitylist.h"
 #include <cmath>

@@ -7,7 +7,7 @@
 #include "../../../sdk/definitions/ctracefilters.h"
 #include "../../../sdk/helpers/helper.h"
 #include "../../entitylist/entitylist.h"
-#include "../../../settings.h"
+#include "../../../settings/settings.h"
 #include <bits/types/locale_t.h>
 
 namespace AutoAirblast

@@ -1,7 +1,7 @@
-#include "../classes.h"
+#include "../classes/entitylua.h"
 #include "../libraries.h"
 #include "../../entitylist/entitylist.h"
-#include "../../../settings.h"
+#include "../../../settings/settings.h"
 #include "../../aimbot/utils/utils.h"
 #include "../../aimbot/aimbot.h"
 
@@ -65,7 +65,7 @@ namespace LuaFuncs
 
 		int GetMode(lua_State* L)
 		{
-			lua_pushinteger(L, int(Settings::aimbot.mode));
+			lua_pushinteger(L, int(Settings::Aimbot::mode));
 			lua_pushstring(L, AimbotUtils::GetAimbotModeName().c_str());
 			return 2;
 		}
@@ -79,7 +79,7 @@ namespace LuaFuncs
 				return 0;
 			}
 
-			Settings::aimbot.mode = AimbotMode(mode);
+			Settings::Aimbot::mode = static_cast<int>(AimbotMode(mode));
 			return 0;
 		}
 
@@ -135,7 +135,7 @@ namespace LuaFuncs
 
 		int GetKey(lua_State* L)
 		{
-			const std::string& key = Settings::aimbot.key;
+			const std::string& key = Settings::Aimbot::key;
 			ButtonCode_t btn = interfaces::InputSystem->StringToButtonCode(key.c_str());
 
 			if (!helper::input::IsButtonValid(btn))
@@ -161,7 +161,7 @@ namespace LuaFuncs
 				ButtonCode_t btn = interfaces::InputSystem->StringToButtonCode(str);
 
 				if (helper::input::IsButtonValid(btn))
-					Settings::aimbot.key = str;
+					Settings::Aimbot::key = str;
 
 				return 0;
 			}
@@ -172,7 +172,7 @@ namespace LuaFuncs
 				ButtonCode_t btn = interfaces::InputSystem->VirtualKeyToButtonCode(key);
 				
 				if (helper::input::IsButtonValid(btn))
-					Settings::aimbot.key = interfaces::InputSystem->ButtonCodeToString(btn);
+					Settings::Aimbot::key = interfaces::InputSystem->ButtonCodeToString(btn);
 
 				return 0;
 			}

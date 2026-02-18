@@ -5,6 +5,8 @@
 #include "features/ticks/ticks.h"
 #include "features/visuals/viewmodel_aim/viewmodel_aim.h"
 #include "features/visuals/viewmodel_interp/viewmodel_interp.h"
+#include "gui/gui.h"
+#include "hooks/cbaseanimating_interpolate.h"
 #include "hooks/cbaseentity_baseinterpolatepart1.h"
 #include "hooks/cgameclient_executestringcommand.h"
 #include "hooks/cinput_getusercmd.h"
@@ -15,6 +17,7 @@
 #include "hooks/cmaterial_uncache.h"
 #include "hooks/cprediction_runcommand.h"
 #include "hooks/ctfplayer_getmaxitemcount.h"
+#include "hooks/datatable_warning.h"
 #include "hooks/host_shutdown.h"
 #include "hooks/istudiorender_forcedmaterialoverride.h"
 #include "hooks/isurface_setcursor.h"
@@ -47,6 +50,7 @@ void init(void)
 	if (!InitializeInterfaces())
 		return;
 
+	GUI::Init();
 	TickManager::Init();
 	MaterialManager::Init();
 	FontManager::Init();
@@ -93,6 +97,11 @@ void init(void)
 	Hook_ValidateUserCmd();
 	HookCL_Move();
 	Hook_BaseInterpolatePart1();
+	Hook_Interpolate();
+	Hook_DataTable_Warning();
+
+	Color_t color = {0, 255, 255, 255};
+	interfaces::Cvar->ConsoleColorPrintf(color, "Skill Issue loaded\nYou can open the menu with Insert or F11\n");
 }
 
 __attribute__((destructor))

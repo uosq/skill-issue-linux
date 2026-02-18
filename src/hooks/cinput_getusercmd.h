@@ -13,5 +13,8 @@ DECLARE_VTABLE_HOOK(GetUserCmd, CUserCmd*, (void* input, int sequence_number))
 inline void Hook_GetUserCmd(void)
 {
 	INSTALL_VTABLE_HOOK(GetUserCmd, interfaces::CInput, 8);
+
+	#ifdef DEBUG
 	interfaces::Cvar->ConsolePrintf("Hooked CInput::GetUserCmd\n");
+	#endif
 }

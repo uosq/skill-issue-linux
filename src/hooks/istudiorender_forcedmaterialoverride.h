@@ -2,7 +2,7 @@
 
 #include "../sdk/interfaces/interfaces.h"
 #include "../sdk/helpers/helper.h"
-#include "../settings.h"
+#include "../settings/settings.h"
 #include <string>
 
 #include "../features/chams/chams.h"
@@ -20,6 +20,8 @@ inline void HookForcedMaterialOverride()
 {
 	INSTALL_VTABLE_HOOK(ForcedMaterialOverride, interfaces::StudioRender, 33);
 
+	#ifdef DEBUG
 	constexpr Color_t color = {100, 255, 100, 255};
 	helper::console::ColoredPrint("IStudioRender::ForcedMaterialOverride hooked\n", color);
+	#endif
 }

@@ -37,5 +37,7 @@ inline void Hook_RunCommand(void)
 		return;
 	}
 
+	#ifdef DEBUG
 	interfaces::Cvar->ConsolePrintf("Hooked CPrediction::RunCommand\n");
+	#endif
 }

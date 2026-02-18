@@ -1,13 +1,15 @@
-#include "../classes.h"
+#include "entitylua.h"
 
 #include "../../../sdk/classes/player.h"
 #include "../../../sdk/classes/cbaseobject.h"
 #include "../../../sdk/classes/ctfrobotdestruction_robot.h"
 #include "../../../sdk/netvars/netvar.h"
-#include "../../entitylist/entitylist.h"
 #include "../../../sdk/handle_utils.h"
-#include "../pluto/lua.h"
+
+#include "../../entitylist/entitylist.h"
 #include "../../prediction/prediction.h"
+
+#include "vectorlua.h"
 
 namespace LuaClasses
 {
@@ -152,7 +154,7 @@ namespace LuaClasses
 			if (le->ent != nullptr)
 			{
 				Vector origin = le->ent->GetAbsOrigin();
-				LuaClasses::VectorLua::push_vector(L, origin);
+				LuaClasses::Vector3::push(L, origin);
 			}
 			else
 			{
@@ -168,7 +170,7 @@ namespace LuaClasses
 			if (le->ent != nullptr)
 			{
 				Vector angles = le->ent->GetAbsAngles();
-				LuaClasses::VectorLua::push_vector(L, angles);
+				LuaClasses::Vector3::push(L, angles);
 			}
 			else
 			{
@@ -255,7 +257,7 @@ namespace LuaClasses
 				auto& offset = it->second;
 				uintptr_t entityPtr = reinterpret_cast<uintptr_t>(le->ent);
 				Vector value = *reinterpret_cast<Vector*>(entityPtr + offset);
-				LuaClasses::VectorLua::push_vector(L, value);
+				LuaClasses::Vector3::push(L, value);
 				return 1;
 			}
 
@@ -391,11 +393,11 @@ namespace LuaClasses
 			if (le->ent->IsBuilding())
 			{
 				CBaseObject* obj = reinterpret_cast<CBaseObject*>(le->ent);
-				LuaClasses::VectorLua::push_vector(L, obj->m_vecBuildMins());
+				LuaClasses::Vector3::push(L, obj->m_vecBuildMins());
 				return 1;
 			}
 
-			LuaClasses::VectorLua::push_vector(L, le->ent->m_vecMins());
+			LuaClasses::Vector3::push(L, le->ent->m_vecMins());
 			return 1;
 		}
 
@@ -411,11 +413,11 @@ namespace LuaClasses
 			if (le->ent->IsBuilding())
 			{
 				CBaseObject* obj = reinterpret_cast<CBaseObject*>(le->ent);
-				LuaClasses::VectorLua::push_vector(L, obj->m_vecBuildMaxs());
+				LuaClasses::Vector3::push(L, obj->m_vecBuildMaxs());
 				return 1;
 			}
 
-			LuaClasses::VectorLua::push_vector(L, le->ent->m_vecMaxs());
+			LuaClasses::Vector3::push(L, le->ent->m_vecMaxs());
 			return 1;
 		}
 
@@ -900,7 +902,7 @@ namespace LuaClasses
 			int i = 1;
 			for (const Vector& v : path)
 			{
-				LuaClasses::VectorLua::push_vector(L, v);
+				LuaClasses::Vector3::push(L, v);
 				lua_rawseti(L, -2, i++);
 			}
 
@@ -916,7 +918,7 @@ namespace LuaClasses
 				return 1;
 			}
 
-			LuaClasses::VectorLua::push_vector(L, le->ent->EstimateAbsVelocity());
+			LuaClasses::Vector3::push(L, le->ent->EstimateAbsVelocity());
 			return 1;
 		}
 

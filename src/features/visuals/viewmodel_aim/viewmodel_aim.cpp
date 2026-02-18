@@ -4,7 +4,7 @@ float ViewmodelAim::m_flStopTime = 0;
 
 void ViewmodelAim::Run(Vector& angle)
 {
-	if (!Settings::aimbot.viewmodelaim)
+	if (!Settings::Aimbot::viewmodelaim)
 		return;
 
 	constexpr float interval = 0.5f;

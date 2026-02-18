@@ -4,7 +4,7 @@
 #include "../sdk/classes/entity.h"
 #include "../sdk/classes/player.h"
 #include "../sdk/helpers/helper.h"
-#include "../settings.h"
+#include "../settings/settings.h"
 #include "../libdetour/libdetour.h"
 #include "../sdk/definitions/inetchannel.h"
 #include "../features/warp/warp.h"
@@ -36,6 +36,8 @@ inline void HookSendNetMsg()
 	detour_init(&SendNetMsg_ctx, original, (void*)&Hooked_SendNetMsg);
 	detour_enable(&SendNetMsg_ctx);
 
+	#ifdef DEBUG
 	constexpr Color_t color{100, 255, 100, 255};
 	interfaces::Cvar->ConsoleColorPrintf(color, "CNetChan::SendNetMsg hooked\n");
+	#endif
 }

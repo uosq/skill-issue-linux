@@ -4,7 +4,7 @@
 #include "../sdk/classes/entity.h"
 #include "../sdk/classes/player.h"
 #include "../sdk/helpers/helper.h"
-#include "../settings.h"
+#include "../settings/settings.h"
 #include <string>
 
 #include "../features/aimbot/aimbot.h"
@@ -16,7 +16,7 @@ DETOUR_DECL_TYPE(bool, original_ShowItemsPickedUpFn, void* thisptr, bool bForce,
 
 static bool HookedShowItemsPickedUpFn(void* thisptr, bool bForce, bool bReturnToGame, bool bNoPanel)
 {
-	if (Settings::misc.accept_item_drop)
+	if (Settings::Misc::accept_item_drop)
 	{
 		interfaces::Cvar->ConsolePrintf("Collected item drop\n");
 		DETOUR_ORIG_CALL(&showitemsctx, original_ShowItemsPickedUpFn, thisptr, true, true, true);
@@ -34,5 +34,7 @@ static void HookShowItemsPickedUp()
 	detour_init(&showitemsctx, original, (void*)&HookedShowItemsPickedUpFn);
 	detour_enable(&showitemsctx);
 
+	#ifdef DEBUG
 	interfaces::Cvar->ConsolePrintf("CInventoryManager::ShowItemsPickedUp hooked\n");
+	#endif
 }

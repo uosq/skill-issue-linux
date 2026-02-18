@@ -2,7 +2,7 @@
 
 void NoRecoil::RunOverrideView(CTFPlayer* pLocal, CViewSetup* pView)
 {
-	if (!Settings::misc.norecoil)
+	if (!Settings::Misc::norecoil)
 		return;
 
 	if (interfaces::CInput->CAM_IsThirdPerson())
@@ -17,7 +17,7 @@ void NoRecoil::RunOverrideView(CTFPlayer* pLocal, CViewSetup* pView)
 
 void NoRecoil::RunCreateMove(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd)
 {
-	if (!Settings::misc.norecoil)
+	if (!Settings::Misc::norecoil)
 		return;
 
 	if (!helper::localplayer::IsAttacking(pLocal, pWeapon, pCmd))

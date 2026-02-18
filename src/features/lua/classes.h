@@ -11,12 +11,13 @@
 #include "pluto/lua.hpp"
 #include "pluto/lualib.h"
 
+#include "classes/usercmdlua.h"
+#include "classes/vectorlua.h"
+#include "classes/entitylua.h"
+#include "classes/stringcmdlua.h"
+
 // Reference instead of the real ones
 // Or else lua might cook us
-struct LuaEntity
-{
-    CBaseEntity* ent;
-};
 
 struct LuaMaterial
 {
@@ -59,116 +60,8 @@ struct LuaViewSetup
 	CViewSetup* view;
 };
 
-struct LuaStringCmd
-{
-	std::string cmd;
-	bool valid;
-};
-
 namespace LuaClasses
 {
-	namespace VectorLua
-	{
-		extern const luaL_Reg methods[];
-		void luaopen_vector(lua_State* L);
-		Vector* push_vector(lua_State* L, float x = 0, float y = 0, float z = 0);
-		Vector* push_vector(lua_State* L, const Vector& vec);
-		int Vector3(lua_State* L);
-		
-		int GC(lua_State* L);
-		int Index(lua_State* L);
-		int NewIndex(lua_State* L);
-		int ToString(lua_State* L);
-
-		int Init(lua_State* L);
-		int Set(lua_State* L);
-		int Normalize(lua_State* L);
-		int Length(lua_State* L);
-		int Length2D(lua_State* L);
-		int LengthSqr(lua_State* L);
-		int Length2DSqr(lua_State* L);
-		int Cross(lua_State* L);
-		int Dot(lua_State* L);
-		int DistTo(lua_State* L);
-		int DistTo2D(lua_State* L);
-		int ToAngle(lua_State* L);
-		int Angles(lua_State* L);
-
-		// operators
-		int Add(lua_State* L);
-		int Sub(lua_State* L);
-		int Div(lua_State* L);
-		int Eq(lua_State* L);
-		int Mul(lua_State* L);
-		int Unary(lua_State* L);
-	};
-
-	namespace EntityLua
-	{
-		extern const luaL_Reg methods[];
-		void luaopen_entity(lua_State* L);
-		LuaEntity* push_entity(lua_State* L, CBaseEntity* entity);
-		LuaEntity* CheckEntity(lua_State* L, int idx);
-
-		int GC(lua_State* L);
-		int EQ(lua_State* L);
-
-		int IsValid(lua_State* L);
-
-		int GetName(lua_State* L);
-		int GetClassName(lua_State* L);
-
-		int GetAbsOrigin(lua_State* L);
-		int GetAbsAngles(lua_State* L);
-
-		int GetNetvarInt(lua_State* L);
-		int GetNetvarFloat(lua_State* L);
-		int GetNetvarVector(lua_State* L);
-		int GetNetvarEntity(lua_State* L);
-
-		int SetNetvarInt(lua_State* L);
-		int SetNetvarFloat(lua_State* L);
-		int SetNetvarVector(lua_State* L);
-		int SetNetvarEntity(lua_State* L);
-
-		int GetHealth(lua_State* L);
-		int GetMaxHealth(lua_State* L);
-
-		int GetMins(lua_State* L);
-		int GetMaxs(lua_State* L);
-
-		int GetTeamNumber(lua_State* L);
-
-		int IsWeapon(lua_State* L);
-		int IsDormant(lua_State* L);
-		int IsAlive(lua_State* L);
-		int IsPlayer(lua_State* L);
-
-		int GetPlayerResources(lua_State* L);
-
-		int GetWeaponID(lua_State *L);
-		int GetClassID(lua_State* L);
-
-		int GetFirstMoveChild(lua_State* L);
-		int GetNextMovePeer(lua_State* L);
-
-		int AttributeHookValueInt(lua_State* L);
-		int AttributeHookValueFloat(lua_State* L);
-
-		int GetWeaponType(lua_State* L);
-		int IsInReload(lua_State* L);
-		int GetSmackTime(lua_State* L);
-
-		int GetIndex(lua_State* L);
-		int Predict(lua_State* L);
-		int EstimateAbsVelocity(lua_State* L);
-		int ShouldDraw(lua_State* L);
-
-		int SetupBones(lua_State* L);
-
-		int GetMoveType(lua_State* L);
-	};
-
 	namespace MaterialLua
 	{
 		extern const luaL_Reg methods[];
@@ -340,17 +233,5 @@ namespace LuaClasses
 
 		int Index(lua_State* L);
 		int NewIndex(lua_State* L);
-	}
-
-	namespace StringCmdLua
-	{
-		extern const luaL_Reg methods[];
-		void open(lua_State* L);
-		LuaStringCmd* push(lua_State* L, std::string cmd);
-
-		int GC(lua_State* L);
-
-		int Get(lua_State* L);
-		int Set(lua_State* L);
 	}
 }

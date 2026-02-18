@@ -9,7 +9,7 @@
 #include "../../../sdk/definitions/cgametrace.h"
 #include "../../../sdk/definitions/ctracefilters.h"
 #include "../../../sdk/definitions/bspflags.h"
-#include "../../../settings.h"
+#include "../../../settings/settings.h"
 #include "../../../sdk/definitions/studio.h"
 
 #include "../utils/utils.h"

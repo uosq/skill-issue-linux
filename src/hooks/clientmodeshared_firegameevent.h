@@ -1,13 +1,7 @@
 #pragma once
 
 #include "../sdk/definitions/igameevents.h"
-#include "../sdk/interfaces/interfaces.h"
-#include "../sdk/classes/entity.h"
-#include "../sdk/classes/player.h"
-#include "../sdk/helpers/helper.h"
-#include "../settings.h"
 #include "../libdetour/libdetour.h"
-#include "../sdk/definitions/inetchannel.h"
 
 #include "../features/lua/hookmgr.h"
 #include "../features/lua/api.h"
@@ -42,5 +36,7 @@ inline void HookFireGameEvent(void)
 	detour_init(&firegameevent_ctx, original, (void*)&Hooked_FireGameEvent);
 	detour_enable(&firegameevent_ctx);
 
+	#ifdef DEBUG
 	interfaces::Cvar->ConsolePrintf("ClientModeShared::FireGameEvent hooked\n");
+	#endif
 }

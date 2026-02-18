@@ -2,7 +2,7 @@
 
 #include "../vtables.h"
 #include "../sdk/interfaces/interfaces.h"
-#include "../settings.h"
+#include "../settings/settings.h"
 
 #include "../imgui/imgui.h"
 

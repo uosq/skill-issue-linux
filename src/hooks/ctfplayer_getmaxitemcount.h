@@ -4,7 +4,7 @@
 #include "../sdk/classes/entity.h"
 #include "../sdk/classes/player.h"
 #include "../sdk/helpers/helper.h"
-#include "../settings.h"
+#include "../settings/settings.h"
 #include "../libdetour/libdetour.h"
 
 #include <string>
@@ -14,7 +14,7 @@ DETOUR_DECL_TYPE(int, originalMaxItemCountFn, void* thisptr);
 
 inline int Hooked_GetMaxItemCount(void* thisptr)
 {
-	if (Settings::misc.backpack_expander)
+	if (Settings::Misc::backpack_expander)
 		return 4000;
 
 	int ret;
@@ -29,6 +29,8 @@ inline void HookCTFPlayerInventory_MaxItemCount()
 	detour_init(&GetMaxItemCount_ctx, original, (void*)&Hooked_GetMaxItemCount);
 	detour_enable(&GetMaxItemCount_ctx);
 
+	#ifdef DEBUG
 	constexpr Color_t color{100, 255, 100, 255};
 	interfaces::Cvar->ConsoleColorPrintf(color, "CTFPlayerInventory::GetMaxItemCount hooked\n");
+	#endif
 }

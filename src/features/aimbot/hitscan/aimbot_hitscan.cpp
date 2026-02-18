@@ -98,11 +98,11 @@ namespace AimbotHitscan
 
 	void Run(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd, AimbotState& state)
 	{
-		if (Settings::aimbot.waitforcharge && pWeapon->IsAmbassador())
+		if (Settings::Aimbot::waitforcharge && pWeapon->IsAmbassador())
 			if (!pWeapon->CanAmbassadorHeadshot())
 				return;
 
-		if (Settings::aimbot.hold_minigun_spin && pWeapon->GetWeaponID() == TF_WEAPON_MINIGUN)
+		if (Settings::Aimbot::hold_minigun_spin && pWeapon->GetWeaponID() == TF_WEAPON_MINIGUN)
 			pCmd->buttons |= IN_ATTACK2;
 
 		std::vector<PotentialTarget> targets;
@@ -125,7 +125,7 @@ namespace AimbotHitscan
 		bool bIsZoomed = pLocal->InCond(TF_COND_ZOOMED);
 		
 		float maxFov = AimbotUtils::GetAimbotFovScaled(); //settings.aimbot.fov;
-		bool bNoFovLimit = Settings::aimbot.fov >= 180.0f;
+		bool bNoFovLimit = Settings::Aimbot::fov >= 180.0f;
 
 		bool bCanHitTeammates = pWeapon->CanHitTeammates();
 
@@ -153,7 +153,7 @@ namespace AimbotHitscan
 			if (!bNoFovLimit && fov > maxFov)
 				continue;
 
-			if (Settings::aimbot.waitforcharge && bIsZoomed && bIsSniperRifle && !AimbotUtils::CanDamageWithSniperRifle(pLocal, entity, pWeapon))
+			if (Settings::Aimbot::waitforcharge && bIsZoomed && bIsSniperRifle && !AimbotUtils::CanDamageWithSniperRifle(pLocal, entity, pWeapon))
 				continue;
 
 			// GetShotPosition already checks if its visible
@@ -174,13 +174,13 @@ namespace AimbotHitscan
 			return a.fov < b.fov;
 		});
 
-		AimbotMode mode = Settings::aimbot.mode;
+		AimbotMode mode = static_cast<AimbotMode>(Settings::Aimbot::mode);
 
 		switch(mode)
 		{
 			case AimbotMode::PLAIN:
 			{
-				if (Settings::aimbot.autoshoot)
+				if (Settings::Aimbot::autoshoot)
 					pCmd->buttons |= IN_ATTACK;
 
 				auto target = targets.front();
@@ -196,7 +196,7 @@ namespace AimbotHitscan
 				Vector targetAngle = target.dir;
 				
 				Vector delta = targetAngle - viewAngles;
-				Vector smoothedAngle = viewAngles + (delta * (100.0f - Settings::aimbot.smoothness) * 0.01f);
+				Vector smoothedAngle = viewAngles + (delta * (100.0f - Settings::Aimbot::smoothness) * 0.01f);
 				state.angle = smoothedAngle;
 
 				interfaces::Engine->SetViewAngles(smoothedAngle);
@@ -213,7 +213,7 @@ namespace AimbotHitscan
 				if (!trace.DidHit() || trace.m_pEnt != target.entity)
 					break;
 
-				if (Settings::aimbot.autoshoot)
+				if (Settings::Aimbot::autoshoot)
 					pCmd->buttons |= IN_ATTACK;
 				break;
 			}
@@ -229,7 +229,7 @@ namespace AimbotHitscan
 				Vector targetAngle = target.dir;
 
 				Vector delta = targetAngle - viewAngles;
-				Vector smoothedAngle = viewAngles + (delta * (100.0f - Settings::aimbot.smoothness) * 0.01f);
+				Vector smoothedAngle = viewAngles + (delta * (100.0f - Settings::Aimbot::smoothness) * 0.01f);
 
 				interfaces::Engine->SetViewAngles(smoothedAngle);
 				pCmd->viewangles = smoothedAngle;
@@ -246,13 +246,13 @@ namespace AimbotHitscan
 				if (!trace.DidHit() || trace.m_pEnt != target.entity)
 					break;
 
-				if (Settings::aimbot.autoshoot)
+				if (Settings::Aimbot::autoshoot)
 					pCmd->buttons |= IN_ATTACK;
 				break;
 			}
 			case AimbotMode::SILENT:
 			{
-				if (Settings::aimbot.autoshoot)
+				if (Settings::Aimbot::autoshoot)
 					pCmd->buttons |= IN_ATTACK;
 
 				if (helper::localplayer::IsAttacking(pLocal, pWeapon, pCmd))

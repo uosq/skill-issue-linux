@@ -4,7 +4,7 @@
 #include "../sdk/classes/entity.h"
 #include "../sdk/classes/player.h"
 #include "../sdk/helpers/helper.h"
-#include "../settings.h"
+#include "../settings/settings.h"
 #include <string>
 
 #include "../features/aimbot/aimbot.h"
@@ -30,8 +30,8 @@ inline void HookedCalcViewModelView(void* thisptr, CBaseEntity* owner, const Vec
 	{
 		if (LuaHookManager::HasHooks("CalcViewModelView"))
 		{
-			LuaClasses::VectorLua::push_vector(Lua::m_luaState, position);
-			LuaClasses::VectorLua::push_vector(Lua::m_luaState, angle);
+			LuaClasses::Vector3::push(Lua::m_luaState, position);
+			LuaClasses::Vector3::push(Lua::m_luaState, angle);
 
 			LuaHookManager::Call(Lua::m_luaState, "CalcViewModelView", 2);
 		}
@@ -50,6 +50,8 @@ inline void HookCalcViewModelView()
 	detour_init(&calcViewModel_ctx, original, (void*)&HookedCalcViewModelView);
 	detour_enable(&calcViewModel_ctx);
 
+	#ifdef DEBUG
 	constexpr Color_t color{100, 255, 100, 255};
 	interfaces::Cvar->ConsoleColorPrintf(color, "CalcViewModelView hooked\n");
+	#endif
 }

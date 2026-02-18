@@ -24,5 +24,7 @@ inline void HookCL_Move(void)
 		return;
 	}
 
+	#ifdef DEBUG
 	interfaces::Cvar->ConsolePrintf("CL_Move hooked\n");
+	#endif
 }

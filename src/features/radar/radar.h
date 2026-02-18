@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../entitylist/entitylist.h"
-#include "../../settings.h"
+#include "../../settings/settings.h"
 #include "../../imgui/imgui.h"
 #include "../esp/esp.h"
 

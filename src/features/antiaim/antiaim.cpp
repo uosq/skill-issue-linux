@@ -5,14 +5,14 @@ namespace Antiaim
 {
 	std::string GetPitchModeName(PitchMode mode)
 	{
-		switch (Settings::antiaim.pitch_mode)
+		switch (Settings::AntiAim::pitch_mode)
 		{
-			case PitchMode::NONE: return "None";
-			case PitchMode::UP: return "Up";
-			case PitchMode::DOWN: return "Down";
-			case PitchMode::FAKEUP: return "Fake Up";
-			case PitchMode::FAKEDOWN: return "Fake Down";
-			case PitchMode::RANDOM: return "Random";
+			case static_cast<int>(PitchMode::NONE): return "None";
+			case static_cast<int>(PitchMode::UP): return "Up";
+			case static_cast<int>(PitchMode::DOWN): return "Down";
+			case static_cast<int>(PitchMode::FAKEUP): return "Fake Up";
+			case static_cast<int>(PitchMode::FAKEDOWN): return "Fake Down";
+			case static_cast<int>(PitchMode::RANDOM): return "Random";
 		}
 
 		return "unknown";
@@ -37,7 +37,7 @@ namespace Antiaim
 
 	float GetPitch(CUserCmd* pCmd)
 	{
-		switch (Settings::antiaim.pitch_mode)
+		switch (static_cast<PitchMode>(Settings::AntiAim::pitch_mode))
 		{
 			case PitchMode::NONE: return pCmd->viewangles.x;
 			case PitchMode::UP: return -89.0f;
@@ -52,7 +52,7 @@ namespace Antiaim
 
 	float GetYaw(CUserCmd* pCmd, YawMode mode)
 	{
-		float spin_speed = Settings::antiaim.spin_speed;
+		float spin_speed = Settings::AntiAim::spin_speed;
 
 		switch (mode)
 		{
@@ -71,7 +71,7 @@ namespace Antiaim
 
 	void Run(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd)
 	{
-		if (!Settings::antiaim.enabled)
+		if (!Settings::AntiAim::enabled)
 			return;
 
 		if (!pLocal->IsAlive() || pLocal->IsGhost() || pLocal->IsTaunting())
@@ -88,15 +88,15 @@ namespace Antiaim
 
 		bool isFake = TickManager::m_bSendPacket;
 		
-		if (Settings::antiaim.pitch_mode != PitchMode::NONE)
+		if (Settings::AntiAim::pitch_mode != static_cast<int>(PitchMode::NONE))
 		{
 			float pitch = GetPitch(pCmd);
 			pCmd->viewangles.x = pitch;
 		}
 
-		YawMode mode = isFake ? Settings::antiaim.fake_yaw_mode : Settings::antiaim.real_yaw_mode;
+		int mode = isFake ? Settings::AntiAim::fake_yaw_mode : Settings::AntiAim::real_yaw_mode;
 
-		if (mode != YawMode::NONE)
-			pCmd->viewangles.y = GetYaw(pCmd, mode);
+		if (mode != static_cast<int>(YawMode::NONE))
+			pCmd->viewangles.y = GetYaw(pCmd, static_cast<YawMode>(mode));
 	}
 }

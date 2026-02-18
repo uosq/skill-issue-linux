@@ -15,7 +15,7 @@ DECLARE_VTABLE_HOOK(FrameStageNotify, void, (CHLClient* thisptr, int stage))
 	{
 		case FRAME_RENDER_START:
 		{
-			if (Settings::misc.thirdperson)
+			if (Settings::Misc::thirdperson)
 			{
 				CTFPlayer* pLocal = EntityList::GetLocal();
 				if (pLocal == nullptr || !pLocal->IsAlive())
@@ -53,6 +53,8 @@ inline void HookFrameStageNotify()
 {
 	INSTALL_VTABLE_HOOK(FrameStageNotify, interfaces::ClientDLL, 35);
 
+	#ifdef DEBUG
 	constexpr Color_t color = {100, 255, 100, 255};
 	helper::console::ColoredPrint("IBaseClientDll::FrameStageNotify hooked\n", color);
+	#endif
 }

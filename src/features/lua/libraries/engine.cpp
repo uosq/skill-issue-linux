@@ -69,17 +69,15 @@ namespace LuaFuncs
 		{
 			Vector angles;
 			interfaces::Engine->GetViewAngles(angles);
-			LuaClasses::VectorLua::push_vector(L, angles);
+			LuaClasses::Vector3::push(L, angles);
 			return 1;
 		}
 
 		int SetViewAngles(lua_State* L)
 		{
-			Vector* vec = static_cast<Vector*>(luaL_checkudata(L, 1, "Vector3"));
+			LuaVector* vec = static_cast<LuaVector*>(luaL_checkudata(L, 1, "Vector3"));
 			if (vec == nullptr)
-			{
 				return 0;
-			}
 
 			interfaces::Engine->SetViewAngles(*vec);
 			return 0;
@@ -87,7 +85,7 @@ namespace LuaFuncs
 
 		int WorldToScreen(lua_State* L)
 		{
-			Vector* vec = static_cast<Vector*>(luaL_checkudata(L, 1, "Vector3"));
+			LuaVector* vec = static_cast<LuaVector*>(luaL_checkudata(L, 1, "Vector3"));
 			if (vec == nullptr)
 			{
 				lua_pushnil(L);
@@ -102,7 +100,7 @@ namespace LuaFuncs
 				return 1;
 			}
 
-			LuaClasses::VectorLua::push_vector(L, out);
+			LuaClasses::Vector3::push(L, out);
 			return 1;
 		}
 
@@ -122,11 +120,11 @@ namespace LuaFuncs
 		// engine.Trace(start, end, mask, shouldHitFunction(entity, contentsmask))
 		int Trace(lua_State* L)
 		{
-			Vector* start = static_cast<Vector*>(luaL_checkudata(L, 1, "Vector3"));
+			LuaVector* start = static_cast<LuaVector*>(luaL_checkudata(L, 1, "Vector3"));
 			if (!start)
 				return 0;
 
-			Vector* end = static_cast<Vector*>(luaL_checkudata(L, 2, "Vector3"));
+			LuaVector* end = static_cast<LuaVector*>(luaL_checkudata(L, 2, "Vector3"));
 			if (!end)
 				return 0;
 
@@ -161,7 +159,7 @@ namespace LuaFuncs
 			lua_pushnumber(L, trace.fraction);
 			lua_setfield(L, -2, "fraction");
 
-			LuaClasses::VectorLua::push_vector(L, trace.plane.normal);
+			LuaClasses::Vector3::push(L, trace.plane.normal);
 			lua_setfield(L, -2, "plane");
 
 			if (trace.m_pEnt != nullptr)
@@ -170,10 +168,10 @@ namespace LuaFuncs
 				lua_setfield(L, -2, "entity");
 			}
 
-			LuaClasses::VectorLua::push_vector(L, trace.startpos);
+			LuaClasses::Vector3::push(L, trace.startpos);
 			lua_setfield(L, -2, "startpos");
 
-			LuaClasses::VectorLua::push_vector(L, trace.endpos);
+			LuaClasses::Vector3::push(L, trace.endpos);
 			lua_setfield(L, -2, "endpos");
 
 			lua_pushinteger(L, trace.surface.surfaceProps);
@@ -211,19 +209,19 @@ namespace LuaFuncs
 
 		int TraceHull(lua_State* L)
 		{
-			Vector* start = static_cast<Vector*>(luaL_checkudata(L, 1, "Vector3"));
+			LuaVector* start = static_cast<LuaVector*>(luaL_checkudata(L, 1, "Vector3"));
 			if (!start)
 				return 0;
 
-			Vector* end = static_cast<Vector*>(luaL_checkudata(L, 2, "Vector3"));
+			LuaVector* end = static_cast<LuaVector*>(luaL_checkudata(L, 2, "Vector3"));
 			if (!end)
 				return 0;
 
-			Vector* min = static_cast<Vector*>(luaL_checkudata(L, 3, "Vector3"));
+			LuaVector* min = static_cast<LuaVector*>(luaL_checkudata(L, 3, "Vector3"));
 			if (!min)
 				return 0;
 
-			Vector* max = static_cast<Vector*>(luaL_checkudata(L, 4, "Vector3"));
+			LuaVector* max = static_cast<LuaVector*>(luaL_checkudata(L, 4, "Vector3"));
 			if (!max)
 				return 0;
 
@@ -258,7 +256,7 @@ namespace LuaFuncs
 			lua_pushnumber(L, trace.fraction);
 			lua_setfield(L, -2, "fraction");
 
-			LuaClasses::VectorLua::push_vector(L, trace.plane.normal);
+			LuaClasses::Vector3::push(L, trace.plane.normal);
 			lua_setfield(L, -2, "plane");
 
 			if (trace.m_pEnt != nullptr)
@@ -267,10 +265,10 @@ namespace LuaFuncs
 				lua_setfield(L, -2, "entity");
 			}
 
-			LuaClasses::VectorLua::push_vector(L, trace.startpos);
+			LuaClasses::Vector3::push(L, trace.startpos);
 			lua_setfield(L, -2, "startpos");
 
-			LuaClasses::VectorLua::push_vector(L, trace.endpos);
+			LuaClasses::Vector3::push(L, trace.endpos);
 			lua_setfield(L, -2, "endpos");
 
 			lua_pushinteger(L, trace.surface.surfaceProps);
@@ -308,7 +306,7 @@ namespace LuaFuncs
 
 		int GetPointContent(lua_State* L)
 		{
-			Vector* vec = static_cast<Vector*>(luaL_checkudata(L, 1, "Vector3"));
+			LuaVector* vec = static_cast<LuaVector*>(luaL_checkudata(L, 1, "Vector3"));
 			if (!vec)
 				return 0;
 

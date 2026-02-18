@@ -37,7 +37,11 @@ inline void InitImGui()
 	if (g_ImGuiInitialized || !g_pd3dDevice)
 		return;
 
+	#ifdef DEBUG
 	if (!tfwindow) return interfaces::Cvar->ConsolePrintf("SDL window is NULL!\n");
+	#else
+	if (!tfwindow) return;
+	#endif
 
 	if (ImGui::GetCurrentContext() == nullptr)
 		ImGui::CreateContext();
@@ -129,16 +133,16 @@ inline void RenderImGui()
 	if (LuaHookManager::HasHooks("ImGui"))
 		LuaHookManager::Call(Lua::m_luaState, "ImGui", 0);
 
-	if (Settings::antiaim.warp_enabled)
+	if (Settings::AntiAim::warp_enabled)
 		Warp::RunWindow();
 
-	if (Settings::radar.enabled)
+	if (Settings::Radar::enabled)
 		Radar::Run();
 
-	if (Settings::misc.spectatorlist)
+	if (Settings::Misc::spectatorlist)
 		GUI::RunSpectatorList();
 
-	if (Settings::misc.playerlist)
+	if (Settings::Misc::playerlist)
 		GUI::RunPlayerList();
 
 	if (Settings::menu_open)
@@ -215,7 +219,9 @@ inline bool HookD3D9VTable()
 		return false;
 	}
 
+	#ifdef DEBUG
 	interfaces::Cvar->ConsolePrintf("DXVK base: %p\n", dxvk_base);
+	#endif
 
 	// Create a temporary D3D9 device to get the vtable
 	void* d3d9_lib = dlopen("libdxvk_d3d9.so", RTLD_LAZY | RTLD_NOLOAD);
@@ -300,7 +306,9 @@ inline bool HookD3D9VTable()
 	pDummyDevice->Release();
 	pD3D->Release();
 
+	#ifdef DEBUG
 	interfaces::Cvar->ConsolePrintf("D3D9/DXVK hooked successfully\n");
+	#endif
 	return true;
 }
 

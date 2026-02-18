@@ -90,6 +90,8 @@ inline void HookDrawModelExecute(void)
 {
 	INSTALL_VTABLE_HOOK(DrawModelExecute, interfaces::ModelRender, 19);
 
+	#ifdef DEBUG
 	constexpr Color_t color = {100, 255, 100, 255};
 	helper::console::ColoredPrint("IModelRender::DrawModelExecute hooked\n", color);
+	#endif
 }

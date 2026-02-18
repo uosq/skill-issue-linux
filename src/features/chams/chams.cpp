@@ -19,7 +19,10 @@ namespace Chams
 			);
 
 			m_bMatLoaded = true;
+
+			#ifdef DEBUG
 			helper::console::Print("Material vapooo created!\n");
+			#endif
 		}
 
 		return m_bMatLoaded;
@@ -67,9 +70,9 @@ namespace Chams
 			while (moveChild != nullptr && passes <= 32)
 			{
 				CBaseEntity* attachment = static_cast<CBaseEntity*>(moveChild);
-				if (Settings::esp.weapon && attachment->IsWeapon())
+				if (Settings::ESP::weapon && attachment->IsWeapon())
 				{
-					color = Settings::colors.weapon;
+					color = Settings::Colors::weapon;
 					flColor[0] = color.r()/255.0f;
 					flColor[1] = color.g()/255.0f;
 					flColor[2] = color.b()/255.0f;
@@ -97,7 +100,7 @@ namespace Chams
 
 		m_bRunning = false;
 
-		if (!Settings::esp.chams)
+		if (!Settings::ESP::chams)
 			return;
 
 		if (interfaces::Engine->IsTakingScreenshot())

@@ -19,7 +19,7 @@ inline bool HookedExecuteStringCommand(void* self, const char* pCommandString)
 
 	if (LuaHookManager::HasHooks("ExecStringCmd"))
 	{
-		LuaClasses::StringCmdLua::push(Lua::m_luaState, cmd);
+		LuaClasses::StringCmd::push(Lua::m_luaState, cmd);
 		LuaHookManager::Call(Lua::m_luaState, "ExecStringCmd", 1);
 	}
 
@@ -39,5 +39,7 @@ inline void Hook_ExecuteStringCommand()
 		return;
 	}
 
+	#ifdef DEBUG
 	interfaces::Cvar->ConsolePrintf("CGameClient::ExecuteStringCommand hooked\n");
+	#endif
 }

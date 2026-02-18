@@ -43,5 +43,7 @@ inline void Hook_ValidateUserCmd(void)
 		return;
 	}
 
+	#ifdef DEBUG
 	interfaces::Cvar->ConsolePrintf("CInput::ValidateUserCmd hooked\n");
+	#endif
 }

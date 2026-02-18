@@ -21,6 +21,8 @@ inline void HookCMaterial_Uncache(void)
 	detour_init(&uncache_ctx, func, (void*)&HookedUncache);
 	detour_enable(&uncache_ctx);
 
+	#ifdef DEBUG
 	Color_t color = {255, 255, 255, 255};
 	interfaces::Cvar->ConsoleColorPrintf(color, "CMaterial::Uncache hooked\n");
+	#endif
 }

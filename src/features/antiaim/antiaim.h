@@ -2,7 +2,7 @@
 
 #include "../../sdk/interfaces/interfaces.h"
 #include "../../sdk/definitions/cusercmd.h"
-#include "../../settings.h"
+#include "../../settings/settings.h"
 #include "../../sdk/classes/player.h"
 #include "../../sdk/classes/weaponbase.h"
 #include "../../sdk/helpers/helper.h"

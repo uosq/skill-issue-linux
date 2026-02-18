@@ -10,6 +10,7 @@
 
 #include "../lua/api.h"
 #include "../lua/hookmgr.h"
+#include "../lua/classes/usercmdlua.h"
 
 #include "../../sdk/definitions/host.h"
 #include "../../sdk/definitions/protocol.h"
@@ -26,109 +27,18 @@ static Host_ShouldRunFn originalHost_ShouldRun = nullptr;
 
 bool TickManager::m_bSendPacket = true;
 
-void TickManager::RunLuaCreateMoveCallback(CUserCmd* pCmd)
+void TickManager::Lua_CreateMove_Callback(CUserCmd* pCmd)
 {
-	lua_newtable(Lua::m_luaState);
+	if (!LuaHookManager::HasHooks("CreateMove"))
+		return;
 
-	lua_pushstring(Lua::m_luaState, "buttons");
-	lua_pushinteger(Lua::m_luaState, pCmd->buttons);
-	lua_settable(Lua::m_luaState, -3);
-
-	lua_pushstring(Lua::m_luaState, "tick_count");
-	lua_pushinteger(Lua::m_luaState, pCmd->tick_count);
-	lua_settable(Lua::m_luaState, -3);
-
-	lua_pushstring(Lua::m_luaState, "forwardmove");
-	lua_pushnumber(Lua::m_luaState, pCmd->forwardmove);
-	lua_settable(Lua::m_luaState, -3);
-
-	lua_pushstring(Lua::m_luaState, "sidemove");
-	lua_pushnumber(Lua::m_luaState, pCmd->sidemove);
-	lua_settable(Lua::m_luaState, -3);
-
-	lua_pushstring(Lua::m_luaState, "upmove");
-	lua_pushnumber(Lua::m_luaState, pCmd->upmove);
-	lua_settable(Lua::m_luaState, -3);
-
-	lua_pushstring(Lua::m_luaState, "mousedx");
-	lua_pushinteger(Lua::m_luaState, pCmd->mousedx);
-	lua_settable(Lua::m_luaState, -3);
-
-	lua_pushstring(Lua::m_luaState, "mousedy");
-	lua_pushinteger(Lua::m_luaState, pCmd->mousedy);
-	lua_settable(Lua::m_luaState, -3);
-
-	lua_pushstring(Lua::m_luaState, "weaponselect");
-	lua_pushinteger(Lua::m_luaState, pCmd->weaponselect);
-	lua_settable(Lua::m_luaState, -3);
-
-	lua_pushstring(Lua::m_luaState, "weaponsubtype");
-	lua_pushinteger(Lua::m_luaState, pCmd->weaponsubtype);
-	lua_settable(Lua::m_luaState, -3);
-
-	lua_pushstring(Lua::m_luaState, "impulse");
-	lua_pushinteger(Lua::m_luaState, pCmd->impulse);
-	lua_settable(Lua::m_luaState, -3);
-
-	lua_pushstring(Lua::m_luaState, "hasbeenpredicted");
-	lua_pushboolean(Lua::m_luaState, pCmd->hasbeenpredicted);
-	lua_settable(Lua::m_luaState, -3);
-
-	lua_pushstring(Lua::m_luaState, "sendpacket");
-	lua_pushboolean(Lua::m_luaState, m_bSendPacket);
-	lua_settable(Lua::m_luaState, -3);
+	LuaUserCmd* lcmd = LuaClasses::UserCmd::push(Lua::m_luaState, *pCmd);
 
 	LuaHookManager::Call(Lua::m_luaState, "CreateMove", 1, false);
+	lcmd->CopyFromUserCmd(*pCmd);
+	lcmd->valid = false;
 
-	lua_getfield(Lua::m_luaState, -1, "buttons");
-	pCmd->buttons = lua_tointeger(Lua::m_luaState, -1);
 	lua_pop(Lua::m_luaState, 1);
-
-	lua_getfield(Lua::m_luaState, -1, "tick_count");
-	pCmd->tick_count = lua_tointeger(Lua::m_luaState, -1);
-	lua_pop(Lua::m_luaState, 1);
-
-	lua_getfield(Lua::m_luaState, -1, "forwardmove");
-	pCmd->forwardmove = lua_tonumber(Lua::m_luaState, -1);
-	lua_pop(Lua::m_luaState, 1);
-
-	lua_getfield(Lua::m_luaState, -1, "sidemove");
-	pCmd->sidemove = lua_tonumber(Lua::m_luaState, -1);
-	lua_pop(Lua::m_luaState, 1);
-
-	lua_getfield(Lua::m_luaState, -1, "upmove");
-	pCmd->upmove = lua_tonumber(Lua::m_luaState, -1);
-	lua_pop(Lua::m_luaState, 1);
-
-	lua_getfield(Lua::m_luaState, -1, "mousedx");
-	pCmd->mousedx = lua_tointeger(Lua::m_luaState, -1);
-	lua_pop(Lua::m_luaState, 1);
-
-	lua_getfield(Lua::m_luaState, -1, "mousedy");
-	pCmd->mousedy = lua_tointeger(Lua::m_luaState, -1);
-	lua_pop(Lua::m_luaState, 1);
-
-	lua_getfield(Lua::m_luaState, -1, "weaponselect");
-	pCmd->weaponselect = lua_tointeger(Lua::m_luaState, -1);
-	lua_pop(Lua::m_luaState, 1);
-
-	lua_getfield(Lua::m_luaState, -1, "weaponsubtype");
-	pCmd->weaponsubtype = lua_tointeger(Lua::m_luaState, -1);
-	lua_pop(Lua::m_luaState, 1);
-
-	lua_getfield(Lua::m_luaState, -1, "impulse");
-	pCmd->impulse = lua_tointeger(Lua::m_luaState, -1);
-	lua_pop(Lua::m_luaState, 1);
-
-	lua_getfield(Lua::m_luaState, -1, "hasbeenpredicted");
-	pCmd->hasbeenpredicted = lua_toboolean(Lua::m_luaState, -1);
-	lua_pop(Lua::m_luaState, 1);
-
-	lua_getfield(Lua::m_luaState, -1, "sendpacket");
-	m_bSendPacket = lua_toboolean(Lua::m_luaState, -1);
-	lua_pop(Lua::m_luaState, 1);
-
-	lua_pop(Lua::m_luaState, 1); // pop the table
 }
 
 void TickManager::Post_CreateMove(int sequence_number)
@@ -159,8 +69,7 @@ void TickManager::Post_CreateMove(int sequence_number)
 	Aimbot::Run(pLocal, pWeapon, pCmd);
 	Triggerbot::Run(pLocal, pWeapon, pCmd);
 
-	if (LuaHookManager::HasHooks("CreateMove"))
-		RunLuaCreateMoveCallback(pCmd);
+	Lua_CreateMove_Callback(pCmd);
 
 	if (reinterpret_cast<CClientState*>(interfaces::ClientState)->chokedcommands >= 21)
 		m_bSendPacket = true;
@@ -376,14 +285,14 @@ void TickManager::Run(float accumulated_extra_samples, bool bFinalTick)
 	if (Warp::m_iDesiredState == WarpState::RUNNING && Warp::m_iStoredTicks > 0)
 	{
 		Warp::m_bShifting = true;
-		Warp::m_iShiftAmount = Settings::antiaim.warp_speed;
+		Warp::m_iShiftAmount = Settings::AntiAim::warp_speed;
 
-		for (int n = 0; n < (Settings::antiaim.warp_speed); n++)
+		for (int n = 0; n < (Settings::AntiAim::warp_speed); n++)
 		{
 			if (Warp::m_iStoredTicks <= 0)
 				break;
 
-			CL_Move(accumulated_extra_samples, n == Settings::antiaim.warp_speed);
+			CL_Move(accumulated_extra_samples, n == Settings::AntiAim::warp_speed);
 			Warp::m_iStoredTicks--;
 		}
 

@@ -8,8 +8,8 @@ void CustomFov::Run(CTFPlayer* pLocal, CViewSetup* pView)
 	static ConVar* fov_desired = interfaces::Cvar->FindVar("fov_desired");
 	static ConVar* default_fov = interfaces::Cvar->FindVar("default_fov");
 
-	if (Settings::misc.customfov_enabled)
-		m_flFov = Settings::misc.customfov;
+	if (Settings::Misc::customfov_enabled)
+		m_flFov = Settings::Misc::customfov;
 	else
 		m_flFov = fov_desired->GetFloat();
 

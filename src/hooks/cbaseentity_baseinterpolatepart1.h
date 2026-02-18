@@ -33,5 +33,7 @@ inline void Hook_BaseInterpolatePart1(void)
 		return;
 	}
 
+	#ifdef DEBUG
 	interfaces::Cvar->ConsolePrintf("CBaseEntity::BaseInterpolatePart1 hooked\n");
+	#endif
 }

@@ -1,5 +1,5 @@
 #include "../libraries.h"
-#include "../classes.h"
+#include "../classes/entitylua.h"
 #include "../../../features/entitylist/entitylist.h"
 
 namespace LuaFuncs

@@ -46,8 +46,8 @@ namespace LuaClasses
 			if (strcmp(key, "m_OrthoBottom") == 0) { lua_pushnumber(L, lview->view->m_OrthoBottom); return 1; }
 			if (strcmp(key, "fov") == 0) { lua_pushnumber(L, lview->view->fov); return 1; }
 			if (strcmp(key, "fovViewmodel") == 0) { lua_pushnumber(L, lview->view->fovViewmodel); return 1; }
-			if (strcmp(key, "origin") == 0) { LuaClasses::VectorLua::push_vector(L, lview->view->origin); return 1; }
-			if (strcmp(key, "angles") == 0) { LuaClasses::VectorLua::push_vector(L, lview->view->angles); return 1; }
+			if (strcmp(key, "origin") == 0) { LuaClasses::Vector3::push(L, lview->view->origin); return 1; }
+			if (strcmp(key, "angles") == 0) { LuaClasses::Vector3::push(L, lview->view->angles); return 1; }
 			if (strcmp(key, "zNear") == 0) { lua_pushnumber(L, lview->view->zNear); return 1; }
 			if (strcmp(key, "zFar") == 0) { lua_pushnumber(L, lview->view->zFar); return 1; }
 			if (strcmp(key, "zNearViewmodel") == 0) { lua_pushnumber(L, lview->view->zNearViewmodel); return 1; }

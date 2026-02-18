@@ -4,7 +4,7 @@ Vector ViewmodelInterp::m_vecOldAngle = {};
 
 void ViewmodelInterp::Run(Vector& angle)
 {
-	if (Settings::misc.viewmodel_interp == 0.0f)
+	if (Settings::Misc::viewmodel_interp == 0.0f)
 		return;
 
 	CTFPlayer* pLocal = helper::engine::GetLocalPlayer();
@@ -16,7 +16,7 @@ void ViewmodelInterp::Run(Vector& angle)
 		return;
 
 	float frameTime = interfaces::GlobalVars->absolute_frametime;
-	float alpha = 1.0f - expf(-Settings::misc.viewmodel_interp * frameTime);
+	float alpha = 1.0f - expf(-Settings::Misc::viewmodel_interp * frameTime);
 
 	m_vecOldAngle.x += Math::NormalizeAngle(angle.x - m_vecOldAngle.x) * alpha;
 	m_vecOldAngle.z += Math::NormalizeAngle(angle.z - m_vecOldAngle.z) * alpha;

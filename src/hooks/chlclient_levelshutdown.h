@@ -23,6 +23,8 @@ static void HookLevelShutdown()
 {
 	INSTALL_VTABLE_HOOK(LevelShutdown, interfaces::ClientDLL, 7);
 
+	#ifdef DEBUG
 	constexpr Color_t color = {100, 255, 100, 255};
 	helper::console::ColoredPrint("BaseClientDll::LevelShutdown hooked\n", color);
+	#endif
 }

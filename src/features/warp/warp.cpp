@@ -1,5 +1,5 @@
 #include "warp.h"
-#include "../../settings.h"
+#include "../../settings/settings.h"
 #include "../../imgui/imgui.h"
 #include <cstdio>
 
@@ -32,7 +32,7 @@ namespace Warp
 	{
 		Warp::m_iDesiredState = WarpState::WAITING;
 
-		if (!Settings::antiaim.warp_enabled)
+		if (!Settings::AntiAim::warp_enabled)
 			return;
 
 		if (!interfaces::Engine->IsInGame() || !interfaces::Engine->IsConnected())
@@ -44,7 +44,7 @@ namespace Warp
 		// this shit does not work
 		// honestly im debating whether I should make a
 		// state machine just for this
-		/*if (m_bDoubleTap)
+		if (m_bDoubleTap)
 		{
 			const Vector vecVelocity = pLocal->GetVelocity();
     
@@ -54,11 +54,11 @@ namespace Warp
 			const float forwardVel = vecVelocity.Dot(vecForward);
 			const float sideVel = vecVelocity.Dot(vecRight);
 			
-			pCmd->forwardmove = -forwardVel;
-			pCmd->sidemove = -sideVel;
-		}*/
+			pCmd->forwardmove = -forwardVel * 450.0f;
+			pCmd->sidemove = -sideVel * 450.0f;
+		}
 
-		ButtonCode_t key = interfaces::InputSystem->StringToButtonCode(Settings::antiaim.warp_dt_key.c_str());
+		ButtonCode_t key = interfaces::InputSystem->StringToButtonCode(Settings::AntiAim::warp_dt_key.c_str());
 		if (key != BUTTON_CODE_INVALID && interfaces::InputSystem->IsButtonDown(key) && Warp::m_iStoredTicks >= Warp::GetMaxTicks())
 		{
 			if (!IsValidWeapon(pWeapon))
@@ -71,14 +71,14 @@ namespace Warp
 			}
 		}
 
-		key = interfaces::InputSystem->StringToButtonCode(Settings::antiaim.warp_key.c_str());
+		key = interfaces::InputSystem->StringToButtonCode(Settings::AntiAim::warp_key.c_str());
 		if (key != BUTTON_CODE_INVALID && interfaces::InputSystem->IsButtonDown(key) && Warp::m_iStoredTicks > 0)
 		{
 			Warp::m_iDesiredState = WarpState::RUNNING;
 			return;
 		}
 
-		key = interfaces::InputSystem->StringToButtonCode(Settings::antiaim.warp_recharge_key.c_str());
+		key = interfaces::InputSystem->StringToButtonCode(Settings::AntiAim::warp_recharge_key.c_str());
 		if (key != BUTTON_CODE_INVALID && interfaces::InputSystem->IsButtonDown(key) && Warp::m_iStoredTicks < GetMaxTicks())
 		{
 			Warp::m_iDesiredState = WarpState::RECHARGING;

@@ -2,7 +2,7 @@
 
 #include "../../../sdk/classes/player.h"
 #include "../../../sdk/classes/cbaseobject.h"
-#include "../../../settings.h"
+#include "../../../settings/settings.h"
 #include "../../../sdk/definitions/cgametrace.h"
 #include "../../../sdk/definitions/ctracefilters.h"
 #include "../../../sdk/helpers/helper.h"

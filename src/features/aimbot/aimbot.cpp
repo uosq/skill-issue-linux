@@ -26,13 +26,13 @@ namespace Aimbot
 	{
 		ClearAimbotState(m_state);
 
-		if (!Settings::aimbot.enabled)
+		if (!Settings::Aimbot::enabled)
 			return;
 
 		if (helper::engine::IsConsoleVisible() || helper::engine::IsGameUIVisible() || helper::engine::IsTakingScreenshot())
 			return;
 
-		ButtonCode_t key = interfaces::InputSystem->StringToButtonCode(Settings::aimbot.key.c_str());
+		ButtonCode_t key = interfaces::InputSystem->StringToButtonCode(Settings::Aimbot::key.c_str());
 
 		if (key != BUTTON_CODE_INVALID && !interfaces::InputSystem->IsButtonDown(key))
 			return;
@@ -65,10 +65,10 @@ namespace Aimbot
 
 	void DrawFOVIndicator()
 	{
-		if (Settings::aimbot.fov >= 90 || !Settings::aimbot.draw_fov_indicator)
+		if (Settings::Aimbot::fov >= 90 || !Settings::Aimbot::draw_fov_indicator)
 			return;
 
-		//float aimFov = DEG2RAD(Settings::aimbot.fov);
+		//float aimFov = DEG2RAD(Settings::Aimbot::fov);
 		float aimFov = DEG2RAD(AimbotUtils::GetAimbotFovScaled());
 		float camFov = DEG2RAD(CustomFov::GetFov() * 0.5f);
 
@@ -124,7 +124,7 @@ namespace Aimbot
 
 	void RunPaint()
 	{
-		if (!Settings::aimbot.enabled)
+		if (!Settings::Aimbot::enabled)
 			return;
 
 		//DrawTargetPath();

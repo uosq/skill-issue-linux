@@ -8,7 +8,7 @@
 #include "../sdk/definitions/color.h"
 #include "../sdk/classes/weaponbase.h"
 #include "../sdk/handle_utils.h"
-#include "../settings.h"
+#include "../settings/settings.h"
 
 #include "../features/esp/esp.h"
 #include "../features/aimbot/aimbot.h"
@@ -57,6 +57,8 @@ inline void HookEngineVGuiPaint()
 {
 	INSTALL_VTABLE_HOOK(VGuiPaint, interfaces::EngineVGui, 15);
 
+	#ifdef DEBUG
 	constexpr Color_t color = {100, 255, 100, 255};
 	helper::console::ColoredPrint("EngineVGui::Paint hooked\n", color);
+	#endif
 }

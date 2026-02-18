@@ -3,7 +3,7 @@
 #include "../../../features/aimbot/aimbot.h"
 #include "../../../sdk/interfaces/interfaces.h"
 #include "../../../sdk/helpers/helper.h"
-#include "../../../settings.h"
+#include "../../../settings/settings.h"
 
 namespace ViewmodelAim
 {

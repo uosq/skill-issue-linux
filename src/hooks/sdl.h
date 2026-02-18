@@ -14,7 +14,7 @@
 #include "../imgui/imgui_impl_sdl2.h"
 #include "../imgui/imgui_impl_opengl3.h"
 
-#include "../settings.h"
+#include "../settings/settings.h"
 #include "../gui/gui.h"
 #include "../features/esp/esp.h"
 #include "../features/lua/hookmgr.h"
@@ -163,16 +163,16 @@ inline void Hooked_SwapWindow(SDL_Window* window)
 	if (LuaHookManager::HasHooks("ImGui"))
 		LuaHookManager::Call(Lua::m_luaState, "ImGui");
 
-	if (Settings::antiaim.warp_enabled)
+	if (Settings::AntiAim::warp_enabled)
 		Warp::RunWindow();
 
-	if (Settings::radar.enabled)
+	if (Settings::Radar::enabled)
 		Radar::Run();
 
-	if (Settings::misc.spectatorlist)
+	if (Settings::Misc::spectatorlist)
 		GUI::RunSpectatorList();
 
-	if (Settings::misc.playerlist)
+	if (Settings::Misc::playerlist)
 		GUI::RunPlayerList();
 
 	if (Settings::menu_open)
@@ -244,5 +244,7 @@ inline void HookSDL()
 	if (!detour_enable(&windowsizedetour))
 		return interfaces::Cvar->ConsolePrintf("Couldn't hook GetWindowSize\n");
 
+	#ifdef DEBUG
 	interfaces::Cvar->ConsolePrintf("SDL2 hooked\n");
+	#endif
 }
