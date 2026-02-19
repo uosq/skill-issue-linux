@@ -7,7 +7,7 @@
 #include "../bhop/bhop.h"
 #include "../triggerbot/triggerbot.h"
 #include "../warp/warp.h"
-//#include "../fakelag/fakelag.h"
+#include "../fakelag/fakelag.h"
 
 #include "../lua/api.h"
 #include "../lua/hookmgr.h"
@@ -16,6 +16,8 @@
 #include "../../sdk/definitions/host.h"
 #include "../../sdk/definitions/protocol.h"
 #include "../../sdk/definitions/con_nprint.h"
+
+#include "../../sdk/helpers/convars/convars.h"
 
 // Host_ShouldRun(void) 48 8B 15 ? ? ? ? B8 01 00 00 00 8B 72 58
 // func to get net_time CReplayServer::GetOnlineTime(CReplayServer*) 48 8D 05 ? ? ? ? 66 0F EF C9 F3 0F 5A 8F DC 93 00 00
@@ -27,7 +29,7 @@ using Host_ShouldRunFn = bool(*)(void);
 static Host_ShouldRunFn originalHost_ShouldRun = nullptr;
 
 bool TickManager::m_bSendPacket = true;
-int TickManager::m_iChokedCommands = 0;
+uint8_t TickManager::m_iChokedCommands = 0;
 
 void TickManager::Lua_CreateMove_Callback(CUserCmd* pCmd)
 {
@@ -37,7 +39,7 @@ void TickManager::Lua_CreateMove_Callback(CUserCmd* pCmd)
 	LuaUserCmd* lcmd = LuaClasses::UserCmd::push(Lua::m_luaState, *pCmd);
 
 	LuaHookManager::Call(Lua::m_luaState, "CreateMove", 1, false);
-	lcmd->CopyFromUserCmd(*pCmd);
+	lcmd->WriteToUserCmd(pCmd);
 	lcmd->valid = false;
 
 	lua_pop(Lua::m_luaState, 1);
@@ -66,7 +68,7 @@ void TickManager::Post_CreateMove(int sequence_number)
 
 	NoRecoil::RunCreateMove(pLocal, pWeapon, pCmd);
 
-	//FakeLag::Run(pCmd);
+	FakeLag::Run();
 
 	Bhop::Run(pLocal, pCmd);
 	Antiaim::Run(pLocal, pWeapon, pCmd);
@@ -92,7 +94,7 @@ void TickManager::CL_SendMove(void)
 
 	byte data[ 4000 ];
 
-	int nextcommandnr = cl->lastoutgoingcommand + cl->chokedcommands + 1;
+	int nextcommandnr = cl->lastoutgoingcommand + m_iChokedCommands + 1;
 
 	// send the client update packet
 
@@ -100,11 +102,11 @@ void TickManager::CL_SendMove(void)
 	moveMsg.m_DataOut.StartWriting( data, sizeof( data ) );
 
 	// How many real new commands have queued up	
-	moveMsg.m_nNewCommands = 1 + cl->chokedcommands;
+	moveMsg.m_nNewCommands = 1 + m_iChokedCommands;
 	moveMsg.m_nNewCommands = std::clamp( moveMsg.m_nNewCommands, 0, MAX_NEW_COMMANDS );
 
 	// Determine number of backup commands to send along
-	int extracmds = cl->chokedcommands + 1 - moveMsg.m_nNewCommands;
+	int extracmds = m_iChokedCommands + 1 - moveMsg.m_nNewCommands;
 	int backupcmds = std::max(2, extracmds);
 	moveMsg.m_nBackupCommands = std::clamp(0, backupcmds, MAX_BACKUP_COMMANDS);
 
@@ -135,9 +137,6 @@ void TickManager::CL_SendMove(void)
 void TickManager::CL_Move(float accumulated_extra_samples, bool bFinalTick)
 {
 	CClientState* cl = static_cast<CClientState*>(interfaces::ClientState);
-
-	static ConVar* host_limitlocal = interfaces::Cvar->FindVar("host_limitlocal");
-	static ConVar* cl_cmdrate = interfaces::Cvar->FindVar("cl_cmdrate");
 
 	// returns the right thing
 	static uintptr_t net_time_addr = reinterpret_cast<uintptr_t>(sigscan_module("engine.so", "48 8D 05 ? ? ? ? 66 0F EF C9 F3 0F 5A 8F DC 93 00 00"));
@@ -177,7 +176,7 @@ void TickManager::CL_Move(float accumulated_extra_samples, bool bFinalTick)
 
 	//printf("net_time: %f, unbounded: %f, stddeviation: %f\n", net_time, host_frametime_unbounded, host_frametime_stddeviation);
 
-	if  ( ( !cl->m_NetChannel->IsLoopback() || host_limitlocal->GetInt() ) &&
+	if  ( ( !cl->m_NetChannel->IsLoopback() || ConVars::host_limitlocal->GetInt() ) &&
 		 ( ( net_time < cl->m_flNextCmdTime ) || !cl->m_NetChannel->CanPacket()  || !bFinalTick ) )
 	{
 		m_bSendPacket = false;
@@ -185,7 +184,7 @@ void TickManager::CL_Move(float accumulated_extra_samples, bool bFinalTick)
 
 	if (cl->m_nSignonState == SIGNONSTATE_FULL)
 	{
-		int nextcommandnr = cl->lastoutgoingcommand + cl->chokedcommands + 1;
+		int nextcommandnr = cl->lastoutgoingcommand + m_iChokedCommands + 1;
 
 		interfaces::ClientDLL->CreateMove(nextcommandnr, host_state->interval_per_tick - accumulated_extra_samples, !cl->m_bPaused);
 
@@ -258,7 +257,7 @@ void TickManager::CL_Move(float accumulated_extra_samples, bool bFinalTick)
 
 	if (cl->m_nSignonState == SIGNONSTATE_FULL)
 	{
-		const float commandInterval = 1.0f / cl_cmdrate->GetFloat();
+		const float commandInterval = 1.0f / ConVars::cl_cmdrate->GetFloat();
 		const float maxDelta = std::min ( host_state->interval_per_tick, commandInterval );
 		const float delta = std::clamp( static_cast<float>(net_time - cl->m_flNextCmdTime), 0.0f, maxDelta );
 		cl->m_flNextCmdTime = net_time + commandInterval - delta;
@@ -273,6 +272,7 @@ void TickManager::Init()
 {
 	originalHost_ShouldRun = reinterpret_cast<Host_ShouldRunFn>(sigscan_module("engine.so", "48 8B 15 ? ? ? ? B8 01 00 00 00 8B 72 58"));
 	m_bSendPacket = true; // just in case yk
+	m_iChokedCommands = 0;
 }
 
 void TickManager::Run(float accumulated_extra_samples, bool bFinalTick)

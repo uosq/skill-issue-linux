@@ -330,6 +330,11 @@ void DrawAntiaimTab()
 	ImGui::InputText("Warp Recharge Key", &Settings::AntiAim::warp_recharge_key);
 	ImGui::InputText("DoubleTap Key", &Settings::AntiAim::warp_dt_key);
 
+	ImGui::Separator();
+
+	ImGui::Checkbox("Fake Lag Enabled", &Settings::AntiAim::fakelag_enabled);
+	ImGui::SliderInt("Ticks", &Settings::AntiAim::fakelag_ticks, 1, 21);
+
 	ImGui::EndGroup();
 }
 

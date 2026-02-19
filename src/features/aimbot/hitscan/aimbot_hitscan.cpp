@@ -190,8 +190,15 @@ namespace AimbotHitscan
 				interfaces::Engine->SetViewAngles(angle);
 				break;
 			}
+			case AimbotMode::ASSISTANCE:
 			case AimbotMode::SMOOTH:
 			{
+				if (mode == AimbotMode::ASSISTANCE)
+				{
+					if (pCmd->mousedx == 0 && pCmd->mousedy == 0)
+						break;
+				}
+
 				auto target = targets.front();
 				Vector targetAngle = target.dir;
 				
@@ -201,39 +208,6 @@ namespace AimbotHitscan
 
 				interfaces::Engine->SetViewAngles(smoothedAngle);
 				pCmd->viewangles = smoothedAngle;
-				
-				state.running = true;
-
-				CGameTrace trace;
-				CTraceFilterHitscan filter;
-				filter.pSkip = pLocal;
-				helper::engine::Trace(shootPos, shootPos + (viewForward * 2048), 
-							MASK_SHOT | CONTENTS_HITBOX, &filter, &trace);
-
-				if (!trace.DidHit() || trace.m_pEnt != target.entity)
-					break;
-
-				if (Settings::Aimbot::autoshoot)
-					pCmd->buttons |= IN_ATTACK;
-				break;
-			}
-			case AimbotMode::ASSISTANCE:
-			{
-				// this sh dont work right
-				// gotta think of something else
-				// not moving the mouse, dont do anything
-				if (pCmd->mousedx == 0 && pCmd->mousedy == 0)
-					break;
-				
-				auto target = targets.front();
-				Vector targetAngle = target.dir;
-
-				Vector delta = targetAngle - viewAngles;
-				Vector smoothedAngle = viewAngles + (delta * (100.0f - Settings::Aimbot::smoothness) * 0.01f);
-
-				interfaces::Engine->SetViewAngles(smoothedAngle);
-				pCmd->viewangles = smoothedAngle;
-				state.angle = smoothedAngle;
 				
 				state.running = true;
 

@@ -38,6 +38,7 @@
 
 #include "sdk/FontManager/fontmanager.h"
 #include "sdk/MaterialManager/materialmanager.h"
+#include "sdk/helpers/convars/convars.h"
 #include "sdk/interfaces/interfaces.h"
 #include <sys/types.h>
 #include <unistd.h>
@@ -49,6 +50,8 @@ void init(void)
 {
 	if (!InitializeInterfaces())
 		return;
+
+	ConVars::Init();
 
 	GUI::Init();
 	TickManager::Init();

@@ -4,9 +4,7 @@
 
 namespace FakeLag
 {
-	void Run(CUserCmd* pCmd);
+	void Run();
 
 	extern bool m_bFakeLagging;
-	extern int m_iChoked;
-	extern int m_iGoal;
 }

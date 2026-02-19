@@ -1,4 +1,5 @@
 #include "aimbot_projectile.h"
+#include "../../../sdk/helpers/convars/convars.h"
 
 namespace AimbotProjectile
 {
@@ -124,12 +125,8 @@ namespace AimbotProjectile
 			}
 
 			case TF_WEAPON_FLAMETHROWER:
-			{
-				static ConVar* tf_flamethrower_size = interfaces::Cvar->FindVar("tf_flamethrower_boxsize");
-				if (!tf_flamethrower_size)
-					return false;
-				
-				float flhull = tf_flamethrower_size->GetFloat();
+			{	
+				float flhull = ConVars::tf_flamethrower_size->GetFloat();
 				info.offset.Set(40, 5, 0);
 				info.hull.Set(flhull, flhull, flhull);
 				info.speed = 1000;
@@ -161,11 +158,7 @@ namespace AimbotProjectile
 			case TF_WEAPON_BAT_WOOD:
 			case TF_WEAPON_BAT_GIFTWRAP:
 			{
-				ConVar* tf_scout_stunball_base_speed = interfaces::Cvar->FindVar("tf_scout_stunball_base_speed");
-				if (!tf_scout_stunball_base_speed)
-					return false;
-
-				info.speed = tf_scout_stunball_base_speed->GetFloat();
+				info.speed = ConVars::tf_scout_stunball_base_speed->GetFloat();
 				info.gravity = 1;
 				info.lifetime = gravity;
 				return true;
@@ -309,11 +302,7 @@ namespace AimbotProjectile
 		CTraceFilterHitscan filter;
 		filter.pSkip = pLocal;
 
-		static ConVar* sv_gravity = interfaces::Cvar->FindVar("sv_gravity");
-		if (!sv_gravity)
-			return;
-
-		float gravity = sv_gravity->GetFloat() * 0.5f * info.gravity;
+		float gravity = ConVars::sv_gravity->GetFloat() * 0.5f * info.gravity;
 
 		bool bCanHitTeammates = pWeapon->CanHitTeammates();
 

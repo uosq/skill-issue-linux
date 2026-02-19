@@ -74,8 +74,8 @@ namespace Settings
 		extern std::string warp_dt_key;
 		extern int warp_speed;
 
-		//extern bool fakelag_enabled;
-		//extern int fakelag_ticks;
+		extern bool fakelag_enabled;
+		extern int fakelag_ticks;
 	}
 }
 

@@ -1,4 +1,5 @@
 #include "prediction.h"
+#include "../../sdk/helpers/convars/convars.h"
 
 namespace PlayerPrediction
 {
@@ -6,22 +7,14 @@ namespace PlayerPrediction
 	{
 		float speed = velocity.Length();
 		if (speed < 0.01f)
-			return;
+			return;;
 
-		ConVar* sv_stopspeed_cvar = interfaces::Cvar->FindVar("sv_stopspeed");
-		if (!sv_stopspeed_cvar)
-			return;
-			
-		float sv_stopspeed = sv_stopspeed_cvar->GetFloat();
+		float sv_stopspeed = ConVars::sv_stopspeed_cvar->GetFloat();
 		float drop = 0;
 
 		if (isOnGround)
 		{
-			ConVar* sv_friction_cvar = interfaces::Cvar->FindVar("sv_friction");
-			if (!sv_friction_cvar)
-				return;
-			
-			float sv_friction = sv_friction_cvar->GetFloat();
+			float sv_friction = ConVars::sv_friction_cvar->GetFloat();
 			float control = speed < sv_stopspeed ? sv_stopspeed : speed;
 			drop = control * sv_friction * interfaces::GlobalVars->interval_per_tick;
 		}
@@ -234,14 +227,6 @@ namespace PlayerPrediction
 		Vector mins = player->m_vecMins();
 		Vector maxs = player->m_vecMaxs();
 
-		ConVar* sv_airaccelerate = interfaces::Cvar->FindVar("sv_airaccelerate");
-		if (!sv_airaccelerate)
-			return;
-
-		ConVar* sv_accelerate = interfaces::Cvar->FindVar("sv_accelerate");
-		if (!sv_accelerate)
-			return;
-
 		float stepsize = player->m_flStepSize();
 		float gravity = 800 * interfaces::GlobalVars->interval_per_tick * 0.5;
 
@@ -256,11 +241,11 @@ namespace PlayerPrediction
 			{
 				velocity.z = 0;
 				Friction(velocity, isOnGround);
-				AcceleratePlayer(velocity, wishdir, wishspeed, sv_accelerate->GetFloat());
+				AcceleratePlayer(velocity, wishdir, wishspeed, ConVars::sv_accelerate->GetFloat());
 			} 
 			else
 			{
-				AirAcceleratePlayer(velocity, wishdir, wishspeed, sv_accelerate->GetFloat(), 0);
+				AirAcceleratePlayer(velocity, wishdir, wishspeed, ConVars::sv_accelerate->GetFloat(), 0);
 			}
 
 			if (!TryStepMove(player, origin, velocity, mins, maxs, stepsize))
