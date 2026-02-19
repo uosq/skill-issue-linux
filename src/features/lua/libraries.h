@@ -265,4 +265,12 @@ namespace LuaFuncs
 		int GetTicks(lua_State* L);
 		int GetMaxTicks(lua_State* L);
 	}
+
+	/*namespace cheat
+	{
+		extern const luaL_Reg methods[];
+
+		int GetChokedCommands(lua_State* L);
+
+	}*/
 }

@@ -7,6 +7,7 @@
 #include "../bhop/bhop.h"
 #include "../triggerbot/triggerbot.h"
 #include "../warp/warp.h"
+//#include "../fakelag/fakelag.h"
 
 #include "../lua/api.h"
 #include "../lua/hookmgr.h"
@@ -26,6 +27,7 @@ using Host_ShouldRunFn = bool(*)(void);
 static Host_ShouldRunFn originalHost_ShouldRun = nullptr;
 
 bool TickManager::m_bSendPacket = true;
+int TickManager::m_iChokedCommands = 0;
 
 void TickManager::Lua_CreateMove_Callback(CUserCmd* pCmd)
 {
@@ -63,6 +65,8 @@ void TickManager::Post_CreateMove(int sequence_number)
 	Vector originalAngles = pCmd->viewangles;
 
 	NoRecoil::RunCreateMove(pLocal, pWeapon, pCmd);
+
+	//FakeLag::Run(pCmd);
 
 	Bhop::Run(pLocal, pCmd);
 	Antiaim::Run(pLocal, pWeapon, pCmd);
@@ -208,6 +212,7 @@ void TickManager::CL_Move(float accumulated_extra_samples, bool bFinalTick)
 		{
 			cl->m_NetChannel->SetChoked();
 			cl->chokedcommands++;
+			m_iChokedCommands++;
 		}
 	}
 
@@ -249,6 +254,7 @@ void TickManager::CL_Move(float accumulated_extra_samples, bool bFinalTick)
 
 	cl->lastoutgoingcommand = cl->m_NetChannel->SendDatagram(NULL);
 	cl->chokedcommands = 0;
+	m_iChokedCommands = 0;
 
 	if (cl->m_nSignonState == SIGNONSTATE_FULL)
 	{

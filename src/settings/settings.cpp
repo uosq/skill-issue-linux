@@ -1,4 +1,5 @@
 #include "settings.h"
+#include "type.h"
 #include <fstream>
 
 bool Settings::menu_open = false;
@@ -18,6 +19,9 @@ namespace Settings
 		std::string warp_recharge_key = "";
 		std::string warp_dt_key = "";
 		int warp_speed = 1;
+
+		//bool fakelag_enabled = false;
+		//int fakelag_ticks = 1;
 	}
 }
 
@@ -216,6 +220,10 @@ void Settings::RegisterOptions()
 	REG_SETTING(warp key, AntiAim::warp_key, std::string, SettingType::STRING)
 	REG_SETTING(warp recharge key, AntiAim::warp_recharge_key, std::string, SettingType::STRING)
 	REG_SETTING(doubletap key, AntiAim::warp_dt_key, std::string, SettingType::STRING)
+
+	// fakelag
+	//REG_SETTING(fakelag enabled, AntiAim::fakelag_enabled, bool, SettingType::BOOL)
+	//REG_SETTING(fakelag ticks, AntiAim::fakelag_ticks, int, SettingType::INT)
 
 	// radar
 	REG_SETTING(radar enabled, Radar::enabled, bool, SettingType::BOOL)
