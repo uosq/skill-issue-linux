@@ -24,7 +24,3 @@ returns width: **number**, height: **number**
 ### > OutlinedCircle( x: **int**, y: **int**, radius: **int**, segments: **int**  )
 
 ### > Text( x: **int**, y: **int**, text: **string** )
-
-### > CreateFont( fontName: **string**, height: **int**, weight: **int**, [flags: **int** = EFONTFLAG_CUSTOM | EFONTFLAG_ANTIALIAS]  )
-
-### > SetFont( font: **int** )

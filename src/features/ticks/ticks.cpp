@@ -17,8 +17,6 @@
 #include "../../sdk/definitions/protocol.h"
 #include "../../sdk/definitions/con_nprint.h"
 
-#include "../../sdk/helpers/convars/convars.h"
-
 // Host_ShouldRun(void) 48 8B 15 ? ? ? ? B8 01 00 00 00 8B 72 58
 // func to get net_time CReplayServer::GetOnlineTime(CReplayServer*) 48 8D 05 ? ? ? ? 66 0F EF C9 F3 0F 5A 8F DC 93 00 00
 
@@ -138,6 +136,9 @@ void TickManager::CL_Move(float accumulated_extra_samples, bool bFinalTick)
 {
 	CClientState* cl = static_cast<CClientState*>(interfaces::ClientState);
 
+	static ConVar* host_limitlocal = interfaces::Cvar->FindVar("host_limitlocal");
+	static ConVar* cl_cmdrate = interfaces::Cvar->FindVar("cl_cmdrate");
+
 	// returns the right thing
 	static uintptr_t net_time_addr = reinterpret_cast<uintptr_t>(sigscan_module("engine.so", "48 8D 05 ? ? ? ? 66 0F EF C9 F3 0F 5A 8F DC 93 00 00"));
 	double net_time = *reinterpret_cast<double*>(vtable::ResolveRIP(net_time_addr, 3, 7));
@@ -176,7 +177,7 @@ void TickManager::CL_Move(float accumulated_extra_samples, bool bFinalTick)
 
 	//printf("net_time: %f, unbounded: %f, stddeviation: %f\n", net_time, host_frametime_unbounded, host_frametime_stddeviation);
 
-	if  ( ( !cl->m_NetChannel->IsLoopback() || ConVars::host_limitlocal->GetInt() ) &&
+	if  ( ( !cl->m_NetChannel->IsLoopback() || host_limitlocal->GetInt() ) &&
 		 ( ( net_time < cl->m_flNextCmdTime ) || !cl->m_NetChannel->CanPacket()  || !bFinalTick ) )
 	{
 		m_bSendPacket = false;
@@ -257,7 +258,7 @@ void TickManager::CL_Move(float accumulated_extra_samples, bool bFinalTick)
 
 	if (cl->m_nSignonState == SIGNONSTATE_FULL)
 	{
-		const float commandInterval = 1.0f / ConVars::cl_cmdrate->GetFloat();
+		const float commandInterval = 1.0f / cl_cmdrate->GetFloat();
 		const float maxDelta = std::min ( host_state->interval_per_tick, commandInterval );
 		const float delta = std::clamp( static_cast<float>(net_time - cl->m_flNextCmdTime), 0.0f, maxDelta );
 		cl->m_flNextCmdTime = net_time + commandInterval - delta;

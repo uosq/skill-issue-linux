@@ -1,4 +1,5 @@
 #include "gui.h"
+
 #include <filesystem>
 
 TextEditor GUI::editor;

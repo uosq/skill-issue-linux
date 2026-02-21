@@ -1,4 +1,4 @@
-# Font Manager Library
+# Font Library
 
 ### > CreateFont( id: **string**, name: **string**, height: **int**, weight: **int**, [flags: **int**] )
 returns **string**

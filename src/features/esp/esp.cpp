@@ -1,65 +1,61 @@
 #include "esp.h"
-#include <immintrin.h>
-
-struct ESP_Data
-{
-	std::string name;
-	int health = 0;
-	int maxhealth = 0;
-	int buffhealth = 0;
-
-	ESP_Data()
-	{
-		name = "";
-		health = 0;
-		maxhealth = 0;
-		buffhealth = 0;
-	}
-};
-
-bool GetESPData(const EntityListEntry& entry, ESP_Data& out)
-{
-	if (entry.ptr == nullptr)
-		return false;
-
-	CBaseEntity* ent = entry.ptr;
-
-	if (entry.flags & EntityFlags::IsPlayer)
-	{
-		if (ent == EntityList::GetLocal() && !Settings::Misc::thirdperson)
-			return false;
-
-		auto* p = static_cast<CTFPlayer*>(ent);
-		out.name = p->GetName();
-		out.health = p->GetHealth();
-
-		if (auto* res = EntityList::GetPlayerResources())
-		{
-			int index = ent->GetIndex();
-			out.maxhealth = res->m_iMaxHealth(index);
-			out.buffhealth = res->m_iMaxBuffedHealth(index);
-		}
-
-		return true;
-	}
-
-	if (entry.flags & EntityFlags::IsBuilding)
-	{
-		auto* b = static_cast<CBaseObject*>(ent);
-		out.name = b->GetName();
-		out.health = b->m_iHealth();
-		out.maxhealth = b->m_iMaxHealth();
-		out.buffhealth = 0;
-		return true;
-	}
-
-	out.name = ent->GetClientClass()->networkName;
-	return true;
-}
+#include "elements/BaseElement.h"
+#include "elements/HealthTextElement.h"
+#include "elements/NameElement.h"
+#include "structs.h"
 
 namespace ESP
 {
-	void Init() { FontManager::CreateFont("esp font", "Arial", 16, 400, EFONTFLAG_CUSTOM | EFONTFLAG_ANTIALIAS); }
+	std::vector<std::unique_ptr<IBaseElement>> m_builtinElements = {};
+
+	void Init()
+	{
+		FontManager::CreateFont("esp font", "Arial", 16, 400, EFONTFLAG_CUSTOM | EFONTFLAG_ANTIALIAS);
+
+		m_builtinElements.reserve(2);
+		m_builtinElements.push_back(std::make_unique<NameElement>());
+		m_builtinElements.push_back(std::make_unique<HealthTextElement>());
+	}
+
+	bool GetData(const EntityListEntry& entry, ESP_Data& out)
+	{
+		if (entry.ptr == nullptr)
+			return false;
+
+		CBaseEntity* ent = entry.ptr;
+
+		if (entry.flags & EntityFlags::IsPlayer)
+		{
+			if (ent == EntityList::GetLocal() && !Settings::Misc::thirdperson)
+				return false;
+
+			auto* p = static_cast<CTFPlayer*>(ent);
+			out.name = p->GetName();
+			out.health = p->GetHealth();
+
+			if (auto* res = EntityList::GetPlayerResources())
+			{
+				int index = ent->GetIndex();
+				out.maxhealth = res->m_iMaxHealth(index);
+				out.buffhealth = res->m_iMaxBuffedHealth(index);
+			}
+
+			return true;
+		}
+
+		if (entry.flags & EntityFlags::IsBuilding)
+		{
+			auto* b = static_cast<CBaseObject*>(ent);
+			out.name = b->GetName();
+			out.health = b->m_iHealth();
+			out.maxhealth = b->m_iMaxHealth();
+			out.buffhealth = 0;
+			return true;
+		}
+
+		out.name = ent->GetClientClass()->networkName != nullptr ? ent->GetClientClass()->networkName : "unknown";
+		return false;
+	}
 
 	Color GetEntityColor(CBaseEntity* entity)
 	{
@@ -191,6 +187,8 @@ namespace ESP
 
 		FontManager::SetFont("esp font");
 
+		constexpr int gap = 2;
+
 		for (const auto& entry : EntityList::GetEntities())
 		{
 			if (!IsValidEntity(pLocal, entry))
@@ -205,19 +203,66 @@ namespace ESP
 
 			Color color = GetEntityColor(ent);
 
+			ESP_Data data = {};
+			if (!GetData(entry, data))
+				continue;
+
 			if (Settings::ESP::box)
 				PaintBox(color, top, bottom, w, h);
 
-			ESP_Data data = {};
-			if (!GetESPData(entry, data))
-				continue;
+			//if (Settings::ESP::name)
+				//PaintName(color, top, w, h, data.name);
 
-			if (Settings::ESP::name)
-				PaintName(color, top, w, h, data.name);
+			//if (Settings::ESP::healthbar && data.maxhealth > 0)
+				//PaintHealthbar(top, bottom, w, h, data.health, data.maxhealth, data.buffhealth);
 
-			if (Settings::ESP::healthbar && data.maxhealth > 0)
-				PaintHealthbar(top, bottom, w, h, data.health, data.maxhealth, data.buffhealth);
+			ESPContext context = {};
+
+			for (const auto& element : m_builtinElements)
+			{
+				if (!element->ShouldDraw(ent, data))
+					continue;
+
+				auto alignment = element->GetAlignment();
+				switch(alignment)
+				{
+					case ESP_ALIGNMENT::TOP:
+					{
+						Vec2 size = element->GetSize(data);
+						Vec2 pos = Vec2(top.x - size.x/2.0f, top.y - context.topOffset - gap);
+						element->Draw(pos, data, context);
+						context.topOffset += element->GetSize(data).y;
+						break;
+					}
+					case ESP_ALIGNMENT::LEFT:
+					{
+						Vec2 size = element->GetSize(data);
+						Vec2 pos = Vec2(top.x - w - size.x - gap, top.y + context.verticalLeftOffset + gap);
+						element->Draw(pos, data, context);
+						context.verticalLeftOffset += element->GetSize(data).y;
+						break;
+					}
+					case ESP_ALIGNMENT::RIGHT:
+					{
+						Vec2 size = element->GetSize(data);
+						Vec2 pos = Vec2(top.x + w + gap, top.y + context.verticalRightOffset + gap);
+						element->Draw(pos, data, context);
+						context.verticalRightOffset += element->GetSize(data).y;
+						break;
+					}
+					case ESP_ALIGNMENT::BOTTOM:
+					{
+						Vec2 size = element->GetSize(data);
+						Vec2 pos = Vec2(top.x - size.x/2.0f, top.y + h + context.bottomOffset + gap);
+						element->Draw(pos, data, context);
+						context.bottomOffset += element->GetSize(data).y;
+						break;
+					}
+					case ESP_ALIGNMENT::INVALID:
+					case ESP_ALIGNMENT::MAX:
+                                	break;
+                                }
+                        }
 		}
 	}
-
 };

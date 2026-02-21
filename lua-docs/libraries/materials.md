@@ -1,4 +1,4 @@
-# Material Manager Library
+# Material Library
 
 ## Methods
 

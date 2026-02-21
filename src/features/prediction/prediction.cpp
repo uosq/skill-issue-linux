@@ -1,5 +1,4 @@
 #include "prediction.h"
-#include "../../sdk/helpers/convars/convars.h"
 
 namespace PlayerPrediction
 {
@@ -9,14 +8,14 @@ namespace PlayerPrediction
 		if (speed < 0.01f)
 			return;;
 
-		float sv_stopspeed = ConVars::sv_stopspeed_cvar->GetFloat();
+		static ConVar* sv_friction = interfaces::Cvar->FindVar("sv_stopspeed");
+		static ConVar* sv_stopspeed = interfaces::Cvar->FindVar("sv_stopspeed");
 		float drop = 0;
 
 		if (isOnGround)
 		{
-			float sv_friction = ConVars::sv_friction_cvar->GetFloat();
-			float control = speed < sv_stopspeed ? sv_stopspeed : speed;
-			drop = control * sv_friction * interfaces::GlobalVars->interval_per_tick;
+			float control = speed < sv_stopspeed->GetFloat() ? sv_stopspeed->GetFloat() : speed;
+			drop = control * sv_friction->GetFloat() * interfaces::GlobalVars->interval_per_tick;
 		}
 
 		float newspeed = speed - drop;
@@ -209,6 +208,8 @@ namespace PlayerPrediction
 
 	void Predict(CTFPlayer* player, float time_seconds, std::vector<Vector> &path)
 	{
+		static ConVar* sv_accelerate = interfaces::Cvar->FindVar("sv_accelerate");
+
 		Vector velocity = player->GetVelocity();
 		Vector origin = player->GetAbsOrigin();
 
@@ -241,11 +242,11 @@ namespace PlayerPrediction
 			{
 				velocity.z = 0;
 				Friction(velocity, isOnGround);
-				AcceleratePlayer(velocity, wishdir, wishspeed, ConVars::sv_accelerate->GetFloat());
+				AcceleratePlayer(velocity, wishdir, wishspeed, sv_accelerate->GetFloat());
 			} 
 			else
 			{
-				AirAcceleratePlayer(velocity, wishdir, wishspeed, ConVars::sv_accelerate->GetFloat(), 0);
+				AirAcceleratePlayer(velocity, wishdir, wishspeed, sv_accelerate->GetFloat(), 0);
 			}
 
 			if (!TryStepMove(player, origin, velocity, mins, maxs, stepsize))

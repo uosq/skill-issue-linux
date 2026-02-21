@@ -2,7 +2,6 @@
 #include "../../settings/settings.h"
 #include "../../imgui/imgui.h"
 #include <cstdio>
-#include "../../sdk/helpers/convars/convars.h"
 
 namespace Warp
 {
@@ -25,7 +24,8 @@ namespace Warp
 
 	int GetMaxTicks()
 	{
-		return ConVars::sv_maxusrcmdprocessticks->GetInt();
+		static ConVar* sv_maxusrcmdprocessticks = interfaces::Cvar->FindVar("sv_maxusrcmdprocessticks");
+		return sv_maxusrcmdprocessticks->GetInt();
 	}
 
 	void RunCreateMove(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd)

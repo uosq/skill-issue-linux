@@ -5,11 +5,17 @@
 #include "../../sdk/classes/weaponbase.h"
 #include "../../sdk/classes/cbaseobject.h"
 #include "../../sdk/definitions/eteam.h"
+
 #include "../entitylist/entitylist.h"
 #include "../../settings/settings.h"
 
+#include "elements/BaseElement.h"
+#include "structs.h"
+
 namespace ESP
 {
+	extern std::vector<std::unique_ptr<IBaseElement>> m_builtinElements;
+
 	Color GetEntityColor(CBaseEntity* entity);
 
 	bool IsValidPlayer(CTFPlayer* pLocal, CBaseEntity* entity);
@@ -19,8 +25,8 @@ namespace ESP
 	bool GetEntityBounds(CBaseEntity* entity, Vector& top, Vector& bottom, int& w, int& h);
 
 	void PaintBox(Color color, const Vector& top, const Vector& bottom, int w, int h);
-	void PaintName(Color color, const Vector& top, int w, int h, const std::string& name);
-	void PaintHealthbar(const Vector& top, const Vector& bottom, int w, int h, int health, int maxhealth, int buffhealth = 0);
+
+	bool GetData(const EntityListEntry& entry, ESP_Data& out);
 
 	void Init();
 	void Run(CTFPlayer* pLocal);
