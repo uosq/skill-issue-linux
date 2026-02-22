@@ -54,7 +54,7 @@ namespace Lua
 		LuaClasses::UserCmd::open(m_luaState);
 		LuaClasses::Vector3::open(m_luaState);
 		LuaClasses::ESP_Data::open(m_luaState);
-		LuaClasses::Color::open(m_luaState);
+		//LuaClasses::Color::open(m_luaState);
 
 		luaregister_constants(m_luaState);
 
