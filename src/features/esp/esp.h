@@ -10,21 +10,17 @@
 #include "../../settings/settings.h"
 
 #include "elements/BaseElement.h"
+#include "elements/LuaElement.h"
 #include "structs.h"
+
+#include "esp_utils.h"
 
 namespace ESP
 {
 	extern std::vector<std::unique_ptr<IBaseElement>> m_builtinElements;
+	extern std::vector<std::unique_ptr<LuaElement>> m_luaElements;
 
-	Color GetEntityColor(CBaseEntity* entity);
-
-	bool IsValidPlayer(CTFPlayer* pLocal, CBaseEntity* entity);
-	bool IsValidBuilding(CTFPlayer* pLocal, CBaseObject* entity);
-	bool IsValidEntity(CBaseEntity* entity);
-
-	bool GetEntityBounds(CBaseEntity* entity, Vector& top, Vector& bottom, int& w, int& h);
-
-	void PaintBox(Color color, const Vector& top, const Vector& bottom, int w, int h);
+	void PaintBox(Color color, const ESP_Data& data);
 
 	bool GetData(const EntityListEntry& entry, ESP_Data& out);
 

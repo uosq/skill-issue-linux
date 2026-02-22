@@ -9,6 +9,10 @@ struct ESP_Data
 	int health;
 	int maxhealth;
 	int buffhealth;
+	float width, height;
+
+	Vec2 top;
+	Vec2 bottom;
 };
 
 enum class ESP_ALIGNMENT

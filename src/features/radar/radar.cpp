@@ -121,7 +121,7 @@ void Radar::DrawContents()
 			continue;
 
 		Vec2 p = WorldToRadar(localPos, entry.ptr->GetAbsOrigin(), viewYaw);
-		Color color = ESP::GetEntityColor(entry.ptr);
+		Color color = ESP_Utils::GetEntityColor(entry.ptr);
 
 		draw->AddCircleFilled({ center.x + p.x, center.y - p.y }, iconSize, IM_COL32(color.r(), color.g(), color.b(), color.a()));
 

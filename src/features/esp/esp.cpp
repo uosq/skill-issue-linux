@@ -1,12 +1,14 @@
 #include "esp.h"
 #include "elements/BaseElement.h"
 #include "elements/HealthTextElement.h"
+#include "elements/LuaElement.h"
 #include "elements/NameElement.h"
 #include "structs.h"
 
 namespace ESP
 {
 	std::vector<std::unique_ptr<IBaseElement>> m_builtinElements = {};
+	std::vector<std::unique_ptr<LuaElement>> m_luaElements = {};
 
 	void Init()
 	{
@@ -15,6 +17,8 @@ namespace ESP
 		m_builtinElements.reserve(2);
 		m_builtinElements.push_back(std::make_unique<NameElement>());
 		m_builtinElements.push_back(std::make_unique<HealthTextElement>());
+
+		m_luaElements.reserve(5);
 	}
 
 	bool GetData(const EntityListEntry& entry, ESP_Data& out)
@@ -27,6 +31,9 @@ namespace ESP
 		if (entry.flags & EntityFlags::IsPlayer)
 		{
 			if (ent == EntityList::GetLocal() && !Settings::Misc::thirdperson)
+				return false;
+
+			if (!ESP_Utils::GetEntityBounds(ent, out))
 				return false;
 
 			auto* p = static_cast<CTFPlayer*>(ent);
@@ -45,6 +52,9 @@ namespace ESP
 
 		if (entry.flags & EntityFlags::IsBuilding)
 		{
+			if (!ESP_Utils::GetEntityBounds(ent, out))
+				return false;
+
 			auto* b = static_cast<CBaseObject*>(ent);
 			out.name = b->GetName();
 			out.health = b->m_iHealth();
@@ -57,92 +67,10 @@ namespace ESP
 		return false;
 	}
 
-	Color GetEntityColor(CBaseEntity* entity)
-	{
-		if (entity == EntityList::m_pAimbotTarget)
-			return Settings::Colors::aimbot_target;
-
-		switch (entity->m_iTeamNum())
-		{
-			case ETeam::TEAM_RED:
-				return Settings::Colors::red_team;
-			case ETeam::TEAM_BLU:
-				return Settings::Colors::blu_team;
-			default: break;
-		}
-
-		Color defaultColor = {255, 255, 255, 255};
-		return defaultColor;
-	}
-
-	bool IsValidPlayer(CTFPlayer* pLocal, CBaseEntity* entity)
-	{
-		if (entity == nullptr)
-			return false;
-
-		if (!entity->IsPlayer())
-			return false;
-
-		if (!interfaces::CInput->CAM_IsThirdPerson() && entity->GetIndex() == pLocal->GetIndex())
-			return false;
-
-		CTFPlayer* player = static_cast<CTFPlayer*>(entity);
-
-		if (!player->IsAlive())
-			return false;
-
-		if (player->InCond(TF_COND_CLOAKED) && Settings::ESP::ignorecloaked)
-			return false;
-
-		return true;
-	}
-
-	bool IsValidBuilding(CTFPlayer* pLocal, CBaseObject* entity)
-	{
-		if (entity == nullptr)
-			return false;
-
-		if (entity->IsDormant())
-			return false;
-
-		return true;
-	}
-
-	bool IsValidEntity(CTFPlayer* pLocal, const EntityListEntry& entry)
-	{
-		if (!entry.ptr)
-			return false;
-
-		if (entry.flags & EntityFlags::IsPlayer)
-			return IsValidPlayer(pLocal, static_cast<CTFPlayer*>(entry.ptr));
-
-		if (entry.flags & EntityFlags::IsBuilding)
-			return IsValidBuilding(pLocal, static_cast<CBaseObject*>(entry.ptr));
-
-		return false;
-	}
-
-	bool GetEntityBounds(CBaseEntity* ent, Vector& top, Vector& bottom, int& w, int& h)
-	{
-		Vector origin = ent->GetAbsOrigin();
-
-		if (!helper::engine::WorldToScreen(origin, bottom))
-			return false;
-
-		Vector absHead = origin + Vector{0, 0, ent->m_vecMaxs().z};
-		if (!helper::engine::WorldToScreen(absHead, top))
-			return false;
-
-		h = (bottom - top).Length2D();
-		w = ent->IsTeleporter() ? (h * 2.0f) : (h * 0.3f);
-
-		return true;
-	}
-
-	void PaintBox(Color color, const Vector& top, const Vector& bottom, int w, int h)
+	void PaintBox(Color color, const ESP_Data& data)
 	{
 		helper::draw::SetColor(color);
-		helper::draw::OutlinedRect(top.x - w, bottom.y - h, bottom.x + w, bottom.y);
+		helper::draw::OutlinedRect(data.top.x - data.width, data.bottom.y - data.height, data.bottom.x + data.width, data.bottom.y);
 	}
 
 	void PaintName(Color color, const Vector& top, int w, int h, const std::string& name)
@@ -152,7 +80,7 @@ namespace ESP
 		helper::draw::TextShadow(top.x - (textw*0.5f), top.y - texth - 2, color, name);
 	}
 
-	void PaintHealthbar(const Vector &top, const Vector &bottom, int w, int h, int health, int maxhealth, int buffhealth)
+	void PaintHealthbar(const ESP_Data& data)
 	{
 		const Color background = {20, 20, 20, 255};
 		const Color bar = {100, 255, 100, 255};
@@ -161,15 +89,15 @@ namespace ESP
 		constexpr int gap = 3;
 		constexpr int barMargin = 1;
 		
-		const int barRight = top.x - w - gap;
+		const int barRight = data.top.x - data.width - gap;
 		const int barLeft = barRight - width;
 		
 		const int x0 = barLeft;
-		const int y0 = top.y;
+		const int y0 = data.top.y;
 		const int x1 = barRight;
-		const int y1 = bottom.y;
+		const int y1 = data.bottom.y;
 
-		const float healthRatio = std::clamp(static_cast<float>(health)/maxhealth, 0.0f, 1.0f);
+		const float healthRatio = std::clamp(static_cast<float>(data.health)/data.maxhealth, 0.0f, 1.0f);
 
 		// draw background
 		interfaces::Surface->DrawSetColor(background);
@@ -177,7 +105,7 @@ namespace ESP
 
 		// draw health bar
 		interfaces::Surface->DrawSetColor(bar);
-		interfaces::Surface->DrawFilledRect(x0, y1 - static_cast<int>(h * healthRatio), x1, y1);
+		interfaces::Surface->DrawFilledRect(x0, y1 - static_cast<int>(data.height * healthRatio), x1, y1);
 	}
 
 	void Run(CTFPlayer* pLocal)
@@ -191,78 +119,77 @@ namespace ESP
 
 		for (const auto& entry : EntityList::GetEntities())
 		{
-			if (!IsValidEntity(pLocal, entry))
+			if (!ESP_Utils::IsValidEntity(pLocal, entry))
 				continue;
 
 			CBaseEntity* ent = entry.ptr;
 
-			Vector top, bottom;
-			int w, h;
-			if (!GetEntityBounds(ent, top, bottom, w, h))
-				continue;
-
-			Color color = GetEntityColor(ent);
-
 			ESP_Data data = {};
+
 			if (!GetData(entry, data))
 				continue;
 
+			Color color = ESP_Utils::GetEntityColor(ent);
 			if (Settings::ESP::box)
-				PaintBox(color, top, bottom, w, h);
+				PaintBox(color, data);
 
 			//if (Settings::ESP::name)
 				//PaintName(color, top, w, h, data.name);
 
-			//if (Settings::ESP::healthbar && data.maxhealth > 0)
-				//PaintHealthbar(top, bottom, w, h, data.health, data.maxhealth, data.buffhealth);
+			if (Settings::ESP::healthbar && data.maxhealth > 0)
+				PaintHealthbar(data);
 
 			ESPContext context = {};
 
-			for (const auto& element : m_builtinElements)
+			auto run = [&](const auto& elements)
 			{
-				if (!element->ShouldDraw(ent, data))
-					continue;
-
-				auto alignment = element->GetAlignment();
-				switch(alignment)
+				for (const auto& element : elements)
 				{
-					case ESP_ALIGNMENT::TOP:
+					if (element == nullptr || !element->ShouldDraw(ent, data))
+						continue;
+		
+					auto alignment = element->GetAlignment();
+					Vec2 size = element->GetSize(data);
+
+					switch(alignment)
 					{
-						Vec2 size = element->GetSize(data);
-						Vec2 pos = Vec2(top.x - size.x/2.0f, top.y - context.topOffset - gap);
-						element->Draw(pos, data, context);
-						context.topOffset += element->GetSize(data).y;
+						case ESP_ALIGNMENT::TOP:
+						{
+							Vec2 pos = Vec2(data.top.x - size.x/2.0f, data.top.y - context.topOffset - gap);
+							element->Draw(pos, ent, data, context);
+							context.topOffset += element->GetSize(data).y;
+							break;
+						}
+						case ESP_ALIGNMENT::LEFT:
+						{
+							Vec2 pos = Vec2(data.top.x - data.width - size.x - gap, data.top.y + context.verticalLeftOffset + gap);
+							element->Draw(pos, ent, data, context);
+							context.verticalLeftOffset += element->GetSize(data).y;
+							break;
+						}
+						case ESP_ALIGNMENT::RIGHT:
+						{
+							Vec2 pos = Vec2(data.top.x + data.width + gap, data.top.y + context.verticalRightOffset + gap);
+							element->Draw(pos, ent, data, context);
+							context.verticalRightOffset += element->GetSize(data).y;
+							break;
+						}
+						case ESP_ALIGNMENT::BOTTOM:
+						{
+							Vec2 pos = Vec2(data.top.x - size.x/2.0f, data.top.y + data.height + context.bottomOffset + gap);
+							element->Draw(pos, ent, data, context);
+							context.bottomOffset += element->GetSize(data).y;
+							break;
+						}
+						case ESP_ALIGNMENT::INVALID:
+						case ESP_ALIGNMENT::MAX:
 						break;
 					}
-					case ESP_ALIGNMENT::LEFT:
-					{
-						Vec2 size = element->GetSize(data);
-						Vec2 pos = Vec2(top.x - w - size.x - gap, top.y + context.verticalLeftOffset + gap);
-						element->Draw(pos, data, context);
-						context.verticalLeftOffset += element->GetSize(data).y;
-						break;
-					}
-					case ESP_ALIGNMENT::RIGHT:
-					{
-						Vec2 size = element->GetSize(data);
-						Vec2 pos = Vec2(top.x + w + gap, top.y + context.verticalRightOffset + gap);
-						element->Draw(pos, data, context);
-						context.verticalRightOffset += element->GetSize(data).y;
-						break;
-					}
-					case ESP_ALIGNMENT::BOTTOM:
-					{
-						Vec2 size = element->GetSize(data);
-						Vec2 pos = Vec2(top.x - size.x/2.0f, top.y + h + context.bottomOffset + gap);
-						element->Draw(pos, data, context);
-						context.bottomOffset += element->GetSize(data).y;
-						break;
-					}
-					case ESP_ALIGNMENT::INVALID:
-					case ESP_ALIGNMENT::MAX:
-                                	break;
-                                }
-                        }
+				}
+			};
+
+			run(m_builtinElements);
+			run(m_luaElements);
 		}
 	}
 };

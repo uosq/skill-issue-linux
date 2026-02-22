@@ -357,14 +357,15 @@ void DrawLuaTab()
 		const char* myIdentifiers[]
 		{
 			"globals", "engine",
-			"hooks", "Vector3",
+			"hooks", "vector3",
 			"entities", "draw",
 			"render", "materials",
-			"client", "BitBuffer",
+			"client", "bitbuffer",
 			"clientstate", "ui",
 			"menu", "aimbot",
 			"radar", "colors",
 			"fonts", "warp",
+			"esp", "color"
 		};
 
 		auto def = TextEditor::LanguageDefinition::Lua();

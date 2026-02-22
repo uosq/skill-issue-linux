@@ -54,7 +54,7 @@ namespace Glow
 	{
 		for (auto ent : glowEnts)
 		{
-			Color color = ESP::GetEntityColor(ent);
+			Color color = ESP_Utils::GetEntityColor(ent);
 			float mod[3] = {color.r()/255.0f, color.g()/255.0f, color.b()/255.0f};
 			interfaces::RenderView->SetColorModulation(mod);
 			m_bRunning = true;

@@ -13,7 +13,7 @@ public:
 		return Settings::ESP::healthbar;
 	}
 
-	void Draw(Vec2& pos, const ESP_Data& data, ESPContext& ctx) const override
+	void Draw(Vec2& pos, CBaseEntity* ent, const ESP_Data& data, ESPContext& ctx) const override
 	{
 		helper::draw::TextShadow(pos.x, pos.y, Color(255, 255, 255, 255), std::to_string(data.health) + "/" + std::to_string(data.maxhealth));
 	}

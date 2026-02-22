@@ -273,4 +273,14 @@ namespace LuaFuncs
 		int GetChokedCommands(lua_State* L);
 
 	}*/
+
+	namespace esp
+	{
+		extern const luaL_Reg methods[];
+		void open(lua_State* L);
+
+		int Register(lua_State* L);
+		int Unregister(lua_State* L);
+		int UnregisterAll(lua_State* L);
+	}
 }

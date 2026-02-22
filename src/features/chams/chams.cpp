@@ -57,7 +57,7 @@ namespace Chams
 			if (!entity->IsAlive())
 				continue;
 			
-			Color color = ESP::GetEntityColor(entity);
+			Color color = ESP_Utils::GetEntityColor(entity);
 			float flColor[3] = {color.r()/255.0f, color.g()/255.0f, color.b()/255.0f};
 
 			interfaces::RenderView->SetColorModulation(flColor);

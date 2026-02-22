@@ -1,6 +1,8 @@
 #include "api.h"
 #include "../../gui/console.h"
 #include "classes.h"
+#include "classes/colorlua.h"
+#include "classes/esp_datalua.h"
 #include "libraries.h"
 #include "constants.h"
 
@@ -37,6 +39,7 @@ namespace Lua
 		LuaFuncs::colors::luaopen_colors(m_luaState);
 		LuaFuncs::fonts::open(m_luaState);
 		LuaFuncs::warp::open(m_luaState);
+		LuaFuncs::esp::open(m_luaState);
 
 		// open classes
 		LuaClasses::EntityLua::luaopen_entity(m_luaState);
@@ -50,6 +53,8 @@ namespace Lua
 		LuaClasses::StringCmd::open(m_luaState);
 		LuaClasses::UserCmd::open(m_luaState);
 		LuaClasses::Vector3::open(m_luaState);
+		LuaClasses::ESP_Data::open(m_luaState);
+		LuaClasses::Color::open(m_luaState);
 
 		luaregister_constants(m_luaState);
 

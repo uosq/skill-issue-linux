@@ -60,3 +60,13 @@
 | FRAME_NET_UPDATE_END | 4 |
 | FRAME_RENDER_START | 5 |
 | FRAME_RENDER_END | 6 |
+
+### ESP Alignment
+| Name | Value |
+| - | - |
+| ESP_ALIGN_INVALID | -1 |
+| ESP_ALIGN_LEFT | 0 |
+| ESP_ALIGN_RIGHT | 1 |
+| ESP_ALIGN_TOP | 2 |
+| ESP_ALIGN_BOTTOM | 3 |
+| ESP_ALIGN_MAX | 4 |

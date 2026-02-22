@@ -1,8 +1,11 @@
 #include "constants.h"
+
 #include "../../sdk/defs.h"
 #include "../../sdk/definitions/cusercmd.h"
 #include "../../sdk/definitions/clientframestage_t.h"
 #include "../../sdk/definitions/buttoncode.h"
+
+#include "../../features/esp/structs.h"
 
 void luaregister_constants(lua_State* L)
 {
@@ -179,4 +182,11 @@ void luaregister_constants(lua_State* L)
 	REGISTER_LUA_CONSTANT_INT("MOUSE_WHEEL_UP", MOUSE_WHEEL_UP);
 	REGISTER_LUA_CONSTANT_INT("MOUSE_WHEEL_DOWN", MOUSE_WHEEL_DOWN);
 	REGISTER_LUA_CONSTANT_INT("MOUSE_LAST", MOUSE_LAST);
+
+	REGISTER_LUA_CONSTANT_INT("ESP_ALIGN_INVALID", static_cast<int>(ESP_ALIGNMENT::INVALID));
+	REGISTER_LUA_CONSTANT_INT("ESP_ALIGN_LEFT", static_cast<int>(ESP_ALIGNMENT::LEFT));
+	REGISTER_LUA_CONSTANT_INT("ESP_ALIGN_RIGHT", static_cast<int>(ESP_ALIGNMENT::RIGHT));
+	REGISTER_LUA_CONSTANT_INT("ESP_ALIGN_TOP", static_cast<int>(ESP_ALIGNMENT::TOP));
+	REGISTER_LUA_CONSTANT_INT("ESP_ALIGN_BOTTOM", static_cast<int>(ESP_ALIGNMENT::BOTTOM));
+	REGISTER_LUA_CONSTANT_INT("ESP_ALIGN_MAX", static_cast<int>(ESP_ALIGNMENT::MAX));
 }

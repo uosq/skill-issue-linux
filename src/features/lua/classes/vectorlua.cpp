@@ -75,7 +75,7 @@ void LuaClasses::Vector3::open(lua_State* L)
 	lua_pop(L, 1); // pop table
 
 	lua_pushcfunction(L, vector3);
-	lua_setglobal(L, "Vector3");
+	lua_setglobal(L, "vector3");
 
 	lua_pop(L, 1); // pop Vector3 global
 }

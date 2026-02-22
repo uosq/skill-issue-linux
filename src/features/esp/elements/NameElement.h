@@ -4,6 +4,7 @@
 #include "BaseElement.h"
 #include "../../../settings/settings.h"
 #include "../../../sdk/helpers/helper.h"
+#include "../esp_utils.h"
 
 class NameElement : public IBaseElement
 {
@@ -13,9 +14,10 @@ public:
 		return Settings::ESP::name;
 	}
 
-	void Draw(Vec2& pos, const ESP_Data& data, ESPContext& ctx) const override
+	void Draw(Vec2& pos, CBaseEntity* ent, const ESP_Data& data, ESPContext& ctx) const override
 	{
-		helper::draw::TextShadow(pos.x, pos.y, Color(255, 255, 255, 255), data.name);
+		Color color = ESP_Utils::GetEntityColor(ent);
+		helper::draw::TextShadow(pos.x, pos.y, color, data.name);
 	}
 
 	Vec2 GetSize(const ESP_Data& data) const override
