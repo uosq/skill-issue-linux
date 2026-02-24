@@ -31,6 +31,8 @@ namespace LuaClasses
 
 			lua_pushcfunction(L, ToString);
 			lua_setfield(L, -2, "__tostring");
+
+			lua_pop(L, 1);
 		}
 
 		LuaNetMessage* push_netmessage(lua_State* L, INetMessage* msg)

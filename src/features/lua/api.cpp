@@ -1,14 +1,10 @@
 #include "api.h"
 #include "../../gui/console.h"
 #include "classes.h"
-#include "classes/colorlua.h"
+//#include "classes/colorlua.h"
 #include "classes/esp_datalua.h"
 #include "libraries.h"
 #include "constants.h"
-
-#ifdef TRACY_ENABLE
-#include "../../tracy/tracy/TracyLua.hpp"
-#endif
 
 namespace Lua
 {

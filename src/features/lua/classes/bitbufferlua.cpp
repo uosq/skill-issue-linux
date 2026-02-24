@@ -37,8 +37,12 @@ namespace LuaClasses
 			lua_pushcfunction(L, GC);
 			lua_setfield(L, -2, "__gc");
 
+			lua_pop(L, 1);
+
 			lua_pushcfunction(L, BitBuffer);
 			lua_setglobal(L, "bitbuffer");
+
+			lua_pop(L, 1);
 		}
 
 		LuaBuffer* push_buffer(lua_State* L, bf_write* writer, bf_read* reader)

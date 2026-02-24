@@ -33,6 +33,8 @@ namespace LuaClasses
 
 			lua_pushcfunction(L, GC);
 			lua_setfield(L, -2, "__gc");
+
+			lua_pop(L, 1);
 		}
 
 		LuaGameEvent* push_gameevent(lua_State* L, IGameEvent* event)

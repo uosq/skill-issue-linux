@@ -27,8 +27,6 @@ struct LuaColor
 	static int __gc(lua_State* L);
 
 	static int Set(lua_State* L);
-
-	static int Color3(lua_State* L);
 };
 
 namespace LuaClasses
@@ -37,5 +35,6 @@ namespace LuaClasses
 	{
 		void open(lua_State* L);
 		LuaColor* push(lua_State* L, struct Color& color);
+		int Color3(lua_State* L);
 	}
 }

@@ -112,6 +112,10 @@ int LuaColor::__newindex(lua_State *L)
 int LuaColor::__gc(lua_State* L)
 {
 	LuaColor* lcolor = static_cast<LuaColor*>(luaL_checkudata(L, 1, LUA_COLOR_METATABLE));
+
+	// I just wanted to say how much I hate Lua's C documentation
+	// Thank you for reading this
+
 	lcolor->~LuaColor();
 	return 0;
 }
@@ -136,7 +140,7 @@ void LuaClasses::Color::open(lua_State *L)
 	// pop the metatable
 	lua_pop(L, 1);
 
-	lua_pushcfunction(L, LuaColor::Color3);
+	lua_pushcfunction(L, Color3);
 	lua_setglobal(L, "color");
 
 	lua_pop(L, 1);
@@ -155,12 +159,13 @@ LuaColor* LuaClasses::Color::push(lua_State *L, struct Color &color)
 	return lcolor;
 }
 
-int LuaColor::Color3(lua_State* L)
+int LuaClasses::Color::Color3(lua_State* L)
 {
 	LuaColor* lcolor = static_cast<LuaColor*>(lua_newuserdata(L, sizeof(LuaColor)));
 	new (lcolor) LuaColor{};
 
-	lcolor->CopyFromColor(Color(0, 0, 0, 0));
+	struct Color color = {0, 0, 0, 0};
+	lcolor->CopyFromColor(color);
 
 	luaL_getmetatable(L, LUA_COLOR_METATABLE);
 	lua_setmetatable(L, -2);
