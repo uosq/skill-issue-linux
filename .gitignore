@@ -1,1 +1,8 @@
+# Binaries
 build/
+
+# Objects
+*.o
+
+# Emacs files
+*~

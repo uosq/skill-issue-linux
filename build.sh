@@ -58,18 +58,8 @@ chmod +x build/attach.sh
 
 echo "Compiling skill issue"
 
-# compile it
-# this shit takes longer to compile than I want to admit
-# i shouldn't include the entire pluto and glew libraries
-# but it doesn't attach without them
-# fuck my life
-g++ -shared -fPIC \
-	$(find src -name "*.cpp") \
-	$(find build -name "*.a") \
-	$(find build/imgui -name "*.a") \
-	-o build/libvapo.so \
-	-O2 -std=c++17 -lSDL2 -lvulkan -lm -ldl \
-	-Werror -fno-exceptions -g -march=x86-64-v3
+# compile the cheat
+make # Note: This will echo
 
 # make .debug symbol file
 objcopy --only-keep-debug build/libvapo.so build/libvapo.debug
