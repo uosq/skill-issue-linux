@@ -58,6 +58,13 @@ enum class TeamMode
 	MAX
 };
 
+enum class BacktrackMode
+{
+	INVALID = -1,
+	NONE, LAST_ONLY, ALL_RECORDS,
+	MAX
+};
+
 namespace Settings
 {
 	namespace AntiAim
@@ -138,6 +145,7 @@ namespace Settings
 		extern bool norecoil;
 		extern float viewmodel_offset[3];
 		extern float viewmodel_interp;
+		extern int backtrack;
 	}
 }
 

@@ -8,6 +8,7 @@
 #include "../triggerbot/triggerbot.h"
 #include "../warp/warp.h"
 #include "../fakelag/fakelag.h"
+#include "../backtrack/backtrack.h"
 
 #include "../lua/api.h"
 #include "../lua/hookmgr.h"
@@ -72,6 +73,7 @@ void TickManager::Post_CreateMove(int sequence_number)
 	Antiaim::Run(pLocal, pWeapon, pCmd);
 	Aimbot::Run(pLocal, pWeapon, pCmd);
 	Triggerbot::Run(pLocal, pWeapon, pCmd);
+	Backtrack::Run(pLocal, pWeapon, pCmd);
 
 	Lua_CreateMove_Callback(pCmd);
 

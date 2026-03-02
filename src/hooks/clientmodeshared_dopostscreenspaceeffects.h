@@ -7,6 +7,7 @@
 
 #include "../features/chams/chams.h"
 #include "../features/glow/glow.h"
+#include "../features/backtrack/backtrack.h"
 
 #include "../features/lua/hookmgr.h"
 #include "../features/lua/api.h"
@@ -18,6 +19,7 @@ DECLARE_VTABLE_HOOK(DoPostScreenSpaceEffects, bool, (IClientMode* thisptr, CView
 
 	Chams::Run();
 	Glow::Run();
+	Backtrack::DoPostScreenSpaceEffects();
 
 	return originalDoPostScreenSpaceEffects(thisptr, setup);
 }

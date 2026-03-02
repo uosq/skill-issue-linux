@@ -56,6 +56,7 @@ void init(void)
 	FontManager::Init();
 	Settings::RegisterOptions();
 
+	Backtrack::Init();
 	ViewmodelInterp::Init();
 	ViewmodelAim::Init();
 	Radar::Init();

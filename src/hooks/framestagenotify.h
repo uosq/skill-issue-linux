@@ -3,8 +3,8 @@
 #include "../sdk/interfaces/interfaces.h"
 #include "../sdk/helpers/helper.h"
 #include "../features/visuals/thirdperson/thirdperson.h"
-#include "../features/entitylist/entitylist.h"
 #include "../features/visuals/customfov/customfov.h"
+#include "../features/entitylist/entitylist.h"
 
 #include "../features/lua/hookmgr.h"
 #include "../features/lua/api.h"

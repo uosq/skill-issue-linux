@@ -2,7 +2,7 @@
 build/
 
 # Objects
-*.o
+obj/
 
 # Emacs files
 *~

@@ -9,6 +9,7 @@
 
 #include "../features/chams/chams.h"
 #include "../features/glow/glow.h"
+#include "../features/backtrack/backtrack.h"
 
 #include "../features/lua/hookmgr.h"
 #include "../features/lua/api.h"
@@ -32,6 +33,9 @@ DECLARE_VTABLE_HOOK(DrawModelExecute, void, (IVModelRender* thisptr, const DrawM
 
 	if (interfaces::Engine->IsTakingScreenshot())
 		return originalDrawModelExecute(thisptr, state, pInfo, pCustomBoneToWorld);
+
+	if (Backtrack::m_drawing)
+		return originalDrawModelExecute(thisptr, state, pInfo, Backtrack::m_current_drawing_record->bones);
 
 	if (!Chams::m_bRunning && !Glow::m_bRunning)
 	{

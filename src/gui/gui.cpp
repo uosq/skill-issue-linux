@@ -1,6 +1,7 @@
 #include "gui.h"
 
 #include <filesystem>
+#include "../features/backtrack/backtrack.h"
 
 TextEditor GUI::editor;
 int GUI::tab = 0;
@@ -191,6 +192,20 @@ void DrawMiscTab()
 
 	ImGui::SliderFloat3("Viewmodel Offset", Settings::Misc::viewmodel_offset, -20, 20.0f );
 	ImGui::SliderFloat("Viewmodel Interp", &Settings::Misc::viewmodel_interp, 0.0f, 50.0f);
+
+	if (ImGui::BeginCombo("Backtrack", Backtrack::GetModeName().c_str()))
+	{
+		if (ImGui::Selectable("None"))
+			Settings::Misc::backtrack = static_cast<int>(BacktrackMode::NONE);
+
+		if (ImGui::Selectable("Last Record Only"))
+			Settings::Misc::backtrack = static_cast<int>(BacktrackMode::LAST_ONLY);
+
+		if (ImGui::Selectable("All Records"))
+			Settings::Misc::backtrack = static_cast<int>(BacktrackMode::ALL_RECORDS);
+
+		ImGui::EndCombo();
+	}
 
 	ImGui::EndGroup();
 }

@@ -15,7 +15,9 @@ namespace Lua
 		m_luaState = luaL_newstate();
 		luaL_openlibs(m_luaState);
 
-		LuaFuncs::common::luaopen_commonfunctions(m_luaState);
+		LuaFuncs::client::luaopen_client(m_luaState);
+
+		/*LuaFuncs::common::luaopen_commonfunctions(m_luaState);
 
 		// open libraries
 		LuaFuncs::globalvars::luaopen_globalvars(m_luaState);
@@ -52,7 +54,7 @@ namespace Lua
 		LuaClasses::ESP_Data::open(m_luaState);
 		//LuaClasses::Color::open(m_luaState);
 
-		luaregister_constants(m_luaState);
+		luaregister_constants(m_luaState);*/
 
 		consoleText += "Pluto initialized\n";
 	}

@@ -1,4 +1,5 @@
 #include "entitylist.h"
+#include "../backtrack/backtrack.h"
 
 namespace EntityList
 {
@@ -62,6 +63,13 @@ namespace EntityList
 						entry.flags |= EntityFlags::IsAlive;
 
 					m_vecEntities.emplace_back(entry);
+
+					// skip localplayer :))
+					// btw this is fucking bullshit
+					// calling Backtrack::Store() directly on FrameStageNotify does not work
+					if (player->GetIndex() != m_pLocalPlayer->GetIndex())
+						Backtrack::Store(entry);
+
 					break;
 				}
 

@@ -84,6 +84,7 @@ namespace Settings
 		bool norecoil = false;
 		float viewmodel_offset[3] = {0.0f, 0.0f, 0.0f};
 		float viewmodel_interp = 0.0f;
+		int backtrack = 0;
 	}
 }
 
