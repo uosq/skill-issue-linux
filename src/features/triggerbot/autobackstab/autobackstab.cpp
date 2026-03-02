@@ -1,5 +1,22 @@
 #include "autobackstab.h"
 
+#include "../../backtrack/backtrack.h"
+#include "../../logs/logs.h"
+
+bool AutoBackstab::IsBehindEntity(Vector localCenter, Vector targetCenter, Vector targetViewAngles)
+{
+	Vector dir = targetCenter - localCenter;
+	dir.z = 0;
+	dir.Normalize();
+
+	Vector targetForward;
+	Math::AngleVectors(targetViewAngles, &targetForward);
+	targetForward.z = 0;
+	targetForward.Normalize();
+
+	return dir.Dot(targetForward) > 0.0f;
+}
+
 bool AutoBackstab::IsBehindEntity(CTFPlayer* pLocal, CTFPlayer* pTarget)
 {
 	Vector dir = (pTarget->GetCenter() - pLocal->GetCenter());
@@ -94,7 +111,7 @@ void RageBackstab(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd, boo
 {
 	Vector shootPos = pLocal->GetEyePos();
 
-	for (auto& entry : EntityList::GetEnemies())
+	/*for (auto& entry : EntityList::GetEnemies())
 	{
 		if (!(entry.flags & EntityFlags::IsPlayer))
 			continue;
@@ -116,10 +133,6 @@ void RageBackstab(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd, boo
 
 			if (helper::localplayer::IsAttacking(pLocal, pWeapon, pCmd))
 			{
-				Vector viewAngles, viewForward;
-				interfaces::Engine->GetViewAngles(viewAngles);
-				Math::AngleVectors(viewAngles, &viewForward);
-					
 				Vector angle = dir.ToAngle();
 				pCmd->viewangles = angle;
 				*pSendPacket = false;
@@ -127,6 +140,48 @@ void RageBackstab(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd, boo
 
 			EntityList::m_pAimbotTarget = enemy;
 			break;
+		}
+	}*/
+
+	Vector localCenter = pLocal->GetCenter();
+
+	for (const auto& entry : EntityList::GetEnemies())
+	{
+		if ((entry.flags & (EntityFlags::IsAlive | EntityFlags::IsPlayer)) == 0)
+			continue;
+
+		CTFPlayer* pPlayer = static_cast<CTFPlayer*>(entry.ptr);
+		if (pPlayer == nullptr)
+			continue;
+
+		if (!AimbotUtils::IsValidEntity(pPlayer))
+			continue;
+
+		std::vector<LagCompRecord> records;
+		if (!Backtrack::GetRecords(pPlayer, records))
+		{
+			Logs::Info("Invalid records");
+			continue;
+		}
+
+		for (const auto& record : records)
+		{
+			if (!AutoBackstab::IsBehindEntity(localCenter, record.absCenter, record.viewAngle))
+				continue;
+
+			if ((record.absCenter - localCenter).Length() > (48*2))
+				continue;
+
+			pCmd->buttons |= IN_ATTACK;
+
+			if (helper::localplayer::IsAttacking(pLocal, pWeapon, pCmd))
+			{
+				Vector dir = record.absCenter - localCenter;
+				pCmd->viewangles = dir.ToAngle();
+				pCmd->tick_count = TIME_TO_TICKS(record.simtime);
+				*pSendPacket = false;
+				return;
+			}
 		}
 	}
 }

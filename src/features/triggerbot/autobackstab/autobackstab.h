@@ -11,6 +11,7 @@
 namespace AutoBackstab
 {
 	bool IsBehindEntity(CTFPlayer* pLocal, CTFPlayer* pTarget);
+	bool IsBehindEntity(Vector localCenter, Vector targetCenter, Vector targetViewAngles);
 	bool IsBehindAndFacingEntity(CTFPlayer *pLocal, CTFPlayer* pTarget);
 	bool CanBackstabEntity(CTFPlayer* pLocal, CTFPlayer* pTarget);
 

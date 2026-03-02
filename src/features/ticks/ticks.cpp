@@ -69,11 +69,12 @@ void TickManager::Post_CreateMove(int sequence_number)
 
 	FakeLag::Run();
 
+	Backtrack::Run(pLocal, pWeapon, pCmd);
+
 	Bhop::Run(pLocal, pCmd);
 	Antiaim::Run(pLocal, pWeapon, pCmd);
 	Aimbot::Run(pLocal, pWeapon, pCmd);
 	Triggerbot::Run(pLocal, pWeapon, pCmd);
-	Backtrack::Run(pLocal, pWeapon, pCmd);
 
 	Lua_CreateMove_Callback(pCmd);
 

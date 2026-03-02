@@ -228,19 +228,26 @@ void Backtrack::DoPostScreenSpaceEffects()
 
 bool Backtrack::GetRecords(CTFPlayer* pEntity, std::vector<LagCompRecord>& out)
 {
+	/*BacktrackMode mode = static_cast<BacktrackMode>(Settings::Misc::backtrack);
+	if (mode >= BacktrackMode::MAX && mode <= BacktrackMode::INVALID)
+	{
+		LagCompRecord origin = {};
+		if (!pEntity->SetupBones(origin.bones, MAXSTUDIOBONES, BONE_USED_BY_ANYTHING, interfaces::GlobalVars->curtime))
+			return false;
+
+		origin.absCenter = pEntity->GetCenter();
+		origin.simtime = pEntity->m_flSimulationTime();
+		origin.viewAngle = pEntity->m_angEyeAngles();
+
+		return true;
+	}*/
+
 	auto records = m_records[pEntity];
 
-	auto origin = LagCompRecord{};
-	if (!pEntity->SetupBones(origin.bones, MAXSTUDIOBONES, BONE_USED_BY_ANYTHING, interfaces::GlobalVars->curtime))
+	if (records.empty())
 		return false;
 
-	origin.absCenter = pEntity->GetCenter();
-	origin.simtime = pEntity->m_flSimulationTime();
-	origin.viewAngle = pEntity->m_angEyeAngles();
-
-	out.push_back(origin);
-
-	for (auto& record : records)
+	for (const auto& record : records)
 		out.push_back(record);
 
 	return true;
