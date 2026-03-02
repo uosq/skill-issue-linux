@@ -22,5 +22,5 @@ namespace PlayerPrediction
 	void AirAcceleratePlayer(Vector &velocity, Vector wishdir, float wishspeed, float accel, int surf);
 	void StayOnGround(CTFPlayer* player, Vector &origin, Vector mins, Vector maxs, float stepsize);
 	bool TryStepMove(CTFPlayer* player, Vector& origin, Vector& velocity, Vector mins, Vector maxs, float stepSize);
-	void Predict(CTFPlayer* player, float time_seconds, std::vector<Vector> &path);
+	bool Predict(CTFPlayer* player, float time_seconds, std::vector<Vector> &path);
 };

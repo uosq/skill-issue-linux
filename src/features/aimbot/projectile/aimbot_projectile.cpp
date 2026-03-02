@@ -2,6 +2,8 @@
 
 namespace AimbotProjectile
 {
+	std::vector<Vector> m_vecPlayerPath = {};
+
 	bool GetProjectileInfo(ProjectileInfo_t& info, CTFPlayer* owner, CTFWeaponBase* pWeapon)
 	{
 		if (owner == nullptr || pWeapon == nullptr)
@@ -194,7 +196,6 @@ namespace AimbotProjectile
 				info.gravity = 1 * gravity;
 				return true;
 			}
-			default: return false;
 		}
 
 		return false;
@@ -350,7 +351,8 @@ namespace AimbotProjectile
 				if (player == nullptr)
 					continue;
 
-				PlayerPrediction::Predict(player, time, path);
+				if (!PlayerPrediction::Predict(player, time, path))
+					continue;
 	
 				// something went wrong
 				if (path.empty())
@@ -433,6 +435,40 @@ namespace AimbotProjectile
 			EntityList::m_pAimbotTarget = target.entity;
 			state.running = true;
 			return;
+		}
+	}
+
+	void DrawPath()
+	{
+		if (m_vecPlayerPath.size() < 2)
+			return;
+
+		Vector previous;
+		bool hasPrevious = false;
+
+		for (const auto& pos : m_vecPlayerPath)
+		{
+			Vector current;
+
+			if (!helper::engine::WorldToScreen(pos, current))
+			{
+				hasPrevious = false;
+				continue;
+			}
+
+			if (hasPrevious)
+			{
+				interfaces::Surface->DrawSetColor(255, 255, 255, 255);
+				interfaces::Surface->DrawLine(
+					static_cast<int>(previous.x),
+					static_cast<int>(previous.y),
+					static_cast<int>(current.x),
+					static_cast<int>(current.y)
+				);
+			}
+
+			previous = current;
+			hasPrevious = true;
 		}
 	}
 };

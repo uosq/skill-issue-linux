@@ -30,10 +30,13 @@ struct ProjectileInfo_t
 
 namespace AimbotProjectile
 {
+	extern std::vector<Vector> m_vecPlayerPath;
+
 	bool GetProjectileInfo(ProjectileInfo_t& info, CTFPlayer* owner, CTFWeaponBase* pWeapon);
 	// Offset before any multipointing is applied
 	float GetInitialOffset(CTFPlayer* target, CTFWeaponBase* pWeapon);
 	bool SolveBallisticArc(Vector &outAngle, Vector p0, Vector p1, float speed, float gravity);
 	bool CheckTrajectory(CBaseEntity* target, Vector startPos, Vector targetPos, Vector angle, ProjectileInfo_t info, float gravity);
 	void Run(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd, AimbotState& state);
+	void DrawPath();
 };

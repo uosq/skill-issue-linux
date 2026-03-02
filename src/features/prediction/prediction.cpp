@@ -206,17 +206,19 @@ namespace PlayerPrediction
 		return slideFrac > 0.0f;
 	}
 
-	void Predict(CTFPlayer* player, float time_seconds, std::vector<Vector> &path)
+	bool Predict(CTFPlayer* player, float time_seconds, std::vector<Vector> &path)
 	{
 		static ConVar* sv_accelerate = interfaces::Cvar->FindVar("sv_accelerate");
+		if (sv_accelerate == nullptr)
+			return false;
 
-		Vector velocity = player->GetVelocity();
+		Vector velocity = player->EstimateAbsVelocity();
 		Vector origin = player->GetAbsOrigin();
 
 		if (velocity.Length() < 5.0f)
 		{
 			path.emplace_back(origin);
-			return;
+			return false;
 		}
 
 		float maxspeed = player->m_flMaxspeed();
@@ -264,5 +266,7 @@ namespace PlayerPrediction
 			path.emplace_back(origin);
 			clock += interfaces::GlobalVars->interval_per_tick;
 		}
+
+		return true;
 	}
 };

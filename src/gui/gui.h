@@ -24,7 +24,8 @@ enum TabMenu
 	TAB_LUA,
 	TAB_NETVARS,
 	TAB_RADAR,
-	TAB_CONFIG
+	TAB_CONFIG,
+	TAB_LOGS,
 };
 
 namespace GUI

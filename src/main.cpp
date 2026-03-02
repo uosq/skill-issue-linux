@@ -1,6 +1,7 @@
 #include "features/chams/chams.h"
 #include "features/esp/esp.h"
 #include "features/glow/glow.h"
+#include "features/logs/logs.h"
 #include "features/radar/radar.h"
 #include "features/ticks/ticks.h"
 #include "features/visuals/viewmodel_aim/viewmodel_aim.h"
@@ -49,6 +50,10 @@ void init(void)
 {
 	if (!InitializeInterfaces())
 		return;
+
+	Logs::Info("Test");
+	Logs::Warn("Test 2");
+	Logs::Error("Test 3");
 
 	GUI::Init();
 	TickManager::Init();

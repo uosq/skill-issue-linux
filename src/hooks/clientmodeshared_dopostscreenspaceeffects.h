@@ -17,9 +17,9 @@ DECLARE_VTABLE_HOOK(DoPostScreenSpaceEffects, bool, (IClientMode* thisptr, CView
 	if (LuaHookManager::HasHooks("DoPostScreenSpaceEffects"))
 		LuaHookManager::Call(Lua::m_luaState, "DoPostScreenSpaceEffects", 0);
 
+	Backtrack::DoPostScreenSpaceEffects();
 	Chams::Run();
 	Glow::Run();
-	Backtrack::DoPostScreenSpaceEffects();
 
 	return originalDoPostScreenSpaceEffects(thisptr, setup);
 }
