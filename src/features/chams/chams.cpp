@@ -70,9 +70,9 @@ namespace Chams
 			while (moveChild != nullptr && passes <= 32)
 			{
 				CBaseEntity* attachment = static_cast<CBaseEntity*>(moveChild);
-				if (Settings::ESP::weapon && attachment->IsWeapon())
+				if (Settings::ESP.weapon && attachment->IsWeapon())
 				{
-					color = Settings::Colors::weapon;
+					color = Settings::Colors.weapon;
 					flColor[0] = color.r()/255.0f;
 					flColor[1] = color.g()/255.0f;
 					flColor[2] = color.b()/255.0f;
@@ -100,7 +100,7 @@ namespace Chams
 
 		m_bRunning = false;
 
-		if (!Settings::ESP::chams)
+		if (!Settings::ESP.chams)
 			return;
 
 		if (interfaces::Engine->IsTakingScreenshot())

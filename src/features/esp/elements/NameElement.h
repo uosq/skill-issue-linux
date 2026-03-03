@@ -11,7 +11,7 @@ class NameElement : public IBaseElement
 public:
 	bool ShouldDraw(CBaseEntity*, const ESP_Data&) const override
 	{
-		return Settings::ESP::name;
+		return Settings::ESP.name;
 	}
 
 	void Draw(Vec2& pos, CBaseEntity* ent, const ESP_Data& data, ESPContext& ctx) const override

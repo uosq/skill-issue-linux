@@ -133,16 +133,16 @@ inline void RenderImGui()
 	if (LuaHookManager::HasHooks("ImGui"))
 		LuaHookManager::Call(Lua::m_luaState, "ImGui", 0);
 
-	if (Settings::AntiAim::warp_enabled)
+	if (Settings::AntiAim.warp_enabled)
 		Warp::RunWindow();
 
-	if (Settings::Radar::enabled)
+	if (Settings::Radar.enabled)
 		Radar::Run();
 
-	if (Settings::Misc::spectatorlist)
+	if (Settings::Misc.spectatorlist)
 		GUI::RunSpectatorList();
 
-	if (Settings::Misc::playerlist)
+	if (Settings::Misc.playerlist)
 		GUI::RunPlayerList();
 
 	if (Settings::menu_open)

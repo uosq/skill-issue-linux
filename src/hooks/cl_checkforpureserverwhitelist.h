@@ -10,7 +10,7 @@ DETOUR_DECL_TYPE(void, originalCheckForPureServerWhitelistFn, void*& pFilesToRel
 
 inline void Hooked_CL_CheckForPureServerWhitelist(void*& pFilesToReload)
 {
-	if (Settings::Misc::sv_pure_bypass)
+	if (Settings::Misc.sv_pure_bypass)
 		return;
 
 	DETOUR_ORIG_CALL(&CL_CheckForPureServerWhitelist_ctx, originalCheckForPureServerWhitelistFn, pFilesToReload);

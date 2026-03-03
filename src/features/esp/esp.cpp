@@ -30,7 +30,7 @@ namespace ESP
 
 		if (entry.flags & EntityFlags::IsPlayer)
 		{
-			if (ent == EntityList::GetLocal() && !Settings::Misc::thirdperson)
+			if (ent == EntityList::GetLocal() && !Settings::Misc.thirdperson)
 				return false;
 
 			if (!ESP_Utils::GetEntityBounds(ent, out))
@@ -110,7 +110,7 @@ namespace ESP
 
 	void Run(CTFPlayer* pLocal)
 	{
-		if (!helper::engine::IsInMatch() || !Settings::ESP::enabled)
+		if (!helper::engine::IsInMatch() || !Settings::ESP.enabled)
 			return;
 
 		FontManager::SetFont("esp font");
@@ -130,13 +130,13 @@ namespace ESP
 				continue;
 
 			Color color = ESP_Utils::GetEntityColor(ent);
-			if (Settings::ESP::box)
+			if (Settings::ESP.box)
 				PaintBox(color, data);
 
-			//if (Settings::ESP::name)
+			//if (Settings::ESP.name)
 				//PaintName(color, top, w, h, data.name);
 
-			if (Settings::ESP::healthbar && data.maxhealth > 0)
+			if (Settings::ESP.healthbar && data.maxhealth > 0)
 				PaintHealthbar(data);
 
 			ESPContext context = {};

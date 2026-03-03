@@ -4,14 +4,14 @@
 Color ESP_Utils::GetEntityColor(CBaseEntity* entity)
 {
 	if (entity == EntityList::m_pAimbotTarget)
-		return Settings::Colors::aimbot_target;
+		return Settings::Colors.aimbot_target;
 
 	switch (entity->m_iTeamNum())
 	{
 		case ETeam::TEAM_RED:
-			return Settings::Colors::red_team;
+			return Settings::Colors.red_team;
 		case ETeam::TEAM_BLU:
-			return Settings::Colors::blu_team;
+			return Settings::Colors.blu_team;
 		default: break;
 	}
 
@@ -35,7 +35,7 @@ bool ESP_Utils::IsValidPlayer(CTFPlayer* pLocal, CBaseEntity* entity)
 	if (!player->IsAlive())
 		return false;
 
-	if (player->InCond(TF_COND_CLOAKED) && Settings::ESP::ignorecloaked)
+	if (player->InCond(TF_COND_CLOAKED) && Settings::ESP.ignorecloaked)
 		return false;
 
 	return true;

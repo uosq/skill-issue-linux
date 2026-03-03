@@ -194,7 +194,7 @@ void AutoBackstab::Run(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd
 	if (pWeapon->GetWeaponID() != TF_WEAPON_KNIFE)
 		return;
 
-	switch(static_cast<AutoBackstabMode>(Settings::Triggerbot::autobackstab))
+	switch(static_cast<AutoBackstabMode>(Settings::Trigger.autobackstab))
 	{
 		case AutoBackstabMode::NONE:
 		break;
@@ -218,7 +218,7 @@ void AutoBackstab::Run(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd
 
 std::string AutoBackstab::GetModeName()
 {
-	switch(static_cast<AutoBackstabMode>(Settings::Triggerbot::autobackstab))
+	switch(static_cast<AutoBackstabMode>(Settings::Trigger.autobackstab))
 	{
 		case AutoBackstabMode::NONE: return "None";
 		case AutoBackstabMode::LEGIT: return "Legit";

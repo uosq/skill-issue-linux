@@ -10,7 +10,7 @@ class HealthTextElement : public IBaseElement
 public:
 	bool ShouldDraw(CBaseEntity*, const ESP_Data&) const override
 	{
-		return Settings::ESP::healthbar;
+		return Settings::ESP.healthbar;
 	}
 
 	void Draw(Vec2& pos, CBaseEntity* ent, const ESP_Data& data, ESPContext& ctx) const override

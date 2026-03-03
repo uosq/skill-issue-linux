@@ -14,7 +14,7 @@ DETOUR_DECL_TYPE(int, originalMaxItemCountFn, void* thisptr);
 
 inline int Hooked_GetMaxItemCount(void* thisptr)
 {
-	if (Settings::Misc::backpack_expander)
+	if (Settings::Misc.backpack_expander)
 		return 4000;
 
 	int ret;

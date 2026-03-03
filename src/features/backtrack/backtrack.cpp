@@ -57,7 +57,7 @@ void Backtrack::Run(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd *pCmd)
 	|| pWeapon->GetWeaponType() == EWeaponType::UNKNOWN)
 		return;
 
-	BacktrackMode mode = static_cast<BacktrackMode>(Settings::Misc::backtrack);
+	BacktrackMode mode = static_cast<BacktrackMode>(Settings::Misc.backtrack);
 	if (mode == BacktrackMode::NONE || mode >= BacktrackMode::MAX || mode <= BacktrackMode::INVALID)
 		return;
 
@@ -107,7 +107,7 @@ void Backtrack::Reset()
 
 void Backtrack::Store(const EntityListEntry& entry)
 {
-	BacktrackMode mode = static_cast<BacktrackMode>(Settings::Misc::backtrack);
+	BacktrackMode mode = static_cast<BacktrackMode>(Settings::Misc.backtrack);
 	if (mode == BacktrackMode::NONE || mode >= BacktrackMode::MAX || mode <= BacktrackMode::INVALID)
 		return;
 
@@ -151,7 +151,7 @@ void Backtrack::DoPostScreenSpaceEffects()
 	if (m_records.empty())
 		return;
 
-	BacktrackMode mode = static_cast<BacktrackMode>(Settings::Misc::backtrack);
+	BacktrackMode mode = static_cast<BacktrackMode>(Settings::Misc.backtrack);
 	if (mode >= BacktrackMode::MAX || mode <= BacktrackMode::INVALID)
 		return;
 
@@ -228,7 +228,7 @@ void Backtrack::DoPostScreenSpaceEffects()
 
 bool Backtrack::GetRecords(CTFPlayer* pEntity, std::vector<LagCompRecord>& out)
 {
-	/*BacktrackMode mode = static_cast<BacktrackMode>(Settings::Misc::backtrack);
+	/*BacktrackMode mode = static_cast<BacktrackMode>(Settings::Misc.backtrack);
 	if (mode >= BacktrackMode::MAX && mode <= BacktrackMode::INVALID)
 	{
 		LagCompRecord origin = {};
@@ -260,7 +260,7 @@ bool Backtrack::IsValidPlayer(const EntityListEntry& entry)
 
 std::string Backtrack::GetModeName()
 {
-	switch(static_cast<BacktrackMode>(Settings::Misc::backtrack))
+	switch(static_cast<BacktrackMode>(Settings::Misc.backtrack))
 	{
 	case BacktrackMode::NONE:
 		return "None";

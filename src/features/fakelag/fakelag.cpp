@@ -9,13 +9,13 @@ void FakeLag::Run()
 {
 	m_bFakeLagging = false;
 
-	if (!Settings::AntiAim::fakelag_enabled)
+	if (!Settings::AntiAim.fakelag_enabled)
 		return;
 
 	if (TickManager::m_iChokedCommands >= 21)
 		return;
 
-	const uint8_t iGoal = Settings::AntiAim::fakelag_ticks;
+	const uint8_t iGoal = Settings::AntiAim.fakelag_ticks;
 	if (TickManager::m_iChokedCommands < iGoal)
 	{
 		TickManager::m_bSendPacket = false;

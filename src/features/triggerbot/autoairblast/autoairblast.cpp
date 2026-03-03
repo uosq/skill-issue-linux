@@ -77,7 +77,7 @@ void AutoAirblast::Run(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd
 	if (!pWeapon->CanAirblast())
 		return;
 
-	if (Settings::Triggerbot::autoairblast == static_cast<int>(AutoBackstabMode::LEGIT))
+	if (Settings::Trigger.autoairblast == static_cast<int>(AutoBackstabMode::LEGIT))
 		LegitAirblast(pLocal, pWeapon, pCmd);
 	else
 	 	RageAirblast(pLocal, pWeapon, pCmd, pSendPacket);
@@ -85,7 +85,7 @@ void AutoAirblast::Run(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd
 
 std::string AutoAirblast::GetModeName()
 {
-	switch(static_cast<AutoBackstabMode>(Settings::Triggerbot::autoairblast))
+	switch(static_cast<AutoBackstabMode>(Settings::Trigger.autoairblast))
 	{
         case AutoBackstabMode::NONE: return "None";
         case AutoBackstabMode::LEGIT: return "Legit";

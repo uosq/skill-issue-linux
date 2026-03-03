@@ -59,7 +59,6 @@ void init(void)
 	TickManager::Init();
 	MaterialManager::Init();
 	FontManager::Init();
-	Settings::RegisterOptions();
 
 	Backtrack::Init();
 	ViewmodelInterp::Init();

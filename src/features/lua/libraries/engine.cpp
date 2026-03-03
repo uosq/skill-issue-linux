@@ -3,7 +3,6 @@
 #include "../api.h"
 #include "../../../sdk/definitions/cgametrace.h"
 #include "../../../sdk/definitions/ctracefilters.h"
-#include "../../../sdk/helpers/helper.h"
 
 namespace LuaFuncs
 {

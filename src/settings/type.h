@@ -1,10 +1,8 @@
 #pragma once
 
 enum class SettingType {
-	NONE,
-	BOOL,
+	BOOL = 0,
 	INT,
 	FLOAT,
 	STRING,
-	UINT8
 };

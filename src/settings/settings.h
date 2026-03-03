@@ -67,166 +67,278 @@ enum class BacktrackMode
 
 namespace Settings
 {
-	namespace AntiAim
+	struct SettingsAntiAim
 	{
-		extern bool enabled;
-		extern int pitch_mode;
-		extern int real_yaw_mode;
-		extern int fake_yaw_mode;
-		extern float spin_speed;
+		char warp_key[16];
+		char warp_recharge_key[16];
+		char warp_dt_key[16];
 
-		extern bool warp_enabled;
-		extern std::string warp_key;
-		extern std::string warp_recharge_key;
-		extern std::string warp_dt_key;
-		extern int warp_speed;
+		int spin_speed;
+		bool enabled;
+		int pitch_mode;
+		int real_yaw_mode;
+		int fake_yaw_mode;
+		bool warp_enabled;
+		int warp_speed;
+		bool fakelag_enabled;
+		int fakelag_ticks;
+	};
 
-		extern bool fakelag_enabled;
-		extern int fakelag_ticks;
-	}
+	extern SettingsAntiAim AntiAim;
 }
 
 namespace Settings
 {
-	namespace ESP
+	struct SettingsESP
 	{
-		extern bool enabled;
-		extern bool ignorecloaked;
-		extern bool buildings;
-		extern bool name;
-		extern bool box;
-		extern bool healthbar;
-		extern bool chams;
-		extern int stencil;
-		extern int blur;
-		extern bool weapon;
-	}
+		int stencil;
+		int blur;
+		bool enabled;
+		bool ignorecloaked;
+		bool buildings;
+		bool name;
+		bool box;
+		bool healthbar;
+		bool chams;
+		bool weapon;
+	};
+
+	extern SettingsESP ESP;
 }
 
 namespace Settings
 {
-	namespace Aimbot
+	struct SettingsAimbot
 	{
-		extern bool enabled;
-		extern float fov;
-		extern std::string key;
-		extern bool autoshoot;
-		extern float max_sim_time;
-		extern bool viewmodelaim;
-		extern bool draw_fov_indicator;
-		extern bool ignorecloaked;
-		extern bool ignoreubered;
-		extern bool ignorehoovy;
-		extern bool ignorebonked;
-		extern bool waitforcharge;
-		extern bool hold_minigun_spin;
-		extern int mode;
-		extern int melee;
-		extern int teamMode;
-		extern float smoothness;
-	}
+		bool enabled = false;
+		float fov = 0.0f;
+		char key[16] = "";
+		bool autoshoot = false;
+		float max_sim_time = 0.0f;
+		bool viewmodelaim = false;
+		bool draw_fov_indicator = false;
+		bool ignorecloaked = false;
+		bool ignoreubered = false;
+		bool ignorehoovy = false;
+		bool ignorebonked = false;
+		bool waitforcharge = false;
+		bool hold_minigun_spin = false;
+		int mode = 0;
+		int melee = 0;
+		int teamMode = 0;
+		float smoothness = 0.0f;
+	};
+
+	extern SettingsAimbot Aimbot;
 }
 
 namespace Settings
 {
-	namespace Misc
+	struct SettingsMisc
 	{
-		extern bool thirdperson;
-		extern std::string thirdperson_key;
-		extern bool customfov_enabled;
-		extern float customfov;
-		extern bool spectatorlist;
-		extern bool backpack_expander;
-		extern bool sv_pure_bypass;
-		extern bool streamer_mode;
-		extern bool bhop;
-		extern bool accept_item_drop;
-		extern bool playerlist;
-		extern bool norecoil;
-		extern float viewmodel_offset[3];
-		extern float viewmodel_interp;
-		extern int backtrack;
-	}
+		bool thirdperson = false;
+		char thirdperson_key[16] = "";
+		bool customfov_enabled = false;
+		float customfov = 90.0f;
+		bool spectatorlist = false;
+		bool backpack_expander = false;
+		bool sv_pure_bypass = false;
+		bool streamer_mode = false;
+		bool bhop = false;
+		bool accept_item_drop = false;
+		bool playerlist = false;
+		bool norecoil = false;
+		float viewmodel_offset[3] = {0, 0, 0};
+		float viewmodel_interp = 0.0f;
+		int backtrack = 0;
+	};
+
+	extern SettingsMisc Misc;
 }
 
 namespace Settings
 {
-	namespace Triggerbot
+	struct SettingsTriggerbot
 	{
-		extern bool enabled;
-		extern bool hitscan;
-		extern int autobackstab;
-		extern std::string key;
-		extern int autoairblast;
-	}
+		char key[16] = "";
+		bool enabled = false;
+		bool hitscan = false;
+		int autobackstab = 0;
+		int autoairblast = 0;
+	};
+
+	extern SettingsTriggerbot Trigger;
 }
 
 namespace Settings
 {
-	namespace Colors
+	struct SettingsColors
 	{
-		extern Color red_team;
-		extern Color blu_team;
-		extern Color aimbot_target;
-		extern Color weapon;
-	}
+		Color red_team = {255, 0, 0, 255};
+		Color blu_team = {0, 255, 255, 255};
+		Color aimbot_target = {255, 255, 255, 255};
+		Color weapon = {255, 255, 255, 255};
+	};
+
+	extern SettingsColors Colors;
 }
 
 namespace Settings
 {
-	namespace Radar
+	struct SettingsRadar
 	{
-		extern int size;
-		extern int range;
-		extern int icon_size;
-		extern bool enabled;
-		extern bool players;
-		extern bool buildings;
-		extern bool objective;
-		extern bool projectiles;
-	}
+		int size = 120;
+		int range = 3000;
+		int icon_size = 10;
+		bool enabled = false;
+		bool players = false;
+		bool buildings = false;
+		bool objective = false;
+		bool projectiles = false;
+	};
+
+	extern SettingsRadar Radar;
 }
 
 namespace Settings
 {
 	extern bool menu_open;
-	inline std::unordered_map<std::string, std::unique_ptr<ISettingEntry>>& GetOptionMap()
+	inline constexpr SettingEntry m_entries[]
 	{
-		static std::unordered_map<std::string, std::unique_ptr<ISettingEntry>> map;
-		return map;
-	}
+		// aimbot
+		{"aimbot enabled", SettingType::BOOL, &Aimbot.enabled},
+		{"aimbot fov", SettingType::FLOAT, &Aimbot.fov},
+		{"aimbot key", SettingType::STRING, Aimbot.key},
+		{"aimbot autoshot", SettingType::BOOL, &Aimbot.autoshoot},
+		{"aimbot max sim time", SettingType::FLOAT, &Aimbot.max_sim_time},
+		{"aimbot viewmodel aim", SettingType::BOOL, &Aimbot.viewmodelaim},
+		{"aimbot draw fov indicator", SettingType::BOOL, &Aimbot.draw_fov_indicator},
+		{"aimbot ignore cloaked", SettingType::BOOL, &Aimbot.ignorecloaked},
+		{"aimbot ignore ubered", SettingType::BOOL, &Aimbot.ignoreubered},
+		{"aimbot ignore hoovy", SettingType::BOOL, &Aimbot.ignorehoovy},
+		{"aimbot ignore bonked", SettingType::BOOL, &Aimbot.ignorebonked},
+		{"aimbot melee", SettingType::INT, &Aimbot.melee},
+		{"aimbot wait for charge", SettingType::BOOL, &Aimbot.waitforcharge},
+		{"aimbot mode", SettingType::INT, &Aimbot.mode},
+		{"aimbot smoothness", SettingType::FLOAT, &Aimbot.smoothness},
+		{"aimbot team mode", SettingType::INT, &Aimbot.teamMode},
+		{"aimbot hold minigun spin", SettingType::BOOL, &Aimbot.hold_minigun_spin},
 
-	void RegisterOptions(void);
-	void SaveAll(const std::string& fullPath);
-	void LoadAll(const std::string& fullPath);
+		// esp
+		{"esp enabled", SettingType::BOOL, &ESP.enabled},
+		{"esp ignore cloaked", SettingType::BOOL, &ESP.ignorecloaked},
+		{"esp buildings", SettingType::BOOL, &ESP.buildings},
+		{"esp name", SettingType::BOOL, &ESP.name},
+		{"esp box", SettingType::BOOL, &ESP.box},
+		{"esp health", SettingType::BOOL, &ESP.healthbar},
+		{"esp chams", SettingType::BOOL, &ESP.chams},
+		{"esp stencil", SettingType::INT, &ESP.stencil},
+		{"esp blur", SettingType::INT, &ESP.blur},
+		{"esp weapon", SettingType::BOOL, &ESP.weapon},
+		{"esp health", SettingType::BOOL, &ESP.healthbar},
+
+		// misc
+		{"misc thirdperson", SettingType::BOOL, &Misc.thirdperson},
+		{"misc thirdperson key",SettingType::STRING,  Misc.thirdperson_key},
+		{"misc customfov enabled", SettingType::BOOL, &Misc.customfov_enabled},
+		{"misc customfov", SettingType::FLOAT, &Misc.customfov},
+		{"misc spectatorlist", SettingType::BOOL, &Misc.spectatorlist},
+		{"misc backpack_expander", SettingType::BOOL, &Misc.backpack_expander},
+		{"misc sv pure bypass", SettingType::BOOL, &Misc.sv_pure_bypass},
+		{"misc streamer mode", SettingType::BOOL, &Misc.streamer_mode},
+		{"misc bhop",SettingType::BOOL,  &Misc.bhop},
+		{"misc accept item drop", SettingType::BOOL, &Misc.accept_item_drop},
+		{"misc playerlist", SettingType::BOOL, &Misc.playerlist},
+		{"misc viewmodel offset x", SettingType::FLOAT, &Misc.viewmodel_offset[0]},
+		{"misc viewmodel offset y", SettingType::FLOAT, &Misc.viewmodel_offset[1]},
+		{"misc viewmodel offset z", SettingType::FLOAT, &Misc.viewmodel_offset[2]},
+		{"misc viewmodel interp", SettingType::FLOAT, &Misc.viewmodel_interp},
+		{"misc no recoil", SettingType::BOOL, &Misc.norecoil},
+
+		//triggerbot
+		{"trigger enabled", SettingType::BOOL, &Trigger.enabled},
+		{"trigger hitscan", SettingType::BOOL, &Trigger.hitscan},
+		{"trigger autobackstab", SettingType::INT, &Trigger.autobackstab},
+		{"trigger key", SettingType::STRING, Trigger.key},
+		{"trigger autoairblast", SettingType::INT, &Trigger.autoairblast},
+
+		// colors
+		/*{"colors red team r", SettingType::INT, Colors.red_team[0]},
+		{"colors red team g", SettingType::INT, Colors.red_team[1]},
+		{"colors red team b", SettingType::INT, Colors.red_team[2]},
+		{"colors red team a", SettingType::INT, Colors.red_team[3]},
+		{"colors blu team r", SettingType::INT, Colors.blu_team[0]},
+		{"colors blu team g", SettingType::INT, Colors.blu_team[1]},
+		{"colors blu team b", SettingType::INT, Colors.blu_team[2]},
+		{"colors blu team a", SettingType::INT, Colors.blu_team[3]},
+		{"colors aimbot target r", SettingType::INT, &Colors.aimbot_target[0]},
+		{"colors aimbot target g", SettingType::INT, &Colors.aimbot_target[1]},
+		{"colors aimbot target b", SettingType::INT, &Colors.aimbot_target[2]},
+		{"colors aimbot target a", SettingType::INT, &Colors.aimbot_target[3]},
+		{"colors weapon r", SettingType::INT, &Colors.weapon[0]},
+		{"colors weapon g", SettingType::INT, &Colors.weapon[1]},
+		{"colors weapon b", SettingType::INT, &Colors.weapon[2]},
+		{"colors weapon a", SettingType::INT, &Colors.weapon[3]},*/
+
+		// antiaim
+		{"antiaim enabled", SettingType::BOOL, &AntiAim.enabled},
+		{"antiaim pitch mode", SettingType::INT, &AntiAim.pitch_mode},
+		{"antiaim real yaw mode", SettingType::INT, &AntiAim.real_yaw_mode},
+		{"antiaim fake yaw mode", SettingType::INT, &AntiAim.fake_yaw_mode},
+		{"antiaim spin speed", SettingType::FLOAT, &AntiAim.spin_speed},
+
+		// warp
+		{"warp enabled", SettingType::BOOL, &AntiAim.warp_enabled},
+		{"warp speed", SettingType::INT, &AntiAim.warp_speed},
+		{"warp key", SettingType::STRING, AntiAim.warp_key},
+		{"warp recharge key", SettingType::STRING, AntiAim.warp_recharge_key},
+		{"doubletap key", SettingType::STRING, AntiAim.warp_dt_key},
+
+		// fakelag
+		{"fakelag enabled", SettingType::BOOL, &AntiAim.fakelag_enabled},
+		{"fakelag ticks", SettingType::INT, &AntiAim.fakelag_ticks},
+
+		// radar
+		{"radar enabled", SettingType::BOOL, &Radar.enabled,},
+		{"radar size", SettingType::INT, &Radar.size,},
+		{"radar range", SettingType::INT, &Radar.range,},
+		{"radar players", SettingType::BOOL, &Radar.players,},
+		{"radar buildings", SettingType::BOOL, &Radar.buildings,},
+		{"radar objective", SettingType::BOOL, &Radar.objective,},
+		{"radar projectiles", SettingType::BOOL, &Radar.projectiles,},
+		{"radar icon size", SettingType::INT, &Radar.icon_size,},
+	};
+
+	void Save(const std::string& fullPath);
+	void Load(const std::string& fullPath);
 
 	template<typename T>
 	bool GetSetting(const std::string& key, T& out)
 	{
-		auto it = GetOptionMap().find(key);
-		if (it == GetOptionMap().end())
-			return false;
+		for (const auto& entry : m_entries)
+		{
+			if (entry.name != key)
+				continue;
 
-		auto* option = dynamic_cast<SettingEntry<T>*>(it->second.get());
-		if (option == nullptr)
-			return false;
+			out = *static_cast<T*>(entry.ptr);
+			return true;
+		}
 
-		out = option->GetValue();
-		return true;
+		return false;
 	}
 
 	template<typename T>
 	bool SetSetting(const std::string& key, const T& value)
 	{
-		auto it = GetOptionMap().find(key);
-		if (it == GetOptionMap().end())
-			return false;
+		for (auto& entry : m_entries)
+		{
+			if (entry.name != key)
+				continue;
 
-		auto* option = dynamic_cast<SettingEntry<T>*>(it->second.get());
-		if (option == nullptr)
-			return false;
+			*static_cast<T*>(entry.ptr) = value;
+			return true;
+		}
 
-		option->SetValue(value);
-		return true;
+		return false;
 	}
 };

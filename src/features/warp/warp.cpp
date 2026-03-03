@@ -32,7 +32,7 @@ namespace Warp
 	{
 		Warp::m_iDesiredState = WarpState::WAITING;
 
-		if (!Settings::AntiAim::warp_enabled)
+		if (!Settings::AntiAim.warp_enabled)
 			return;
 
 		if (!interfaces::Engine->IsInGame() || !interfaces::Engine->IsConnected())
@@ -58,7 +58,7 @@ namespace Warp
 			pCmd->sidemove = -sideVel * 450.0f;
 		}
 
-		ButtonCode_t key = interfaces::InputSystem->StringToButtonCode(Settings::AntiAim::warp_dt_key.c_str());
+		ButtonCode_t key = interfaces::InputSystem->StringToButtonCode(Settings::AntiAim.warp_dt_key);
 		if (key != BUTTON_CODE_INVALID && interfaces::InputSystem->IsButtonDown(key) && Warp::m_iStoredTicks >= Warp::GetMaxTicks())
 		{
 			if (!IsValidWeapon(pWeapon))
@@ -71,14 +71,14 @@ namespace Warp
 			}
 		}
 
-		key = interfaces::InputSystem->StringToButtonCode(Settings::AntiAim::warp_key.c_str());
+		key = interfaces::InputSystem->StringToButtonCode(Settings::AntiAim.warp_key);
 		if (key != BUTTON_CODE_INVALID && interfaces::InputSystem->IsButtonDown(key) && Warp::m_iStoredTicks > 0)
 		{
 			Warp::m_iDesiredState = WarpState::RUNNING;
 			return;
 		}
 
-		key = interfaces::InputSystem->StringToButtonCode(Settings::AntiAim::warp_recharge_key.c_str());
+		key = interfaces::InputSystem->StringToButtonCode(Settings::AntiAim.warp_recharge_key);
 		if (key != BUTTON_CODE_INVALID && interfaces::InputSystem->IsButtonDown(key) && Warp::m_iStoredTicks < GetMaxTicks())
 		{
 			Warp::m_iDesiredState = WarpState::RECHARGING;

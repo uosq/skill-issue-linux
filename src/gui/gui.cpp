@@ -47,29 +47,29 @@ void DrawTabButtons(int &tab)
 
 void DrawAimbotTab()
 {
-	ImGui::Checkbox("Enabled", &Settings::Aimbot::enabled);
+	ImGui::Checkbox("Enabled", &Settings::Aimbot.enabled);
 
-	ImGui::BeginDisabled(!Settings::Aimbot::enabled);
+	ImGui::BeginDisabled(!Settings::Aimbot.enabled);
 	{
-		ImGui::InputText("Key", &Settings::Aimbot::key);
-		ImGui::Checkbox("Autoshoot", &Settings::Aimbot::autoshoot);
-		ImGui::Checkbox("Viewmodel Aim", &Settings::Aimbot::viewmodelaim);
-		ImGui::Checkbox("Draw FOV Indicator", &Settings::Aimbot::draw_fov_indicator);
-		ImGui::Checkbox("Wait For Charge", &Settings::Aimbot::waitforcharge);
-		ImGui::SliderFloat("Fov", &Settings::Aimbot::fov, 0.0f, 180.0f);
-		ImGui::SliderFloat("Max Sim Time", &Settings::Aimbot::max_sim_time, 0.0f, 5.0f);
-		ImGui::SliderFloat("Smoothness", &Settings::Aimbot::smoothness, 0.0f, 100.0f);
+		ImGui::InputText("Key", Settings::Aimbot.key, sizeof(Settings::Aimbot.key));
+		ImGui::Checkbox("Autoshoot", &Settings::Aimbot.autoshoot);
+		ImGui::Checkbox("Viewmodel Aim", &Settings::Aimbot.viewmodelaim);
+		ImGui::Checkbox("Draw FOV Indicator", &Settings::Aimbot.draw_fov_indicator);
+		ImGui::Checkbox("Wait For Charge", &Settings::Aimbot.waitforcharge);
+		ImGui::SliderFloat("Fov", &Settings::Aimbot.fov, 0.0f, 180.0f);
+		ImGui::SliderFloat("Max Sim Time", &Settings::Aimbot.max_sim_time, 0.0f, 5.0f);
+		ImGui::SliderFloat("Smoothness", &Settings::Aimbot.smoothness, 0.0f, 100.0f);
 
 		if (ImGui::BeginCombo("Melee Aimbot", AimbotMelee::GetMeleeModeName().c_str()))
 		{
 			if (ImGui::Selectable("None"))
-				Settings::Aimbot::melee = static_cast<int>(MeleeMode::NONE);
+				Settings::Aimbot.melee = static_cast<int>(MeleeMode::NONE);
 
 			if (ImGui::Selectable("Legit"))
-				Settings::Aimbot::melee = static_cast<int>(MeleeMode::LEGIT);
+				Settings::Aimbot.melee = static_cast<int>(MeleeMode::LEGIT);
 
 			if (ImGui::Selectable("Rage"))
-				Settings::Aimbot::melee = static_cast<int>(MeleeMode::RAGE);
+				Settings::Aimbot.melee = static_cast<int>(MeleeMode::RAGE);
 
 			ImGui::EndCombo();
 		}
@@ -77,16 +77,16 @@ void DrawAimbotTab()
 		if (ImGui::BeginCombo("Aimbot Method", AimbotUtils::GetAimbotModeName().c_str()))
 		{
 			if (ImGui::Selectable("Plain"))
-				Settings::Aimbot::mode = static_cast<int>(AimbotMode::PLAIN);
+				Settings::Aimbot.mode = static_cast<int>(AimbotMode::PLAIN);
 
 			if (ImGui::Selectable("Smooth"))
-				Settings::Aimbot::mode = static_cast<int>(AimbotMode::SMOOTH);
+				Settings::Aimbot.mode = static_cast<int>(AimbotMode::SMOOTH);
 
 			if (ImGui::Selectable("Assistance"))
-				Settings::Aimbot::mode = static_cast<int>(AimbotMode::ASSISTANCE);
+				Settings::Aimbot.mode = static_cast<int>(AimbotMode::ASSISTANCE);
 
 			if (ImGui::Selectable("Silent"))
-				Settings::Aimbot::mode = static_cast<int>(AimbotMode::SILENT);
+				Settings::Aimbot.mode = static_cast<int>(AimbotMode::SILENT);
 
 			ImGui::EndCombo();
 		}
@@ -94,13 +94,13 @@ void DrawAimbotTab()
 		if (ImGui::BeginCombo("Team Selection", AimbotUtils::GetTeamModeName().c_str()))
 		{
 			if (ImGui::Selectable("Only Enemy"))
-				Settings::Aimbot::teamMode = static_cast<int>(TeamMode::ONLYENEMY);
+				Settings::Aimbot.teamMode = static_cast<int>(TeamMode::ONLYENEMY);
 
 			if (ImGui::Selectable("Only Teammate"))
-				Settings::Aimbot::teamMode = static_cast<int>(TeamMode::ONLYTEAMMATE);
+				Settings::Aimbot.teamMode = static_cast<int>(TeamMode::ONLYTEAMMATE);
 
 			if (ImGui::Selectable("Both"))
-				Settings::Aimbot::teamMode = static_cast<int>(TeamMode::BOTH);
+				Settings::Aimbot.teamMode = static_cast<int>(TeamMode::BOTH);
 
 			ImGui::EndCombo();
 		}
@@ -108,112 +108,112 @@ void DrawAimbotTab()
 		ImGui::Separator();
 
 		ImGui::TextUnformatted("Ignore Options");
-		ImGui::Checkbox("Cloaked", &Settings::Aimbot::ignorecloaked);
+		ImGui::Checkbox("Cloaked", &Settings::Aimbot.ignorecloaked);
 		ImGui::SameLine();
-		ImGui::Checkbox("Ubercharged", &Settings::Aimbot::ignoreubered);
+		ImGui::Checkbox("Ubercharged", &Settings::Aimbot.ignoreubered);
 		ImGui::SameLine();
-		ImGui::Checkbox("Hoovy", &Settings::Aimbot::ignorehoovy);
+		ImGui::Checkbox("Hoovy", &Settings::Aimbot.ignorehoovy);
 		ImGui::SameLine();
-		ImGui::Checkbox("Bonked", &Settings::Aimbot::ignorebonked);
+		ImGui::Checkbox("Bonked", &Settings::Aimbot.ignorebonked);
 
 		ImGui::Separator();
 
-		ImGui::Checkbox("Hold Minigun Spin", &Settings::Aimbot::hold_minigun_spin);
+		ImGui::Checkbox("Hold Minigun Spin", &Settings::Aimbot.hold_minigun_spin);
 	}
 	ImGui::EndDisabled();
 }
 
 void DrawESPTab()
 {
-	ImGui::Checkbox("ESP Enabled", &Settings::ESP::enabled);
+	ImGui::Checkbox("ESP Enabled", &Settings::ESP.enabled);
 
-	ImGui::BeginDisabled(!Settings::ESP::enabled);
+	ImGui::BeginDisabled(!Settings::ESP.enabled);
 	{
-		ImGui::Checkbox("Name", &Settings::ESP::name);
-		ImGui::Checkbox("Box", &Settings::ESP::box);
-		ImGui::Checkbox("Ignore Cloaked", &Settings::ESP::ignorecloaked);
-		ImGui::Checkbox("Buildings", &Settings::ESP::buildings);
-		ImGui::Checkbox("Weapon", &Settings::ESP::weapon);
-		ImGui::Checkbox("Health", &Settings::ESP::healthbar);
+		ImGui::Checkbox("Name", &Settings::ESP.name);
+		ImGui::Checkbox("Box", &Settings::ESP.box);
+		ImGui::Checkbox("Ignore Cloaked", &Settings::ESP.ignorecloaked);
+		ImGui::Checkbox("Buildings", &Settings::ESP.buildings);
+		ImGui::Checkbox("Weapon", &Settings::ESP.weapon);
+		ImGui::Checkbox("Health", &Settings::ESP.healthbar);
 	}
 	ImGui::EndDisabled();
 
 	ImGui::Separator();
 
-	ImGui::Checkbox("Chams", &Settings::ESP::chams);
+	ImGui::Checkbox("Chams", &Settings::ESP.chams);
 
 	ImGui::Separator();
 
 	ImGui::TextUnformatted("Glow");
-	ImGui::SliderInt("Stencil", &Settings::ESP::stencil, 0, 10);
-	ImGui::SliderInt("Blur", &Settings::ESP::blur, 0, 10);
+	ImGui::SliderInt("Stencil", &Settings::ESP.stencil, 0, 10);
+	ImGui::SliderInt("Blur", &Settings::ESP.blur, 0, 10);
 
 	ImGui::Separator();
 
-	static float red[3] = {Settings::Colors::red_team.r()/255.0f, Settings::Colors::red_team.g()/255.0f, Settings::Colors::red_team.b()/255.0f};
-	static float blu[3] = {Settings::Colors::blu_team.r()/255.0f, Settings::Colors::blu_team.g()/255.0f, Settings::Colors::blu_team.b()/255.0f};
-	static float target[3] = {Settings::Colors::aimbot_target.r()/255.0f, Settings::Colors::aimbot_target.g()/255.0f, Settings::Colors::aimbot_target.b()/255.0f};
-	static float weapon[3] = {Settings::Colors::weapon.r()/255.0f, Settings::Colors::weapon.g()/255.0f, Settings::Colors::weapon.b()/255.0f};
+	static float red[3] = {Settings::Colors.red_team.r()/255.0f, Settings::Colors.red_team.g()/255.0f, Settings::Colors.red_team.b()/255.0f};
+	static float blu[3] = {Settings::Colors.blu_team.r()/255.0f, Settings::Colors.blu_team.g()/255.0f, Settings::Colors.blu_team.b()/255.0f};
+	static float target[3] = {Settings::Colors.aimbot_target.r()/255.0f, Settings::Colors.aimbot_target.g()/255.0f, Settings::Colors.aimbot_target.b()/255.0f};
+	static float weapon[3] = {Settings::Colors.weapon.r()/255.0f, Settings::Colors.weapon.g()/255.0f, Settings::Colors.weapon.b()/255.0f};
 
 	ImGui::TextUnformatted("Colors");
 
 	if (ImGui::ColorEdit3("RED Team", red))
-		Settings::Colors::red_team.SetColor(red[0]*255.0f, red[1]*255.0f, red[2]*255.0f, 255.0f);
+		Settings::Colors.red_team.SetColor(red[0]*255.0f, red[1]*255.0f, red[2]*255.0f, 255.0f);
 
 	if (ImGui::ColorEdit3("BLU Team", blu))
-		Settings::Colors::blu_team.SetColor(blu[0]*255.0f, blu[1]*255.0f, blu[2]*255.0f, 255.0f);
+		Settings::Colors.blu_team.SetColor(blu[0]*255.0f, blu[1]*255.0f, blu[2]*255.0f, 255.0f);
 
 	if (ImGui::ColorEdit3("Aimbot Target", target))
-		Settings::Colors::aimbot_target.SetColor(target[0]*255.0f, target[1]*255.0f, target[2]*255.0f, 255.0f);
+		Settings::Colors.aimbot_target.SetColor(target[0]*255.0f, target[1]*255.0f, target[2]*255.0f, 255.0f);
 
 	if (ImGui::ColorEdit3("Weapon", weapon))
-		Settings::Colors::weapon.SetColor(weapon[0]*255.0f, weapon[1]*255.0f, weapon[2]*255.0f, 255.0f);
+		Settings::Colors.weapon.SetColor(weapon[0]*255.0f, weapon[1]*255.0f, weapon[2]*255.0f, 255.0f);
 }
 
 void DrawMiscTab()
 {
 	ImGui::BeginGroup();
 
-	ImGui::Checkbox("Third person", &Settings::Misc::thirdperson);
-	ImGui::InputText("Third Person Key", &Settings::Misc::thirdperson_key);
+	ImGui::Checkbox("Third person", &Settings::Misc.thirdperson);
+	ImGui::InputText("Third Person Key", Settings::Misc.thirdperson_key, sizeof(Settings::Misc.thirdperson_key));
 
 	ImGui::Separator();
 
-	ImGui::Checkbox("Spectator List", &Settings::Misc::spectatorlist);
-	ImGui::Checkbox("Player List", &Settings::Misc::playerlist);
-	ImGui::Checkbox("sv_pure bypass", &Settings::Misc::sv_pure_bypass);
-	ImGui::Checkbox("Streamer Mode", &Settings::Misc::streamer_mode);
-	ImGui::Checkbox("Bhop", &Settings::Misc::bhop);
-	ImGui::Checkbox("Backpack Expander", &Settings::Misc::backpack_expander);
-	ImGui::Checkbox("Accept Item Drops", &Settings::Misc::accept_item_drop);
+	ImGui::Checkbox("Spectator List", &Settings::Misc.spectatorlist);
+	ImGui::Checkbox("Player List", &Settings::Misc.playerlist);
+	ImGui::Checkbox("sv_pure bypass", &Settings::Misc.sv_pure_bypass);
+	ImGui::Checkbox("Streamer Mode", &Settings::Misc.streamer_mode);
+	ImGui::Checkbox("Bhop", &Settings::Misc.bhop);
+	ImGui::Checkbox("Backpack Expander", &Settings::Misc.backpack_expander);
+	ImGui::Checkbox("Accept Item Drops", &Settings::Misc.accept_item_drop);
 
-	ImGui::Checkbox("No Recoil", &Settings::Misc::norecoil);
+	ImGui::Checkbox("No Recoil", &Settings::Misc.norecoil);
 
 	ImGui::Separator();
 
-	ImGui::Checkbox("Custom Fov Enabled", &Settings::Misc::customfov_enabled);
+	ImGui::Checkbox("Custom Fov Enabled", &Settings::Misc.customfov_enabled);
 
-	ImGui::BeginDisabled(!Settings::Misc::customfov_enabled);
+	ImGui::BeginDisabled(!Settings::Misc.customfov_enabled);
 	{
-		ImGui::SliderFloat("Custom Fov", &Settings::Misc::customfov, 54.0f, 120.0f);
+		ImGui::SliderFloat("Custom Fov", &Settings::Misc.customfov, 54.0f, 120.0f);
 	}
 	ImGui::EndDisabled();
 
 	ImGui::Separator();
 
-	ImGui::SliderFloat3("Viewmodel Offset", Settings::Misc::viewmodel_offset, -20, 20.0f );
-	ImGui::SliderFloat("Viewmodel Interp", &Settings::Misc::viewmodel_interp, 0.0f, 50.0f);
+	ImGui::SliderFloat3("Viewmodel Offset", Settings::Misc.viewmodel_offset, -20, 20.0f );
+	ImGui::SliderFloat("Viewmodel Interp", &Settings::Misc.viewmodel_interp, 0.0f, 50.0f);
 
 	if (ImGui::BeginCombo("Backtrack", Backtrack::GetModeName().c_str()))
 	{
 		if (ImGui::Selectable("None"))
-			Settings::Misc::backtrack = static_cast<int>(BacktrackMode::NONE);
+			Settings::Misc.backtrack = static_cast<int>(BacktrackMode::NONE);
 
 		if (ImGui::Selectable("Last Record Only"))
-			Settings::Misc::backtrack = static_cast<int>(BacktrackMode::LAST_ONLY);
+			Settings::Misc.backtrack = static_cast<int>(BacktrackMode::LAST_ONLY);
 
 		if (ImGui::Selectable("All Records"))
-			Settings::Misc::backtrack = static_cast<int>(BacktrackMode::ALL_RECORDS);
+			Settings::Misc.backtrack = static_cast<int>(BacktrackMode::ALL_RECORDS);
 
 		ImGui::EndCombo();
 	}
@@ -223,22 +223,22 @@ void DrawMiscTab()
 
 void DrawTriggerTab()
 {
-	ImGui::Checkbox("Trigger Enabled", &Settings::Triggerbot::enabled);
-	ImGui::BeginDisabled(!Settings::Triggerbot::enabled);
+	ImGui::Checkbox("Trigger Enabled", &Settings::Trigger.enabled);
+	ImGui::BeginDisabled(!Settings::Trigger.enabled);
 	{
-		ImGui::Checkbox("Hitscan", &Settings::Triggerbot::hitscan);
-		ImGui::InputText("Trigger Key", &Settings::Triggerbot::key);
+		ImGui::Checkbox("Hitscan", &Settings::Trigger.hitscan);
+		ImGui::InputText("Trigger Key", Settings::Trigger.key, sizeof(Settings::Trigger.key));
 	
 		if (ImGui::BeginCombo("Auto Backstab", AutoBackstab::GetModeName().c_str()))
 		{
 			if (ImGui::Selectable("None"))
-				Settings::Triggerbot::autobackstab = static_cast<int>(AutoBackstabMode::NONE);
+				Settings::Trigger.autobackstab = static_cast<int>(AutoBackstabMode::NONE);
 	
 			if (ImGui::Selectable("Legit"))
-				Settings::Triggerbot::autobackstab = static_cast<int>(AutoBackstabMode::LEGIT);
+				Settings::Trigger.autobackstab = static_cast<int>(AutoBackstabMode::LEGIT);
 	
 			if (ImGui::Selectable("Rage"))
-				Settings::Triggerbot::autobackstab = static_cast<int>(AutoBackstabMode::RAGE);
+				Settings::Trigger.autobackstab = static_cast<int>(AutoBackstabMode::RAGE);
 	
 			ImGui::EndCombo();
 		}
@@ -246,13 +246,13 @@ void DrawTriggerTab()
 		if (ImGui::BeginCombo("Auto Airblast", AutoAirblast::GetModeName().c_str()))
 		{
 			if (ImGui::Selectable("None"))
-				Settings::Triggerbot::autoairblast = static_cast<int>(AutoBackstabMode::NONE);
+				Settings::Trigger.autoairblast = static_cast<int>(AutoBackstabMode::NONE);
 	
 			if (ImGui::Selectable("Legit"))
-				Settings::Triggerbot::autoairblast = static_cast<int>(AutoBackstabMode::LEGIT);
+				Settings::Trigger.autoairblast = static_cast<int>(AutoBackstabMode::LEGIT);
 	
 			if (ImGui::Selectable("Rage"))
-				Settings::Triggerbot::autoairblast = static_cast<int>(AutoBackstabMode::RAGE);
+				Settings::Trigger.autoairblast = static_cast<int>(AutoBackstabMode::RAGE);
 	
 			ImGui::EndCombo();
 		}
@@ -262,114 +262,114 @@ void DrawTriggerTab()
 
 void DrawAntiaimTab()
 {
-	ImGui::Checkbox("Enabled", &Settings::AntiAim::enabled);
+	ImGui::Checkbox("Enabled", &Settings::AntiAim.enabled);
 
-	ImGui::BeginDisabled(!Settings::AntiAim::enabled);
+	ImGui::BeginDisabled(!Settings::AntiAim.enabled);
 	{
-		if (ImGui::BeginCombo("Pitch Mode", Antiaim::GetPitchModeName(static_cast<PitchMode>(Settings::AntiAim::pitch_mode)).c_str()))
+		if (ImGui::BeginCombo("Pitch Mode", Antiaim::GetPitchModeName(static_cast<PitchMode>(Settings::AntiAim.pitch_mode)).c_str()))
 		{
 			if (ImGui::Selectable("None"))
-				Settings::AntiAim::pitch_mode = static_cast<int>(PitchMode::NONE);
+				Settings::AntiAim.pitch_mode = static_cast<int>(PitchMode::NONE);
 	
 			if (ImGui::Selectable("Up"))
-				Settings::AntiAim::pitch_mode = static_cast<int>(PitchMode::UP);
+				Settings::AntiAim.pitch_mode = static_cast<int>(PitchMode::UP);
 	
 			if (ImGui::Selectable("Down"))
-				Settings::AntiAim::pitch_mode = static_cast<int>(PitchMode::DOWN);
+				Settings::AntiAim.pitch_mode = static_cast<int>(PitchMode::DOWN);
 	
 			if (ImGui::Selectable("Fake Up"))
-				Settings::AntiAim::pitch_mode = static_cast<int>(PitchMode::FAKEUP);
+				Settings::AntiAim.pitch_mode = static_cast<int>(PitchMode::FAKEUP);
 	
 			if (ImGui::Selectable("Fake Down"))
-				Settings::AntiAim::pitch_mode = static_cast<int>(PitchMode::FAKEDOWN);
+				Settings::AntiAim.pitch_mode = static_cast<int>(PitchMode::FAKEDOWN);
 	
 			if (ImGui::Selectable("Random"))
-				Settings::AntiAim::pitch_mode = static_cast<int>(PitchMode::RANDOM);
+				Settings::AntiAim.pitch_mode = static_cast<int>(PitchMode::RANDOM);
 	
 			ImGui::EndCombo();
 		}
 	
-		if (ImGui::BeginCombo("Real Yaw Mode", Antiaim::GetYawModeName(static_cast<YawMode>(Settings::AntiAim::real_yaw_mode)).c_str()))
+		if (ImGui::BeginCombo("Real Yaw Mode", Antiaim::GetYawModeName(static_cast<YawMode>(Settings::AntiAim.real_yaw_mode)).c_str()))
 		{
 			if (ImGui::Selectable("None"))
-				Settings::AntiAim::real_yaw_mode = static_cast<int>(YawMode::NONE);
+				Settings::AntiAim.real_yaw_mode = static_cast<int>(YawMode::NONE);
 	
 			if (ImGui::Selectable("Left"))
-				Settings::AntiAim::real_yaw_mode = static_cast<int>(YawMode::LEFT);
+				Settings::AntiAim.real_yaw_mode = static_cast<int>(YawMode::LEFT);
 	
 			if (ImGui::Selectable("Right"))
-				Settings::AntiAim::real_yaw_mode = static_cast<int>(YawMode::RIGHT);
+				Settings::AntiAim.real_yaw_mode = static_cast<int>(YawMode::RIGHT);
 	
 			if (ImGui::Selectable("Spin Left"))
-				Settings::AntiAim::real_yaw_mode = static_cast<int>(YawMode::SPIN_LEFT);
+				Settings::AntiAim.real_yaw_mode = static_cast<int>(YawMode::SPIN_LEFT);
 	
 			if (ImGui::Selectable("Spin Right"))
-				Settings::AntiAim::real_yaw_mode = static_cast<int>(YawMode::SPIN_RIGHT);
+				Settings::AntiAim.real_yaw_mode = static_cast<int>(YawMode::SPIN_RIGHT);
 	
 			if (ImGui::Selectable("Jitter"))
-				Settings::AntiAim::real_yaw_mode = static_cast<int>(YawMode::JITTER);
+				Settings::AntiAim.real_yaw_mode = static_cast<int>(YawMode::JITTER);
 	
 			if (ImGui::Selectable("Back"))
-				Settings::AntiAim::real_yaw_mode = static_cast<int>(YawMode::BACK);
+				Settings::AntiAim.real_yaw_mode = static_cast<int>(YawMode::BACK);
 	
 			if (ImGui::Selectable("Forward"))
-				Settings::AntiAim::real_yaw_mode = static_cast<int>(YawMode::FORWARD);
+				Settings::AntiAim.real_yaw_mode = static_cast<int>(YawMode::FORWARD);
 	
 			ImGui::EndCombo();
 		}
 	
-		if (ImGui::BeginCombo("Fake Yaw Mode", Antiaim::GetYawModeName(static_cast<YawMode>(Settings::AntiAim::fake_yaw_mode)).c_str()))
+		if (ImGui::BeginCombo("Fake Yaw Mode", Antiaim::GetYawModeName(static_cast<YawMode>(Settings::AntiAim.fake_yaw_mode)).c_str()))
 		{
 			if (ImGui::Selectable("None"))
-				Settings::AntiAim::fake_yaw_mode = static_cast<int>(YawMode::NONE);
+				Settings::AntiAim.fake_yaw_mode = static_cast<int>(YawMode::NONE);
 	
 			if (ImGui::Selectable("Left"))
-				Settings::AntiAim::fake_yaw_mode = static_cast<int>(YawMode::LEFT);
+				Settings::AntiAim.fake_yaw_mode = static_cast<int>(YawMode::LEFT);
 	
 			if (ImGui::Selectable("Right"))
-				Settings::AntiAim::fake_yaw_mode = static_cast<int>(YawMode::RIGHT);
+				Settings::AntiAim.fake_yaw_mode = static_cast<int>(YawMode::RIGHT);
 	
 			if (ImGui::Selectable("Spin Left"))
-				Settings::AntiAim::fake_yaw_mode = static_cast<int>(YawMode::SPIN_LEFT);
+				Settings::AntiAim.fake_yaw_mode = static_cast<int>(YawMode::SPIN_LEFT);
 	
 			if (ImGui::Selectable("Spin Right"))
-				Settings::AntiAim::fake_yaw_mode = static_cast<int>(YawMode::SPIN_RIGHT);
+				Settings::AntiAim.fake_yaw_mode = static_cast<int>(YawMode::SPIN_RIGHT);
 	
 			if (ImGui::Selectable("Jitter"))
-				Settings::AntiAim::fake_yaw_mode = static_cast<int>(YawMode::JITTER);
+				Settings::AntiAim.fake_yaw_mode = static_cast<int>(YawMode::JITTER);
 	
 			if (ImGui::Selectable("Back"))
-				Settings::AntiAim::fake_yaw_mode = static_cast<int>(YawMode::BACK);
+				Settings::AntiAim.fake_yaw_mode = static_cast<int>(YawMode::BACK);
 	
 			if (ImGui::Selectable("Forward"))
-				Settings::AntiAim::fake_yaw_mode = static_cast<int>(YawMode::FORWARD);
+				Settings::AntiAim.fake_yaw_mode = static_cast<int>(YawMode::FORWARD);
 	
 			ImGui::EndCombo();
 		}
 	
-		ImGui::SliderFloat("Spin Speed", &Settings::AntiAim::spin_speed, 0.0f, 10.0f);
+		ImGui::SliderInt("Spin Speed", &Settings::AntiAim.spin_speed, 0, 10);
 	}
 	ImGui::EndDisabled();
 
 	ImGui::Separator();
 
-	ImGui::Checkbox("Warp", &Settings::AntiAim::warp_enabled);
-	ImGui::BeginDisabled(!Settings::AntiAim::warp_enabled);
+	ImGui::Checkbox("Warp", &Settings::AntiAim.warp_enabled);
+	ImGui::BeginDisabled(!Settings::AntiAim.warp_enabled);
 	{
-		ImGui::SliderInt("Speed", &Settings::AntiAim::warp_speed, 1, 24);
-		ImGui::InputText("Warp Key", &Settings::AntiAim::warp_key);
-		ImGui::InputText("Warp Recharge Key", &Settings::AntiAim::warp_recharge_key);
-		ImGui::InputText("DoubleTap Key", &Settings::AntiAim::warp_dt_key);
+		ImGui::SliderInt("Speed", &Settings::AntiAim.warp_speed, 1, 24);
+		ImGui::InputText("Warp Key", Settings::AntiAim.warp_key, sizeof(Settings::AntiAim.warp_key));
+		ImGui::InputText("Warp Recharge Key", Settings::AntiAim.warp_recharge_key, sizeof(Settings::AntiAim.warp_recharge_key));
+		ImGui::InputText("DoubleTap Key", Settings::AntiAim.warp_dt_key, sizeof(Settings::AntiAim.warp_dt_key));
 	}
 	ImGui::EndDisabled();
 
 	ImGui::Separator();
 
-	ImGui::Checkbox("Fake Lag Enabled", &Settings::AntiAim::fakelag_enabled);
+	ImGui::Checkbox("Fake Lag Enabled", &Settings::AntiAim.fakelag_enabled);
 
-	ImGui::BeginDisabled(!Settings::AntiAim::fakelag_enabled);
+	ImGui::BeginDisabled(!Settings::AntiAim.fakelag_enabled);
 	{
-		ImGui::SliderInt("Ticks", &Settings::AntiAim::fakelag_ticks, 1, 21);
+		ImGui::SliderInt("Ticks", &Settings::AntiAim.fakelag_ticks, 1, 21);
 	}
 	ImGui::EndDisabled();
 }
@@ -494,16 +494,16 @@ void DrawNetVarsTab()
 
 void DrawRadarTab()
 {
-	ImGui::Checkbox("Enabled", &Settings::Radar::enabled);
-	ImGui::SliderInt("Size", &Settings::Radar::size, 1, 300);
-	ImGui::SliderInt("Icon Size", &Settings::Radar::icon_size, 1, 15);
-	ImGui::SliderInt("Range", &Settings::Radar::range, 10, 3000);
+	ImGui::Checkbox("Enabled", &Settings::Radar.enabled);
+	ImGui::SliderInt("Size", &Settings::Radar.size, 1, 300);
+	ImGui::SliderInt("Icon Size", &Settings::Radar.icon_size, 1, 15);
+	ImGui::SliderInt("Range", &Settings::Radar.range, 10, 3000);
 
 	ImGui::Separator();
-	ImGui::Checkbox("Players", &Settings::Radar::players);
-	ImGui::Checkbox("Projectiles", &Settings::Radar::projectiles);
-	//ImGui::Checkbox("Objective", &Settings::Radar::objective);
-	ImGui::Checkbox("Buildings", &Settings::Radar::buildings);
+	ImGui::Checkbox("Players", &Settings::Radar.players);
+	ImGui::Checkbox("Projectiles", &Settings::Radar.projectiles);
+	//ImGui::Checkbox("Objective", &Settings::Radar.objective);
+	ImGui::Checkbox("Buildings", &Settings::Radar.buildings);
 }
 
 int GUI::selectedIndex = -1;
@@ -559,7 +559,7 @@ void DrawConfigTab()
 			std::string filename = std::string(GUI::newConfigName) + ".txt";
 			std::string fullPath = configFolder + "/" + filename;
 
-			Settings::SaveAll(fullPath);
+			Settings::Save(fullPath);
 			RefreshConfigList(configFolder);
 			GUI::newConfigName[0] = '\0';
 		}
@@ -582,12 +582,12 @@ void DrawConfigTab()
 				std::string fullPath = configFolder + "/" + GUI::configs[i] + ".txt";
 
 				if (ImGui::Button("Load"))
-					Settings::LoadAll(fullPath);
+					Settings::Load(fullPath);
 			
 				ImGui::SameLine();
 			
 				if (ImGui::Button("Save"))
-					Settings::SaveAll(fullPath);
+					Settings::Save(fullPath);
 		
 				ImGui::SameLine();
 
@@ -746,7 +746,7 @@ void GUI::RunPlayerList()
 			{
 				case TEAM_BLU:
 				{
-					Color color = Settings::Colors::blu_team;
+					Color color = Settings::Colors.blu_team;
 					ImVec4 textColor(color.r()/255.0f, color.g()/255.0f, color.b()/255.0f, 255);
 					ImGui::TextColored(textColor, "%s", name.c_str());
 					break;
@@ -754,7 +754,7 @@ void GUI::RunPlayerList()
 
 				case TEAM_RED:
 				{
-					Color color = Settings::Colors::red_team;
+					Color color = Settings::Colors.red_team;
 					ImVec4 textColor(color.r()/255.0f, color.g()/255.0f, color.b()/255.0f, 255);
 					ImGui::TextColored(textColor, "%s", name.c_str());
 					break;

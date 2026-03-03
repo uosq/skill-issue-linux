@@ -295,14 +295,14 @@ void TickManager::Run(float accumulated_extra_samples, bool bFinalTick)
 	if (Warp::m_iDesiredState == WarpState::RUNNING && Warp::m_iStoredTicks > 0)
 	{
 		Warp::m_bShifting = true;
-		Warp::m_iShiftAmount = Settings::AntiAim::warp_speed;
+		Warp::m_iShiftAmount = Settings::AntiAim.warp_speed;
 
-		for (int n = 0; n < (Settings::AntiAim::warp_speed); n++)
+		for (int n = 0; n < (Settings::AntiAim.warp_speed); n++)
 		{
 			if (Warp::m_iStoredTicks <= 0)
 				break;
 
-			CL_Move(accumulated_extra_samples, n == Settings::AntiAim::warp_speed);
+			CL_Move(accumulated_extra_samples, n == Settings::AntiAim.warp_speed);
 			Warp::m_iStoredTicks--;
 		}
 
