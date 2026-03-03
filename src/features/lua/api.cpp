@@ -13,6 +13,8 @@ namespace Lua
 	void InitPluto()
 	{
 		m_luaState = luaL_newstate();
+		return;
+
 		luaL_openlibs(m_luaState);
 
 		LuaFuncs::common::luaopen_commonfunctions(m_luaState);
