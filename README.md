@@ -23,6 +23,7 @@ Run the `attach.sh` file as **sudo**/**root**!
 TF2 **should be** open and in the main menu. Currently this does not wait for the libraries to be opened so it will **silently fail** if you dont wait long enough
 
 ```bash
+cd build
 sudo ./attach.sh
 ```
 
