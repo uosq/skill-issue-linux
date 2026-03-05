@@ -40,16 +40,16 @@
 #include "sdk/FontManager/fontmanager.h"
 #include "sdk/MaterialManager/materialmanager.h"
 #include "sdk/interfaces/interfaces.h"
+#include <pthread.h>
 #include <sys/types.h>
 #include <unistd.h>
 #include "sdk/netvars/netvar.h"
 #include "features/lua/api.h"
 
-__attribute__((constructor))
-void init(void)
+void* OurThread(void* arg)
 {
 	if (!InitializeInterfaces())
-		return;
+		return nullptr;
 
 	Logs::Info("Test");
 	Logs::Warn("Test 2");
@@ -105,8 +105,18 @@ void init(void)
 	Hook_Interpolate();
 	Hook_DataTable_Warning();
 
-	Color_t color = {0, 255, 255, 255};
-	interfaces::Cvar->ConsoleColorPrintf(color, "Skill Issue loaded\nYou can open the menu with Insert or F11\n");
+	//Color_t color = {0, 255, 255, 255};
+	//interfaces::Cvar->ConsoleColorPrintf(color, "Skill Issue loaded\nYou can open the menu with Insert or F11\n");
+
+	return nullptr;
+}
+
+__attribute__((constructor))
+void init(void)
+{
+	pthread_t thread;
+	pthread_create(&thread, nullptr, OurThread, nullptr);
+	pthread_detach(thread);
 }
 
 __attribute__((destructor))
