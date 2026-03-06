@@ -9,12 +9,12 @@ namespace AimbotMelee
 		
 		std::vector<PotentialTarget> targets;
 
-		bool is_a_sword = static_cast<int>(AttributeHookValue(0, "is_a_sword", pWeapon, nullptr, true));
-		float range = (is_a_sword ? 72.0f : 48.0f) * 1.9f;
+		bool bIsSword = static_cast<int>(AttributeHookValue(0, "is_a_sword", pWeapon, nullptr, true));
+		float range = (bIsSword ? 72.0f : 48.0f) * 1.9f;
 		int localTeam = pLocal->m_iTeamNum();
 
 		Vector shootPos = pLocal->GetEyePos();
-		
+
 		CGameTrace trace;
 		CTraceFilterHitscan filter;
 		filter.pSkip = pLocal;

@@ -190,10 +190,9 @@ public:
 			case ETFClassID::CTFSniperRifleClassic:
 			case ETFClassID::CTFSniperRifle:
 			case ETFClassID::CTFSniperRifleDecap:
-				return true;
+			return true;
 
-			default:
-				return false;
+			default: break;
 		}
 
 		return false;

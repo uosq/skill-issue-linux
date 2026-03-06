@@ -233,7 +233,8 @@ namespace PlayerPrediction
 		float stepsize = player->m_flStepSize();
 		float gravity = 800 * interfaces::GlobalVars->interval_per_tick * 0.5;
 
-		time_seconds = std::min(time_seconds, 5.0f);
+		float sv_accelerate_float = sv_accelerate->GetFloat();
+
 		while (clock < time_seconds)
 		{
 			bool isOnGround = CheckIsOnGround(player, origin, mins, maxs);
@@ -244,11 +245,11 @@ namespace PlayerPrediction
 			{
 				velocity.z = 0;
 				Friction(velocity, isOnGround);
-				AcceleratePlayer(velocity, wishdir, wishspeed, sv_accelerate->GetFloat());
+				AcceleratePlayer(velocity, wishdir, wishspeed, sv_accelerate_float);
 			} 
 			else
 			{
-				AirAcceleratePlayer(velocity, wishdir, wishspeed, sv_accelerate->GetFloat(), 0);
+				AirAcceleratePlayer(velocity, wishdir, wishspeed, sv_accelerate_float, 0);
 			}
 
 			if (!TryStepMove(player, origin, velocity, mins, maxs, stepsize))

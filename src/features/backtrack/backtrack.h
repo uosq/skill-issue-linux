@@ -18,6 +18,7 @@ struct LagCompRecord
 		simtime = 0;
 		absCenter = {};
 		viewAngle = {};
+		memset(bones, 0, sizeof(LagCompRecord));
 	}
 
 	LagCompRecord(matrix3x4* inBones, float inSimTime, Vector center, Vector viewAngle)
@@ -39,7 +40,7 @@ struct LagCompRecord
 
 namespace Backtrack
 {
-	extern std::unordered_map<CBaseEntity*, std::deque<LagCompRecord>> m_records;
+	extern std::unordered_map<CTFPlayer*, std::deque<LagCompRecord>> m_records;
 	extern IMaterial* m_mat;
 	extern bool m_drawing;
 	extern LagCompRecord* m_current_drawing_record;
@@ -51,7 +52,10 @@ namespace Backtrack
 	void Init();
 	void DoPostScreenSpaceEffects();
 
+	void CleanRecords();
 	bool GetRecords(CTFPlayer* pEntity, std::vector<LagCompRecord>& out);
+	bool GetReal(CTFPlayer* pEntity, LagCompRecord& out);
+	//bool GetClosestRecordFromViewAngle(LagCompRecord* pOut, CBaseEntity* pTarget, const Vector& viewAngle);
 
 	std::string GetModeName();
 }

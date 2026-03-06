@@ -18,9 +18,17 @@
 #include "../features/lua/hookmgr.h"
 #include "../features/lua/api.h"
 
+#include "../core/core.h"
+
 DECLARE_VTABLE_HOOK(VGuiPaint, void, (IEngineVGui* thisptr, PaintMode_t paint))
 {
 	originalVGuiPaint(thisptr, paint);
+
+	if (!gApp.App().IsInitialized())
+	{
+		gApp.App().StartHooks();
+		return;
+	}
 
 	if (interfaces::Engine->IsTakingScreenshot())
 		return;
@@ -28,12 +36,12 @@ DECLARE_VTABLE_HOOK(VGuiPaint, void, (IEngineVGui* thisptr, PaintMode_t paint))
 	if (paint & PAINT_UIPANELS)
 	{
 		interfaces::Surface->StartDrawing();
-		
+
 		if (LuaHookManager::HasHooks("Draw"))
 			LuaHookManager::Call(Lua::m_luaState, "Draw", 0);
 
 		FontManager::SetFont("esp font");
-	
+
 		CTFPlayer* pLocal = EntityList::GetLocal();
 		if (pLocal)
 		{

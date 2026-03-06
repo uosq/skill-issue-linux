@@ -9,10 +9,10 @@
 #include <algorithm>
 #include <vector>
 
-#define	COORD_INTEGER_BITS			14
-#define COORD_FRACTIONAL_BITS		5
-#define COORD_DENOMINATOR			(1<<(COORD_FRACTIONAL_BITS))
-#define COORD_RESOLUTION			(1.0/(COORD_DENOMINATOR))
+#define	COORD_INTEGER_BITS 14
+#define COORD_FRACTIONAL_BITS 5
+#define COORD_DENOMINATOR (1<<(COORD_FRACTIONAL_BITS))
+#define COORD_RESOLUTION (1.0/(COORD_DENOMINATOR))
 
 namespace PlayerPrediction
 {
