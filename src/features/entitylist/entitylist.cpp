@@ -68,7 +68,7 @@ namespace EntityList
 					// skip localplayer :))
 					// btw this is fucking bullshit
 					// calling Backtrack::Store() directly on FrameStageNotify does not work
-					if (player->GetIndex() != m_pLocalPlayer->GetIndex() && (entry.flags & (EntityFlags::IsEnemy | EntityFlags::IsAlive)))
+					if (player->GetIndex() != m_pLocalPlayer->GetIndex() && Backtrack::IsValidPlayer(entry))
 						Backtrack::Store(entry);
 
 					break;

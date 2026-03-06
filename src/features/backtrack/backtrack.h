@@ -40,7 +40,7 @@ struct LagCompRecord
 
 namespace Backtrack
 {
-	extern std::unordered_map<CTFPlayer*, std::deque<LagCompRecord>> m_records;
+	extern std::unordered_map<int, std::deque<LagCompRecord>> m_records;
 	extern IMaterial* m_mat;
 	extern bool m_drawing;
 	extern LagCompRecord* m_current_drawing_record;

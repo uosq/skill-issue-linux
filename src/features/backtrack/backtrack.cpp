@@ -8,7 +8,7 @@
 
 //#include "../ticks/ticks.h"
 
-std::unordered_map<CTFPlayer*, std::deque<LagCompRecord>> Backtrack::m_records = {};
+std::unordered_map<int, std::deque<LagCompRecord>> Backtrack::m_records = {};
 IMaterial* Backtrack::m_mat = nullptr;
 bool Backtrack::m_drawing = false;
 LagCompRecord* Backtrack::m_current_drawing_record = nullptr;
@@ -102,8 +102,9 @@ void Backtrack::Run(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd *pCmd)
 
 	const auto& hitboxes = ShouldPrioritizeHead(pWeapon) ? sniperPriorityHitboxes : normalPriorityHitboxes;
 
-	for (auto& [entity, records] : m_records)
+	for (auto& [index, records] : m_records)
 	{
+		CTFPlayer* entity = static_cast<CTFPlayer*>(interfaces::EntityList->GetClientEntity(index));
 		if (entity == nullptr)
 			continue;
 
@@ -172,7 +173,7 @@ void Backtrack::CleanRecords()
 	// todo: make this shit look good
 	for (auto it = m_records.begin(); it != m_records.end();)
 	{
-		CTFPlayer* entity = it->first;
+		CTFPlayer* entity = static_cast<CTFPlayer*>(interfaces::EntityList->GetClientEntity(it->first));
 		auto& records = it->second;
 
 		if (!entity || !entity->IsAlive())
@@ -212,7 +213,7 @@ void Backtrack::Store(const EntityListEntry& entry)
 	if (pEntity == nullptr)
 		return;
 
-	auto& records = m_records[pEntity];
+	auto& records = m_records[pEntity->GetIndex()];
 
 	if (!records.empty() && records.front().simtime == pEntity->m_flSimulationTime())
 			return;
@@ -271,19 +272,19 @@ void Backtrack::DoPostScreenSpaceEffects()
 	{
         case BacktrackMode::LAST_ONLY:
 	{
-		for (auto& [entity, records] : m_records)
+		for (auto& [index, records] : m_records)
 		{
+			CTFPlayer* entity = static_cast<CTFPlayer*>(interfaces::EntityList->GetClientEntity(index));
+			if (entity == nullptr)
+				continue;
+
 			if (records.empty())
 				continue;
 
-			auto last = records.back();
+			if (!entity->ShouldDraw())
+				continue;
 
-			// don't check if its valid
-			// as it flickers the shit out of the backtrack
-			/*if (!last.IsValid())
-				continue;*/
-
-			m_current_drawing_record = &last;
+			m_current_drawing_record = &records.back();
 			entity->DrawModel(STUDIO_RENDER | STUDIO_NOSHADOWS);
 		}
 
@@ -291,8 +292,18 @@ void Backtrack::DoPostScreenSpaceEffects()
 	}
         case BacktrackMode::ALL_RECORDS:
 	{
-		for (auto& [entity, records] : m_records)
+		for (auto& [index, records] : m_records)
 		{
+			CTFPlayer* entity = static_cast<CTFPlayer*>(interfaces::EntityList->GetClientEntity(index));
+			if (entity == nullptr)
+				continue;
+
+			if (!entity->ShouldDraw())
+				continue;
+
+			if (!entity->IsAlive())
+				continue;
+
 			if (records.empty())
 				continue;
 
@@ -338,7 +349,7 @@ bool Backtrack::GetRecords(CTFPlayer* pEntity, std::vector<LagCompRecord>& out)
 		return true;
 	}*/
 
-	auto records = m_records[pEntity];
+	auto records = m_records[pEntity->GetIndex()];
 
 	if (records.empty())
 		return false;
@@ -377,7 +388,7 @@ bool Backtrack::GetReal(CTFPlayer *pEntity, LagCompRecord& out)
 	if (m_records.empty())
 		return false;
 
-	auto records = m_records[pEntity];
+	auto records = m_records[pEntity->GetIndex()];
 	if (records.empty())
 		return false;
 
