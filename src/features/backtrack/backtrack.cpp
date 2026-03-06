@@ -3,6 +3,7 @@
 #include "../../sdk/interfaces/interfaces.h"
 #include "../../sdk/MaterialManager/materialmanager.h"
 #include "../../sdk/helpers/localplayer/localplayer.h"
+#include "../../sdk/helpers/engine/engine.h"
 
 #include "../../settings/settings.h"
 
@@ -29,42 +30,35 @@ static const int normalPriorityHitboxes[]
 	HITBOX_HEAD,
 };
 
-//bool LagCompRecord::IsValid(CUserCmd* pCmd)
+// https://github.com/ValveSoftware/source-sdk-2013/blob/master/src/game/server/player_lagcompensation.cpp#L381-L412
 bool LagCompRecord::IsValid()
 {
-	/*float correct = 0.0f;
-	Have to think on how to pass pCmd's tick_count on FSN
+	float correct = 0.0f;
 
 	INetChannelInfo* netchan = interfaces::Engine->GetNetChannelInfo();
-
-	// add network latency
-	if (netchan != nullptr)
+	if (netchan)
+	{
 		correct += netchan->GetLatency(FLOW_OUTGOING);
+		correct += netchan->GetLatency(FLOW_INCOMING);
+	}
 
 	static ConVar* cl_interp = interfaces::Cvar->FindVar("cl_interp");
 	static ConVar* cl_updaterate = interfaces::Cvar->FindVar("cl_updaterate");
 	static ConVar* cl_interp_ratio = interfaces::Cvar->FindVar("cl_interp_ratio");
 
-	float lerp_time = std::max(cl_interp->GetFloat(), cl_interp_ratio->GetFloat() / cl_updaterate->GetFloat());
-	correct += lerp_time;
+	float lerp = std::max(
+		cl_interp->GetFloat(),
+		cl_interp_ratio->GetFloat() / cl_updaterate->GetFloat()
+	);
+
+	correct += lerp;
 
 	static ConVar* sv_maxunlag = interfaces::Cvar->FindVar("sv_maxunlag");
 	correct = std::clamp(correct, 0.0f, sv_maxunlag->GetFloat());
 
-	int targettick = pCmd->tick_count - TIME_TO_TICKS(lerp_time);
+	float delta = correct - (interfaces::GlobalVars->curtime - simtime);
 
-	float delta_tick = correct - TICKS_TO_TIME(interfaces::GlobalVars->tickcount - targettick);
-
-	return std::fabs(delta_tick) <= 0.2f;*/
-
-	float time = interfaces::GlobalVars->curtime;
-
-	INetChannelInfo* netchan = interfaces::Engine->GetNetChannelInfo();
-
-	if (netchan)
-		time += netchan->GetLatency(FLOW_OUTGOING);
-
-	return (time - simtime) <= 0.2f;
+	return std::fabs(delta) <= 0.2f;
 }
 
 bool ShouldPrioritizeHead(CTFWeaponBase* pWeapon)
@@ -248,6 +242,10 @@ void Backtrack::DoPostScreenSpaceEffects()
 	if (m_records.empty())
 		return;
 
+	CTFPlayer* pLocal = helper::engine::GetLocalPlayer();
+	if (pLocal == nullptr || !pLocal->IsAlive())
+		return;
+
 	BacktrackMode mode = static_cast<BacktrackMode>(Settings::Misc.backtrack);
 	if (mode >= BacktrackMode::MAX || mode <= BacktrackMode::INVALID)
 		return;
@@ -284,6 +282,9 @@ void Backtrack::DoPostScreenSpaceEffects()
 			if (!entity->ShouldDraw())
 				continue;
 
+			if (!entity->IsEnemyOf(pLocal))
+				continue;
+
 			m_current_drawing_record = &records.back();
 			entity->DrawModel(STUDIO_RENDER | STUDIO_NOSHADOWS);
 		}
@@ -305,6 +306,9 @@ void Backtrack::DoPostScreenSpaceEffects()
 				continue;
 
 			if (records.empty())
+				continue;
+
+			if (!entity->IsEnemyOf(pLocal))
 				continue;
 
 			for (auto& record : records)

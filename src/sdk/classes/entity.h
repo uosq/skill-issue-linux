@@ -268,4 +268,9 @@ public:
 
 		return false;
 	}
+
+	bool IsEnemyOf(CBaseEntity* pEntity)
+	{
+		return m_iTeamNum() != pEntity->m_iTeamNum();
+	}
 };
