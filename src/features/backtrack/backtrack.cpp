@@ -6,6 +6,7 @@
 #include "../../sdk/helpers/engine/engine.h"
 
 #include "../../settings/settings.h"
+#include "../aimbot/utils/utils.h"
 
 //#include "../ticks/ticks.h"
 
@@ -13,22 +14,6 @@ std::unordered_map<int, std::deque<LagCompRecord>> Backtrack::m_records = {};
 IMaterial* Backtrack::m_mat = nullptr;
 bool Backtrack::m_drawing = false;
 LagCompRecord* Backtrack::m_current_drawing_record = nullptr;
-
-static const int sniperPriorityHitboxes[]
-{
-	HITBOX_HEAD,
-	HITBOX_SPINE0,
-	HITBOX_SPINE3,
-	HITBOX_PELVIS,
-};
-
-static const int normalPriorityHitboxes[]
-{
-	HITBOX_SPINE0,
-	HITBOX_SPINE3,
-	HITBOX_PELVIS,
-	HITBOX_HEAD,
-};
 
 // https://github.com/ValveSoftware/source-sdk-2013/blob/master/src/game/server/player_lagcompensation.cpp#L381-L412
 bool LagCompRecord::IsValid()
@@ -42,23 +27,14 @@ bool LagCompRecord::IsValid()
 		correct += netchan->GetLatency(FLOW_INCOMING);
 	}
 
-	static ConVar* cl_interp = interfaces::Cvar->FindVar("cl_interp");
-	static ConVar* cl_updaterate = interfaces::Cvar->FindVar("cl_updaterate");
-	static ConVar* cl_interp_ratio = interfaces::Cvar->FindVar("cl_interp_ratio");
-
-	float lerp = std::max(
-		cl_interp->GetFloat(),
-		cl_interp_ratio->GetFloat() / cl_updaterate->GetFloat()
-	);
-
-	correct += lerp;
+	correct += Backtrack::GetInterp();
 
 	static ConVar* sv_maxunlag = interfaces::Cvar->FindVar("sv_maxunlag");
 	correct = std::clamp(correct, 0.0f, sv_maxunlag->GetFloat());
 
-	float delta = correct - (interfaces::GlobalVars->curtime - simtime);
+	float delta = correct - (interfaces::GlobalVars->curtime - m_flSimTime);
 
-	return std::fabs(delta) <= 0.2f;
+	return std::fabs(delta) < 0.2f;
 }
 
 bool ShouldPrioritizeHead(CTFWeaponBase* pWeapon)
@@ -88,18 +64,21 @@ void Backtrack::Run(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd *pCmd)
 	Vector& viewAngles = pCmd->viewangles;
 	Vector eyePos = pLocal->GetEyePos();
 
-	LagCompRecord* pBestHeadRecord = nullptr;
-	float flBestHeadFov = 30.0f;
+	LagCompRecord* pBestRecord = nullptr;
+	float flBestFov = AimbotUtils::GetFovScaled(30.0f);
 
-	LagCompRecord* pBestBodyRecord = nullptr;
-	float flBestBodyFov = 30.0f;
-
-	const auto& hitboxes = ShouldPrioritizeHead(pWeapon) ? sniperPriorityHitboxes : normalPriorityHitboxes;
+	bool bPriotizeHead = ShouldPrioritizeHead(pWeapon);
 
 	for (auto& [index, records] : m_records)
 	{
 		CTFPlayer* entity = static_cast<CTFPlayer*>(interfaces::EntityList->GetClientEntity(index));
 		if (entity == nullptr)
+			continue;
+
+		if (pLocal->GetIndex() == entity->GetIndex())
+			continue;
+
+		if (entity->m_iTeamNum() == pLocal->m_iTeamNum())
 			continue;
 
 		CBaseAnimating* pAnimating = reinterpret_cast<CBaseAnimating*>(entity);
@@ -111,52 +90,45 @@ void Backtrack::Run(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd *pCmd)
 			if (!record.IsValid())
 				continue;
 
-			for (const auto& hitbox : hitboxes)
+			Vector aimPos;
+			if (!pAnimating->GetHitboxCenter(record.m_Bones, bPriotizeHead ? HITBOX_HEAD : HITBOX_PELVIS, aimPos))
+				continue;
+
+			Vector angle;
+			Math::VectorAngles(aimPos - eyePos, angle);
+
+			float flFov = Math::CalcFov(viewAngles, angle);
+			if (flFov < flBestFov)
 			{
-				Vector aimPos;
-				if (!pAnimating->GetHitboxCenter(record.bones, hitbox, aimPos))
-					continue;
-
-				Vector angle;
-				Math::VectorAngles(aimPos - eyePos, angle);
-
-				float flFov = Math::CalcFov(viewAngles, angle);
-				if (hitbox == HITBOX_HEAD)
-				{
-					if (flFov < flBestHeadFov)
-					{
-						flBestHeadFov = flFov;
-						pBestHeadRecord = &record;
-					}
-				}
-				else
-				{
-					if (flFov < flBestBodyFov)
-					{
-						flBestBodyFov = flFov;
-						pBestBodyRecord = &record;
-					}
-				}
+				pBestRecord = &record;
+				flBestFov = flFov;
 			}
 		}
 	}
 
-	LagCompRecord* bestRecord = pBestHeadRecord ? pBestHeadRecord : pBestBodyRecord;
-	if (bestRecord == nullptr)
+	if (pBestRecord == nullptr)
 		return;
 
-	float flLatency = 0.0f;
-
-	if (auto* netchan = interfaces::Engine->GetNetChannelInfo(); netchan != nullptr)
-		flLatency = netchan->GetLatency(FLOW_OUTGOING);
-
-	int tick = TIME_TO_TICKS(bestRecord->simtime + flLatency);
-	pCmd->tick_count = tick;
+	pCmd->tick_count = TIME_TO_TICKS(pBestRecord->m_flSimTime);
 }
 
 void Backtrack::Reset()
 {
 	m_records.clear();
+}
+
+float Backtrack::GetInterp()
+{
+	static ConVar* cl_interp = interfaces::Cvar->FindVar("cl_interp");
+	static ConVar* cl_updaterate = interfaces::Cvar->FindVar("cl_updaterate");
+	static ConVar* cl_interp_ratio = interfaces::Cvar->FindVar("cl_interp_ratio");
+
+	float lerp = std::max(
+		cl_interp->GetFloat(),
+		cl_interp_ratio->GetFloat() / cl_updaterate->GetFloat()
+	);
+
+	return lerp;
 }
 
 void Backtrack::CleanRecords()
@@ -192,13 +164,9 @@ void Backtrack::CleanRecords()
 	}
 }
 
-void Backtrack::Store(const EntityListEntry& entry)
+void Backtrack::Store(CTFPlayer* pLocal, const EntityListEntry& entry)
 {
 	CleanRecords();
-
-	BacktrackMode mode = static_cast<BacktrackMode>(Settings::Misc.backtrack);
-	if (mode == BacktrackMode::NONE || mode >= BacktrackMode::MAX || mode <= BacktrackMode::INVALID)
-		return;
 
 	if (!IsValidPlayer(entry))
 		return;
@@ -207,9 +175,12 @@ void Backtrack::Store(const EntityListEntry& entry)
 	if (pEntity == nullptr)
 		return;
 
+	if (pLocal->m_iTeamNum() == pEntity->m_iTeamNum())
+		return;
+
 	auto& records = m_records[pEntity->GetIndex()];
 
-	if (!records.empty() && records.front().simtime == pEntity->m_flSimulationTime())
+	if (!records.empty() && records.front().m_flSimTime == pEntity->m_flSimulationTime())
 			return;
 
 	matrix3x4 bones[MAXSTUDIOBONES];
@@ -221,7 +192,8 @@ void Backtrack::Store(const EntityListEntry& entry)
 		bones,
 		pEntity->m_flSimulationTime(),
 		pEntity->GetCenter(),
-		pEntity->m_angEyeAngles()
+		pEntity->m_angEyeAngles(),
+		pEntity->EstimateAbsVelocity()
 	};
 
 	records.push_front(record);
@@ -282,7 +254,7 @@ void Backtrack::DoPostScreenSpaceEffects()
 			if (!entity->ShouldDraw())
 				continue;
 
-			if (!entity->IsEnemyOf(pLocal))
+			if (pLocal->m_iTeamNum() == entity->m_iTeamNum())
 				continue;
 
 			m_current_drawing_record = &records.back();
@@ -308,7 +280,7 @@ void Backtrack::DoPostScreenSpaceEffects()
 			if (records.empty())
 				continue;
 
-			if (!entity->IsEnemyOf(pLocal))
+			if (pLocal->m_iTeamNum() == entity->m_iTeamNum())
 				continue;
 
 			for (auto& record : records)
@@ -339,19 +311,27 @@ void Backtrack::DoPostScreenSpaceEffects()
 
 bool Backtrack::GetRecords(CTFPlayer* pEntity, std::vector<LagCompRecord>& out)
 {
-	/*BacktrackMode mode = static_cast<BacktrackMode>(Settings::Misc.backtrack);
-	if (mode >= BacktrackMode::MAX && mode <= BacktrackMode::INVALID)
+	// if backtrack is disabled
+	// return only their origin
+	BacktrackMode mode = static_cast<BacktrackMode>(Settings::Misc.backtrack);
+	if (mode >= BacktrackMode::MAX || mode <= BacktrackMode::INVALID || mode == BacktrackMode::NONE)
 	{
-		LagCompRecord origin = {};
-		if (!pEntity->SetupBones(origin.bones, MAXSTUDIOBONES, BONE_USED_BY_ANYTHING, interfaces::GlobalVars->curtime))
+		matrix3x4 bones[MAXSTUDIOBONES];
+		if (!pEntity->SetupBones(bones, MAXSTUDIOBONES, BONE_USED_BY_ANYTHING, interfaces::GlobalVars->curtime))
 			return false;
 
-		origin.absCenter = pEntity->GetCenter();
-		origin.simtime = pEntity->m_flSimulationTime();
-		origin.viewAngle = pEntity->m_angEyeAngles();
+		LagCompRecord origin
+		(
+			bones,
+			pEntity->m_flSimulationTime(),
+			pEntity->GetCenter(),
+			pEntity->m_angEyeAngles(),
+			pEntity->EstimateAbsVelocity()
+		);
 
+		out.push_back(origin);
 		return true;
-	}*/
+	}
 
 	auto records = m_records[pEntity->GetIndex()];
 

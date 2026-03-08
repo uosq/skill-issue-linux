@@ -3,13 +3,13 @@
 #include <cstdint>
 #include "../../sdk/classes/entity.h"
 
-enum EntityFlags: uint8_t
+enum EntityFlags
 {
 	IsPlayer = 1,
-	IsBuilding = 2,
-	IsEnemy = 4,
-	IsProjectile = 8,
-	IsAlive = 16
+	IsBuilding = 1 << 1,
+	IsEnemy = 1 << 2,
+	IsProjectile = 1 << 3,
+	IsAlive = 1 << 4
 };
 
 struct EntityListEntry

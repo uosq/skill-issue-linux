@@ -351,8 +351,7 @@ namespace AimbotProjectile
 				if (player == nullptr)
 					continue;
 
-				if (!PlayerPrediction::Predict(player, time, path))
-					continue;
+				PlayerPrediction::Predict(player, time, path);
 	
 				// something went wrong
 				if (path.empty())

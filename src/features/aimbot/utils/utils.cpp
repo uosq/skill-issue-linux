@@ -137,17 +137,22 @@ namespace AimbotUtils
 		return false;
 	}
 
-	float GetAimbotFovScaled()
+	float GetFovScaled(float flFov)
 	{
 		float cameraFOV = CustomFov::GetFov();
 
-		float radAimbotHalf = DEG2RAD(Settings::Aimbot.fov / 2.0f);
+		float radAimbotHalf = DEG2RAD(flFov / 2.0f);
 		float radPlayerHalf = DEG2RAD(cameraFOV / 2.0f);
 		constexpr float radBaseHalf = DEG2RAD(90.0f / 2.0f);
 
 		float scaledRad = atan(tan(radAimbotHalf) * (tan(radPlayerHalf) / tan(radBaseHalf)));
 
 		return RAD2DEG(scaledRad) * 2.0f;
+	}
+
+	float GetAimbotFovScaled()
+	{
+		return GetFovScaled(Settings::Aimbot.fov);
 	}
 
 	std::vector<EntityListEntry> GetTargets(const bool& bCanHitTeammates, int localTeam)

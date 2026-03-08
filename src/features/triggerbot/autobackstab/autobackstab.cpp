@@ -59,6 +59,33 @@ bool AutoBackstab::IsBehindAndFacingEntity(CTFPlayer *pLocal, CTFPlayer* pTarget
 	return isBehind && isLookingAtTarget && isFacingBack;
 }
 
+bool AutoBackstab::IsBehindAndFacingEntity(Vector localCenter, Vector targetCenter, Vector localViewAngles, Vector targetViewAngles)
+{
+	Vector dir = targetCenter - localCenter;
+	dir.z = 0;
+	dir.Normalize();
+
+	Vector localForward;
+	Math::AngleVectors(localViewAngles, &localForward);
+	localForward.z = 0;
+	localForward.Normalize();
+
+	Vector targetForward;
+	Math::AngleVectors(targetViewAngles, &targetForward);
+	targetForward.z = 0;
+	targetForward.Normalize();
+
+	float posVsTargetView = dir.Dot(targetForward);
+	float posVsLocalView = dir.Dot(localForward);
+	float viewAnglesDot = localForward.Dot(targetForward);
+
+	bool isBehind = posVsTargetView > 0.0f; // for some reason this is positive, but in the tf2's source code it is negative wtf
+	bool isLookingAtTarget = posVsLocalView > 0.5f;
+	bool isFacingBack = viewAnglesDot > -0.3f;
+
+	return isBehind && isLookingAtTarget && isFacingBack;
+}
+
 bool AutoBackstab::CanBackstabEntity(CTFPlayer* pLocal, CTFPlayer* pTarget)
 {
 	if (pLocal == nullptr || pTarget == nullptr)
@@ -76,73 +103,51 @@ bool AutoBackstab::CanBackstabEntity(CTFPlayer* pLocal, CTFPlayer* pTarget)
 
 void LegitBackstab(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd)
 {
-	CGameTrace trace;
-	CTraceFilterHitscan filter;
-	filter.pSkip = pLocal;
+	Vector shootPos = pLocal->GetEyePos();
+	Vector localCenter = pLocal->GetCenter();
+	Vector localViewAngles = pCmd->viewangles;
 
-	Vector viewAngles, forward;
-	interfaces::Engine->GetViewAngles(viewAngles);
-	Math::AngleVectors(viewAngles, &forward);
+	for (const auto& entry : EntityList::GetEnemies())
+	{
+		if ((entry.flags & (EntityFlags::IsAlive | EntityFlags::IsPlayer)) == 0)
+			continue;
 
-	Vector start = pLocal->GetAbsOrigin() + pLocal->m_vecViewOffset();
-	Vector end = start + (forward * 48);
+		CTFPlayer* pPlayer = static_cast<CTFPlayer*>(entry.ptr);
+		if (pPlayer == nullptr)
+			continue;
 
-	int localTeam = pLocal->m_iTeamNum();
+		if (!AimbotUtils::IsValidEntity(pPlayer))
+			continue;
 
-	helper::engine::Trace(start, end, MASK_SHOT_HULL, &filter, &trace);
+		std::vector<LagCompRecord> records;
+		if (!Backtrack::GetRecords(pPlayer, records))
+		{
+			Logs::Info("Invalid records");
+			continue;
+		}
 
-	if (!trace.DidHit() || trace.m_pEnt == nullptr)
-		return;
+		for (const auto& record : records)
+		{
+			if (!AutoBackstab::IsBehindAndFacingEntity(localCenter, record.m_vecAbsCenter, localViewAngles, record.m_vecViewAngles))
+				continue;
 
-	if (!AimbotUtils::IsValidEntity(trace.m_pEnt))
-		return;
+			if ((record.m_vecAbsCenter - localCenter).Length() > (48*2))
+				continue;
 
-	if (trace.m_pEnt->m_iTeamNum() == localTeam)
-		return;
+			pCmd->buttons |= IN_ATTACK;
 
-	if (!AutoBackstab::CanBackstabEntity(pLocal, static_cast<CTFPlayer*>(trace.m_pEnt)))
-		return;
-
-	pCmd->buttons |= IN_ATTACK;
-	EntityList::m_pAimbotTarget = trace.m_pEnt;
+			if (helper::localplayer::IsAttacking(pLocal, pWeapon, pCmd))
+			{
+				pCmd->tick_count = TIME_TO_TICKS(record.m_flSimTime);
+				return;
+			}
+		}
+	}
 }
 
 void RageBackstab(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd, bool* pSendPacket)
 {
 	Vector shootPos = pLocal->GetEyePos();
-
-	/*for (auto& entry : EntityList::GetEnemies())
-	{
-		if (!(entry.flags & EntityFlags::IsPlayer))
-			continue;
-
-		CTFPlayer* enemy = static_cast<CTFPlayer*>(entry.ptr);
-		if (!AimbotUtils::IsValidEntity(enemy))
-			continue;
-
-		Vector center = enemy->GetCenter();
-		Vector dir = center - shootPos;
-		float distance = dir.Normalize();
-
-		if (distance > (48*2))
-			continue;
-
-		if (AutoBackstab::IsBehindEntity(pLocal, enemy))
-		{
-			pCmd->buttons |= IN_ATTACK;
-
-			if (helper::localplayer::IsAttacking(pLocal, pWeapon, pCmd))
-			{
-				Vector angle = dir.ToAngle();
-				pCmd->viewangles = angle;
-				*pSendPacket = false;
-			}
-
-			EntityList::m_pAimbotTarget = enemy;
-			break;
-		}
-	}*/
-
 	Vector localCenter = pLocal->GetCenter();
 
 	for (const auto& entry : EntityList::GetEnemies())
@@ -166,19 +171,19 @@ void RageBackstab(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd, boo
 
 		for (const auto& record : records)
 		{
-			if (!AutoBackstab::IsBehindEntity(localCenter, record.absCenter, record.viewAngle))
+			if (!AutoBackstab::IsBehindEntity(localCenter, record.m_vecAbsCenter, record.m_vecViewAngles))
 				continue;
 
-			if ((record.absCenter - localCenter).Length() > (48*2))
+			if ((record.m_vecAbsCenter - localCenter).Length() > (48*2))
 				continue;
 
 			pCmd->buttons |= IN_ATTACK;
 
 			if (helper::localplayer::IsAttacking(pLocal, pWeapon, pCmd))
 			{
-				Vector dir = record.absCenter - localCenter;
+				Vector dir = record.m_vecAbsCenter - localCenter;
 				pCmd->viewangles = dir.ToAngle();
-				pCmd->tick_count = TIME_TO_TICKS(record.simtime);
+				pCmd->tick_count = TIME_TO_TICKS(record.m_flSimTime);
 				*pSendPacket = false;
 				return;
 			}

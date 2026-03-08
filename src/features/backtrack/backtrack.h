@@ -15,27 +15,30 @@ struct LagCompRecord
 {
 	LagCompRecord()
 	{
-		simtime = 0;
-		absCenter = {};
-		viewAngle = {};
-		memset(bones, 0, sizeof(LagCompRecord));
+		m_flSimTime = 0;
+		m_vecAbsCenter = {};
+		m_vecViewAngles = {};
+		m_vecVelocity = {};
+		memset(m_Bones, 0, sizeof(LagCompRecord));
 	}
 
-	LagCompRecord(matrix3x4* inBones, float inSimTime, Vector center, Vector viewAngle)
+	LagCompRecord(matrix3x4* pBones, float flSimTime, Vector vecCenter, Vector vecViewAngles, Vector vecVelocity)
 	{
-		memcpy(bones, inBones, sizeof(bones));
-		simtime = inSimTime;
-		absCenter = center;
-		this->viewAngle = viewAngle;
+		memcpy(m_Bones, pBones, sizeof(m_Bones));
+		m_flSimTime = flSimTime;
+		m_vecAbsCenter = vecCenter;
+		m_vecViewAngles = vecViewAngles;
+		m_vecVelocity = vecVelocity;
 	}
 
 	//bool IsValid(CUserCmd* pCmd);
 	bool IsValid();
 
-	float simtime;
-	Vector absCenter;
-	matrix3x4 bones[MAXSTUDIOBONES];
-	Vector viewAngle;
+	float m_flSimTime;
+	Vector m_vecAbsCenter;
+	matrix3x4 m_Bones[MAXSTUDIOBONES];
+	Vector m_vecViewAngles;
+	Vector m_vecVelocity;
 };
 
 namespace Backtrack
@@ -48,9 +51,10 @@ namespace Backtrack
 	bool IsValidPlayer(const EntityListEntry& entry);
 	void Run(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd *pCmd);
 	void Reset();
-	void Store(const EntityListEntry& entry);
+	void Store(CTFPlayer* pLocal, const EntityListEntry& entry);
 	void Init();
 	void DoPostScreenSpaceEffects();
+	float GetInterp();
 
 	void CleanRecords();
 	bool GetRecords(CTFPlayer* pEntity, std::vector<LagCompRecord>& out);

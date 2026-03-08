@@ -47,6 +47,7 @@ namespace AimbotUtils
 	std::string GetTeamModeName();
 
 	bool CanDamageWithSniperRifle(CTFPlayer* pLocal, CBaseEntity* pTarget, CTFWeaponBase* pWeapon);
+	float GetFovScaled(float flFov);
 	float GetAimbotFovScaled();
 
 	std::vector<EntityListEntry> GetTargets(const bool& bCanHitTeammates, int localTeam);
