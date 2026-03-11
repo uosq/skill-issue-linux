@@ -66,7 +66,6 @@ void CPrediction::BeginPrediction(CTFPlayer* pEntity, float flTargetSeconds)
 	static ConVar* sv_bounce = interfaces::Cvar->FindVar("sv_bounce");
 	if (!sv_bounce)
 		return Logs::Error("[CPrediction::BeginPrediction] sv_bounce is nullptr!");
-
 	
 	m_pTarget = pEntity;
 	
@@ -76,10 +75,11 @@ void CPrediction::BeginPrediction(CTFPlayer* pEntity, float flTargetSeconds)
 	m_flStopSpeed = sv_stopspeed->GetFloat();
 	m_flStepSize = pEntity->m_flStepSize();
 	
-	m_vecAbsOrigin = pEntity->m_vecOrigin();
+	// janky ahh shit
+	m_vecAbsOrigin = pEntity->m_vecOrigin() + Vector{0, 0, 1.0f};
 	m_vecMaxs = pEntity->m_vecMaxs();
 	m_vecMins = pEntity->m_vecMins();
-	m_vecVelocity = pEntity->GetVelocity();
+	m_vecVelocity = pEntity->EstimateAbsVelocity();
 	m_vecBaseVelocity = pEntity->m_vecBaseVelocity();
 	m_flBounce = sv_bounce->GetFloat();
 	m_flMaxSpeed = pEntity->m_flMaxspeed();
@@ -91,6 +91,7 @@ void CPrediction::BeginPrediction(CTFPlayer* pEntity, float flTargetSeconds)
 	m_vecWishDir.z = 0;
 	m_vecWishDir.Normalize();
 
+	m_bAllowAutoMovement = pEntity->m_bAllowAutoMovement();
 	m_bIsOnGround = IsOnGround();
 	m_bIsStarted = true;
 }
