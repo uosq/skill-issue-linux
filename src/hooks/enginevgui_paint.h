@@ -27,10 +27,7 @@ DECLARE_VTABLE_HOOK(VGuiPaint, void, (IEngineVGui* thisptr, PaintMode_t paint))
 	// I don't trust
 	// C++'s static initialization
 	if (!gApp.IsInitialized())
-	{
-		gApp.StartHooks();
-		return;
-	}
+		return gApp.Setup();
 
 	if (interfaces::Engine->IsTakingScreenshot())
 		return;

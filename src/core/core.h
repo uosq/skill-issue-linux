@@ -6,6 +6,7 @@ public:
 	CApp();
 
 	bool IsInitialized();
+	void Setup();
 	bool StartInterfaces();
 	bool StartHooks();
 private:

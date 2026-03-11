@@ -6,7 +6,7 @@
 
 namespace Aimbot
 {
-	AimbotState m_state = {};
+	AimbotState m_state{};
 
 	Vector GetAngle()
 	{
@@ -95,27 +95,24 @@ namespace Aimbot
 
 	void DrawTargetPath()
 	{
-		/*
-		//CleanTargetPath();
-
-		if (state.targetPath.size() < 2)
+		if (m_state.targetPath.size() < 2)
 			return;
 
 		Vector prevScreen;
-		if (!helper::engine::WorldToScreen(state.targetPath[0], prevScreen))
+		if (!helper::engine::WorldToScreen(m_state.targetPath[0], prevScreen))
 			return;
 
 		helper::draw::SetColor({255, 255, 255, 255});
 
-		for (size_t i = 1; i < state.targetPath.size(); i++)
+		for (size_t i = 1; i < m_state.targetPath.size(); i++)
 		{
 			Vector currScreen;
-			if (!helper::engine::WorldToScreen(state.targetPath[i], currScreen))
+			if (!helper::engine::WorldToScreen(m_state.targetPath[i], currScreen))
 				continue;
 
 			interfaces::Surface->DrawLine(prevScreen.x, prevScreen.y, currScreen.x, currScreen.y);
 			prevScreen = currScreen;
-		}*/
+		}
 	}
 
 	void RunPaint()
@@ -123,7 +120,7 @@ namespace Aimbot
 		if (!Settings::Aimbot.key->IsEnabled())
 			return;
 
-		//DrawTargetPath();
 		DrawFOVIndicator();
+		DrawTargetPath();
 	}
 };

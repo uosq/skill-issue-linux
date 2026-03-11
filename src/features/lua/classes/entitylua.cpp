@@ -895,7 +895,10 @@ namespace LuaClasses
 			float seconds = luaL_checknumber(L, 2);
 
 			std::vector<Vector> path;
-			PlayerPrediction::Predict(static_cast<CTFPlayer*>(le->ent), seconds, path);
+			//PlayerPrediction::Predict(static_cast<CTFPlayer*>(le->ent), seconds, path);
+			gPrediction.BeginPrediction(static_cast<CTFPlayer*>(le->ent), seconds);
+			gPrediction.Simulate(path);
+			gPrediction.EndPrediction();
 
 			lua_newtable(L);
 

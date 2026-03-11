@@ -51,16 +51,12 @@ bool CApp::StartInterfaces()
 	return InitializeInterfaces();
 }
 
-bool CApp::StartHooks()
+void CApp::Setup()
 {
-	// !!	not a good solution	!!
-	// !!	think of something else	!!
-	Settings::Aimbot.key = gBinds.RegisterHotkey("aimbot key");
-	Settings::AntiAim.warp_key = gBinds.RegisterHotkey("warp key");
-	Settings::AntiAim.warp_recharge_key = gBinds.RegisterHotkey("warp recharge key");
-	Settings::AntiAim.warp_dt_key = gBinds.RegisterHotkey("doubletap key");
-	Settings::Misc.thirdperson_key = gBinds.RegisterHotkey("thirdperson key");
-	Settings::Trigger.key = gBinds.RegisterHotkey("trigger key");
+	Netvars::Setup();
+
+	Settings::InitBinds();
+	Lua::InitPluto();
 
 	GUI::Init();
 	TickManager::Init();
@@ -75,14 +71,13 @@ bool CApp::StartHooks()
 	Glow::Init();
 	Chams::Init();
 
+	StartHooks();
+}
+
+bool CApp::StartHooks()
+{
 	HookSDL();
-	//HookVulkan();
 	HookDXVK();
-
-	Netvars::Setup();
-	//SetupNetVarsToFile();
-
-	Lua::InitPluto();
 
 	//HookEngineVGuiPaint(); Already initialized
 	HookFrameStageNotify();

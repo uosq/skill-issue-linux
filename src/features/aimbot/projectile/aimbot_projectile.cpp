@@ -1,5 +1,7 @@
 #include "aimbot_projectile.h"
 
+#include "../../logs/logs.h"
+
 namespace AimbotProjectile
 {
 	std::vector<Vector> m_vecPlayerPath = {};
@@ -284,9 +286,12 @@ namespace AimbotProjectile
 
 	void Run(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd, AimbotState& state)
 	{
+		if (!pLocal || !pLocal || !pCmd)
+			return;
+
 		ProjectileInfo_t info;
 		if (!GetProjectileInfo(info, pLocal, pWeapon))
-			return;
+			return Logs::Error("No Projectile Info!");
 
 		int localTeam = pLocal->m_iTeamNum();
 		Vector shootPos = pLocal->GetEyePos();
@@ -339,6 +344,9 @@ namespace AimbotProjectile
 
 		for (const auto& target : targets)
 		{
+			if (target.entity == nullptr)
+				continue;
+
 			float time = (target.distance/info.speed);
 
 			if (time > Settings::Aimbot.max_sim_time)
@@ -351,10 +359,11 @@ namespace AimbotProjectile
 			if (target.entity->IsPlayer())
 			{
 				CTFPlayer* player = static_cast<CTFPlayer*>(target.entity);
-				if (player == nullptr)
-					continue;
 
-				PlayerPrediction::Predict(player, time, path);
+				//PlayerPrediction::Predict(player, time, path);
+				gPrediction.BeginPrediction(player, time);
+				gPrediction.Simulate(path);
+				gPrediction.EndPrediction();
 	
 				// something went wrong
 				if (path.empty())
@@ -422,6 +431,8 @@ namespace AimbotProjectile
 
 			if (helper::localplayer::IsAttacking(pLocal, pWeapon, pCmd))
 			{
+				state.targetPath = path;
+
 				pCmd->viewangles = angle;
 				state.angle = angle;
 

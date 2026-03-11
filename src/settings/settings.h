@@ -370,3 +370,8 @@ namespace Settings
 		return false;
 	}
 };
+
+namespace Settings
+{
+	void InitBinds();
+};

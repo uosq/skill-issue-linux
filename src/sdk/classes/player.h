@@ -94,6 +94,8 @@ public:
 	NETVAR(m_vecPunchAngle, "CBasePlayer->m_vecPunchAngle", Vector)
 
 	NETVAR(m_iStunFlags, "CTFPlayer->m_iStunFlags", int)
+	NETVAR(m_vecBaseVelocity, "CBasePlayer->m_vecBaseVelocity", Vector)
+	NETVAR(m_bAllowAutoMovement, "CBasePlayer->m_bAllowAutoMovement", bool)
 
 	bool IsAlive();
 	bool InCond(ETFCond cond);

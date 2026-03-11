@@ -9,8 +9,15 @@ DETOUR_DECL_TYPE(void, original_Uncache, IMaterial* mat, bool bPreserveVars);
 
 inline void HookedUncache(IMaterial* mat, bool bPreserveVars)
 {
+	// hopefully fix the crash that happens here
+	if (mat == nullptr)
+	{
+		DETOUR_ORIG_CALL(&uncache_ctx, original_Uncache, mat, bPreserveVars);
+		return;
+	}
+
 	if (MaterialManager::MaterialExists(mat->GetName()))
-		return;;
+		return;
 
 	DETOUR_ORIG_CALL(&uncache_ctx, original_Uncache, mat, bPreserveVars);
 }

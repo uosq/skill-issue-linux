@@ -22,7 +22,7 @@ struct AimbotState
 {
 	bool running = false;
 	bool shouldSilent = false;
-	//std::vector<Vector> targetPath;
+	std::vector<Vector> targetPath;
 	Vector angle = {0, 0, 0};
 };
 
