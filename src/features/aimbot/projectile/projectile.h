@@ -29,6 +29,7 @@ protected:
 	bool CheckTrajectory(CBaseEntity* pTarget, const Vector vecStartPos, const Vector vecTargetPos, const Vector vecAngle, const ProjectileInfo_t& prjInfo, float flGravity);
 	std::vector<PotentialTarget> GetBestTargets(CTFPlayer* pLocal, CTFWeaponBase* pWeapon);
 	float GetAimDrop(float flGravity, float flTimeSeconds);
+	void DrawPath(const std::vector<Vector>& vPath);
 
 private:
 	std::vector<Vector> m_vecPath;

@@ -63,42 +63,50 @@ bool CAimbotProjectile::SolveBallisticArc(Vector &outAngle, const Vector p0, con
 	return true;
 }
 
-bool CAimbotProjectile::CheckTrajectory(CBaseEntity* pTarget, const Vector vecStartPos, const Vector vecTargetPos, const Vector vecAngle, const ProjectileInfo_t& prjInfo, float flGravity)
+// Yes, I know this isn't predicting right
+bool CAimbotProjectile::CheckTrajectory(CBaseEntity* pTarget, const Vector vecStartPos,const Vector vecTargetPos, const Vector vecAngle, const ProjectileInfo_t& prjInfo, float flGravity)
 {
-	if (!pTarget)
+	if (pTarget == nullptr)
 		return false;
 
-	// step
-	float accuracy = 5.0f;
+	float flDistance = (vecTargetPos - vecStartPos).Length();
+	float flTotalTime = flDistance / prjInfo.speed;
 
-	float distance = (vecTargetPos - vecStartPos).Length();
-	float totalTime = distance / prjInfo.speed;
-
-	Vector velocity;
-	Math::AngleVectors(vecAngle, &velocity);
-
-	velocity *= prjInfo.speed;
+	Vector vecVelocity;
+	Math::AngleVectors(vecAngle, &vecVelocity);
+	vecVelocity *= prjInfo.speed;
 
 	CGameTrace trace;
 	CTraceFilterWorldAndPropsOnly filter;
 	filter.pSkip = pTarget;
 
-	Vector min{-prjInfo.hull.x, -prjInfo.hull.y, -prjInfo.hull.z};
-	for (int i = 1; i <= accuracy; i++)
+	Vector vecMins{ -prjInfo.hull.x, -prjInfo.hull.y, -prjInfo.hull.z };
+	Vector vecMaxs{  prjInfo.hull.x,  prjInfo.hull.y,  prjInfo.hull.z };
+
+	Vector vecPos = vecStartPos;
+
+	float flClock = 0.0f;
+	float flDt = interfaces::GlobalVars->interval_per_tick;
+	float flMaxTime = Settings::Aimbot.max_sim_time;
+
+	while (flClock < flMaxTime)
 	{
-		float t = (static_cast<float>(i) / accuracy) * totalTime;
+		Vector prevPos = vecPos;
 
-		Vector pos = vecStartPos + (velocity * t);
-		pos.z -= (0.5 * flGravity * t * t);
+		vecVelocity.z -= flGravity * flDt;
+		vecPos += vecVelocity * flDt;
 
-		float prevT = (static_cast<float>(i - 1) / accuracy) * totalTime;
-		Vector prevPos = vecStartPos + (velocity * prevT);
-		prevPos.z -= (0.5f * flGravity * prevT * prevT);
-
-		helper::engine::TraceHull(prevPos, pos, min, prjInfo.hull, MASK_SHOT, &filter, &trace);
+		helper::engine::TraceHull(prevPos, vecPos, vecMins, vecMaxs, MASK_SOLID, &filter, &trace);
 
 		if (trace.fraction < 1.0f)
 			return false;
+
+		flClock += flDt;
+
+		//check if we have passed the target pos
+		Vector vecToTarget = vecTargetPos - vecPos;
+        	if (vecToTarget.Dot(vecVelocity) < 0.0f)
+            		break;
 	}
 
 	return true;
@@ -428,7 +436,15 @@ void CAimbotProjectile::RunMain(CTFPlayer* pLocal, CTFWeaponBase* pWeapon)
 			vecDir.Normalize();
 			Vector vecAngle = vecDir.ToAngle();
 
-			if (!CheckTrajectory(target.entity, vecEyePos, vecAimPos, vecAngle, prjInfo, 0.0f))
+			Vector vecForward, vecRight, vecUp;
+			Math::AngleVectors(vecAngle, &vecForward, &vecRight, &vecUp);
+
+			Vector vecSpawnPos = vecEyePos
+				+ vecForward * prjInfo.offset.x
+				+ vecRight * prjInfo.offset.y
+				+ vecUp * prjInfo.offset.z;
+
+			if (!CheckTrajectory(target.entity, vecSpawnPos, vecAimPos, vecAngle, prjInfo, 0.0f))
 				continue;
 
 			m_pTarget = target.entity;
@@ -446,7 +462,15 @@ void CAimbotProjectile::RunMain(CTFPlayer* pLocal, CTFWeaponBase* pWeapon)
 			if (!SolveBallisticArc(vecAngle, vecEyePos, vecAimPos, prjInfo.speed, flGravity))
 				continue;
 
-			if (!CheckTrajectory(target.entity, vecEyePos, vecAimPos, vecAngle, prjInfo, flGravity))
+			Vector vecForward, vecRight, vecUp;
+			Math::AngleVectors(vecAngle, &vecForward, &vecRight, &vecUp);
+
+			Vector vecSpawnPos = vecEyePos
+				+ vecForward * prjInfo.offset.x
+				+ vecRight * prjInfo.offset.y
+				+ vecUp * prjInfo.offset.z;
+
+			if (!CheckTrajectory(target.entity, vecSpawnPos, vecAimPos, vecAngle, prjInfo, flGravity))
 				continue;
 
 			m_pTarget = target.entity;
@@ -609,13 +633,17 @@ void CAimbotProjectile::RunPath()
 		return;
 
 	interfaces::Surface->DrawSetColor(255, 255, 255, 255);
+	DrawPath(m_vecPath);
+}
 
-	for (int i = 1; i < m_vecPath.size(); i++)
+void CAimbotProjectile::DrawPath(const std::vector<Vector>& vPath)
+{
+	for (int i = 1; i < vPath.size(); i++)
 	{
 		Vector vecPrevScreen, vecCurrScreen;
 
-		bool bIsPreviousVisible = helper::engine::WorldToScreen(m_vecPath[i - 1], vecPrevScreen);
-		bool bIsCurrentVisible = helper::engine::WorldToScreen(m_vecPath[i], vecCurrScreen);
+		bool bIsPreviousVisible = helper::engine::WorldToScreen(vPath[i - 1], vecPrevScreen);
+		bool bIsCurrentVisible = helper::engine::WorldToScreen(vPath[i], vecCurrScreen);
 
 		if (bIsPreviousVisible && bIsCurrentVisible)
 			interfaces::Surface->DrawLine(vecPrevScreen.x, vecPrevScreen.y, vecCurrScreen.x, vecCurrScreen.y);
