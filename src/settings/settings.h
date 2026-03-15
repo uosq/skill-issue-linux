@@ -154,6 +154,7 @@ namespace Settings
 		int melee = 0;
 		int teamMode = 0;
 		float smoothness = 0.0f;
+		bool indicator = false;
 	};
 
 	extern SettingsAimbot Aimbot;
@@ -251,6 +252,7 @@ namespace Settings
 		{"aimbot smoothness", SettingType::FLOAT, &Aimbot.smoothness},
 		{"aimbot team mode", SettingType::INT, &Aimbot.teamMode},
 		{"aimbot hold minigun spin", SettingType::BOOL, &Aimbot.hold_minigun_spin},
+		{"aimbot indicator", SettingType::BOOL, &Aimbot.indicator},
 
 		// esp
 		{"esp enabled", SettingType::BOOL, &ESP.enabled},

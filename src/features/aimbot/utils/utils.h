@@ -18,6 +18,18 @@ struct PotentialTarget
 	CBaseEntity* entity;
 };
 
+struct ProjectileInfo_t
+{
+	float speed = 0;
+	float gravity = 0;
+	float primetime = 0;
+	float damage_radius = 0;
+	float lifetime = 60.0f;
+	bool simple_trace = false;
+	Vector offset{};
+	Vector hull{6, 6, 6};
+};
+
 struct AimbotState
 {
 	bool running = false;

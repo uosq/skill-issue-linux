@@ -1,13 +1,16 @@
 #pragma once
 
 #include "../vtables.h"
+
 #include "../sdk/helpers/helper.h"
+
 #include "../features/entitylist/entitylist.h"
 #include "../features/lua/hookmgr.h"
 #include "../features/lua/api.h"
 #include "../features/lua/classes.h"
 #include "../features/warp/warp.h"
 #include "../features/backtrack/backtrack.h"
+#include "../features/aimbot/projectile/projectile.h"
 //#include "../features/ticks/ticks.h"
 
 DECLARE_VTABLE_HOOK(LevelShutdown, void, (CHLClient* thisptr))
@@ -15,7 +18,8 @@ DECLARE_VTABLE_HOOK(LevelShutdown, void, (CHLClient* thisptr))
 	EntityList::Clear();
 	Warp::Reset();
 	Backtrack::Reset();
-	//TickManager::m_iChokedCommands = 0;
+	gAimProjectile.Reset();
+	gAimProjectile.ResetIndicator();
 
 	if (LuaHookManager::HasHooks("LevelShutdown"))
 		LuaHookManager::Call(Lua::m_luaState, "LevelShutdown");

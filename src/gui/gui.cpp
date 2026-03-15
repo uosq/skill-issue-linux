@@ -62,6 +62,7 @@ void DrawAimbotTab()
 		ImGui::Checkbox("Viewmodel Aim", &Settings::Aimbot.viewmodelaim);
 		ImGui::Checkbox("Draw FOV Indicator", &Settings::Aimbot.draw_fov_indicator);
 		ImGui::Checkbox("Wait For Charge", &Settings::Aimbot.waitforcharge);
+		ImGui::Checkbox("Indicator", &Settings::Aimbot.indicator);
 		ImGui::SliderFloat("Fov", &Settings::Aimbot.fov, 0.0f, 180.0f);
 		ImGui::SliderFloat("Max Sim Time", &Settings::Aimbot.max_sim_time, 0.0f, 5.0f);
 		ImGui::SliderFloat("Smoothness", &Settings::Aimbot.smoothness, 0.0f, 100.0f);

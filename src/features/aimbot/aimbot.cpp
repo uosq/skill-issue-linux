@@ -4,6 +4,8 @@
 #include "../ticks/ticks.h"
 #include "../binds/binds.h"
 
+#include "projectile/projectile.h"
+
 namespace Aimbot
 {
 	AimbotState m_state{};
@@ -30,6 +32,8 @@ namespace Aimbot
 		if (helper::engine::IsConsoleVisible() || helper::engine::IsGameUIVisible() || helper::engine::IsTakingScreenshot())
 			return;
 
+		gAimProjectile.RunMain(pLocal, pWeapon);
+
 		if (!Settings::Aimbot.key->IsActive())
 			return;
 
@@ -42,7 +46,8 @@ namespace Aimbot
 			
 			case EWeaponType::PROJECTILE:
 			{
-				AimbotProjectile::Run(pLocal, pWeapon, pCmd, m_state);
+				//AimbotProjectile::Run(pLocal, pWeapon, pCmd, m_state);
+				gAimProjectile.RunAim(pLocal, pWeapon, pCmd, m_state);
 
 				if (m_state.shouldSilent)
 					TickManager::m_bSendPacket = false;
@@ -121,6 +126,6 @@ namespace Aimbot
 			return;
 
 		DrawFOVIndicator();
-		DrawTargetPath();
+		gAimProjectile.RunIndicator();
 	}
 };
