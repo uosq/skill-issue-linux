@@ -11,7 +11,7 @@
 #include "../features/warp/warp.h"
 #include "../features/backtrack/backtrack.h"
 #include "../features/aimbot/projectile/projectile.h"
-//#include "../features/ticks/ticks.h"
+#include "../features/bhop/bhop.h"
 
 DECLARE_VTABLE_HOOK(LevelShutdown, void, (CHLClient* thisptr))
 {
@@ -20,6 +20,7 @@ DECLARE_VTABLE_HOOK(LevelShutdown, void, (CHLClient* thisptr))
 	Backtrack::Reset();
 	gAimProjectile.Reset();
 	gAimProjectile.ResetIndicator();
+	Bhop::Reset();
 
 	if (LuaHookManager::HasHooks("LevelShutdown"))
 		LuaHookManager::Call(Lua::m_luaState, "LevelShutdown");

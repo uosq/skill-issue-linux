@@ -8,6 +8,13 @@ inline detour_ctx_t interpolate_ctx;
 
 inline bool Hooked_Interpolate(CBaseEntity* self, float currentTime)
 {
+	if (self == nullptr)
+	{
+		bool retVal;
+		DETOUR_ORIG_GET(&interpolate_ctx, retVal, Interpolate, self, currentTime);
+		return retVal;
+	}
+
 	if (Warp::m_bShifting || Warp::m_bRecharging)
 		return true;
 
