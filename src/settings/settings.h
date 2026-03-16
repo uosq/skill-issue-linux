@@ -183,6 +183,7 @@ namespace Settings
 		bool sv_pure_bypass = false;
 		bool streamer_mode = false;
 		bool bhop = false;
+		bool autostrafe = false;
 		bool accept_item_drop = false;
 		bool playerlist = false;
 		bool norecoil = false;
@@ -345,6 +346,7 @@ namespace Settings
 		CONFIG_BOOL("misc sv pure bypass", Misc.sv_pure_bypass),
 		CONFIG_BOOL("misc streamer mode", Misc.streamer_mode),
 		CONFIG_BOOL("misc bhop", Misc.bhop),
+		CONFIG_BOOL("misc autostrafe", Misc.autostrafe),
 		CONFIG_BOOL("misc accept item drop", Misc.accept_item_drop),
 		CONFIG_BOOL("misc playerlist", Misc.playerlist),
 		CONFIG_FLOAT3("misc viewmodel offset", Misc.viewmodel_offset),

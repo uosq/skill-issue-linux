@@ -211,6 +211,7 @@ void DrawMiscTab()
 	ImGui::Checkbox("sv_pure bypass", &Settings::Misc.sv_pure_bypass);
 	ImGui::Checkbox("Streamer Mode", &Settings::Misc.streamer_mode);
 	ImGui::Checkbox("Bhop", &Settings::Misc.bhop);
+	ImGui::Checkbox("Autostrafe", &Settings::Misc.autostrafe);
 	ImGui::Checkbox("Backpack Expander", &Settings::Misc.backpack_expander);
 	ImGui::Checkbox("Accept Item Drops", &Settings::Misc.accept_item_drop);
 
