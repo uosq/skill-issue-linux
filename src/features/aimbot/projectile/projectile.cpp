@@ -361,7 +361,7 @@ std::vector<PotentialTarget> CAimbotProjectile::GetBestTargets(CTFPlayer* pLocal
 		return {};
 
 	std::sort(vPotentialTargets.begin(), vPotentialTargets.end(), [&](PotentialTarget a, PotentialTarget b){
-			return a.fov < b.fov;
+		return a.fov < b.fov;
 	});
 
 	return vPotentialTargets;
