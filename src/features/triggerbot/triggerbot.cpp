@@ -52,10 +52,10 @@ namespace Triggerbot
 		if (Settings::Trigger.hitscan && pWeapon->IsHitscan())
 			Hitscan(pLocal, pWeapon, pCmd);
 
-                if (Settings::Trigger.autobackstab != static_cast<int>(AutoBackstabMode::NONE) && pWeapon->IsMelee())
+                if (Settings::Trigger.autobackstab != static_cast<int>(GenericMode::NONE) && pWeapon->IsMelee())
 			AutoBackstab::Run(pLocal, pWeapon, pCmd, &TickManager::m_bSendPacket);
 
-		if (Settings::Trigger.autoairblast != static_cast<int>(AutoBackstabMode::NONE) && pWeapon->GetWeaponID() == TF_WEAPON_FLAMETHROWER)
+		if (Settings::Trigger.autoairblast != static_cast<int>(GenericMode::NONE) && pWeapon->GetWeaponID() == TF_WEAPON_FLAMETHROWER)
 			AutoAirblast::Run(pLocal, pWeapon, pCmd, &TickManager::m_bSendPacket);
 	}
 }
