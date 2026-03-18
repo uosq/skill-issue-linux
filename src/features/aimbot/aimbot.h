@@ -19,7 +19,7 @@ namespace Aimbot
 	bool ShouldSilent();
 	void Run(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd);
 	void DrawFOVIndicator();
-	void CleanTargetPath();
-	void DrawTargetPath();
+	//void CleanTargetPath();
+	//void DrawTargetPath();
 	void RunPaint();
 };

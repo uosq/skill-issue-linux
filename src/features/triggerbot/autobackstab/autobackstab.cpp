@@ -138,7 +138,7 @@ void LegitBackstab(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd)
 
 			if (helper::localplayer::IsAttacking(pLocal, pWeapon, pCmd))
 			{
-				pCmd->tick_count = TIME_TO_TICKS(record.m_flSimTime);
+				pCmd->tick_count = TIME_TO_TICKS(record.m_flSimTime + Backtrack::GetInterp());
 				return;
 			}
 		}
@@ -199,18 +199,18 @@ void AutoBackstab::Run(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd
 	if (pWeapon->GetWeaponID() != TF_WEAPON_KNIFE)
 		return;
 
-	switch(static_cast<AutoBackstabMode>(Settings::Trigger.autobackstab))
+	switch(static_cast<GenericMode>(Settings::Trigger.autobackstab))
 	{
-		case AutoBackstabMode::NONE:
+		case GenericMode::NONE:
 		break;
 
-		case AutoBackstabMode::LEGIT:
+		case GenericMode::LEGIT:
 		{
 			LegitBackstab(pLocal, pWeapon, pCmd);
 			break;
 		}
 
-		case AutoBackstabMode::RAGE:
+		case GenericMode::RAGE:
 		{
 			RageBackstab(pLocal, pWeapon, pCmd, pSendPacket);
 			break;
@@ -223,11 +223,11 @@ void AutoBackstab::Run(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd
 
 std::string AutoBackstab::GetModeName()
 {
-	switch(static_cast<AutoBackstabMode>(Settings::Trigger.autobackstab))
+	switch(static_cast<GenericMode>(Settings::Trigger.autobackstab))
 	{
-		case AutoBackstabMode::NONE: return "None";
-		case AutoBackstabMode::LEGIT: return "Legit";
-		case AutoBackstabMode::RAGE: return "Rage";
+		case GenericMode::NONE: return "None";
+		case GenericMode::LEGIT: return "Legit";
+		case GenericMode::RAGE: return "Rage";
 		default: return "Unknown";
         }
 }

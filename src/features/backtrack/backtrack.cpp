@@ -109,7 +109,7 @@ void Backtrack::Run(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd *pCmd)
 	if (pBestRecord == nullptr)
 		return;
 
-	pCmd->tick_count = TIME_TO_TICKS(pBestRecord->m_flSimTime);
+	pCmd->tick_count = TIME_TO_TICKS(pBestRecord->m_flSimTime + GetInterp());
 }
 
 void Backtrack::Reset()

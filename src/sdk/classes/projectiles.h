@@ -2,6 +2,7 @@
 
 #include "basecombatweapon.h"
 #include "../handle_utils.h"
+#include "entity.h"
 
 class CBaseProjectile: public CBaseAnimating
 {
@@ -38,4 +39,16 @@ public:
 	NETVAR(m_iType, "CTFGrenadePipebombProjectile->m_iType", int);
 	NETVAR(m_hLauncher, "CTFGrenadePipebombProjectile->m_hLauncher", EHANDLE);
 	NETVAR(m_bDefensiveBomb, "CTFGrenadePipebombProjectile->m_bDefensiveBomb", bool);
+
+	float GetLiveTime()
+	{
+		static ConVar* tf_grenadelauncher_livetime = interfaces::Cvar->FindVar("tf_grenadelauncher_livetime");
+		float flLiveTime = tf_grenadelauncher_livetime->GetFloat();
+
+		AttributeHookValue(flLiveTime, "sticky_arm_time", HandleAs<CBaseEntity*>(m_hLauncher()), nullptr, true);
+
+		// check for powerups here!
+
+		return flLiveTime;
+	}
 };

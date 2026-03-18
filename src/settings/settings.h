@@ -45,7 +45,7 @@ enum class AimbotMode
 	MAX
 };
 
-enum class AutoBackstabMode
+enum class GenericMode
 {
 	NONE = 0,
 	LEGIT, RAGE
@@ -207,6 +207,7 @@ namespace Settings
 		bool hitscan = false;
 		int autobackstab = 0;
 		int autoairblast = 0;
+		int autosticky = 0;
 	};
 
 	extern SettingsTriggerbot Trigger;

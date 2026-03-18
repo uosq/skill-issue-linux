@@ -84,42 +84,6 @@ namespace Aimbot
 		interfaces::Surface->DrawOutlinedCircle((int)(w*0.5f), (int)(h*0.5f), (int)(radius), 64);
 	}
 
-	void CleanTargetPath()
-	{
-		/*static float lastcleartime = 0.0f;
-		if (state.targetPath.empty())
-			return;
-
-		if (interfaces::GlobalVars && (interfaces::GlobalVars->realtime - lastcleartime) < 5.0f)
-			return;
-
-		state.targetPath.clear();
-		lastcleartime = interfaces::GlobalVars->realtime;
-		*/
-	}
-
-	void DrawTargetPath()
-	{
-		if (m_state.targetPath.size() < 2)
-			return;
-
-		Vector prevScreen;
-		if (!helper::engine::WorldToScreen(m_state.targetPath[0], prevScreen))
-			return;
-
-		helper::draw::SetColor({255, 255, 255, 255});
-
-		for (size_t i = 1; i < m_state.targetPath.size(); i++)
-		{
-			Vector currScreen;
-			if (!helper::engine::WorldToScreen(m_state.targetPath[i], currScreen))
-				continue;
-
-			interfaces::Surface->DrawLine(prevScreen.x, prevScreen.y, currScreen.x, currScreen.y);
-			prevScreen = currScreen;
-		}
-	}
-
 	void RunPaint()
 	{
 		if (!Settings::Aimbot.key->IsEnabled())
