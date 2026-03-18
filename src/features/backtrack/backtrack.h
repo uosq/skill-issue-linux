@@ -31,7 +31,6 @@ struct LagCompRecord
 		m_vecVelocity = vecVelocity;
 	}
 
-	//bool IsValid(CUserCmd* pCmd);
 	bool IsValid();
 
 	float m_flSimTime;
@@ -55,11 +54,11 @@ namespace Backtrack
 	void Init();
 	void DoPostScreenSpaceEffects();
 	float GetInterp();
+	float GetLatency();
 
 	void CleanRecords();
 	bool GetRecords(CTFPlayer* pEntity, std::vector<LagCompRecord>& out);
 	bool GetReal(CTFPlayer* pEntity, LagCompRecord& out);
-	//bool GetClosestRecordFromViewAngle(LagCompRecord* pOut, CBaseEntity* pTarget, const Vector& viewAngle);
 
 	std::string GetModeName();
 }

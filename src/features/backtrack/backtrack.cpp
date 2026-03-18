@@ -37,6 +37,16 @@ bool LagCompRecord::IsValid()
 	return std::fabs(delta) < 0.2f;
 }
 
+float Backtrack::GetLatency()
+{
+	float flLatency = 0.0f;
+
+	if (auto netchan = interfaces::Engine->GetNetChannelInfo())
+		flLatency += netchan->GetLatency(FLOW_INCOMING) + netchan->GetLatency(FLOW_OUTGOING);
+
+	return flLatency;
+}
+
 bool ShouldPrioritizeHead(CTFWeaponBase* pWeapon)
 {
 	if (pWeapon->IsAmbassador() && pWeapon->CanAmbassadorHeadshot())
@@ -109,7 +119,7 @@ void Backtrack::Run(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd *pCmd)
 	if (pBestRecord == nullptr)
 		return;
 
-	pCmd->tick_count = TIME_TO_TICKS(pBestRecord->m_flSimTime + GetInterp());
+	pCmd->tick_count = TIME_TO_TICKS(pBestRecord->m_flSimTime + GetInterp() + GetLatency());
 }
 
 void Backtrack::Reset()
