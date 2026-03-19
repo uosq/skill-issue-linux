@@ -167,8 +167,11 @@ inline HRESULT __stdcall Hooked_Present(IDirect3DDevice9* pDevice, const RECT* p
 	if (!g_pd3dDevice)
 		g_pd3dDevice = pDevice;
 
-	InitImGui();
-	RenderImGui();
+	if (pDevice && pSourceRect && pDestRect && pDirtyRegion && hDestWindowOverride)
+	{
+		InitImGui();
+		RenderImGui();
+	}
 
 	HRESULT ret;
 	DETOUR_ORIG_GET(&present_ctx, ret, original_Present, pDevice, pSourceRect, pDestRect, hDestWindowOverride, pDirtyRegion);

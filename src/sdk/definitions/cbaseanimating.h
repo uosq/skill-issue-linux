@@ -61,7 +61,47 @@ public:
 class CBaseAnimatingOverlay : public CBaseAnimating
 {
 public:
+	void* GetAnimOverlay(int iIndex)
+	{
+		/*
+		go to CMultiPlayerAnimState::VerifyAnimLayerInSlot
+		xref: "Player %d doesn\'t have gesture slot %d any more.\n
 
+			lVar5 = gestureSlot * 0x18;
+			if ((int)iGestureSlot < numAnimLayers) {
+			uVar4 = 1;
+			=> lVar3 = CBaseAnimatingOverlay::GetAnimOverlay(*(long **)(self + 0x30),gestureSlot);
+			lVar1 = *(long *)(*(long *)(self + 0x10) + 0x10 + lVar5);
+			if (lVar1 != lVar3) {
+				Msg("Gesture slot %d pointing to wrong address %p. Updating to new address %p.\n",
+				gestureSlot,lVar1,lVar3);
+				*(long *)(*(long *)(self + 0x10) + 0x10 + lVar5) = lVar3;
+			}
+		*/
+
+		using GetAnimOverlayFn = void*(*)(CBaseAnimatingOverlay* self, int iIndex);
+		static GetAnimOverlayFn original = reinterpret_cast<GetAnimOverlayFn>(sigscan_module("client.so", "89 F0 48 6B C0 2C"));
+		return original(this, iIndex);
+	}
+
+	int GetNumAnimOverlays()
+	{
+		/*
+		go to CMultiPlayerAnimState::VerifyAnimLayerInSlot
+		xref: "Player %d doesn\'t have gesture slot %d any more.\n
+
+		uVar4 = 0;
+		if (iGestureSlot < 7) {
+			gestureSlot = (ulong)iGestureSlot;
+		=>	numAnimLayers = CBaseAnimatingOverlay::GetNumAnimOverlays(*(undefined8 *)(self + 0x30));
+			lVar5 = gestureSlot * 0x18;
+			if ((int)iGestureSlot < numAnimLayers) {
+		*/
+
+		using GetNumAnimOverlaysFn = int(*)(CBaseAnimatingOverlay* self);
+		static GetNumAnimOverlaysFn original = reinterpret_cast<GetNumAnimOverlaysFn>(sigscan_module("client.so", "E8 ? ? ? ? 39 C3 7C ? 45 85 F6 75 ? 48 8B 45 D8 48 85 C0 74 ? 48 8B 75 D0"));
+		return original(this);
+	}
 };
 
 class CCurrencyPack : public CBaseAnimating

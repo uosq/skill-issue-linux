@@ -211,7 +211,7 @@ inline int Hooked_PollEvent(SDL_Event* event)
 // fuck my life
 inline int Hooked_GetWindowSize(SDL_Window* window, int* w, int* h)
 {
-	if (!tfwindow)
+	if (!tfwindow && window)
 		tfwindow = window;
 
 	int ret = 0;
