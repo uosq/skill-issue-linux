@@ -145,7 +145,15 @@ returns **number**
 returns **bool**
 
 ### > SetupBones( [boneMask: **int** = 0x7FF00], [currentTime: **number** = current time] )
-Returns a table of at most 128 bones
+returns a table of at most 128 bones
+
+### > EstimateAbsVelocity()
+returns a **Vector3**
+
+### > GetMoveType()
+returns a **int**
+
+Will return nil when entity is not a player
 
 ## Examples
 

@@ -71,6 +71,7 @@ namespace LuaFuncs
 		int GetEnemies(lua_State* L);
 		int GetActiveWeapon(lua_State* L);
 		int GetByClassID(lua_State* L);
+		int GetEntityByID(lua_State* L);
 	}
 
 	namespace draw

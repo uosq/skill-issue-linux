@@ -3,8 +3,12 @@
 ### > GetRange( )
 returns **int**
 
+---
+
 ### > GetRadius( )
 returns **number**
+
+---
 
 ### > WorldToRadar( localPos: **Vector3**, enemyPos: **Vector3** )
 returns **Vector3**

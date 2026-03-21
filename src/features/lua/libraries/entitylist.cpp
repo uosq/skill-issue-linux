@@ -16,6 +16,7 @@ namespace LuaFuncs
 			{"GetEnemies", GetEnemies},
 			{"GetActiveWeapon", GetActiveWeapon},
 			{"GetByClassID", GetByClassID},
+			{"GetEntityByID", GetEntityByID},
 			{nullptr, nullptr}
 		};
 
@@ -192,6 +193,31 @@ namespace LuaFuncs
 				lua_rawseti(L, -2, i);
 			}
 
+			return 1;
+		}
+
+		int GetEntityByID(lua_State *L)
+		{
+			int iUserID = luaL_checkinteger(L, 1);
+
+			for (int i = 1; i <= interfaces::GlobalVars->max_clients; i++)
+			{
+				CTFPlayer* pPlayer = static_cast<CTFPlayer*>(interfaces::EntityList->GetClientEntity(i));
+				if (pPlayer == nullptr || !pPlayer->IsPlayer())
+					continue;
+
+				player_info_t pInfo;
+				if (!interfaces::Engine->GetPlayerInfo(i, &pInfo))
+					continue;
+
+				if (pInfo.userID == iUserID)
+				{
+					LuaClasses::EntityLua::push_entity(L, pPlayer);
+					return 1;
+				}
+			}
+
+			lua_pushnil(L);
 			return 1;
 		}
 	}

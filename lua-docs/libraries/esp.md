@@ -21,3 +21,20 @@ returns **bool**
 
 ### > UnregisterAll( )
 Unregisters every lua element from the ESP
+
+## Examples
+
+```lua
+local col = {r = 255, g = 0, b = 255, a = 255}
+
+esp.Register
+(
+	"coolid",
+	"hello",
+	ESP_ALIGN_TOP,
+	col,
+	function(entity: Entity, data: ESP_Data)
+		return entity:IsAlive() and data.health > 0
+	end
+)
+```

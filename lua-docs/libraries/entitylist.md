@@ -5,14 +5,24 @@
 ### > GetEntityAtIndex( index: **int** )
 returns **Entity?**
 
+---
+
 ### > GetLocalPlayer( )
-returns **Entity**
+returns **Entity?**
+
+Can return nil
+
+---
 
 ### > GetHighestEntityIndex( )
 returns **int**
 
+---
+
 ### > GetPlayers( )
 returns **Entity[]**
+
+---
 
 ### > GetTeammates( )
 returns **Entity[]**
@@ -21,9 +31,18 @@ This can return entities that aren't players!
 
 What this returns depends on your aimbot settings
 
+---
+
 ### > GetEnemies( )
 returns **Entity[]**
 
 This can return entities that aren't players!
 
 What this returns depends on your aimbot settings
+
+---
+
+### > GetByClassID( classID: **int** )
+returns **Entity?**
+
+Can return nil

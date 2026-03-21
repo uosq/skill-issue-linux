@@ -3,14 +3,22 @@
 ### > GetAimbotTargetColor( )
 returns **table** [r: **int**, g: **int**, b: **int**, a: **int**]
 
+---
+
 ### > GetRedTeamColor( )
 returns **table** [r: **int**, g: **int**, b: **int**, a: **int**]
+
+---
 
 ### > GetBluTeamColor( )
 returns **table** [r: **int**, g: **int**, b: **int**, a: **int**]
 
+---
+
 ### > GetWeaponColor( )
 returns **table** [r: **int**, g: **int**, b: **int**, a: **int**]
+
+---
 
 ## Examples
 
