@@ -3,6 +3,9 @@
 #include "../../../sdk/definitions/cgametrace.h"
 #include "../../../sdk/definitions/ctracefilters.h"
 
+#define CAM_HULL_OFFSET 14.0f
+#define CAM_UP_OFFSET 25.0f
+
 // Call in FrameStageNotify -> FRAME_NET_UPDATE_END
 void Thirdperson::FrameStageNotify(CTFPlayer* pLocal)
 {
@@ -33,26 +36,32 @@ void Thirdperson::OverrideView(CTFPlayer* pLocal, CViewSetup *pView)
 
 	if (interfaces::CInput->CAM_IsThirdPerson())
 	{
+		bool bActive = Settings::Misc.thirdperson_key->IsActive();
 		Vector vecViewAngles = pView->angles;
-	
+		Vector vecCamOffset = GetCameraOffset();
+
 		Vector vecForward, vecRight, vecUp;
 		Math::AngleVectors(vecViewAngles, &vecForward, &vecRight, &vecUp);
 	
-		float flScale = Settings::Misc.thirdperson_offset[3];
+		float flScale = bActive ? Settings::Misc.thirdperson_offset[3] : 1.0f;
 	
 		Vector vecOrigin = pView->origin;
-	
+
 		CGameTrace trace{};
 		CTraceFilterWorldAndPropsOnly filter{};
 		filter.pSkip = pLocal;
-	
+
 		Vector vecEnd =
 		pLocal->GetEyePos()
-		+ (vecForward * Settings::Misc.thirdperson_offset[0] * flScale)
-		+ (vecRight * Settings::Misc.thirdperson_offset[1] * flScale)
-		+ (vecUp * Settings::Misc.thirdperson_offset[2] * flScale);
-	
-		helper::engine::Trace(pView->origin, vecEnd, MASK_SHOT_HULL, &filter, &trace);
+		+ (vecForward * vecCamOffset.x * flScale)
+		+ (vecRight * vecCamOffset.y * flScale)
+		+ (vecUp * vecCamOffset.z * flScale);
+
+		Vector vecHullMin, vecHullMax;
+		vecHullMin.Set(-CAM_HULL_OFFSET, -CAM_HULL_OFFSET, -CAM_HULL_OFFSET);
+		vecHullMax.Set(CAM_HULL_OFFSET, CAM_HULL_OFFSET, CAM_HULL_OFFSET);
+
+		helper::engine::TraceHull(pView->origin, vecEnd, vecHullMin, vecHullMax, MASK_SHOT_HULL, &filter, &trace);
 	
 		vecEnd = trace.endpos;
 	
@@ -74,4 +83,12 @@ bool Thirdperson::ShouldIgnoreBind(CTFPlayer *pLocal)
 bool Thirdperson::IsThirdPerson(CTFPlayer* pLocal)
 {
 	return Settings::Misc.thirdperson_key->IsActive() || ShouldIgnoreBind(pLocal);
+}
+
+Vector Thirdperson::GetCameraOffset()
+{
+	if (Settings::Misc.thirdperson_key->IsActive())
+		return {Settings::Misc.thirdperson_offset[0], Settings::Misc.thirdperson_offset[1], Settings::Misc.thirdperson_offset[2]};
+	else
+		return {-150.0f, 0, CAM_UP_OFFSET};
 }

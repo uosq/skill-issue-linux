@@ -31,12 +31,13 @@ DECLARE_VTABLE_HOOK(OverrideView, void, (IClientMode *thisptr, CViewSetup *pView
 
 	if (CTFPlayer* pLocal = EntityList::GetLocal(); pLocal != nullptr)
 	{
+		Thirdperson::OverrideView(pLocal, pView);
+
 		if (!pLocal->IsAlive())
 			return;
 
 		NoRecoil::RunOverrideView(pLocal, pView);
 		CustomFov::Run(pLocal, pView);
-		Thirdperson::OverrideView(pLocal, pView);
 	}
 }
 

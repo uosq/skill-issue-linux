@@ -211,11 +211,11 @@ inline int Hooked_PollEvent(SDL_Event* event)
 // fuck my life
 inline int Hooked_GetWindowSize(SDL_Window* window, int* w, int* h)
 {
-	if (!tfwindow && window)
+	if (window != nullptr)
 		tfwindow = window;
 
 	int ret = 0;
-	DETOUR_ORIG_GET(&windowsizedetour, ret, original_GetWindowSize, tfwindow, w, h);
+	DETOUR_ORIG_GET(&windowsizedetour, ret, original_GetWindowSize, window, w, h);
 	return ret;
 }
 

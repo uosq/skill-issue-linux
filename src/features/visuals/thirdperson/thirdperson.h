@@ -12,4 +12,6 @@ namespace Thirdperson
 
 	bool IsThirdPerson(CTFPlayer* pLocal);
 	bool ShouldIgnoreBind(CTFPlayer* pLocal);
+
+	Vector GetCameraOffset();
 };

@@ -36,7 +36,7 @@ namespace EntityList
 
 		int localTeam = m_pLocalPlayer->m_iTeamNum();
 
-		for (int i = 1; i < interfaces::EntityList->GetHighestEntityIndex(); i++)
+		for (int i = 1; i <= interfaces::EntityList->GetHighestEntityIndex(); i++)
 		{
 			IClientEntity* entity = interfaces::EntityList->GetClientEntity(i);
 			if (entity == nullptr || entity->IsDormant())

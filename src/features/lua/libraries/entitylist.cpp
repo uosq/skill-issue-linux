@@ -15,6 +15,7 @@ namespace LuaFuncs
 			{"GetTeammates", GetTeammates},
 			{"GetEnemies", GetEnemies},
 			{"GetActiveWeapon", GetActiveWeapon},
+			{"GetByClassID", GetByClassID},
 			{nullptr, nullptr}
 		};
 
@@ -168,6 +169,29 @@ namespace LuaFuncs
 			}
 
 			LuaClasses::EntityLua::push_entity(L, pWeapon);
+			return 1;
+		}
+
+		// entities.GetEntitiesByID(217) -- 217 = stickies
+		int GetByClassID(lua_State* L)
+		{
+			int id = luaL_checkinteger(L, 1);
+
+			lua_newtable(L);
+
+			for (int i = 1; i <= interfaces::EntityList->GetHighestEntityIndex(); i++)
+			{
+				CBaseEntity* pEntity = static_cast<CBaseEntity*>(interfaces::EntityList->GetClientEntity(i));
+				if (pEntity == nullptr)
+					continue;
+
+				if (static_cast<int>(pEntity->GetClassID()) != id)
+					continue;
+
+				LuaClasses::EntityLua::push_entity(L, pEntity);
+				lua_rawseti(L, -2, i);
+			}
+
 			return 1;
 		}
 	}
