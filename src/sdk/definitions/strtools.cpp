@@ -1,4 +1,5 @@
 #include "strtools.h"
+#include <cstdio>
 #include <cstring>
 #include <cassert>
 
@@ -30,33 +31,18 @@ unsigned char V_nibble( char c )
 	return '0';
 }
 
-//-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : *in - 
-//			numchars - 
-//			*out - 
-//			maxoutputbytes - 
-//-----------------------------------------------------------------------------
-void V_hextobinary( char const *in, int numchars, byte *out, int maxoutputbytes )
+void V_binarytohex( const byte *in, int inputbytes, char *out, int outsize )
 {
-	int len = strlen( in );
-	numchars = std::min( len, numchars );
-	// Make sure it's even
-	numchars = ( numchars ) & ~0x1;
-
-	// Must be an even # of input characters (two chars per output byte)
-	assert( numchars >= 2 );
-
-	memset( out, 0x00, maxoutputbytes );
-
-	byte *p;
+	assert( outsize >= 1 );
+	char doublet[10];
 	int i;
 
-	p = out;
-	for ( i = 0; 
-		 ( i < numchars ) && ( ( p - out ) < maxoutputbytes ); 
-		 i+=2, p++ )
+	out[0]=0;
+
+	for ( i = 0; i < inputbytes; i++ )
 	{
-		*p = ( V_nibble( in[i] ) << 4 ) | V_nibble( in[i+1] );		
+		unsigned char c = in[i];
+		snprintf( doublet, sizeof( doublet ), "%02x", c );
+		strncat( out, doublet, outsize );
 	}
 }
