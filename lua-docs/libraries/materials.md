@@ -9,7 +9,7 @@ The **vmt** parameter must be valid
 
 Example:
 ```lua
-local mat = materials.Create("test",
+local mat = materials.CreateMaterial("test",
 [[
 UnlitGeneric
 {

@@ -370,8 +370,13 @@ std::vector<PotentialTarget> CAimbotProjectile::GetBestTargets(CTFPlayer* pLocal
 void CAimbotProjectile::RunMain(CTFPlayer* pLocal, CTFWeaponBase* pWeapon)
 {
 	Reset();
-
+	
 	if (!Settings::Aimbot.key->IsEnabled())
+		return;
+
+	bool bVisualsEnabled = Settings::Aimbot.path || Settings::Aimbot.indicator;
+
+	if (!bVisualsEnabled && !Settings::Aimbot.key->IsActive())
 		return;
 
 	static ConVar* sv_gravity = interfaces::Cvar->FindVar("sv_gravity");
