@@ -7,11 +7,6 @@
 #include "../libsigscan.h"
 #include "../sdk/interfaces/interfaces.h"
 
-#if 0
-#include "../features/lua/hookmgr.h"
-#include "../features/lua/api.h"
-#include "../features/lua/classes.h"
-#endif
 #include <string>
 
 DETOUR_DECL_TYPE(bool, ExecuteStringCommand, void* self, const char* pCommandString);
@@ -19,18 +14,10 @@ inline detour_ctx_t execstringcmd_ctx;
 
 inline bool HookedExecuteStringCommand(void* self, const char* pCommandString)
 {
-	std::string cmd = pCommandString;
-
-	#if 0
-	if (LuaHookManager::HasHooks("ExecStringCmd"))
-	{
-		LuaClasses::StringCmd::push(Lua::m_luaState, cmd);
-		LuaHookManager::Call(Lua::m_luaState, "ExecStringCmd", 1);
-	}
-	#endif
+	//std::string cmd = pCommandString;
 
 	bool ret;
-	DETOUR_ORIG_GET(&execstringcmd_ctx, ret, ExecuteStringCommand, self, cmd.c_str());
+	DETOUR_ORIG_GET(&execstringcmd_ctx, ret, ExecuteStringCommand, self, pCommandString);
 
 	return ret;
 }

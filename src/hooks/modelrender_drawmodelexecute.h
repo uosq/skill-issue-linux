@@ -11,12 +11,6 @@
 #include "../features/glow/glow.h"
 #include "../features/backtrack/backtrack.h"
 
-#if 0
-#include "../features/lua/hookmgr.h"
-#include "../features/lua/api.h"
-#include "../features/lua/classes.h"
-#endif
-
 #include "../features/angelscript/api/classes/drawmodelcontext/drawmodelcontext.h"
 
 #include "../features/angelscript/api/api.h"

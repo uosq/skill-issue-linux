@@ -65,16 +65,7 @@ DECLARE_VTABLE_HOOK(FrameStageNotify, void, (CHLClient* thisptr, int stage))
 		default: break;
 	}
 
-	#if 0
-	if (LuaHookManager::HasHooks("FrameStageNotify"))
-	{
-		lua_pushinteger(Lua::m_luaState, stage);
-		LuaHookManager::Call(Lua::m_luaState, "FrameStageNotify", 1);
-	}
-	#endif
-
 	AS_FrameStage_Callback(stage);
-
 	originalFrameStageNotify(thisptr, stage);
 }
 

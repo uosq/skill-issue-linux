@@ -8,12 +8,6 @@
 #include "../settings/settings.h"
 #include <string>
 
-#if 0
-#include "../features/lua/classes.h"
-#include "../features/lua/hookmgr.h"
-#include "../features/lua/api.h"
-#endif
-
 #include "../features/visuals/customfov/customfov.h"
 #include "../features/visuals/norecoil/norecoil.h"
 #include "../features/visuals/thirdperson/thirdperson.h"
@@ -48,13 +42,6 @@ DECLARE_VTABLE_HOOK(OverrideView, void, (IClientMode *thisptr, CViewSetup *pView
 	if (pView == nullptr)
 		return;
 
-	#if 0
-	if (LuaHookManager::HasHooks("OverrideView"))
-	{
-		LuaClasses::ViewSetupLua::push_viewsetup(Lua::m_luaState, pView);
-		LuaHookManager::Call(Lua::m_luaState, "OverrideView", 1);
-	}
-	#endif
 	AS_OverrideView_Callback(pView);
 
 	if (CTFPlayer* pLocal = EntityList::GetLocal(); pLocal != nullptr)

@@ -38,13 +38,7 @@ DECLARE_VTABLE_HOOK(LevelInitPostEntity, void, (CHLClient* thisptr))
 	EntityList::Reserve();
 	ViewmodelAim::ResetStopTime();
 
-	#if 0
-	if (LuaHookManager::HasHooks("LevelInitPostEntity"))
-		LuaHookManager::Call(Lua::m_luaState, "LevelInitPostEntity", 0);
-	#endif
-
-	
-
+	AS_LevelInitPostEntity_Callback();
 	originalLevelInitPostEntity(thisptr);
 }
 

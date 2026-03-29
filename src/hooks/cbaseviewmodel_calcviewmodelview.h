@@ -14,12 +14,6 @@
 
 #include "../libdetour/libdetour.h"
 
-#if 0
-#include "../features/lua/hookmgr.h"
-#include "../features/lua/api.h"
-#include "../features/lua/classes.h"
-#endif
-
 #include "../features/angelscript/api/api.h"
 #include "../features/angelscript/api/libraries/hooks/hooks.h"
 
@@ -54,16 +48,6 @@ inline void HookedCalcViewModelView(void* thisptr, CBaseEntity* owner, const Vec
 
 	if (owner)
 	{
-		#if 0
-		if (LuaHookManager::HasHooks("CalcViewModelView"))
-		{
-			LuaClasses::Vector3::push(Lua::m_luaState, position);
-			LuaClasses::Vector3::push(Lua::m_luaState, angle);
-
-			LuaHookManager::Call(Lua::m_luaState, "CalcViewModelView", 2);
-		}
-		#endif
-
 		AS_CalcViewModelView_Callback(position, angle);
 
 		ViewmodelInterp::Run(angle);

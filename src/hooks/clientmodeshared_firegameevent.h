@@ -4,12 +4,6 @@
 #include "../libdetour/libdetour.h"
 #include "../libsigscan.h"
 
-#if 0
-#include "../features/lua/hookmgr.h"
-#include "../features/lua/api.h"
-#include "../features/lua/classes.h"
-#endif
-
 #include "../features/angelscript/api/api.h"
 #include "../features/angelscript/api/libraries/hooks/hooks.h"
 
@@ -45,14 +39,6 @@ inline void Hooked_FireGameEvent(void* self, IGameEvent* event)
 		DETOUR_ORIG_CALL(&firegameevent_ctx, original_FireGameEvent, self, event);
 		return;
 	}
-
-	#if 0
-	if (LuaHookManager::HasHooks("FireGameEvent"))
-	{
-		LuaClasses::GameEventLua::push_gameevent(Lua::m_luaState, event);
-		LuaHookManager::Call(Lua::m_luaState, "FireGameEvent", 1);
-	}
-	#endif
 
 	AS_FireGameEvent_Callback(event);
 

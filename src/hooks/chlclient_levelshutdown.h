@@ -5,11 +5,6 @@
 #include "../sdk/helpers/helper.h"
 
 #include "../features/entitylist/entitylist.h"
-#if 0
-#include "../features/lua/hookmgr.h"
-#include "../features/lua/api.h"
-#include "../features/lua/classes.h"
-#endif
 #include "../features/warp/warp.h"
 #include "../features/backtrack/backtrack.h"
 #include "../features/aimbot/projectile/projectile.h"
@@ -46,13 +41,7 @@ DECLARE_VTABLE_HOOK(LevelShutdown, void, (CHLClient* thisptr))
 	gAimProjectile.ResetIndicator();
 	Bhop::Reset();
 
-	#if 0
-	if (LuaHookManager::HasHooks("LevelShutdown"))
-		LuaHookManager::Call(Lua::m_luaState, "LevelShutdown");
-	#endif
-
 	AS_LevelShutdown_Callback();
-
 	originalLevelShutdown(thisptr);
 }
 

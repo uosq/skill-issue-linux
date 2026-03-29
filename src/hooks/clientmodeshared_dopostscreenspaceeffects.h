@@ -10,11 +10,6 @@
 #include "../features/backtrack/backtrack.h"
 #include "../features/visuals/thirdperson/thirdperson.h"
 
-#if 0
-#include "../features/lua/hookmgr.h"
-#include "../features/lua/api.h"
-#endif
-
 #include "../features/angelscript/api/api.h"
 #include "../features/angelscript/api/libraries/hooks/hooks.h"
 
@@ -39,13 +34,6 @@ static void AS_DPPSE_Callback()
 
 DECLARE_VTABLE_HOOK(DoPostScreenSpaceEffects, bool, (IClientMode* thisptr, CViewSetup* setup))
 {
-	#if 0
-	if (LuaHookManager::HasHooks("DoPostScreenSpaceEffects"))
-		LuaHookManager::Call(Lua::m_luaState, "DoPostScreenSpaceEffects", 0);
-	#endif
-
-	
-
 	Backtrack::DoPostScreenSpaceEffects();
 	Chams::Run();
 	Glow::Run();
@@ -67,6 +55,7 @@ DECLARE_VTABLE_HOOK(DoPostScreenSpaceEffects, bool, (IClientMode* thisptr, CView
 		}
 	}
 
+	AS_DPPSE_Callback();
 	return originalDoPostScreenSpaceEffects(thisptr, setup);
 }
 
