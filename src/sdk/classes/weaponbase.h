@@ -17,6 +17,24 @@ class CTFGrenadePipebombProjectile;
 
 typedef unsigned short WEAPON_FILE_INFO_HANDLE;
 
+struct BobState_t
+{
+	BobState_t() 
+	{ 
+		m_flBobTime = 0; 
+		m_flLastBobTime = 0;
+		m_flLastSpeed = 0;
+		m_flVerticalBob = 0;
+		m_flLateralBob = 0;
+	}
+
+	float m_flBobTime;
+	float m_flLastBobTime;
+	float m_flLastSpeed;
+	float m_flVerticalBob;
+	float m_flLateralBob;
+};
+
 // xref: CHudCrosshair
 // Almost all of the functions with 1 parameter is GetTFWpnData
 // Then to get the ofset for the handle you do

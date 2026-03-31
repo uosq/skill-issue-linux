@@ -15,26 +15,6 @@
 #include "../features/angelscript/api/api.h"
 #include "../features/angelscript/api/libraries/hooks/hooks.h"
 
-static void AS_OverrideView_Callback(CViewSetup* pView)
-{
-	std::vector<ASHook> hooks;
-	if (!Hooks_GetHooks("OverrideView", hooks))
-		return;
-
-	auto engine = API::GetScriptEngine();
-
-	for (const auto& hook : hooks)
-	{
-		asIScriptContext* ctx = engine->RequestContext();
-
-		ctx->Prepare(hook.func);
-		ctx->SetArgObject(0, pView);
-		ctx->Execute();
-
-		engine->ReturnContext(ctx);
-	}
-}
-
 DECLARE_VTABLE_HOOK(OverrideView, void, (IClientMode *thisptr, CViewSetup *pView))
 {
 	originalOverrideView(thisptr, pView);
@@ -42,7 +22,10 @@ DECLARE_VTABLE_HOOK(OverrideView, void, (IClientMode *thisptr, CViewSetup *pView
 	if (pView == nullptr)
 		return;
 
-	AS_OverrideView_Callback(pView);
+	Hooks_CallHooks("OverrideView", [&](asIScriptContext* ctx)
+	{
+		ctx->SetArgObject(0, &pView);
+	});
 
 	if (CTFPlayer* pLocal = EntityList::GetLocal(); pLocal != nullptr)
 	{

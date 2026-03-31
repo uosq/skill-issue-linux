@@ -21,6 +21,7 @@ bool Execute(const std::string& text)
 	asIScriptModule* mod = engine->GetModule("code", asGM_ALWAYS_CREATE);
 
 	mod->AddScriptSection("script", text.c_str());
+	mod->SetAccessMask(GetScriptAccessMask());
 	mod->Build();
 
 	auto ctx = GetScriptContext();

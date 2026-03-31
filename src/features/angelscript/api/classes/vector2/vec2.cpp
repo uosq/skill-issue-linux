@@ -2,7 +2,7 @@
 
 #include "../../../../../sdk/definitions/vector.h"
 
-#define VEC2_CLASSNAME "Vector2D"
+#define VEC2_CLASSNAME "Vector2"
 
 void Vector2_Default(Vec2* self)
 {

@@ -1,6 +1,8 @@
 #include "core.h"
 
+#include "../sdk/signatures/signatures.h"
 #include "../sdk/interfaces/interfaces.h"
+
 #include "../features/chams/chams.h"
 #include "../features/esp/esp.h"
 #include "../features/glow/glow.h"
@@ -45,8 +47,8 @@
 #include "../hooks/ctfwearable_shoulddraw.h"
 #include "../hooks/iclientmode_shoulddrawviewmodel.h"
 #include "../hooks/cbaseplayer_shoulddrawlocalplayer.h"
+#include "../hooks/calcviewmodelbobhelper.h"
 //#include "../hooks/cbaseentity_shoulddraw.h"
-#include "../sdk/signatures/signatures.h"
 
 CApp::CApp() : m_bInitialized(false) {}
 
@@ -123,6 +125,7 @@ bool CApp::StartHooks()
 	Hook_CTFWearable_ShouldDraw();
 	Hook_ShouldDrawViewModel();
 	Hook_CBasePlayer_ShouldDrawLocalPlayer();
+	Hook_CalcViewModelBobHelper();
 	//Hook_CBaseEntity_ShouldDraw();
 
 	m_bInitialized = true;

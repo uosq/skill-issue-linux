@@ -23,8 +23,8 @@ void ViewSetup_RegisterClass(asIScriptEngine* engine)
 	engine->RegisterObjectProperty(VIEWSETUP_CLASSNAME, "float m_OrthoBottom", asOFFSET(CViewSetup, m_OrthoBottom));
 	engine->RegisterObjectProperty(VIEWSETUP_CLASSNAME, "float fov", asOFFSET(CViewSetup, fov));
 	engine->RegisterObjectProperty(VIEWSETUP_CLASSNAME, "float fovViewmodel", asOFFSET(CViewSetup, fovViewmodel));
-	engine->RegisterObjectProperty(VIEWSETUP_CLASSNAME, "Vector origin", asOFFSET(CViewSetup, origin));
-	engine->RegisterObjectProperty(VIEWSETUP_CLASSNAME, "Vector angles", asOFFSET(CViewSetup, angles));
+	engine->RegisterObjectProperty(VIEWSETUP_CLASSNAME, "Vector3 origin", asOFFSET(CViewSetup, origin));
+	engine->RegisterObjectProperty(VIEWSETUP_CLASSNAME, "Vector3 angles", asOFFSET(CViewSetup, angles));
 	engine->RegisterObjectProperty(VIEWSETUP_CLASSNAME, "float zNear", asOFFSET(CViewSetup, zNear));
 	engine->RegisterObjectProperty(VIEWSETUP_CLASSNAME, "float zFar", asOFFSET(CViewSetup, zFar));
 	engine->RegisterObjectProperty(VIEWSETUP_CLASSNAME, "float zNearViewmodel", asOFFSET(CViewSetup, zNearViewmodel));

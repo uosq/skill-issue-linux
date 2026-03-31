@@ -13,25 +13,6 @@
 #include "../features/angelscript/api/api.h"
 #include "../features/angelscript/api/libraries/hooks/hooks.h"
 
-static void AS_LevelShutdown_Callback()
-{
-	std::vector<ASHook> hooks;
-	if (!Hooks_GetHooks("LevelShutdown", hooks))
-		return;
-
-	auto engine = API::GetScriptEngine();
-
-	for (const auto& hook : hooks)
-	{
-		asIScriptContext* ctx = engine->RequestContext();
-
-		ctx->Prepare(hook.func);
-		ctx->Execute();
-
-		engine->ReturnContext(ctx);
-	}
-}
-
 DECLARE_VTABLE_HOOK(LevelShutdown, void, (CHLClient* thisptr))
 {
 	EntityList::Clear();
@@ -41,7 +22,7 @@ DECLARE_VTABLE_HOOK(LevelShutdown, void, (CHLClient* thisptr))
 	gAimProjectile.ResetIndicator();
 	Bhop::Reset();
 
-	AS_LevelShutdown_Callback();
+	Hooks_CallHooks("LevelShutdown");
 	originalLevelShutdown(thisptr);
 }
 

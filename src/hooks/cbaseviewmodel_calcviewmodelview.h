@@ -24,27 +24,6 @@ DETOUR_DECL_TYPE(void, original_CalcViewModelView, void* thisptr, CBaseEntity*, 
 
 ADD_SIG(CBaseViewModel_CalcViewModelView, "client.so", "55 48 89 E5 41 57 41 56 41 55 49 89 F5 41 54 49 89 FC 53 48 83 EC 48 8B 41 08")
 
-static void AS_CalcViewModelView_Callback(Vector& eyePos, Vector& eyeAngles)
-{
-	std::vector<ASHook> hooks;
-	if (!Hooks_GetHooks("CalcViewModelView", hooks))
-		return;
-
-	auto engine = API::GetScriptEngine();
-
-	for (const auto& hook : hooks)
-	{
-		asIScriptContext* ctx = engine->RequestContext();
-
-		ctx->Prepare(hook.func);
-		ctx->SetArgObject(0, &eyePos);
-		ctx->SetArgObject(1, &eyeAngles);
-		ctx->Execute();
-
-		engine->ReturnContext(ctx);
-	}
-}
-
 inline void HookedCalcViewModelView(void* thisptr, CBaseEntity* owner, const Vector& eyePosition, const QAngle& eyeAngles)
 {
 	Vector angle = eyeAngles;
@@ -52,7 +31,11 @@ inline void HookedCalcViewModelView(void* thisptr, CBaseEntity* owner, const Vec
 
 	if (owner)
 	{
-		AS_CalcViewModelView_Callback(position, angle);
+		Hooks_CallHooks("CalcViewModelView", [&](asIScriptContext* ctx)
+		{
+			ctx->SetArgObject(0, &position);
+			ctx->SetArgObject(1, &angle);
+		});
 
 		ViewmodelInterp::Run(angle);
 		ViewmodelAim::Run(angle);

@@ -1,6 +1,7 @@
 #include "hooks.h"
-#include <unordered_map>
 #include "../../globals.h"
+
+#include <unordered_map>
 
 std::unordered_map<std::string, std::vector<ASHook>>& GetHookList()
 {
@@ -60,13 +61,37 @@ bool Hooks_GetHooks(const std::string& event, std::vector<ASHook>& out)
 	return true;
 }
 
+void ExecuteHook(const ASHook& hook, const std::function<void(asIScriptContext*)>& argSetter)
+{
+	auto engine = GetScriptEngine();
+	asIScriptContext* ctx = engine->RequestContext();
+
+	ctx->Prepare(hook.func);
+
+	// let caller set arguments however they want
+	if (argSetter) argSetter(ctx);
+
+	ctx->Execute();
+	engine->ReturnContext(ctx);
+}
+
+void Hooks_CallHooks(const std::string& name, const std::function<void(asIScriptContext*)>& argSetter)
+{
+	std::vector<ASHook> hooks;
+	if (!Hooks_GetHooks(name, hooks))
+		return;
+
+	for (const auto& hook : hooks)
+		ExecuteHook(hook, argSetter);
+}
+
 void Hooks_RegisterLibrary(asIScriptEngine* engine)
 {
 	const char* strDefaultNamespace = engine->GetDefaultNamespace();
 
 	engine->RegisterFuncdef("void CreateMoveHook(UserCmd@ cmd)");
 	engine->RegisterFuncdef("void OverrideViewHook(ViewSetup@ view)");
-	engine->RegisterFuncdef("void CalcViewModelHook(Vector position, Vector angle)");
+	engine->RegisterFuncdef("void CalcViewModelHook(Vector3 position, Vector3 angle)");
 	engine->RegisterFuncdef("void GenericHook()");
 	engine->RegisterFuncdef("void LevelInitPreEntHook(const string &in mapName)");
 	engine->RegisterFuncdef("void DrawModelHook(DrawModelContext@ ctx)");

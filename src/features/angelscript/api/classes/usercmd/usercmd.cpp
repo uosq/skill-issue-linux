@@ -23,7 +23,7 @@ void UserCmd_RegisterClass(asIScriptEngine* engine)
 
 	engine->RegisterObjectProperty(USERCMD_CLASSNAME, "int command_number", asOFFSET(CUserCmd, command_number));
 	engine->RegisterObjectProperty(USERCMD_CLASSNAME, "int tick_count", asOFFSET(CUserCmd, tick_count));
-	engine->RegisterObjectProperty(USERCMD_CLASSNAME, "Vector viewangles", asOFFSET(CUserCmd, viewangles));
+	engine->RegisterObjectProperty(USERCMD_CLASSNAME, "Vector3 viewangles", asOFFSET(CUserCmd, viewangles));
 	engine->RegisterObjectProperty(USERCMD_CLASSNAME, "float forwardmove", asOFFSET(CUserCmd, forwardmove));
 	engine->RegisterObjectProperty(USERCMD_CLASSNAME, "float sidemove", asOFFSET(CUserCmd, sidemove));
 	engine->RegisterObjectProperty(USERCMD_CLASSNAME, "float upmove", asOFFSET(CUserCmd, upmove));

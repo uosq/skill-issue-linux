@@ -8,25 +8,11 @@
 #include "../features/angelscript/api/libraries/hooks/hooks.h"
 
 static void AS_LevelInitPreEntity_Callback(const char* mapName)
-{
-	std::vector<ASHook> hooks;
-	if (!Hooks_GetHooks("LevelInitPreEntity", hooks))
-		return;
-
-	auto engine = API::GetScriptEngine();
-
-	std::string name(mapName);
-
-	for (const auto& hook : hooks)
+{	
+	Hooks_CallHooks("LevelInitPreEntity", [&](asIScriptContext* ctx)
 	{
-		asIScriptContext* ctx = engine->RequestContext();
-
-		ctx->Prepare(hook.func);
-		ctx->SetArgObject(0, &name);
-		ctx->Execute();
-
-		engine->ReturnContext(ctx);
-	}
+		ctx->SetArgObject(0, &mapName);
+	});
 }
 
 DECLARE_VTABLE_HOOK(LevelInitPreEntity, void, (CHLClient* thisptr, const char* mapName))

@@ -8,31 +8,12 @@
 #include "../features/angelscript/api/api.h"
 #include "../features/angelscript/api/libraries/hooks/hooks.h"
 
-static void AS_LevelInitPostEntity_Callback()
-{
-	std::vector<ASHook> hooks;
-	if (!Hooks_GetHooks("LevelInitPostEntity", hooks))
-		return;
-
-	auto engine = API::GetScriptEngine();
-
-	for (const auto& hook : hooks)
-	{
-		asIScriptContext* ctx = engine->RequestContext();
-
-		ctx->Prepare(hook.func);
-		ctx->Execute();
-
-		engine->ReturnContext(ctx);
-	}
-}
-
 DECLARE_VTABLE_HOOK(LevelInitPostEntity, void, (CHLClient* thisptr))
 {
 	EntityList::Reserve();
 	ViewmodelAim::ResetStopTime();
 
-	AS_LevelInitPostEntity_Callback();
+	Hooks_CallHooks("LevelInitPostEntity");
 	originalLevelInitPostEntity(thisptr);
 }
 

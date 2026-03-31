@@ -16,7 +16,6 @@
 #include "../../sdk/definitions/con_nprint.h"
 
 #include "../angelscript/api/libraries/hooks/hooks.h"
-#include "../angelscript/api/api.h"
 
 #include "../../sdk/signatures/signatures.h"
 
@@ -37,26 +36,6 @@ using Host_ShouldRunFn = bool(*)(void);
 
 bool TickManager::m_bSendPacket = true;
 uint8_t TickManager::m_iChokedCommands = 0;
-
-void AS_CreateMove_Callback(CUserCmd* pCmd)
-{
-	std::vector<ASHook> hooks;
-	if (!Hooks_GetHooks("CreateMove", hooks))
-		return;
-
-	auto engine = API::GetScriptEngine();
-
-	for (const auto& hook : hooks)
-	{
-		asIScriptContext* ctx = engine->RequestContext();
-
-		ctx->Prepare(hook.func);
-		ctx->SetArgObject(0, pCmd);
-		ctx->Execute();
-
-		engine->ReturnContext(ctx);
-	}
-}
 
 void TickManager::Post_CreateMove(int sequence_number)
 {
@@ -91,7 +70,10 @@ void TickManager::Post_CreateMove(int sequence_number)
 	Aimbot::Run(pLocal, pWeapon, pCmd);
 	Triggerbot::Run(pLocal, pWeapon, pCmd);
 
-	AS_CreateMove_Callback(pCmd);
+	Hooks_CallHooks("CreateMove", [&](asIScriptContext* ctx)
+	{
+		ctx->SetArgObject(0, pCmd);
+	});
 
 	if (reinterpret_cast<CClientState*>(interfaces::ClientState)->chokedcommands >= 21)
 		m_bSendPacket = true;

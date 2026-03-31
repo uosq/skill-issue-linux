@@ -13,25 +13,6 @@
 #include "../features/angelscript/api/api.h"
 #include "../features/angelscript/api/libraries/hooks/hooks.h"
 
-static void AS_DPPSE_Callback()
-{
-	std::vector<ASHook> hooks;
-	if (!Hooks_GetHooks("DoPostScreenSpaceEffects", hooks))
-		return;
-
-	auto engine = API::GetScriptEngine();
-
-	for (const auto& hook : hooks)
-	{
-		asIScriptContext* ctx = engine->RequestContext();
-
-		ctx->Prepare(hook.func);
-		ctx->Execute();
-
-		engine->ReturnContext(ctx);
-	}
-}
-
 DECLARE_VTABLE_HOOK(DoPostScreenSpaceEffects, bool, (IClientMode* thisptr, CViewSetup* setup))
 {
 	Backtrack::DoPostScreenSpaceEffects();
@@ -55,7 +36,7 @@ DECLARE_VTABLE_HOOK(DoPostScreenSpaceEffects, bool, (IClientMode* thisptr, CView
 		}
 	}
 
-	AS_DPPSE_Callback();
+	Hooks_CallHooks("DoPostScreenSpaceEffects");
 	return originalDoPostScreenSpaceEffects(thisptr, setup);
 }
 

@@ -1,9 +1,9 @@
-# Vector2D Class
+# Vector2 Class
 
 ## Constructor
-### > Vector2D()
+### > Vector2()
 
-### > Vector2D(float x, float y)
+### > Vector2(float x, float y)
 
 ## Fields
 ### > float x

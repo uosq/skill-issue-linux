@@ -16,26 +16,6 @@ ADD_SIG(ClientModeShared_FireGameEvent, "client.so", "55 48 89 E5 41 57 41 56 49
 inline detour_ctx_t firegameevent_ctx;
 DETOUR_DECL_TYPE(void, original_FireGameEvent, void* self, IGameEvent* gameEvent);
 
-static void AS_FireGameEvent_Callback(IGameEvent* event)
-{
-	std::vector<ASHook> hooks;
-	if (!Hooks_GetHooks("FireGameEvent", hooks))
-		return;
-
-	auto engine = API::GetScriptEngine();
-
-	for (const auto& hook : hooks)
-	{
-		asIScriptContext* ctx = engine->RequestContext();
-
-		ctx->Prepare(hook.func);
-		ctx->SetArgObject(0, event);
-		ctx->Execute();
-
-		engine->ReturnContext(ctx);
-	}
-}
-
 inline void Hooked_FireGameEvent(void* self, IGameEvent* event)
 {
 	if (event == nullptr)
@@ -44,7 +24,10 @@ inline void Hooked_FireGameEvent(void* self, IGameEvent* event)
 		return;
 	}
 
-	AS_FireGameEvent_Callback(event);
+	Hooks_CallHooks("FireGameEvent", [&](asIScriptContext* ctx)
+	{
+		ctx->SetArgObject(0, &event);
+	});
 
 	DETOUR_ORIG_CALL(&firegameevent_ctx, original_FireGameEvent, self, event);
 }

@@ -18,22 +18,7 @@ DETOUR_DECL_TYPE(void, originalHost_ShutdownFn, void);
 
 static void HookedHost_ShutdownFn(void)
 {
-	std::vector<ASHook> hooks;
-	if (Hooks_GetHooks("GameShutdown", hooks))
-	{
-		auto engine = API::GetScriptEngine();
-
-		for (const auto& hook : hooks)
-		{
-			asIScriptContext* ctx = engine->RequestContext();
-
-			ctx->Prepare(hook.func);
-			ctx->Execute();
-
-			engine->ReturnContext(ctx);
-		}
-	}
-
+	Hooks_CallHooks("GameShutdown");
 	DETOUR_ORIG_CALL(&shutdownctx, originalHost_ShutdownFn);
 }
 

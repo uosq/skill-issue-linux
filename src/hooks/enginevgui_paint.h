@@ -15,34 +15,10 @@
 #include "../features/entitylist/entitylist.h"
 #include "../features/warp/warp.h"
 
-#if 0
-#include "../features/lua/hookmgr.h"
-#include "../features/lua/api.h"
-#endif
-
 #include "../features/angelscript/api/api.h"
 #include "../features/angelscript/api/libraries/hooks/hooks.h"
 
 #include "../core/core.h"
-
-static void AS_VGUIPaint_Callback()
-{
-	std::vector<ASHook> hooks;
-	if (!Hooks_GetHooks("Draw", hooks))
-		return;
-
-	auto engine = API::GetScriptEngine();
-
-	for (const auto& hook : hooks)
-	{
-		asIScriptContext* ctx = engine->RequestContext();
-
-		ctx->Prepare(hook.func);
-		ctx->Execute();
-
-		engine->ReturnContext(ctx);
-	}
-}
 
 DECLARE_VTABLE_HOOK(VGuiPaint, void, (IEngineVGui* thisptr, PaintMode_t paint))
 {
@@ -60,11 +36,7 @@ DECLARE_VTABLE_HOOK(VGuiPaint, void, (IEngineVGui* thisptr, PaintMode_t paint))
 	{
 		interfaces::Surface->StartDrawing();
 
-		#if 0
-		if (LuaHookManager::HasHooks("Draw"))
-			LuaHookManager::Call(Lua::m_luaState, "Draw", 0);
-		#endif
-		AS_VGUIPaint_Callback();
+		Hooks_CallHooks("Draw");
 
 		FontManager::SetFont(ESP::GetFont());
 

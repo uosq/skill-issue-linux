@@ -6,33 +6,8 @@
 #include "../features/visuals/customfov/customfov.h"
 #include "../features/entitylist/entitylist.h"
 
-#if 0
-#include "../features/lua/hookmgr.h"
-#include "../features/lua/api.h"
-#endif
-
 #include "../features/angelscript/api/api.h"
 #include "../features/angelscript/api/libraries/hooks/hooks.h"
-
-static void AS_FrameStage_Callback(int stage)
-{
-	std::vector<ASHook> hooks;
-	if (!Hooks_GetHooks("FrameStageNotify", hooks))
-		return;
-
-	auto engine = API::GetScriptEngine();
-
-	for (const auto& hook : hooks)
-	{
-		asIScriptContext* ctx = engine->RequestContext();
-
-		ctx->Prepare(hook.func);
-		ctx->SetArgDWord(0, stage);
-		ctx->Execute();
-
-		engine->ReturnContext(ctx);
-	}
-}
 
 DECLARE_VTABLE_HOOK(FrameStageNotify, void, (CHLClient* thisptr, int stage))
 {
@@ -65,7 +40,10 @@ DECLARE_VTABLE_HOOK(FrameStageNotify, void, (CHLClient* thisptr, int stage))
 		default: break;
 	}
 
-	AS_FrameStage_Callback(stage);
+	Hooks_CallHooks("FrameStageNotify", [&](asIScriptContext* ctx)
+	{
+		ctx->SetArgDWord(0, stage);
+	});
 	originalFrameStageNotify(thisptr, stage);
 }
 

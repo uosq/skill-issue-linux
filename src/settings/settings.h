@@ -206,6 +206,8 @@ namespace Settings
 
 		bool no_scope_overlay = false;
 		bool no_zoom = false;
+
+		bool no_viewmodel_bob = false;
 	};
 
 	extern SettingsMisc Misc;
@@ -370,6 +372,7 @@ namespace Settings
 		CONFIG_BOOL("misc no engine sleep", Misc.no_engine_sleep),
 		CONFIG_BOOL("no scope overlay", Misc.no_scope_overlay),
 		CONFIG_BOOL("no zoom", Misc.no_zoom),
+		CONFIG_BOOL("no viewmodel bob", Misc.no_viewmodel_bob),
 
 		//triggerbot
 		CONFIG_KEY("trigger key", Trigger.key),

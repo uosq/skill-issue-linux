@@ -16,28 +16,6 @@
 #include "../features/angelscript/api/api.h"
 #include "../features/angelscript/api/libraries/hooks/hooks.h"
 
-static void AS_DrawModelExecute_Callback(DrawModelContext& ctx)
-{
-	std::vector<ASHook> hooks;
-	if (Hooks_GetHooks("DrawModel", hooks))
-	{
-		auto engine = API::GetScriptEngine();
-
-		for (const auto& hook : hooks)
-		{
-			asIScriptContext* ctx = engine->RequestContext();
-
-			ctx->Prepare(hook.func);
-			ctx->SetArgObject(0, &ctx);
-			ctx->Execute();
-
-			engine->ReturnContext(ctx);
-		}
-
-		ctx.valid = false;
-	}
-}
-
 DECLARE_VTABLE_HOOK(DrawModelExecute, void, (IVModelRender* thisptr, const DrawModelState_t &state, const ModelRenderInfo_t &pInfo, matrix3x4 *pCustomBoneToWorld))
 {
 	//if (settings.esp.chams && !Chams::m_bRunning && Chams::ShouldHide(pInfo.entity_index))
@@ -60,38 +38,6 @@ DECLARE_VTABLE_HOOK(DrawModelExecute, void, (IVModelRender* thisptr, const DrawM
 		interfaces::ModelRender->ForcedMaterialOverride(nullptr);
 	}
 
-	#if 0
-	if (LuaHookManager::HasHooks("DrawModel"))
-	{
-		lua_newtable(Lua::m_luaState);
-
-		CBaseEntity* ent = static_cast<CBaseEntity*>(interfaces::EntityList->GetClientEntity(pInfo.entity_index));
-
-		if (ent != nullptr)
-			LuaClasses::EntityLua::push_entity(Lua::m_luaState, ent);
-		else
-			lua_pushnil(Lua::m_luaState);
-
-		lua_setfield(Lua::m_luaState, -2, "entity");
-
-		lua_pushcfunction(Lua::m_luaState, LuaCallDME);
-		lua_setfield(Lua::m_luaState, -2, "Call");
-
-		lua_pushboolean(Lua::m_luaState, Chams::m_bRunning);
-		lua_setfield(Lua::m_luaState, - 2, "is_chams");
-
-		lua_pushboolean(Lua::m_luaState, Glow::m_bRunning);
-		lua_setfield(Lua::m_luaState, - 2, "is_glow");
-
-		ctx.state = state;
-		ctx.pCustomBoneToWorld = pCustomBoneToWorld;
-		ctx.pInfo = pInfo;
-		ctx.thisptr = thisptr;
-
-		LuaHookManager::Call(Lua::m_luaState, "DrawModel", 1);
-	}
-	#endif
-
 	{
 		DrawModelContext ctx;
 		ctx.valid = true;
@@ -99,7 +45,10 @@ DECLARE_VTABLE_HOOK(DrawModelExecute, void, (IVModelRender* thisptr, const DrawM
 		ctx.pCustomBoneToWorld = pCustomBoneToWorld;
 		ctx.pInfo = pInfo;
 		ctx.thisptr = thisptr;
-		AS_DrawModelExecute_Callback(ctx);
+		Hooks_CallHooks("DrawModel", [&](asIScriptContext* ctx)
+		{
+			ctx->SetArgObject(0, &ctx);
+		});
 	}
 
 	if (Chams::m_bRunning || Glow::m_bRunning)

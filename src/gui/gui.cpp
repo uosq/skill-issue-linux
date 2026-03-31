@@ -36,8 +36,8 @@ void DrawTabButtons(int &tab)
 	if (ImGui::Button("MISC", ImVec2(-1, 0)))
 		tab = TAB_MISC;
 
-	if (ImGui::Button("ANTIAIM", ImVec2(-1, 0)))
-		tab = TAB_ANTIAIM;
+	//if (ImGui::Button("ANTIAIM", ImVec2(-1, 0)))
+		//tab = TAB_ANTIAIM;
 
 	if (ImGui::Button("RADAR", ImVec2(-1, 0)))
 		tab = TAB_RADAR;
@@ -244,13 +244,26 @@ void DrawMiscTab()
 
 	ImGui::Separator();
 
+	ImGui::Checkbox("No Viewmodel Bob", &Settings::Misc.no_viewmodel_bob);
 	ImGui::SliderFloat3("Viewmodel Offset", Settings::Misc.viewmodel_offset, -20, 20.0f );
 	ImGui::SliderFloat("Viewmodel Interp", &Settings::Misc.viewmodel_interp, 0.0f, 50.0f);
+
+	ImGui::Separator();
 
 	{
 		constexpr const char* items[]{"None", "Last Record Only", "All Records"};
 		ImGui::Combo("Backtrack", &Settings::Misc.backtrack, items, 3);
 	}
+
+	ImGui::Separator();
+
+	ImGui::PushStyleVar(ImGuiStyleVar_Alpha, Settings::AntiAim.warp_key->IsEnabled() ? 1.0f : 0.5f); 
+	{
+		gBinds.RenderHotkey("Warp Key", Settings::AntiAim.warp_key);
+		gBinds.RenderHotkey("Warp Recharge Key", Settings::AntiAim.warp_recharge_key);
+		ImGui::SliderInt("Warp Speed", &Settings::AntiAim.warp_speed, 1, 24);
+	}
+	ImGui::PopStyleVar();
 
 	ImGui::EndGroup();
 }
@@ -303,16 +316,6 @@ void DrawAntiaimTab()
 
 	ImGui::Separator();
 
-	gBinds.RenderHotkey("Warp Key", Settings::AntiAim.warp_key);
-	ImGui::PushStyleVar(ImGuiStyleVar_Alpha, Settings::AntiAim.warp_key->IsEnabled() ? 1.0f : 0.5f); 
-	{
-		gBinds.RenderHotkey("Warp Recharge Key", Settings::AntiAim.warp_recharge_key);
-		ImGui::SliderInt("Speed", &Settings::AntiAim.warp_speed, 1, 24);
-	}
-	ImGui::PopStyleVar();
-
-	ImGui::Separator();
-
 	ImGui::Checkbox("Fake Lag Enabled", &Settings::AntiAim.fakelag_enabled);
 
 	ImGui::BeginDisabled(!Settings::AntiAim.fakelag_enabled);
@@ -336,11 +339,11 @@ void DrawLuaTab()
 		constexpr const char* keywords[]
 		{
 			"null", "UserCmd",
-			"Entity", "Vector",
+			"Entity", "Vector3",
 			"ViewSetup", "GameEvent",
 			"DrawModelContext", "Material",
 			"Texture", "ConVar",
-			"Vector2D"
+			"Vector2"
 		};
 
 		constexpr const char* myIdentifiers[]
@@ -765,28 +768,9 @@ void GUI::RunPlayerList()
 	ImGui::End();
 }
 
-void AS_ImGui_Callback()
-{
-	std::vector<ASHook> hooks;
-	if (!Hooks_GetHooks("ImGui", hooks))
-		return;
-
-	auto engine = GetScriptEngine();
-
-	for (const auto& hook : hooks)
-	{
-		asIScriptContext* ctx = engine->RequestContext();
-
-		ctx->Prepare(hook.func);
-		ctx->Execute();
-
-		engine->ReturnContext(ctx);
-	}
-}
-
 void GUI::RunMainWindow()
 {
-	AS_ImGui_Callback();
+	Hooks_CallHooks("ImGui");
 
 	if (!Settings::menu_open)
 		return;
@@ -807,20 +791,24 @@ void GUI::RunMainWindow()
 			DrawTabButtons(tab);
 
 			ImGui::TableSetColumnIndex(1);
-			switch(tab)
+			if (ImGui::BeginChild("##Cheese"))
 			{
-				case TAB_AIMBOT: DrawAimbotTab(); break;
-				case TAB_ESP: DrawESPTab(); break;
-				case TAB_MISC: DrawMiscTab(); break;
-				case TAB_TRIGGER: DrawTriggerTab(); break;
-				case TAB_ANTIAIM: DrawAntiaimTab(); break;
-				case TAB_LUA: DrawLuaTab(); break;
-				case TAB_NETVARS: DrawNetVarsTab(); break;
-				case TAB_RADAR: DrawRadarTab(); break;
-				case TAB_CONFIG: DrawConfigTab(); break;
-				case TAB_LOGS: DrawLogsTab(); break;
-				default: break;
+				switch(tab)
+				{
+					case TAB_AIMBOT: DrawAimbotTab(); break;
+					case TAB_ESP: DrawESPTab(); break;
+					case TAB_MISC: DrawMiscTab(); break;
+					case TAB_TRIGGER: DrawTriggerTab(); break;
+					//case TAB_ANTIAIM: DrawAntiaimTab(); break;
+					case TAB_LUA: DrawLuaTab(); break;
+					case TAB_NETVARS: DrawNetVarsTab(); break;
+					case TAB_RADAR: DrawRadarTab(); break;
+					case TAB_CONFIG: DrawConfigTab(); break;
+					case TAB_LOGS: DrawLogsTab(); break;
+					default: break;
+				}
 			}
+			ImGui::EndChild();
 			
 			ImGui::EndTable();
 		}

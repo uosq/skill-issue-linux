@@ -93,8 +93,8 @@ void API::Initialize()
 	Enums_Register(engine);
 
 	// classes
-	Vector3_RegisterClass(engine);
 	Vector2_RegisterClass(engine);
+	Vector3_RegisterClass(engine);
 	Entity_RegisterClass(engine);
 	UserCmd_RegisterClass(engine);
 	ViewSetup_RegisterClass(engine);
@@ -135,28 +135,5 @@ bool API::IsInitialized()
 
 bool API::RunCode(const std::string& text)
 {
-	auto engine = GetScriptEngine();
-
-	asIScriptModule* mod = engine->GetModule("code", asGM_ALWAYS_CREATE);
-
-	mod->AddScriptSection("script", text.c_str());
-	mod->SetAccessMask(GetScriptAccessMask());
-	mod->Build();
-
-	auto ctx = GetScriptContext();
-	auto func = mod->GetFunctionByDecl("void main()");
-
-	if (!func)
-	{
-		interfaces::Cvar->ConsolePrintf("\"void main()\" function is missing!\n");
-		return false;
-	}
-
-	ctx->Prepare(func);
-
-	if (ctx->Execute() != asEXECUTION_FINISHED)
-		interfaces::Cvar->ConsolePrintf("Execution could not finish!\n");
-
-	ctx->Unprepare();
-	return true;
+	return Execute(text);
 }
