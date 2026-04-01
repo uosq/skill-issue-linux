@@ -83,6 +83,9 @@ void Spectators::DrawList()
 		{
 			for (auto pPlayer : s_vSpectatorList)
 			{
+				if (pPlayer == nullptr)
+					continue;
+
 				int iObserverMode = pPlayer->m_iObserverMode();
 				bool isfirstperson = iObserverMode == OBS_MODE_IN_EYE;
 
@@ -99,4 +102,9 @@ void Spectators::DrawList()
 
 
 	ImGui::End();
+}
+
+void Spectators::OnLevelShutdown()
+{
+	Reset();
 }

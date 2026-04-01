@@ -12,5 +12,6 @@ namespace Spectators
 	bool IsSpectated(CTFPlayer* pTarget, std::vector<CTFPlayer*>& out);
 	void Reset();
 	void OnLevelInitPostEntity();
+	void OnLevelShutdown();
 	bool IsLocalPlayerSpectated();
 } // namespace end

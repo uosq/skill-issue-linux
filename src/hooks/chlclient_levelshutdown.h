@@ -9,6 +9,7 @@
 #include "../features/backtrack/backtrack.h"
 #include "../features/aimbot/projectile/projectile.h"
 #include "../features/bhop/bhop.h"
+#include "../features/spectators/spectators.h"
 
 #include "../features/angelscript/api/api.h"
 #include "../features/angelscript/api/libraries/hooks/hooks.h"
@@ -21,6 +22,7 @@ DECLARE_VTABLE_HOOK(LevelShutdown, void, (CHLClient* thisptr))
 	gAimProjectile.Reset();
 	gAimProjectile.ResetIndicator();
 	Bhop::Reset();
+	Spectators::OnLevelShutdown();
 
 	Hooks_CallHooks("LevelShutdown");
 	originalLevelShutdown(thisptr);
