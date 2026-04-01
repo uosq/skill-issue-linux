@@ -32,7 +32,6 @@ void UserCmd_RegisterClass(asIScriptEngine* engine)
 	engine->RegisterObjectProperty(USERCMD_CLASSNAME, "int weaponselect", asOFFSET(CUserCmd, weaponselect));
 	engine->RegisterObjectProperty(USERCMD_CLASSNAME, "int weaponsubtype", asOFFSET(CUserCmd, weaponsubtype));
 	engine->RegisterObjectProperty(USERCMD_CLASSNAME, "int random_seed", asOFFSET(CUserCmd, random_seed));
-	engine->RegisterObjectProperty(USERCMD_CLASSNAME, "int server_random_seed", asOFFSET(CUserCmd, server_random_seed));
 	engine->RegisterObjectProperty(USERCMD_CLASSNAME, "int mousedx", asOFFSET(CUserCmd, mousedx));
 	engine->RegisterObjectProperty(USERCMD_CLASSNAME, "int mousedy", asOFFSET(CUserCmd, mousedy));
 	engine->RegisterObjectProperty(USERCMD_CLASSNAME, "bool hasbeenpredicted", asOFFSET(CUserCmd, hasbeenpredicted));

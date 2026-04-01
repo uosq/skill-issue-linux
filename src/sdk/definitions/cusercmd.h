@@ -26,7 +26,7 @@ public:
 		weaponselect = 0;
 		weaponsubtype = 0;
 		random_seed = 0;
-		server_random_seed = 0;
+		//server_random_seed = 0;
 		mousedx = 0;
 		mousedy = 0;
 
@@ -49,7 +49,7 @@ public:
 		weaponselect		= src.weaponselect;
 		weaponsubtype		= src.weaponsubtype;
 		random_seed			= src.random_seed;
-		server_random_seed = src.server_random_seed;
+		//server_random_seed = src.server_random_seed;
 		mousedx				= src.mousedx;
 		mousedy				= src.mousedy;
 
@@ -122,7 +122,7 @@ public:
 	int		weaponsubtype;
 
 	int		random_seed;	// For shared random functions
-	int		server_random_seed; // Only the server populates this seed
+	//int		server_random_seed; // Only the server populates this seed
 
 	short	mousedx;		// mouse accum in x from create move
 	short	mousedy;		// mouse accum in y from create move
