@@ -232,6 +232,8 @@ void DrawMiscTab()
 	ImGui::Checkbox("No Scope Overlay", &Settings::Misc.no_scope_overlay);
 	ImGui::Checkbox("No Zoom", &Settings::Misc.no_zoom);
 
+	//ImGui::Checkbox("No Survey", &Settings::Misc.no_survey);
+
 	ImGui::Separator();
 
 	ImGui::Checkbox("Custom Fov Enabled", &Settings::Misc.customfov_enabled);

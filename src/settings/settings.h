@@ -198,16 +198,13 @@ namespace Settings
 		bool norecoil = false;
 		float viewmodel_offset[3] = {0, 0, 0};
 		float viewmodel_interp = 0.0f;
+		bool no_viewmodel_bob = false;
 		int backtrack = 0;
-
 		float thirdperson_offset[4] = {23.5, 11.5, 8.0f, 1.0f};
-
 		bool no_engine_sleep = false;
-
 		bool no_scope_overlay = false;
 		bool no_zoom = false;
-
-		bool no_viewmodel_bob = false;
+		//bool no_survey = false;
 	};
 
 	extern SettingsMisc Misc;
@@ -373,6 +370,7 @@ namespace Settings
 		CONFIG_BOOL("no scope overlay", Misc.no_scope_overlay),
 		CONFIG_BOOL("no zoom", Misc.no_zoom),
 		CONFIG_BOOL("no viewmodel bob", Misc.no_viewmodel_bob),
+		//CONFIG_BOOL("no survey", Misc.no_survey),
 
 		//triggerbot
 		CONFIG_KEY("trigger key", Trigger.key),

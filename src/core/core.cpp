@@ -48,6 +48,7 @@
 #include "../hooks/iclientmode_shoulddrawviewmodel.h"
 #include "../hooks/cbaseplayer_shoulddrawlocalplayer.h"
 #include "../hooks/calcviewmodelbobhelper.h"
+//#include "../hooks/ctfmatchsummary_ontick.h"
 //#include "../hooks/cbaseentity_shoulddraw.h"
 
 CApp::CApp() : m_bInitialized(false) {}
@@ -126,6 +127,7 @@ bool CApp::StartHooks()
 	Hook_ShouldDrawViewModel();
 	Hook_CBasePlayer_ShouldDrawLocalPlayer();
 	Hook_CalcViewModelBobHelper();
+	//Hook_CTFMatchSummary_OnTick();
 	//Hook_CBaseEntity_ShouldDraw();
 
 	m_bInitialized = true;

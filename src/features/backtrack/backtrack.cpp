@@ -197,16 +197,13 @@ void Backtrack::Store(CTFPlayer* pLocal, const EntityListEntry& entry)
 	if (!pEntity->SetupBones(bones, MAXSTUDIOBONES, BONE_USED_BY_ANYTHING, pEntity->m_flSimulationTime()))
 		return;
 
-	LagCompRecord record
-	{
+	records.emplace_front(
 		bones,
 		pEntity->m_flSimulationTime(),
 		pEntity->GetCenter(),
 		pEntity->m_angEyeAngles(),
 		pEntity->EstimateAbsVelocity()
-	};
-
-	records.push_front(record);
+	);
 }
 
 void Backtrack::Init()
