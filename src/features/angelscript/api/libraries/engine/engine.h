@@ -2,7 +2,7 @@
 
 #include "../../../include/angelscript.h"
 
-void Engine_RegisterLibrary(asIScriptEngine* engine);
+void Engine_RegisterLibrary (asIScriptEngine *engine);
 
 /* Example code
 Engine::PlaySound("hello world");

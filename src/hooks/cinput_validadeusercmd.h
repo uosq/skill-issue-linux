@@ -5,7 +5,8 @@
 #include "../sdk/interfaces/interfaces.h"
 #include "../sdk/signatures/signatures.h"
 
-ADD_SIG(CInput_ValidateUserCmd, "client.so", "55 48 89 E5 41 56 41 89 D6 41 55 49 89 FD 41 54 4C 8D 65 DC")
+ADD_SIG (CInput_ValidateUserCmd, "client.so",
+	 "55 48 89 E5 41 56 41 89 D6 41 55 49 89 FD 41 54 4C 8D 65 DC")
 
 // sig 55 48 89 E5 41 56 41 89 D6 41 55 49 89 FD 41 54 4C 8D 65 DC
 // client.so
@@ -27,24 +28,26 @@ LAB_01736f98:
 */
 
 inline detour_ctx_t validate_ctx;
-DETOUR_DECL_TYPE(void, ValidateUserCmd, void*, CUserCmd*, int);
+DETOUR_DECL_TYPE (void, ValidateUserCmd, void *, CUserCmd *, int);
 
-inline void Hooked_ValidateUserCmd(void* input, CUserCmd* pCmd, int sequence_number)
+inline void Hooked_ValidateUserCmd (void *input, CUserCmd *pCmd,
+				    int sequence_number)
 {
-
 }
 
-inline void Hook_ValidateUserCmd(void)
+inline void Hook_ValidateUserCmd (void)
 {
-	detour_init(&validate_ctx, Sigs::CInput_ValidateUserCmd.GetPointer(), (void*)&Hooked_ValidateUserCmd);
+	detour_init (&validate_ctx, Sigs::CInput_ValidateUserCmd.GetPointer (),
+		     (void *)&Hooked_ValidateUserCmd);
 
-	if (!detour_enable(&validate_ctx))
+	if (!detour_enable (&validate_ctx))
 	{
-		interfaces::Cvar->ConsolePrintf("Failed to hook CInput::ValidateUserCmd!\n");
+		interfaces::Cvar->ConsolePrintf (
+		    "Failed to hook CInput::ValidateUserCmd!\n");
 		return;
 	}
 
-	#ifdef DEBUG
-	interfaces::Cvar->ConsolePrintf("CInput::ValidateUserCmd hooked\n");
-	#endif
+#ifdef DEBUG
+	interfaces::Cvar->ConsolePrintf ("CInput::ValidateUserCmd hooked\n");
+#endif
 }

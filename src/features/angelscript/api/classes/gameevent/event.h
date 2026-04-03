@@ -2,4 +2,4 @@
 
 #include "../../../include/angelscript.h"
 
-void GameEvent_RegisterClass(asIScriptEngine* engine);
+void GameEvent_RegisterClass (asIScriptEngine *engine);

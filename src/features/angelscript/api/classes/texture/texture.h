@@ -2,4 +2,4 @@
 
 #include "../../../include/angelscript.h"
 
-void Texture_RegisterClass(asIScriptEngine* engine);
+void Texture_RegisterClass (asIScriptEngine *engine);

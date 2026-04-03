@@ -13,25 +13,26 @@
 
 struct LagCompRecord
 {
-	LagCompRecord()
+	LagCompRecord ()
 	{
-		m_flSimTime = 0;
-		m_vecAbsCenter = {};
+		m_flSimTime	= 0;
+		m_vecAbsCenter	= {};
 		m_vecViewAngles = {};
-		m_vecVelocity = {};
-		memset(m_Bones, 0, sizeof(LagCompRecord));
+		m_vecVelocity	= {};
+		memset (m_Bones, 0, sizeof (LagCompRecord));
 	}
 
-	LagCompRecord(matrix3x4* pBones, float flSimTime, Vector vecCenter, Vector vecViewAngles, Vector vecVelocity)
+	LagCompRecord (matrix3x4 *pBones, float flSimTime, Vector vecCenter,
+		       Vector vecViewAngles, Vector vecVelocity)
 	{
-		memcpy(m_Bones, pBones, sizeof(m_Bones));
-		m_flSimTime = flSimTime;
-		m_vecAbsCenter = vecCenter;
+		memcpy (m_Bones, pBones, sizeof (m_Bones));
+		m_flSimTime	= flSimTime;
+		m_vecAbsCenter	= vecCenter;
 		m_vecViewAngles = vecViewAngles;
-		m_vecVelocity = vecVelocity;
+		m_vecVelocity	= vecVelocity;
 	}
 
-	bool IsValid();
+	bool IsValid ();
 
 	float m_flSimTime;
 	Vector m_vecAbsCenter;
@@ -43,22 +44,22 @@ struct LagCompRecord
 namespace Backtrack
 {
 	extern std::unordered_map<int, std::deque<LagCompRecord>> m_records;
-	extern IMaterial* m_mat;
+	extern IMaterial *m_mat;
 	extern bool m_drawing;
-	extern LagCompRecord* m_current_drawing_record;
+	extern LagCompRecord *m_current_drawing_record;
 
-	bool IsValidPlayer(const EntityListEntry& entry);
-	void Run(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd *pCmd);
-	void Reset();
-	void Store(CTFPlayer* pLocal, const EntityListEntry& entry);
-	void Init();
-	void DoPostScreenSpaceEffects();
-	float GetInterp();
-	float GetLatency();
+	bool IsValidPlayer (const EntityListEntry &entry);
+	void Run (CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCmd);
+	void Reset ();
+	void Store (CTFPlayer *pLocal, const EntityListEntry &entry);
+	void Init ();
+	void DoPostScreenSpaceEffects ();
+	float GetInterp ();
+	float GetLatency ();
 
-	void CleanRecords();
-	bool GetRecords(CTFPlayer* pEntity, std::vector<LagCompRecord>& out);
-	bool GetReal(CTFPlayer* pEntity, LagCompRecord& out);
+	void CleanRecords ();
+	bool GetRecords (CTFPlayer *pEntity, std::vector<LagCompRecord> &out);
+	bool GetReal (CTFPlayer *pEntity, LagCompRecord &out);
 
-	std::string GetModeName();
+	std::string GetModeName ();
 }

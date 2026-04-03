@@ -2,4 +2,4 @@
 
 #include "../../../include/angelscript.h"
 
-void UserCmd_RegisterClass(asIScriptEngine* engine);
+void UserCmd_RegisterClass (asIScriptEngine *engine);

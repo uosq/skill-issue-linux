@@ -1,3 +1,3 @@
 #pragma once
 
-using CreateInterfaceFn = void* (*)(const char*, int*);
+using CreateInterfaceFn = void *(*)(const char *, int *);

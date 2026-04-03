@@ -1,14 +1,14 @@
 #pragma once
 
-#include <string>
-#include <string.h>
-#include <cstdint>
-#include "../definitions/types.h"
-#include "../interfaces/interfaces.h"
 #include "../definitions/icliententity.h"
-#include "../netvars/netvar.h"
-#include "../handle_utils.h"
 #include "../definitions/iclientleafsystem.h"
+#include "../definitions/types.h"
+#include "../handle_utils.h"
+#include "../interfaces/interfaces.h"
+#include "../netvars/netvar.h"
+#include <cstdint>
+#include <string.h>
+#include <string>
 
 #define MULTIPLAYER_BACKUP 90
 
@@ -16,188 +16,198 @@ typedef CHandle<CBaseEntity> EHANDLE;
 
 class CBaseEntity : public IClientEntity
 {
-public:
-	NETVAR(m_flAnimTime, "CBaseEntity->m_flAnimTime", float);
-	NETVAR(m_flSimulationTime, "CBaseEntity->m_flSimulationTime", float);
-	NETVAR(m_ubInterpolationFrame, "CBaseEntity->m_ubInterpolationFrame", int);
-	NETVAR(m_vecOrigin, "CBaseEntity->m_vecOrigin", Vec3);
-	NETVAR(m_angRotation, "CBaseEntity->m_angRotation", Vec3);
-	NETVAR(m_nModelIndex, "CBaseEntity->m_nModelIndex", int);
-	NETVAR(m_fEffects, "CBaseEntity->m_fEffects", int);
-	NETVAR(m_nRenderMode, "CBaseEntity->m_nRenderMode", int);
-	NETVAR(m_nRenderFX, "CBaseEntity->m_nRenderFX", int);
-	NETVAR(m_clrRender, "CBaseEntity->m_clrRender", Color);
-	NETVAR(m_iTeamNum, "CBaseEntity->m_iTeamNum", int);
-	NETVAR(m_CollisionGroup, "CBaseEntity->m_CollisionGroup", int);
-	NETVAR(m_flGravity, "CBaseEntity->m_flGravity", float);
-	NETVAR(m_flElasticity, "CBaseEntity->m_flElasticity", float);
-	NETVAR(m_flShadowCastDistance, "CBaseEntity->m_flShadowCastDistance", float);
-	NETVAR(m_hOwnerEntity, "CBaseEntity->m_hOwnerEntity", EHANDLE);
-	NETVAR(m_hEffectEntity, "CBaseEntity->m_hEffectEntity", EHANDLE);
-	NETVAR(moveparent, "CBaseEntity->moveparent", int);
-	NETVAR(m_iParentAttachment, "CBaseEntity->m_iParentAttachment", int);
-	NETVAR(m_Collision, "CBaseEntity->m_Collision", void*);
-	NETVAR(m_vecMinsPreScaled, "CBaseEntity->m_vecMinsPreScaled", Vec3);
-	NETVAR(m_vecMaxsPreScaled, "CBaseEntity->m_vecMaxsPreScaled", Vec3);
-	NETVAR(m_vecMins, "CBaseEntity->m_vecMins", Vec3);
-	NETVAR(m_vecMaxs, "CBaseEntity->m_vecMaxs", Vec3);
-	NETVAR(m_nSolidType, "CBaseEntity->m_nSolidType", int);
-	NETVAR(m_usSolidFlags, "CBaseEntity->m_usSolidFlags", int);
-	NETVAR(m_nSurroundType, "CBaseEntity->m_nSurroundType", int);
-	NETVAR(m_triggerBloat, "CBaseEntity->m_triggerBloat", int);
-	NETVAR(m_bUniformTriggerBloat, "CBaseEntity->m_bUniformTriggerBloat", bool);
-	NETVAR(m_vecSpecifiedSurroundingMinsPreScaled, "CBaseEntity->m_vecSpecifiedSurroundingMinsPreScaled", Vec3);
-	NETVAR(m_vecSpecifiedSurroundingMaxsPreScaled, "CBaseEntity->m_vecSpecifiedSurroundingMaxsPreScaled", Vec3);
-	NETVAR(m_vecSpecifiedSurroundingMins, "CBaseEntity->m_vecSpecifiedSurroundingMins", Vec3);
-	NETVAR(m_vecSpecifiedSurroundingMaxs, "CBaseEntity->m_vecSpecifiedSurroundingMaxs", Vec3);
-	NETVAR(m_iTextureFrameIndex, "CBaseEntity->m_iTextureFrameIndex", int);
-	NETVAR(m_PredictableID, "CBaseEntity->m_PredictableID", int);
-	NETVAR(m_bIsPlayerSimulated, "CBaseEntity->m_bIsPlayerSimulated", bool);
-	NETVAR(m_bSimulatedEveryTick, "CBaseEntity->m_bSimulatedEveryTick", bool);
-	NETVAR(m_bAnimatedEveryTick, "CBaseEntity->m_bAnimatedEveryTick", bool);
-	NETVAR(m_bAlternateSorting, "CBaseEntity->m_bAlternateSorting", bool);
-	NETVAR(m_nModelIndexOverrides, "CBaseEntity->m_nModelIndexOverrides", void*);
-	NETVAR(movetype, "CBaseEntity->movetype", int);
-	NETVAR(m_flNextAttack, "CBaseCombatCharacter->m_flNextAttack", float)
+      public:
+	NETVAR (m_flAnimTime, "CBaseEntity->m_flAnimTime", float);
+	NETVAR (m_flSimulationTime, "CBaseEntity->m_flSimulationTime", float);
+	NETVAR (m_ubInterpolationFrame, "CBaseEntity->m_ubInterpolationFrame",
+		int);
+	NETVAR (m_vecOrigin, "CBaseEntity->m_vecOrigin", Vec3);
+	NETVAR (m_angRotation, "CBaseEntity->m_angRotation", Vec3);
+	NETVAR (m_nModelIndex, "CBaseEntity->m_nModelIndex", int);
+	NETVAR (m_fEffects, "CBaseEntity->m_fEffects", int);
+	NETVAR (m_nRenderMode, "CBaseEntity->m_nRenderMode", int);
+	NETVAR (m_nRenderFX, "CBaseEntity->m_nRenderFX", int);
+	NETVAR (m_clrRender, "CBaseEntity->m_clrRender", Color);
+	NETVAR (m_iTeamNum, "CBaseEntity->m_iTeamNum", int);
+	NETVAR (m_CollisionGroup, "CBaseEntity->m_CollisionGroup", int);
+	NETVAR (m_flGravity, "CBaseEntity->m_flGravity", float);
+	NETVAR (m_flElasticity, "CBaseEntity->m_flElasticity", float);
+	NETVAR (m_flShadowCastDistance, "CBaseEntity->m_flShadowCastDistance",
+		float);
+	NETVAR (m_hOwnerEntity, "CBaseEntity->m_hOwnerEntity", EHANDLE);
+	NETVAR (m_hEffectEntity, "CBaseEntity->m_hEffectEntity", EHANDLE);
+	NETVAR (moveparent, "CBaseEntity->moveparent", int);
+	NETVAR (m_iParentAttachment, "CBaseEntity->m_iParentAttachment", int);
+	NETVAR (m_Collision, "CBaseEntity->m_Collision", void *);
+	NETVAR (m_vecMinsPreScaled, "CBaseEntity->m_vecMinsPreScaled", Vec3);
+	NETVAR (m_vecMaxsPreScaled, "CBaseEntity->m_vecMaxsPreScaled", Vec3);
+	NETVAR (m_vecMins, "CBaseEntity->m_vecMins", Vec3);
+	NETVAR (m_vecMaxs, "CBaseEntity->m_vecMaxs", Vec3);
+	NETVAR (m_nSolidType, "CBaseEntity->m_nSolidType", int);
+	NETVAR (m_usSolidFlags, "CBaseEntity->m_usSolidFlags", int);
+	NETVAR (m_nSurroundType, "CBaseEntity->m_nSurroundType", int);
+	NETVAR (m_triggerBloat, "CBaseEntity->m_triggerBloat", int);
+	NETVAR (m_bUniformTriggerBloat, "CBaseEntity->m_bUniformTriggerBloat",
+		bool);
+	NETVAR (m_vecSpecifiedSurroundingMinsPreScaled,
+		"CBaseEntity->m_vecSpecifiedSurroundingMinsPreScaled", Vec3);
+	NETVAR (m_vecSpecifiedSurroundingMaxsPreScaled,
+		"CBaseEntity->m_vecSpecifiedSurroundingMaxsPreScaled", Vec3);
+	NETVAR (m_vecSpecifiedSurroundingMins,
+		"CBaseEntity->m_vecSpecifiedSurroundingMins", Vec3);
+	NETVAR (m_vecSpecifiedSurroundingMaxs,
+		"CBaseEntity->m_vecSpecifiedSurroundingMaxs", Vec3);
+	NETVAR (m_iTextureFrameIndex, "CBaseEntity->m_iTextureFrameIndex",
+		int);
+	NETVAR (m_PredictableID, "CBaseEntity->m_PredictableID", int);
+	NETVAR (m_bIsPlayerSimulated, "CBaseEntity->m_bIsPlayerSimulated",
+		bool);
+	NETVAR (m_bSimulatedEveryTick, "CBaseEntity->m_bSimulatedEveryTick",
+		bool);
+	NETVAR (m_bAnimatedEveryTick, "CBaseEntity->m_bAnimatedEveryTick",
+		bool);
+	NETVAR (m_bAlternateSorting, "CBaseEntity->m_bAlternateSorting", bool);
+	NETVAR (m_nModelIndexOverrides, "CBaseEntity->m_nModelIndexOverrides",
+		void *);
+	NETVAR (movetype, "CBaseEntity->movetype", int);
+	NETVAR (m_flNextAttack, "CBaseCombatCharacter->m_flNextAttack", float)
 
-	bool IsPlayer()
-	{
-		return GetClassID() == ETFClassID::CTFPlayer;
-	}
+	bool IsPlayer () { return GetClassID () == ETFClassID::CTFPlayer; }
 
-	bool IsWeapon()
+	bool IsWeapon ()
 	{
 		// I think I got every one of them
-		switch(GetClassID())
+		switch (GetClassID ())
 		{
-			case ETFClassID::CTFWeaponInvis:
-			case ETFClassID::CTFWeaponPDA:
-			case ETFClassID::CWeaponMedigun:
-			case ETFClassID::CTFWeaponPDA_Spy: // wtf is this?
-			case ETFClassID::CTFWeaponBuilder:
-			case ETFClassID::CTFWeaponSapper:
-			case ETFClassID::CTFMinigun:
-			case ETFClassID::CTFSniperRifleClassic:
-			case ETFClassID::CTFSniperRifle:
-			case ETFClassID::CTFSniperRifleDecap:
-			case ETFClassID::CTFBaseProjectile:
-			case ETFClassID::CTFBat:
-			case ETFClassID::CTFBat_Giftwrap:
-			case ETFClassID::CTFBat_Fish:
-			case ETFClassID::CTFBat_Wood:
-			case ETFClassID::CTFBonesaw:
-			case ETFClassID::CTFBottle:
-			case ETFClassID::CTFBuffBanner:
-			case ETFClassID::CTFCannon:
-			case ETFClassID::CTFSMG:
-			case ETFClassID::CTFChargedSMG:
-			case ETFClassID::CTFCleaver:
-			case ETFClassID::CTFClub:
-			case ETFClassID::CTFCompoundBow:
-			case ETFClassID::CTFCrossbow:
-			case ETFClassID::CTFDRGPomson:
-			case ETFClassID::CTFFireAxe:
-			case ETFClassID::CTFFists:
-			case ETFClassID::CTFFlameRocket:
-			case ETFClassID::CTFFlameThrower:
-			case ETFClassID::CTFWeaponFlameBall:
-			case ETFClassID::CTFFlareGun:
-			case ETFClassID::CTFFlareGun_Revenge:
-			case ETFClassID::CTFGrenadeLauncher:
-			case ETFClassID::CTFJar:
-			case ETFClassID::CTFJarGas:
-			case ETFClassID::CTFJarMilk:
-			case ETFClassID::CTFKatana:
-			case ETFClassID::CTFKnife:
-			case ETFClassID::CTFLaserPointer:
-			case ETFClassID::CTFLunchBox_Drink:
-			case ETFClassID::CTFMechanicalArm:
-			case ETFClassID::CTFParachute:
-			case ETFClassID::CTFParachute_Primary:
-			case ETFClassID::CTFParachute_Secondary:
-			case ETFClassID::CTFPistol:
-			case ETFClassID::CTFPistol_Scout:
-			case ETFClassID::CTFPistol_ScoutPrimary:
-			case ETFClassID::CTFPistol_ScoutSecondary:
-			case ETFClassID::CTFPipebombLauncher:
-			case ETFClassID::CTFPEPBrawlerBlaster:
-			case ETFClassID::CTFRocketLauncher:
-			case ETFClassID::CTFRocketLauncher_AirStrike:
-			case ETFClassID::CTFRocketLauncher_DirectHit:
-			case ETFClassID::CTFRocketLauncher_Mortar:
-			case ETFClassID::CTFRocketPack:
-			case ETFClassID::CTFShotgun:
-			case ETFClassID::CTFShotgun_HWG:
-			case ETFClassID::CTFShotgun_Pyro:
-			case ETFClassID::CTFShotgun_Revenge:
-			case ETFClassID::CTFShotgunBuildingRescue:
-			case ETFClassID::CTFShotgun_Soldier:
-			case ETFClassID::CTFRevolver:
+		case ETFClassID::CTFWeaponInvis:
+		case ETFClassID::CTFWeaponPDA:
+		case ETFClassID::CWeaponMedigun:
+		case ETFClassID::CTFWeaponPDA_Spy: // wtf is this?
+		case ETFClassID::CTFWeaponBuilder:
+		case ETFClassID::CTFWeaponSapper:
+		case ETFClassID::CTFMinigun:
+		case ETFClassID::CTFSniperRifleClassic:
+		case ETFClassID::CTFSniperRifle:
+		case ETFClassID::CTFSniperRifleDecap:
+		case ETFClassID::CTFBaseProjectile:
+		case ETFClassID::CTFBat:
+		case ETFClassID::CTFBat_Giftwrap:
+		case ETFClassID::CTFBat_Fish:
+		case ETFClassID::CTFBat_Wood:
+		case ETFClassID::CTFBonesaw:
+		case ETFClassID::CTFBottle:
+		case ETFClassID::CTFBuffBanner:
+		case ETFClassID::CTFCannon:
+		case ETFClassID::CTFSMG:
+		case ETFClassID::CTFChargedSMG:
+		case ETFClassID::CTFCleaver:
+		case ETFClassID::CTFClub:
+		case ETFClassID::CTFCompoundBow:
+		case ETFClassID::CTFCrossbow:
+		case ETFClassID::CTFDRGPomson:
+		case ETFClassID::CTFFireAxe:
+		case ETFClassID::CTFFists:
+		case ETFClassID::CTFFlameRocket:
+		case ETFClassID::CTFFlameThrower:
+		case ETFClassID::CTFWeaponFlameBall:
+		case ETFClassID::CTFFlareGun:
+		case ETFClassID::CTFFlareGun_Revenge:
+		case ETFClassID::CTFGrenadeLauncher:
+		case ETFClassID::CTFJar:
+		case ETFClassID::CTFJarGas:
+		case ETFClassID::CTFJarMilk:
+		case ETFClassID::CTFKatana:
+		case ETFClassID::CTFKnife:
+		case ETFClassID::CTFLaserPointer:
+		case ETFClassID::CTFLunchBox_Drink:
+		case ETFClassID::CTFMechanicalArm:
+		case ETFClassID::CTFParachute:
+		case ETFClassID::CTFParachute_Primary:
+		case ETFClassID::CTFParachute_Secondary:
+		case ETFClassID::CTFPistol:
+		case ETFClassID::CTFPistol_Scout:
+		case ETFClassID::CTFPistol_ScoutPrimary:
+		case ETFClassID::CTFPistol_ScoutSecondary:
+		case ETFClassID::CTFPipebombLauncher:
+		case ETFClassID::CTFPEPBrawlerBlaster:
+		case ETFClassID::CTFRocketLauncher:
+		case ETFClassID::CTFRocketLauncher_AirStrike:
+		case ETFClassID::CTFRocketLauncher_DirectHit:
+		case ETFClassID::CTFRocketLauncher_Mortar:
+		case ETFClassID::CTFRocketPack:
+		case ETFClassID::CTFShotgun:
+		case ETFClassID::CTFShotgun_HWG:
+		case ETFClassID::CTFShotgun_Pyro:
+		case ETFClassID::CTFShotgun_Revenge:
+		case ETFClassID::CTFShotgunBuildingRescue:
+		case ETFClassID::CTFShotgun_Soldier:
+		case ETFClassID::CTFRevolver:
 			return true;
 
-			default: return false;
+		default:
+			return false;
 		}
 		return false;
 	}
 
-	int GetIndex()
+	int GetIndex () { return GetClientNetworkable ()->entindex (); }
+
+	bool IsSentry ()
 	{
-		return GetClientNetworkable()->entindex();
+		return GetClassID () == ETFClassID::CObjectSentrygun;
 	}
 
-	bool IsSentry()
+	bool IsDispenser ()
 	{
-		return GetClassID() == ETFClassID::CObjectSentrygun;
+		return GetClassID () == ETFClassID::CObjectDispenser;
 	}
 
-	bool IsDispenser()
+	bool IsTeleporter ()
 	{
-		return GetClassID() == ETFClassID::CObjectDispenser;
+		return GetClassID () == ETFClassID::CObjectTeleporter;
 	}
 
-	bool IsTeleporter()
+	bool IsBuilding ()
 	{
-		return GetClassID() == ETFClassID::CObjectTeleporter;
-	}
-
-	bool IsBuilding()
-	{
-		switch(GetClassID())
+		switch (GetClassID ())
 		{
-			case ETFClassID::CObjectDispenser:
-			case ETFClassID::CObjectSentrygun:
-			case ETFClassID::CObjectTeleporter:
-				return true;
-			default: break;
+		case ETFClassID::CObjectDispenser:
+		case ETFClassID::CObjectSentrygun:
+		case ETFClassID::CObjectTeleporter:
+			return true;
+		default:
+			break;
 		}
 
 		return false;
 	}
 
-	bool IsRobot()
+	bool IsRobot ()
 	{
-		return GetClassID() == ETFClassID::CTFRobotDestruction_Robot;
+		return GetClassID () == ETFClassID::CTFRobotDestruction_Robot;
 	}
 
-	Vector GetCenter()
+	Vector GetCenter ()
 	{
-		return GetAbsOrigin() + (m_vecMaxs() + m_vecMins()) * 0.5f;
+		return GetAbsOrigin () + (m_vecMaxs () + m_vecMins ()) * 0.5f;
 	}
 
-	void CalcAbsVelocity()
+	void CalcAbsVelocity ()
 	{
 		// xref: Main: %s, Cycle: %.2f\n
 		// is inside CMultiPlayerAnimState::DebugShowAnimStateForPlayer
 		// first function
-		using CalcAbsVelocityFn = void(*)(CBaseEntity* self);
-		static CalcAbsVelocityFn original = reinterpret_cast<CalcAbsVelocityFn>(sigscan_module("client.so", "F6 87 11 02 00 00 10"));
-		original(this);
+		using CalcAbsVelocityFn = void (*) (CBaseEntity *self);
+		static CalcAbsVelocityFn original
+		    = reinterpret_cast<CalcAbsVelocityFn> (
+			sigscan_module ("client.so", "F6 87 11 02 00 00 10"));
+		original (this);
 	}
 
 	// janky ahh shit
-	Vector EstimateAbsVelocity()
+	Vector EstimateAbsVelocity ()
 	{
-		CalcAbsVelocity();
+		CalcAbsVelocity ();
 
 		/*
 		The offsets are from CMultiPlayerAnimState::GetOuterAbsVelocity
@@ -210,79 +220,86 @@ public:
 		}
 		*/
 		//Vector* m_vecAbsVelocity = reinterpret_cast<Vector*>(reinterpret_cast<uintptr_t>(this) + 0x1c8);
-		uintptr_t ptr = reinterpret_cast<uintptr_t>(this);
-		float* m_vecAbsVelocityX = reinterpret_cast<float*>(ptr + 0x1c8);
-		float* m_vecAbsVelocityY = reinterpret_cast<float*>(ptr + 0x1cc);
-		float* m_vecAbsVelocityZ = reinterpret_cast<float*>(ptr + 0x1d0);
+		uintptr_t ptr = reinterpret_cast<uintptr_t> (this);
+		float *m_vecAbsVelocityX
+		    = reinterpret_cast<float *> (ptr + 0x1c8);
+		float *m_vecAbsVelocityY
+		    = reinterpret_cast<float *> (ptr + 0x1cc);
+		float *m_vecAbsVelocityZ
+		    = reinterpret_cast<float *> (ptr + 0x1d0);
 
-		return Vector(*m_vecAbsVelocityX, *m_vecAbsVelocityY, *m_vecAbsVelocityZ);
+		return Vector (*m_vecAbsVelocityX, *m_vecAbsVelocityY,
+			       *m_vecAbsVelocityZ);
 	}
 
-	bool IsProjectile()
+	bool IsProjectile ()
 	{
-		switch (GetClassID())
+		switch (GetClassID ())
 		{
-			case ETFClassID::CBaseProjectile:
-			case ETFClassID::CBaseGrenade:
-			case ETFClassID::CTFWeaponBaseGrenadeProj:
-			case ETFClassID::CTFWeaponBaseMerasmusGrenade:
-			case ETFClassID::CTFGrenadePipebombProjectile:
-			case ETFClassID::CTFStunBall:
-			case ETFClassID::CTFBall_Ornament:
-			case ETFClassID::CTFProjectile_Jar:
-			case ETFClassID::CTFProjectile_Cleaver:
-			case ETFClassID::CTFProjectile_JarGas:
-			case ETFClassID::CTFProjectile_JarMilk:
-			case ETFClassID::CTFProjectile_SpellBats:
-			case ETFClassID::CTFProjectile_SpellKartBats:
-			case ETFClassID::CTFProjectile_SpellMeteorShower:
-			case ETFClassID::CTFProjectile_SpellMirv:
-			case ETFClassID::CTFProjectile_SpellPumpkin:
-			case ETFClassID::CTFProjectile_SpellSpawnBoss:
-			case ETFClassID::CTFProjectile_SpellSpawnHorde:
-			case ETFClassID::CTFProjectile_SpellSpawnZombie:
-			case ETFClassID::CTFProjectile_SpellTransposeTeleport:
-			case ETFClassID::CTFProjectile_Throwable:
-			case ETFClassID::CTFProjectile_ThrowableBreadMonster:
-			case ETFClassID::CTFProjectile_ThrowableBrick:
-			case ETFClassID::CTFProjectile_ThrowableRepel:
-			case ETFClassID::CTFBaseRocket:
-			case ETFClassID::CTFFlameRocket:
-			case ETFClassID::CTFProjectile_Arrow:
-			case ETFClassID::CTFProjectile_GrapplingHook:
-			case ETFClassID::CTFProjectile_HealingBolt:
-			case ETFClassID::CTFProjectile_Rocket:
-			case ETFClassID::CTFProjectile_BallOfFire:
-			case ETFClassID::CTFProjectile_MechanicalArmOrb:
-			case ETFClassID::CTFProjectile_SentryRocket:
-			case ETFClassID::CTFProjectile_SpellFireball:
-			case ETFClassID::CTFProjectile_SpellLightningOrb:
-			case ETFClassID::CTFProjectile_SpellKartOrb:
-			case ETFClassID::CTFProjectile_EnergyBall:
-			case ETFClassID::CTFProjectile_Flare:
-			case ETFClassID::CTFBaseProjectile:
-			case ETFClassID::CTFProjectile_EnergyRing:
-				return true;
-			default:
-				return false;
+		case ETFClassID::CBaseProjectile:
+		case ETFClassID::CBaseGrenade:
+		case ETFClassID::CTFWeaponBaseGrenadeProj:
+		case ETFClassID::CTFWeaponBaseMerasmusGrenade:
+		case ETFClassID::CTFGrenadePipebombProjectile:
+		case ETFClassID::CTFStunBall:
+		case ETFClassID::CTFBall_Ornament:
+		case ETFClassID::CTFProjectile_Jar:
+		case ETFClassID::CTFProjectile_Cleaver:
+		case ETFClassID::CTFProjectile_JarGas:
+		case ETFClassID::CTFProjectile_JarMilk:
+		case ETFClassID::CTFProjectile_SpellBats:
+		case ETFClassID::CTFProjectile_SpellKartBats:
+		case ETFClassID::CTFProjectile_SpellMeteorShower:
+		case ETFClassID::CTFProjectile_SpellMirv:
+		case ETFClassID::CTFProjectile_SpellPumpkin:
+		case ETFClassID::CTFProjectile_SpellSpawnBoss:
+		case ETFClassID::CTFProjectile_SpellSpawnHorde:
+		case ETFClassID::CTFProjectile_SpellSpawnZombie:
+		case ETFClassID::CTFProjectile_SpellTransposeTeleport:
+		case ETFClassID::CTFProjectile_Throwable:
+		case ETFClassID::CTFProjectile_ThrowableBreadMonster:
+		case ETFClassID::CTFProjectile_ThrowableBrick:
+		case ETFClassID::CTFProjectile_ThrowableRepel:
+		case ETFClassID::CTFBaseRocket:
+		case ETFClassID::CTFFlameRocket:
+		case ETFClassID::CTFProjectile_Arrow:
+		case ETFClassID::CTFProjectile_GrapplingHook:
+		case ETFClassID::CTFProjectile_HealingBolt:
+		case ETFClassID::CTFProjectile_Rocket:
+		case ETFClassID::CTFProjectile_BallOfFire:
+		case ETFClassID::CTFProjectile_MechanicalArmOrb:
+		case ETFClassID::CTFProjectile_SentryRocket:
+		case ETFClassID::CTFProjectile_SpellFireball:
+		case ETFClassID::CTFProjectile_SpellLightningOrb:
+		case ETFClassID::CTFProjectile_SpellKartOrb:
+		case ETFClassID::CTFProjectile_EnergyBall:
+		case ETFClassID::CTFProjectile_Flare:
+		case ETFClassID::CTFBaseProjectile:
+		case ETFClassID::CTFProjectile_EnergyRing:
+			return true;
+		default:
+			return false;
 		}
 
 		return false;
 	}
 
-	bool IsEnemyOf(CBaseEntity* pEntity)
+	bool IsEnemyOf (CBaseEntity *pEntity)
 	{
-		return m_iTeamNum() != pEntity->m_iTeamNum();
+		return m_iTeamNum () != pEntity->m_iTeamNum ();
 	}
 
-	void AddToLeafSystem(RenderGroup_t group)
+	void AddToLeafSystem (RenderGroup_t group)
 	{
-		using AddToLeafSystemFn = void(*)(void* self, RenderGroup_t group);
-		static AddToLeafSystemFn original = reinterpret_cast<AddToLeafSystemFn>(sigscan_module("client.so", "55 89 F2 48 89 E5 41 54"));
-		original(this, group);
+		using AddToLeafSystemFn
+		    = void (*) (void *self, RenderGroup_t group);
+		static AddToLeafSystemFn original
+		    = reinterpret_cast<AddToLeafSystemFn> (sigscan_module (
+			"client.so", "55 89 F2 48 89 E5 41 54"));
+		original (this, group);
 	}
 
-	inline bool IsEffectsActive(int nEffects)
+	inline bool IsEffectsActive (int nEffects)
 	{
 		// xref: CalcAimEntPositions
 		/*
@@ -300,27 +317,31 @@ public:
 		//auto& effects = GetEffects();
 
 		// i want to kms :sob:
-		return (m_fEffects() & nEffects) != 0;
+		return (m_fEffects () & nEffects) != 0;
 	}
 
-	inline void AddEffects(uint8_t effects)
+	inline void AddEffects (uint8_t effects)
 	{
 		//auto addr = reinterpret_cast<uintptr_t>(this) + 0xa8;
 		//*reinterpret_cast<uint8_t*>(addr) |= effects;
-		m_fEffects() |= effects;
+		m_fEffects () |= effects;
 	}
 
-	inline void RemoveEffects(uint8_t effects)
+	inline void RemoveEffects (uint8_t effects)
 	{
 		//aut o addr = reinterpret_cast<uintptr_t>(this) + 0xa8;
 		// *reinterpret_cast<uint8_t*>(addr) &= ~effects;
-		m_fEffects() &= ~effects;
+		m_fEffects () &= ~effects;
 	}
 
-	void UpdateVisibility()
+	void UpdateVisibility ()
 	{
-		using UpdateVisibilityFn = void(*)(void* self);
-		static UpdateVisibilityFn original = reinterpret_cast<UpdateVisibilityFn>(sigscan_module("client.so", "55 48 89 E5 41 54 49 89 FC 53 48 83 EC 10 48 8D 1D ? ? ? ? 48 8B 3B 48 8B 07 FF 90 60 02 00 00"));
-		original(this);
+		using UpdateVisibilityFn = void (*) (void *self);
+		static UpdateVisibilityFn original
+		    = reinterpret_cast<UpdateVisibilityFn> (sigscan_module (
+			"client.so",
+			"55 48 89 E5 41 54 49 89 FC 53 48 83 EC 10 48 8D 1D ? "
+			"? ? ? 48 8B 3B 48 8B 07 FF 90 60 02 00 00"));
+		original (this);
 	}
 };

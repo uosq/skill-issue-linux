@@ -1,25 +1,24 @@
 #pragma once
 
-#include <cstdint>
 #include "../../sdk/classes/entity.h"
+#include <cstdint>
 
-enum EntityFlags
-{
-	IsPlayer = 1,
-	IsBuilding = 1 << 1,
-	IsEnemy = 1 << 2,
+enum EntityFlags {
+	IsPlayer     = 1,
+	IsBuilding   = 1 << 1,
+	IsEnemy	     = 1 << 2,
 	IsProjectile = 1 << 3,
-	IsAlive = 1 << 4
+	IsAlive	     = 1 << 4
 };
 
 struct EntityListEntry
 {
-	CBaseEntity* ptr;
+	CBaseEntity *ptr;
 	uint8_t flags;
 
-	EntityListEntry()
+	EntityListEntry ()
 	{
 		flags = 0;
-		ptr = nullptr;
+		ptr   = nullptr;
 	}
 };

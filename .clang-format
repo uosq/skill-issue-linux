@@ -6,6 +6,7 @@ UseTab: true
 AlwaysBreakAfterReturnType: None
 AlwaysBreakAfterDefinitionReturnType: None
 NamespaceIndentation: All
+ReflowComments: false
 
 AlignConsecutiveAssignments:
   Enabled: true

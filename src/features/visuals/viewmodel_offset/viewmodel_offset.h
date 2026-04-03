@@ -1,10 +1,10 @@
 #pragma once
 
-#include "../../../sdk/interfaces/interfaces.h"
 #include "../../../sdk/helpers/helper.h"
+#include "../../../sdk/interfaces/interfaces.h"
 #include "../../../settings/settings.h"
 
 namespace ViewmodelOffset
 {
-	void Run(Vector& position, Vector& angle);
+	void Run (Vector &position, Vector &angle);
 };

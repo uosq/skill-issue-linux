@@ -2,4 +2,4 @@
 
 #include "../../../include/angelscript.h"
 
-void Client_RegisterLibrary(asIScriptEngine* engine);
+void Client_RegisterLibrary (asIScriptEngine *engine);
