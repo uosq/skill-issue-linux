@@ -31,7 +31,7 @@ class CAimbotProjectile
 			     const Vector vecAngle, const ProjectileInfo_t &prjInfo, float flGravity);
 	std::vector<PotentialTarget> GetBestTargets(CTFPlayer *pLocal, CTFWeaponBase *pWeapon);
 	float GetAimDrop(float flGravity, float flTimeSeconds);
-	void DrawPath(const std::vector<Vector> &vPath);
+	void DrawPath(const std::vector<Vector>& vPath);
 	bool IsRightAttack(CTFWeaponBase *pWeapon);
 
       private:

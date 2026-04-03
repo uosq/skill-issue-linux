@@ -193,14 +193,10 @@ void DrawESPTab()
 
 	ImGui::Separator();
 
-	float red[3]	= {Settings::Colors.red_team.r() / 255.0f, Settings::Colors.red_team.g() / 255.0f,
-			   Settings::Colors.red_team.b() / 255.0f};
-	float blu[3]	= {Settings::Colors.blu_team.r() / 255.0f, Settings::Colors.blu_team.g() / 255.0f,
-			   Settings::Colors.blu_team.b() / 255.0f};
-	float target[3] = {Settings::Colors.aimbot_target.r() / 255.0f, Settings::Colors.aimbot_target.g() / 255.0f,
-			   Settings::Colors.aimbot_target.b() / 255.0f};
-	float weapon[3] = {Settings::Colors.weapon.r() / 255.0f, Settings::Colors.weapon.g() / 255.0f,
-			   Settings::Colors.weapon.b() / 255.0f};
+	float red[3] = {Settings::Colors.red_team.r() / 255.0f, Settings::Colors.red_team.g() / 255.0f, Settings::Colors.red_team.b() / 255.0f};
+	float blu[3] = {Settings::Colors.blu_team.r() / 255.0f, Settings::Colors.blu_team.g() / 255.0f, Settings::Colors.blu_team.b() / 255.0f};
+	float target[3] = {Settings::Colors.aimbot_target.r() / 255.0f, Settings::Colors.aimbot_target.g() / 255.0f, Settings::Colors.aimbot_target.b() / 255.0f};
+	float weapon[3] = {Settings::Colors.weapon.r() / 255.0f, Settings::Colors.weapon.g() / 255.0f, Settings::Colors.weapon.b() / 255.0f};
 
 	ImGui::TextUnformatted("Colors");
 
@@ -211,8 +207,7 @@ void DrawESPTab()
 		Settings::Colors.blu_team.SetColor(blu[0] * 255.0f, blu[1] * 255.0f, blu[2] * 255.0f, 255.0f);
 
 	if (ImGui::ColorEdit3("Aimbot Target", target))
-		Settings::Colors.aimbot_target.SetColor(target[0] * 255.0f, target[1] * 255.0f, target[2] * 255.0f,
-							255.0f);
+		Settings::Colors.aimbot_target.SetColor(target[0] * 255.0f, target[1] * 255.0f, target[2] * 255.0f, 255.0f);
 
 	if (ImGui::ColorEdit3("Weapon", weapon))
 		Settings::Colors.weapon.SetColor(weapon[0] * 255.0f, weapon[1] * 255.0f, weapon[2] * 255.0f, 255.0f);
@@ -282,13 +277,10 @@ void DrawMiscTab()
 
 void DrawTriggerTab()
 {
-	// ImGui::Checkbox("Trigger Enabled", &Settings::Trigger.enabled);
 	gBinds.RenderHotkey("TriggerBot", Settings::Trigger.key);
 	ImGui::PushStyleVar(ImGuiStyleVar_Alpha, Settings::Trigger.key->IsEnabled() ? 1.0f : 0.5f);
 	{
 		ImGui::Checkbox("Hitscan", &Settings::Trigger.hitscan);
-		// ImGui::InputText("Trigger Key", Settings::Trigger.key,
-		// sizeof(Settings::Trigger.key));
 
 		{
 			constexpr const char *items[]{"None", "Legit", "Rage"};
@@ -819,5 +811,5 @@ void GUI::Init()
 	configs.reserve(5);
 	selectedIndex	   = -1;
 	firstOpenConfigTab = true;
-	openDeletePopup	   = false;
+	openDeletePopup = false;
 }

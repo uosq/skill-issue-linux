@@ -12,8 +12,7 @@
 #include "../features/entitylist/entitylist.h"
 #include "../features/triggerbot/triggerbot.h"
 
-enum TabMenu
-{
+enum TabMenu {
 	TAB_AIMBOT = 0,
 	TAB_ESP,
 	TAB_MISC,
@@ -26,8 +25,7 @@ enum TabMenu
 	TAB_LOGS,
 };
 
-namespace GUI
-{
+namespace GUI {
 	extern int tab;
 
 	extern int selectedIndex;
