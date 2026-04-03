@@ -30,9 +30,7 @@
 #include "../definitions/vphysics_interface.h"
 #include "../definitions/weaponinfo.h"
 
-using AttributeHookValueFn
-    = float (*) (float defaultValue, const char *attribName,
-		 CBaseEntity *pEntity, void *, bool);
+using AttributeHookValueFn = float (*)(float defaultValue, const char *attribName, CBaseEntity *pEntity, void *, bool);
 extern AttributeHookValueFn AttributeHookValue;
 
 extern HCursor cursor;
@@ -63,7 +61,7 @@ namespace interfaces
 	//extern IGameMovement* GameMovement;
 	//extern CEconNotificationQueue* g_notificationQueue;
 	extern IPhysics *Physics;
-}
+} // namespace interfaces
 
 namespace factories
 {
@@ -77,8 +75,7 @@ namespace factories
 	extern CreateInterfaceFn materialsystem;
 	extern CreateInterfaceFn studiorender;
 	extern CreateInterfaceFn vphysics;
-};
+}; // namespace factories
 
-template <typename T>
-bool GetInterface (T *&out, CreateInterfaceFn factory, const char *name);
-bool InitializeInterfaces ();
+template <typename T> bool GetInterface(T *&out, CreateInterfaceFn factory, const char *name);
+bool InitializeInterfaces();

@@ -6,9 +6,20 @@
 
 #include "../../imgui/imgui.h"
 
-enum class HotkeyMode { Off, Hold, Toggle, HoldOff, Always };
+enum class HotkeyMode
+{
+	Off,
+	Hold,
+	Toggle,
+	HoldOff,
+	Always
+};
 
-enum class InputType { None, VirtualKey };
+enum class InputType
+{
+	None,
+	VirtualKey
+};
 
 struct Hotkey
 {
@@ -24,12 +35,14 @@ struct Hotkey
 
 	bool m_bCapturing  = false;
 
-	bool IsActive () { return m_bState; }
-
-	bool IsEnabled ()
+	bool IsActive()
 	{
-		return m_iType == InputType::VirtualKey
-		       && m_iMode != HotkeyMode::Off;
+		return m_bState;
+	}
+
+	bool IsEnabled()
+	{
+		return m_iType == InputType::VirtualKey && m_iMode != HotkeyMode::Off;
 	}
 };
 
@@ -37,20 +50,20 @@ class Binds
 {
       private:
 	std::vector<std::unique_ptr<Hotkey>> m_hotkeys;
-	bool IsKeyDown (const Hotkey *hk);
-	int GetPressedKey ();
-	const char *GetKeyName (const Hotkey *hk);
+	bool IsKeyDown(const Hotkey *hk);
+	int GetPressedKey();
+	const char *GetKeyName(const Hotkey *hk);
 
       public:
-	Hotkey *RegisterHotkey (const char *name);
-	const std::vector<std::unique_ptr<Hotkey>> &GetHotkeys () const;
-	bool IsActive (const Hotkey *hk) const;
-	bool IsEnabled (const Hotkey *hk) const;
-	void Update ();
-	bool RenderHotkey (const char *label, Hotkey *hk);
+	Hotkey *RegisterHotkey(const char *name);
+	const std::vector<std::unique_ptr<Hotkey>> &GetHotkeys() const;
+	bool IsActive(const Hotkey *hk) const;
+	bool IsEnabled(const Hotkey *hk) const;
+	void Update();
+	bool RenderHotkey(const char *label, Hotkey *hk);
 
-	const char *GetModeName (HotkeyMode mode);
-	void DrawWindow (bool bMenuOpen);
+	const char *GetModeName(HotkeyMode mode);
+	void DrawWindow(bool bMenuOpen);
 };
 
 extern Binds gBinds;

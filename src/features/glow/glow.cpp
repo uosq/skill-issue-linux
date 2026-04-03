@@ -8,296 +8,248 @@ namespace Glow
 	bool m_bRunning			    = false;
 	bool m_bInitialized		    = false;
 
-	void Init ()
+	void Init()
 	{
 		if (m_bInitialized)
 			return;
 
-		m_Materials.glowColor
-		    = interfaces::MaterialSystem->FindMaterial (
-			"dev/glow_color", TEXTURE_GROUP_OTHER, true);
+		m_Materials.glowColor =
+		    interfaces::MaterialSystem->FindMaterial("dev/glow_color", TEXTURE_GROUP_OTHER, true);
 
-		m_Materials.haloAddToScreen = MaterialManager::CreateMaterial (
-		    "GlowMaterial1", "UnlitGeneric\n"
-				     "{\n"
-				     "	$basetexture \"GlowBuffer1\"\n"
-				     "	$additive \"1\"\n"
-				     "}");
+		m_Materials.haloAddToScreen =
+		    MaterialManager::CreateMaterial("GlowMaterial1", "UnlitGeneric\n"
+								     "{\n"
+								     "	$basetexture \"GlowBuffer1\"\n"
+								     "	$additive \"1\"\n"
+								     "}");
 
-		m_Materials.blurX = MaterialManager::CreateMaterial (
-		    "GlowMatBlurX", "BlurFilterX\n"
-				    "{\n"
-				    "	$basetexture \"GlowBuffer1\"\n"
-				    "}");
+		m_Materials.blurX = MaterialManager::CreateMaterial("GlowMatBlurX", "BlurFilterX\n"
+										    "{\n"
+										    "	$basetexture \"GlowBuffer1\"\n"
+										    "}");
 
-		m_Materials.blurY = MaterialManager::CreateMaterial (
-		    "GlowMatBlurY", "BlurFilterY\n"
-				    "{\n"
-				    "	$basetexture \"GlowBuffer2\"\n"
-				    "}");
+		m_Materials.blurY = MaterialManager::CreateMaterial("GlowMatBlurY", "BlurFilterY\n"
+										    "{\n"
+										    "	$basetexture \"GlowBuffer2\"\n"
+										    "}");
 
-		m_Materials.pRtFullFrame
-		    = interfaces::MaterialSystem->FindTexture (
-			"_rt_FullFrameFB", "RenderTargets", true);
+		m_Materials.pRtFullFrame =
+		    interfaces::MaterialSystem->FindTexture("_rt_FullFrameFB", "RenderTargets", true);
 
-		m_Materials.glowBuffer1
-		    = MaterialManager::CreateTextureNamedRenderTarget (
-			"GlowBuffer1",
-			m_Materials.pRtFullFrame->GetActualWidth (),
-			m_Materials.pRtFullFrame->GetActualHeight ());
-		m_Materials.glowBuffer2
-		    = MaterialManager::CreateTextureNamedRenderTarget (
-			"GlowBuffer2",
-			m_Materials.pRtFullFrame->GetActualWidth (),
-			m_Materials.pRtFullFrame->GetActualHeight ());
+		m_Materials.glowBuffer1 = MaterialManager::CreateTextureNamedRenderTarget(
+		    "GlowBuffer1", m_Materials.pRtFullFrame->GetActualWidth(),
+		    m_Materials.pRtFullFrame->GetActualHeight());
+		m_Materials.glowBuffer2 = MaterialManager::CreateTextureNamedRenderTarget(
+		    "GlowBuffer2", m_Materials.pRtFullFrame->GetActualWidth(),
+		    m_Materials.pRtFullFrame->GetActualHeight());
 
 		m_bInitialized = true;
 	}
 
-	bool ShouldHide (int entindex)
+	bool ShouldHide(int entindex)
 	{
-		return m_Entities.find (entindex) != m_Entities.end ();
+		return m_Entities.find(entindex) != m_Entities.end();
 	}
 
-	void DrawEntities ()
+	void DrawEntities()
 	{
 		for (auto ent : glowEnts)
 		{
-			Color color = ESP_Utils::GetEntityColor (ent);
-			float mod[3]
-			    = { color.r () / 255.0f, color.g () / 255.0f,
-				color.b () / 255.0f };
-			interfaces::RenderView->SetColorModulation (mod);
+			Color color  = ESP_Utils::GetEntityColor(ent);
+			float mod[3] = {color.r() / 255.0f, color.g() / 255.0f, color.b() / 255.0f};
+			interfaces::RenderView->SetColorModulation(mod);
 			m_bRunning = true;
-			ent->DrawModel (STUDIO_RENDER | STUDIO_NOSHADOWS);
+			ent->DrawModel(STUDIO_RENDER | STUDIO_NOSHADOWS);
 
-			auto moveChild = ent->FirstShadowChild ();
+			auto moveChild = ent->FirstShadowChild();
 			int passes     = 0;
 			while (moveChild != nullptr && passes <= 32)
 			{
-				if (Settings::ESP.weapon
-				    && static_cast<CBaseEntity *> (moveChild)
-					   ->IsWeapon ())
+				if (Settings::ESP.weapon && static_cast<CBaseEntity *>(moveChild)->IsWeapon())
 				{
 					color = Settings::Colors.weapon;
 					// this is fucking stupid
 					// why is a array not assignable?
-					mod[0] = color.r () / 255.0f;
-					mod[1] = color.g () / 255.0f;
-					mod[2] = color.b () / 255.0f;
-					interfaces::RenderView
-					    ->SetColorModulation (mod);
+					mod[0] = color.r() / 255.0f;
+					mod[1] = color.g() / 255.0f;
+					mod[2] = color.b() / 255.0f;
+					interfaces::RenderView->SetColorModulation(mod);
 				}
 
-				moveChild->DrawModel (STUDIO_RENDER
-						      | STUDIO_NOSHADOWS);
-				moveChild = moveChild->NextShadowPeer ();
+				moveChild->DrawModel(STUDIO_RENDER | STUDIO_NOSHADOWS);
+				moveChild = moveChild->NextShadowPeer();
 				passes++;
 			}
 			m_bRunning = false;
 		}
 	}
 
-	void GetEntities ()
+	void GetEntities()
 	{
-		CTFPlayer *pLocal = EntityList::GetLocal ();
+		CTFPlayer *pLocal = EntityList::GetLocal();
 		if (pLocal == nullptr)
 			return;
 
-		for (auto entry : EntityList::GetEntities ())
+		for (auto entry : EntityList::GetEntities())
 		{
-			if (!ESP_Utils::IsValidEntity (pLocal, entry))
+			if (!ESP_Utils::IsValidEntity(pLocal, entry))
 				continue;
 
 			CBaseEntity *entity = entry.ptr;
 
-			if (!entity->ShouldDraw ())
+			if (!entity->ShouldDraw())
 				continue;
 
 			if (entry.flags & EntityFlags::IsBuilding)
 			{
-				CBaseObject *building
-				    = static_cast<CBaseObject *> (entity);
+				CBaseObject *building = static_cast<CBaseObject *>(entity);
 				if (building == nullptr)
 					continue;
 
-				if (building->m_iHealth () <= 0)
+				if (building->m_iHealth() <= 0)
 					continue;
 			}
 
-			glowEnts.emplace_back (entity);
+			glowEnts.emplace_back(entity);
 		}
 	}
 
 	// Call in DoPostScreenSpaceEffects
-	void Run ()
+	void Run()
 	{
 		m_bRunning = false;
-		if (!m_Entities.empty ())
-			m_Entities.clear ();
-		if (!glowEnts.empty ())
-			glowEnts.clear ();
+		if (!m_Entities.empty())
+			m_Entities.clear();
+		if (!glowEnts.empty())
+			glowEnts.clear();
 
 		if (Settings::ESP.blur == 0 && Settings::ESP.stencil == 0)
 			return;
 
-		if (interfaces::Engine->IsTakingScreenshot ())
+		if (interfaces::Engine->IsTakingScreenshot())
 			return;
 
-		GetEntities ();
+		GetEntities();
 
-		if (glowEnts.empty ())
+		if (glowEnts.empty())
 			return;
 
-		auto pRenderContext
-		    = interfaces::MaterialSystem->GetRenderContext ();
+		auto pRenderContext = interfaces::MaterialSystem->GetRenderContext();
 		if (!pRenderContext)
 			return;
 
 		int w, h;
-		interfaces::Engine->GetScreenSize (w, h);
+		interfaces::Engine->GetScreenSize(w, h);
 
 		{ // stencil pass
-			pRenderContext->SetStencilEnable (true);
-			float savedBlend = interfaces::RenderView->GetBlend ();
-			interfaces::ModelRender->ForcedMaterialOverride (
-			    m_Materials.glowColor);
-			interfaces::RenderView->SetBlend (0);
+			pRenderContext->SetStencilEnable(true);
+			float savedBlend = interfaces::RenderView->GetBlend();
+			interfaces::ModelRender->ForcedMaterialOverride(m_Materials.glowColor);
+			interfaces::RenderView->SetBlend(0);
 
-			pRenderContext->SetStencilReferenceValue (1);
-			pRenderContext->SetStencilCompareFunction (
-			    STENCILCOMPARISONFUNCTION_ALWAYS);
-			pRenderContext->SetStencilPassOperation (
-			    STENCILOPERATION_REPLACE);
-			pRenderContext->SetStencilFailOperation (
-			    STENCILOPERATION_KEEP);
-			pRenderContext->SetStencilZFailOperation (
-			    STENCILOPERATION_REPLACE);
+			pRenderContext->SetStencilReferenceValue(1);
+			pRenderContext->SetStencilCompareFunction(STENCILCOMPARISONFUNCTION_ALWAYS);
+			pRenderContext->SetStencilPassOperation(STENCILOPERATION_REPLACE);
+			pRenderContext->SetStencilFailOperation(STENCILOPERATION_KEEP);
+			pRenderContext->SetStencilZFailOperation(STENCILOPERATION_REPLACE);
 
-			DrawEntities ();
+			DrawEntities();
 
-			interfaces::ModelRender->ForcedMaterialOverride (
-			    nullptr);
-			interfaces::RenderView->SetBlend (savedBlend);
-			pRenderContext->SetStencilEnable (false);
+			interfaces::ModelRender->ForcedMaterialOverride(nullptr);
+			interfaces::RenderView->SetBlend(savedBlend);
+			pRenderContext->SetStencilEnable(false);
 		}
 
 		{ // color pass
-			pRenderContext->PushRenderTargetAndViewport ();
+			pRenderContext->PushRenderTargetAndViewport();
 
 			float savedColor[3], savedBlend;
-			interfaces::RenderView->GetColorModulation (
-			    savedColor);
-			savedBlend = interfaces::RenderView->GetBlend ();
+			interfaces::RenderView->GetColorModulation(savedColor);
+			savedBlend = interfaces::RenderView->GetBlend();
 
-			interfaces::RenderView->SetBlend (1.0f);
-			pRenderContext->SetRenderTarget (
-			    m_Materials.glowBuffer1);
-			pRenderContext->Viewport (0, 0, w, h);
-			pRenderContext->ClearColor3ub (0, 0, 0);
-			pRenderContext->ClearBuffers (true, false, false);
-			interfaces::ModelRender->ForcedMaterialOverride (
-			    m_Materials.glowColor);
+			interfaces::RenderView->SetBlend(1.0f);
+			pRenderContext->SetRenderTarget(m_Materials.glowBuffer1);
+			pRenderContext->Viewport(0, 0, w, h);
+			pRenderContext->ClearColor3ub(0, 0, 0);
+			pRenderContext->ClearBuffers(true, false, false);
+			interfaces::ModelRender->ForcedMaterialOverride(m_Materials.glowColor);
 
-			DrawEntities ();
+			DrawEntities();
 
-			interfaces::ModelRender->ForcedMaterialOverride (
-			    nullptr);
-			interfaces::RenderView->SetBlend (savedBlend);
-			interfaces::RenderView->SetColorModulation (
-			    savedColor);
+			interfaces::ModelRender->ForcedMaterialOverride(nullptr);
+			interfaces::RenderView->SetBlend(savedBlend);
+			interfaces::RenderView->SetColorModulation(savedColor);
 
-			pRenderContext->PopRenderTargetAndViewport ();
+			pRenderContext->PopRenderTargetAndViewport();
 		}
 
 		// blur pass
 		if (Settings::ESP.blur > 0)
 		{
-			pRenderContext->PushRenderTargetAndViewport ();
-			pRenderContext->Viewport (0, 0, w, h);
+			pRenderContext->PushRenderTargetAndViewport();
+			pRenderContext->Viewport(0, 0, w, h);
 
 			for (int i = 0; i < Settings::ESP.blur; ++i)
 			{
-				pRenderContext->SetRenderTarget (
-				    m_Materials.glowBuffer2);
-				pRenderContext->DrawScreenSpaceRectangle (
-				    m_Materials.blurX, 0, 0, w, h, 0, 0, w - 1,
-				    h - 1, w, h);
-				pRenderContext->SetRenderTarget (
-				    m_Materials.glowBuffer1);
-				pRenderContext->DrawScreenSpaceRectangle (
-				    m_Materials.blurY, 0, 0, w, h, 0, 0, w - 1,
-				    h - 1, w, h);
+				pRenderContext->SetRenderTarget(m_Materials.glowBuffer2);
+				pRenderContext->DrawScreenSpaceRectangle(m_Materials.blurX, 0, 0, w, h, 0, 0, w - 1,
+									 h - 1, w, h);
+				pRenderContext->SetRenderTarget(m_Materials.glowBuffer1);
+				pRenderContext->DrawScreenSpaceRectangle(m_Materials.blurY, 0, 0, w, h, 0, 0, w - 1,
+									 h - 1, w, h);
 			}
 
-			pRenderContext->PopRenderTargetAndViewport ();
+			pRenderContext->PopRenderTargetAndViewport();
 		}
 
 		{ // draw pass
-			pRenderContext->SetStencilEnable (true);
-			pRenderContext->SetStencilWriteMask (0);
-			pRenderContext->SetStencilTestMask (0xFF);
+			pRenderContext->SetStencilEnable(true);
+			pRenderContext->SetStencilWriteMask(0);
+			pRenderContext->SetStencilTestMask(0xFF);
 
-			pRenderContext->SetStencilReferenceValue (1);
-			pRenderContext->SetStencilCompareFunction (
-			    STENCILCOMPARISONFUNCTION_NOTEQUAL);
+			pRenderContext->SetStencilReferenceValue(1);
+			pRenderContext->SetStencilCompareFunction(STENCILCOMPARISONFUNCTION_NOTEQUAL);
 
-			pRenderContext->SetStencilPassOperation (
-			    STENCILOPERATION_KEEP);
-			pRenderContext->SetStencilFailOperation (
-			    STENCILOPERATION_KEEP);
-			pRenderContext->SetStencilZFailOperation (
-			    STENCILOPERATION_KEEP);
+			pRenderContext->SetStencilPassOperation(STENCILOPERATION_KEEP);
+			pRenderContext->SetStencilFailOperation(STENCILOPERATION_KEEP);
+			pRenderContext->SetStencilZFailOperation(STENCILOPERATION_KEEP);
 
 			// this is from amalgam
 			if (Settings::ESP.stencil)
 			{
 				int side = (Settings::ESP.stencil + 1) / 2;
-				pRenderContext->DrawScreenSpaceRectangle (
-				    m_Materials.haloAddToScreen, -side, 0, w,
-				    h, 0, 0, w - 1, h - 1, w, h);
-				pRenderContext->DrawScreenSpaceRectangle (
-				    m_Materials.haloAddToScreen, 0, -side, w,
-				    h, 0, 0, w - 1, h - 1, w, h);
-				pRenderContext->DrawScreenSpaceRectangle (
-				    m_Materials.haloAddToScreen, side, 0, w, h,
-				    0, 0, w - 1, h - 1, w, h);
-				pRenderContext->DrawScreenSpaceRectangle (
-				    m_Materials.haloAddToScreen, 0, side, w, h,
-				    0, 0, w - 1, h - 1, w, h);
+				pRenderContext->DrawScreenSpaceRectangle(m_Materials.haloAddToScreen, -side, 0, w, h, 0,
+									 0, w - 1, h - 1, w, h);
+				pRenderContext->DrawScreenSpaceRectangle(m_Materials.haloAddToScreen, 0, -side, w, h, 0,
+									 0, w - 1, h - 1, w, h);
+				pRenderContext->DrawScreenSpaceRectangle(m_Materials.haloAddToScreen, side, 0, w, h, 0,
+									 0, w - 1, h - 1, w, h);
+				pRenderContext->DrawScreenSpaceRectangle(m_Materials.haloAddToScreen, 0, side, w, h, 0,
+									 0, w - 1, h - 1, w, h);
 
 				int corner = Settings::ESP.stencil / 2;
 				if (corner)
 				{
-					pRenderContext
-					    ->DrawScreenSpaceRectangle (
-						m_Materials.haloAddToScreen,
-						-corner, -corner, w, h, 0, 0,
-						w - 1, h - 1, w, h);
-					pRenderContext
-					    ->DrawScreenSpaceRectangle (
-						m_Materials.haloAddToScreen,
-						corner, corner, w, h, 0, 0,
-						w - 1, h - 1, w, h);
-					pRenderContext
-					    ->DrawScreenSpaceRectangle (
-						m_Materials.haloAddToScreen,
-						corner, -corner, w, h, 0, 0,
-						w - 1, h - 1, w, h);
-					pRenderContext
-					    ->DrawScreenSpaceRectangle (
-						m_Materials.haloAddToScreen,
-						-corner, corner, w, h, 0, 0,
-						w - 1, h - 1, w, h);
+					pRenderContext->DrawScreenSpaceRectangle(m_Materials.haloAddToScreen, -corner,
+										 -corner, w, h, 0, 0, w - 1, h - 1, w,
+										 h);
+					pRenderContext->DrawScreenSpaceRectangle(m_Materials.haloAddToScreen, corner,
+										 corner, w, h, 0, 0, w - 1, h - 1, w,
+										 h);
+					pRenderContext->DrawScreenSpaceRectangle(m_Materials.haloAddToScreen, corner,
+										 -corner, w, h, 0, 0, w - 1, h - 1, w,
+										 h);
+					pRenderContext->DrawScreenSpaceRectangle(m_Materials.haloAddToScreen, -corner,
+										 corner, w, h, 0, 0, w - 1, h - 1, w,
+										 h);
 				}
 			}
 
 			if (Settings::ESP.blur)
-				pRenderContext->DrawScreenSpaceRectangle (
-				    m_Materials.haloAddToScreen, 0, 0, w, h, 0,
-				    0, w - 1, h - 1, w, h);
+				pRenderContext->DrawScreenSpaceRectangle(m_Materials.haloAddToScreen, 0, 0, w, h, 0, 0,
+									 w - 1, h - 1, w, h);
 
-			pRenderContext->SetStencilEnable (false);
+			pRenderContext->SetStencilEnable(false);
 		}
 	}
-}
+} // namespace Glow

@@ -28,13 +28,11 @@
    andreas@angelcode.com
 */
 
-
 //
 // as_variablescope.cpp
 //
 // A manager class for variable declarations
 //
-
 
 #include "as_config.h"
 
@@ -46,7 +44,7 @@ BEGIN_AS_NAMESPACE
 
 asCVariableScope::asCVariableScope(asCVariableScope *parent)
 {
-	this->parent    = parent;
+	this->parent = parent;
 	Reset();
 }
 
@@ -57,13 +55,13 @@ asCVariableScope::~asCVariableScope()
 
 void asCVariableScope::Reset()
 {
-	isBreakScope = false;
+	isBreakScope	= false;
 	isContinueScope = false;
 
-	for( asUINT n = 0; n < variables.GetLength(); n++ )
-		if( variables[n] ) 
+	for (asUINT n = 0; n < variables.GetLength(); n++)
+		if (variables[n])
 		{
-			asDELETE(variables[n],sVariable);
+			asDELETE(variables[n], sVariable);
 		}
 	variables.SetLength(0);
 }
@@ -72,30 +70,30 @@ int asCVariableScope::DeclareVariable(const char *name, const asCDataType &type,
 {
 	// TODO: optimize: Improve linear search
 	// See if the variable is already declared
-	if( strcmp(name, "") != 0 )
+	if (strcmp(name, "") != 0)
 	{
-		for( asUINT n = 0; n < variables.GetLength(); n++ )
+		for (asUINT n = 0; n < variables.GetLength(); n++)
 		{
-			if( variables[n]->name == name )
+			if (variables[n]->name == name)
 				return -1;
 		}
 	}
 
 	sVariable *var = asNEW(sVariable);
-	if( var == 0 )
+	if (var == 0)
 	{
 		// Out of memory. Return without allocating the var
 		return -2;
 	}
-	var->name           = name;
-	var->type           = type;
+	var->name	    = name;
+	var->type	    = type;
 	var->stackOffset    = stackOffset;
 	var->isInitialized  = false;
 	var->isPureConstant = false;
-	var->onHeap         = onHeap;
+	var->onHeap	    = onHeap;
 
 	// Parameters are initialized
-	if( stackOffset <= 0 )
+	if (stackOffset <= 0)
 		var->isInitialized = true;
 
 	variables.PushLast(var);
@@ -107,13 +105,13 @@ sVariable *asCVariableScope::GetVariable(const char *name)
 {
 	// TODO: optimize: Improve linear search
 	// Find the variable
-	for( asUINT n = 0; n < variables.GetLength(); n++ )
+	for (asUINT n = 0; n < variables.GetLength(); n++)
 	{
-		if( variables[n]->name == name )
+		if (variables[n]->name == name)
 			return variables[n];
 	}
 
-	if( parent )
+	if (parent)
 		return parent->GetVariable(name);
 
 	return 0;
@@ -123,13 +121,13 @@ sVariable *asCVariableScope::GetVariableByOffset(int offset)
 {
 	// TODO: optimize: Improve linear search
 	// Find the variable
-	for( asUINT n = 0; n < variables.GetLength(); n++ )
+	for (asUINT n = 0; n < variables.GetLength(); n++)
 	{
-		if( variables[n]->stackOffset == offset )
+		if (variables[n]->stackOffset == offset)
 			return variables[n];
 	}
 
-	if( parent )
+	if (parent)
 		return parent->GetVariableByOffset(offset);
 
 	return 0;
@@ -138,5 +136,3 @@ sVariable *asCVariableScope::GetVariableByOffset(int offset)
 END_AS_NAMESPACE
 
 #endif // AS_NO_COMPILER
-
-

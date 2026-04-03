@@ -10,7 +10,7 @@ typedef enum
 
 typedef struct netadr_s
 {
-public:
+      public:
 	netadrtype_t type;
 	unsigned char ip[4];
 	unsigned short port;

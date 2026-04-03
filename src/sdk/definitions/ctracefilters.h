@@ -1,8 +1,8 @@
 #pragma once
 
+#include "../defs.h"
 #include "cgametrace.h"
 #include "ienginetrace.h"
-#include "../defs.h"
 
 enum
 {
@@ -31,48 +31,48 @@ enum
 
 class CTraceFilterHitscan : public ITraceFilter
 {
-public:
-	bool ShouldHitEntity(IHandleEntity* pServerEntity, int nContentsMask) override;
+      public:
+	bool ShouldHitEntity(IHandleEntity *pServerEntity, int nContentsMask) override;
 	TraceType_t GetTraceType() const override;
-	CBaseEntity* pSkip = nullptr;
+	CBaseEntity *pSkip	  = nullptr;
 
-	int iTeam = -1;
-	std::vector<int> vWeapons = { TF_WEAPON_SNIPERRIFLE, TF_WEAPON_SNIPERRIFLE_CLASSIC, TF_WEAPON_SNIPERRIFLE_DECAP };
-	int iType = FORCE_HIT;
-	int iWeapon = WEAPON_EXCLUDE;
-	bool bWeapon = false;
+	int iTeam		  = -1;
+	std::vector<int> vWeapons = {TF_WEAPON_SNIPERRIFLE, TF_WEAPON_SNIPERRIFLE_CLASSIC, TF_WEAPON_SNIPERRIFLE_DECAP};
+	int iType		  = FORCE_HIT;
+	int iWeapon		  = WEAPON_EXCLUDE;
+	bool bWeapon		  = false;
 };
 
 class CTraceFilterCollideable : public ITraceFilter
 {
-public:
-	bool ShouldHitEntity(IHandleEntity* pServerEntity, int nContentsMask) override;
+      public:
+	bool ShouldHitEntity(IHandleEntity *pServerEntity, int nContentsMask) override;
 	TraceType_t GetTraceType() const override;
-	CBaseEntity* pSkip = nullptr;
+	CBaseEntity *pSkip	  = nullptr;
 
-	int iTeam = -1;
-	std::vector<int> vWeapons = { TF_WEAPON_CROSSBOW, TF_WEAPON_LUNCHBOX };
-	int iType = FORCE_HIT;
-	int iWeapon = WEAPON_INCLUDE;
-	bool bWeapon = false;
-	int iPlayer = PLAYER_DEFAULT;
-	int iObject = OBJECT_ALL;
-	bool bMisc = false;
+	int iTeam		  = -1;
+	std::vector<int> vWeapons = {TF_WEAPON_CROSSBOW, TF_WEAPON_LUNCHBOX};
+	int iType		  = FORCE_HIT;
+	int iWeapon		  = WEAPON_INCLUDE;
+	bool bWeapon		  = false;
+	int iPlayer		  = PLAYER_DEFAULT;
+	int iObject		  = OBJECT_ALL;
+	bool bMisc		  = false;
 };
 
 class CTraceFilterWorldAndPropsOnly : public ITraceFilter
 {
-public:
-	bool ShouldHitEntity(IHandleEntity* pServerEntity, int nContentsMask) override;
+      public:
+	bool ShouldHitEntity(IHandleEntity *pServerEntity, int nContentsMask) override;
 	TraceType_t GetTraceType() const override;
-	CBaseEntity* pSkip = nullptr;
+	CBaseEntity *pSkip = nullptr;
 
-	int iTeam = -1;
+	int iTeam	   = -1;
 };
 
-class CTraceFilterLua: public ITraceFilter
+class CTraceFilterLua : public ITraceFilter
 {
-public:
-	bool ShouldHitEntity(IHandleEntity* pServerEntity, int nContentsMask) override;
+      public:
+	bool ShouldHitEntity(IHandleEntity *pServerEntity, int nContentsMask) override;
 	TraceType_t GetTraceType() const override;
 };

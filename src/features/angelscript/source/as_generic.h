@@ -28,13 +28,11 @@
    andreas@angelcode.com
 */
 
-
 //
 // as_generic.h
 //
 // This class handles the call to a function registered with asCALL_GENERIC
 //
-
 
 #ifndef AS_GENERIC_H
 #define AS_GENERIC_H
@@ -48,47 +46,47 @@ class asCScriptFunction;
 
 class asCGeneric : public asIScriptGeneric
 {
-public:
-//------------------------------
-// asIScriptGeneric
-//------------------------------
+      public:
+	//------------------------------
+	// asIScriptGeneric
+	//------------------------------
 	// Miscellaneous
-	asIScriptEngine   *GetEngine() const;
+	asIScriptEngine *GetEngine() const;
 	asIScriptFunction *GetFunction() const;
-	void              *GetAuxiliary() const;
+	void *GetAuxiliary() const;
 
 	// Object
-	void   *GetObject();
-	int     GetObjectTypeId() const;
+	void *GetObject();
+	int GetObjectTypeId() const;
 
 	// Arguments
-	int     GetArgCount() const;
-	int     GetArgTypeId(asUINT arg, asDWORD *flags = 0) const;
-	asBYTE  GetArgByte(asUINT arg);
-	asWORD  GetArgWord(asUINT arg);
+	int GetArgCount() const;
+	int GetArgTypeId(asUINT arg, asDWORD *flags = 0) const;
+	asBYTE GetArgByte(asUINT arg);
+	asWORD GetArgWord(asUINT arg);
 	asDWORD GetArgDWord(asUINT arg);
 	asQWORD GetArgQWord(asUINT arg);
-	float   GetArgFloat(asUINT arg);
-	double  GetArgDouble(asUINT arg);
-	void   *GetArgAddress(asUINT arg);
-	void   *GetArgObject(asUINT arg);
-	void   *GetAddressOfArg(asUINT arg);
+	float GetArgFloat(asUINT arg);
+	double GetArgDouble(asUINT arg);
+	void *GetArgAddress(asUINT arg);
+	void *GetArgObject(asUINT arg);
+	void *GetAddressOfArg(asUINT arg);
 
 	// Return value
-	int     GetReturnTypeId(asDWORD *flags = 0) const;
-	int     SetReturnByte(asBYTE val);
-	int     SetReturnWord(asWORD val);
-	int     SetReturnDWord(asDWORD val);
-	int     SetReturnQWord(asQWORD val);
-	int     SetReturnFloat(float val);
-	int     SetReturnDouble(double val);
-	int     SetReturnAddress(void *addr);
-	int     SetReturnObject(void *obj);
-	void   *GetAddressOfReturnLocation();
+	int GetReturnTypeId(asDWORD *flags = 0) const;
+	int SetReturnByte(asBYTE val);
+	int SetReturnWord(asWORD val);
+	int SetReturnDWord(asDWORD val);
+	int SetReturnQWord(asQWORD val);
+	int SetReturnFloat(float val);
+	int SetReturnDouble(double val);
+	int SetReturnAddress(void *addr);
+	int SetReturnObject(void *obj);
+	void *GetAddressOfReturnLocation();
 
-//------------------------
-// internal
-//-------------------------
+	//------------------------
+	// internal
+	//-------------------------
 	asCGeneric(asCScriptEngine *engine, asCScriptFunction *sysFunction, void *currentObject, asDWORD *stackPointer);
 	virtual ~asCGeneric();
 
@@ -105,30 +103,31 @@ public:
 
 class asCGenericVariadic : public asCGeneric
 {
-public:
-	asCGenericVariadic(asCScriptEngine* engine, asCScriptFunction* sysFunction, void* currentObject, asDWORD* stackPointer, asDWORD stackArgCount);
+      public:
+	asCGenericVariadic(asCScriptEngine *engine, asCScriptFunction *sysFunction, void *currentObject,
+			   asDWORD *stackPointer, asDWORD stackArgCount);
 
-	int     GetArgCount() const;
-	int     GetArgTypeId(asUINT arg, asDWORD* flags = 0) const;
-	asBYTE  GetArgByte(asUINT arg);
-	asWORD  GetArgWord(asUINT arg);
+	int GetArgCount() const;
+	int GetArgTypeId(asUINT arg, asDWORD *flags = 0) const;
+	asBYTE GetArgByte(asUINT arg);
+	asWORD GetArgWord(asUINT arg);
 	asDWORD GetArgDWord(asUINT arg);
 	asQWORD GetArgQWord(asUINT arg);
-	float   GetArgFloat(asUINT arg);
-	double  GetArgDouble(asUINT arg);
-	void*   GetArgAddress(asUINT arg);
-	void*   GetArgObject(asUINT arg);
-	void*   GetAddressOfArg(asUINT arg);
+	float GetArgFloat(asUINT arg);
+	double GetArgDouble(asUINT arg);
+	void *GetArgAddress(asUINT arg);
+	void *GetArgObject(asUINT arg);
+	void *GetAddressOfArg(asUINT arg);
 
-	int     SetReturnObject(void* obj);
-	void*   GetAddressOfReturnLocation();
+	int SetReturnObject(void *obj);
+	void *GetAddressOfReturnLocation();
 
-//------------------------
-// internal
-//-------------------------
+	//------------------------
+	// internal
+	//-------------------------
 	asDWORD argCount;
 
-	asCDataType* GetArgDataType(asUINT arg) const;
+	asCDataType *GetArgDataType(asUINT arg) const;
 	int GetArgOffsetOnStack(asUINT arg) const;
 };
 

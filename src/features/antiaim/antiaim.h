@@ -10,9 +10,9 @@
 
 namespace Antiaim
 {
-	std::string GetPitchModeName (PitchMode mode);
-	std::string GetYawModeName (YawMode mode);
-	float GetPitch (CUserCmd *pCmd);
-	float GetYaw (CUserCmd *pCmd, YawMode mode);
-	void Run (CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCmd);
-}
+	std::string GetPitchModeName(PitchMode mode);
+	std::string GetYawModeName(YawMode mode);
+	float GetPitch(CUserCmd *pCmd);
+	float GetYaw(CUserCmd *pCmd, YawMode mode);
+	void Run(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCmd);
+} // namespace Antiaim

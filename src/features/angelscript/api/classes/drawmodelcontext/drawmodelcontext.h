@@ -12,5 +12,5 @@ struct DrawModelContext
 	bool valid = false;
 };
 
-void DrawModelContext_RegisterClass (asIScriptEngine *engine);
-bool AS_ShouldCallOriginal ();
+void DrawModelContext_RegisterClass(asIScriptEngine *engine);
+bool AS_ShouldCallOriginal();

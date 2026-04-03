@@ -27,7 +27,7 @@ struct ProjectileInfo_t
 	float lifetime	    = 60.0f;
 	bool simple_trace   = false;
 	Vector offset{};
-	Vector hull{ 6, 6, 6 };
+	Vector hull{6, 6, 6};
 };
 
 struct AimbotState
@@ -35,10 +35,10 @@ struct AimbotState
 	bool running	  = false;
 	bool shouldSilent = false;
 	std::vector<Vector> targetPath;
-	Vector angle = { 0, 0, 0 };
+	Vector angle = {0, 0, 0};
 };
 
-static void ClearAimbotState (AimbotState &state)
+static void ClearAimbotState(AimbotState &state)
 {
 	// state.angle.Set(0, 0, 0);
 	state.shouldSilent = false;
@@ -48,22 +48,19 @@ static void ClearAimbotState (AimbotState &state)
 
 namespace AimbotUtils
 {
-	bool IsValidEntity (CBaseEntity *entity);
+	bool IsValidEntity(CBaseEntity *entity);
 
 	// Is this optimized? absolutely fucking not
 	// I need to think of a better way
 	// I should probably check bones
-	bool GetVisiblePoint (Vector &out, CTFPlayer *pLocal, Vector origin,
-			      Vector mins, Vector maxs);
+	bool GetVisiblePoint(Vector &out, CTFPlayer *pLocal, Vector origin, Vector mins, Vector maxs);
 
-	std::string GetAimbotModeName ();
-	std::string GetTeamModeName ();
+	std::string GetAimbotModeName();
+	std::string GetTeamModeName();
 
-	bool CanDamageWithSniperRifle (CTFPlayer *pLocal, CBaseEntity *pTarget,
-				       CTFWeaponBase *pWeapon);
-	float GetFovScaled (float flFov);
-	float GetAimbotFovScaled ();
+	bool CanDamageWithSniperRifle(CTFPlayer *pLocal, CBaseEntity *pTarget, CTFWeaponBase *pWeapon);
+	float GetFovScaled(float flFov);
+	float GetAimbotFovScaled();
 
-	std::vector<EntityListEntry> GetTargets (const bool &bCanHitTeammates,
-						 int localTeam);
-};
+	std::vector<EntityListEntry> GetTargets(const bool &bCanHitTeammates, int localTeam);
+}; // namespace AimbotUtils

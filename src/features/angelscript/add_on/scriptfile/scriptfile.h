@@ -20,26 +20,23 @@
 #define AS_WRITE_OPS 1
 #endif
 
-
-
-
 //---------------------------
 // Declaration
 //
 
-#ifndef ANGELSCRIPT_H 
+#ifndef ANGELSCRIPT_H
 // Avoid having to inform include path if header is already include before
 #include "../../include/angelscript.h"
 #endif
 
-#include <string>
 #include <stdio.h>
+#include <string>
 
 BEGIN_AS_NAMESPACE
 
 class CScriptFile
 {
-public:
+      public:
 	CScriptFile();
 
 	void AddRef() const;
@@ -49,18 +46,18 @@ public:
 	// mode = "r" -> open the file for reading
 	//        "w" -> open the file for writing (overwrites existing file)
 	//        "a" -> open the file for appending
-	int  Open(const std::string &filename, const std::string &mode);
-	int  Close();
-	int  GetSize() const;
+	int Open(const std::string &filename, const std::string &mode);
+	int Close();
+	int GetSize() const;
 	bool IsEOF() const;
 
 	// Reading
 	std::string ReadString(unsigned int length);
 	std::string ReadLine();
-	asINT64     ReadInt(asUINT bytes);
-	asQWORD     ReadUInt(asUINT bytes);
-	float       ReadFloat();
-	double      ReadDouble();
+	asINT64 ReadInt(asUINT bytes);
+	asQWORD ReadUInt(asUINT bytes);
+	float ReadFloat();
+	double ReadDouble();
 
 	// Writing
 	int WriteString(const std::string &str);
@@ -77,11 +74,11 @@ public:
 	// Big-endian = most significant byte first
 	bool mostSignificantByteFirst;
 
-protected:
+      protected:
 	~CScriptFile();
 
 	mutable int refCount;
-	FILE       *file;
+	FILE *file;
 };
 
 // This function will determine the configuration of the engine

@@ -15,8 +15,8 @@ namespace Chams
 	extern bool m_bRunning;
 	extern std::unordered_set<int> m_Entities;
 
-	bool Init ();
-	bool ShouldHide (int entindex);
-	void DrawPlayers ();
-	void Run ();
-}
+	bool Init();
+	bool ShouldHide(int entindex);
+	void DrawPlayers();
+	void Run();
+} // namespace Chams

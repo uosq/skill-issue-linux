@@ -28,35 +28,38 @@
    andreas@angelcode.com
 */
 
-
-
-
 #include "as_config.h"
 #include "as_property.h"
 #include "as_scriptengine.h"
 
 BEGIN_AS_NAMESPACE
 
-asCGlobalProperty::asCGlobalProperty() 
-{ 
-	memory          = &storage; 
-	memoryAllocated = false; 
-	realAddress     = 0; 
-	initFunc        = 0;
-	accessMask      = 0xFFFFFFFF;
+asCGlobalProperty::asCGlobalProperty()
+{
+	memory		= &storage;
+	memoryAllocated = false;
+	realAddress	= 0;
+	initFunc	= 0;
+	accessMask	= 0xFFFFFFFF;
 
 	refCount.set(1);
 }
 
 asCGlobalProperty::~asCGlobalProperty()
-{ 
+{
 #ifndef WIP_16BYTE_ALIGNED
-	if( memoryAllocated ) { asDELETEARRAY(memory); } 
+	if (memoryAllocated)
+	{
+		asDELETEARRAY(memory);
+	}
 #else
-	if( memoryAllocated ) { asDELETEARRAYALIGNED(memory); } 
+	if (memoryAllocated)
+	{
+		asDELETEARRAYALIGNED(memory);
+	}
 #endif
 
-	if( initFunc )
+	if (initFunc)
 		initFunc->ReleaseInternal();
 }
 
@@ -67,13 +70,13 @@ void asCGlobalProperty::AddRef()
 
 void asCGlobalProperty::Release()
 {
-	if( refCount.atomicDec() == 0 )
+	if (refCount.atomicDec() == 0)
 		asDELETE(this, asCGlobalProperty);
 }
 
 void asCGlobalProperty::DestroyInternal()
 {
-	if( initFunc )
+	if (initFunc)
 	{
 		initFunc->ReleaseInternal();
 		initFunc = 0;
@@ -81,7 +84,7 @@ void asCGlobalProperty::DestroyInternal()
 }
 
 void *asCGlobalProperty::GetAddressOfValue()
-{ 
+{
 	return memory;
 }
 
@@ -89,30 +92,30 @@ void *asCGlobalProperty::GetAddressOfValue()
 // method for script declared variables. Each allocation is independent of
 // other global properties, so that variables can be added and removed at
 // any time.
-void asCGlobalProperty::AllocateMemory() 
-{ 
-	if( type.GetSizeOnStackDWords() > 2 ) 
-	{ 
+void asCGlobalProperty::AllocateMemory()
+{
+	if (type.GetSizeOnStackDWords() > 2)
+	{
 #ifndef WIP_16BYTE_ALIGNED
-		memory = asNEWARRAY(asDWORD, type.GetSizeOnStackDWords()); 
+		memory = asNEWARRAY(asDWORD, type.GetSizeOnStackDWords());
 #else
 		// TODO: Avoid aligned allocation if not needed to reduce the waste of memory for the alignment
-		memory = asNEWARRAYALIGNED(asDWORD, type.GetSizeOnStackDWords(), type.GetAlignment()); 
+		memory = asNEWARRAYALIGNED(asDWORD, type.GetSizeOnStackDWords(), type.GetAlignment());
 #endif
-		memoryAllocated = true; 
-	} 
+		memoryAllocated = true;
+	}
 }
 
-void asCGlobalProperty::SetRegisteredAddress(void *p) 
-{ 
+void asCGlobalProperty::SetRegisteredAddress(void *p)
+{
 	realAddress = p;
-	if( type.IsObject() && !type.IsReference() && !type.IsObjectHandle() )
+	if (type.IsObject() && !type.IsReference() && !type.IsObjectHandle())
 	{
-		// The global property is a pointer to a pointer 
+		// The global property is a pointer to a pointer
 		memory = &realAddress;
-	} 
+	}
 	else
-		memory = p; 
+		memory = p;
 }
 
 void *asCGlobalProperty::GetRegisteredAddress() const
@@ -123,7 +126,7 @@ void *asCGlobalProperty::GetRegisteredAddress() const
 void asCGlobalProperty::SetInitFunc(asCScriptFunction *in_initFunc)
 {
 	// This should only be done once
-	asASSERT( initFunc == 0 );
+	asASSERT(initFunc == 0);
 
 	initFunc = in_initFunc;
 	initFunc->AddRefInternal();

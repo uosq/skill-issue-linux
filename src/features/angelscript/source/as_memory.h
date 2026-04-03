@@ -28,15 +28,12 @@
    andreas@angelcode.com
 */
 
-
 //
 // as_memory.h
 //
 // Overload the default memory management functions so that we
 // can let the application decide how to do it.
 //
-
-
 
 #ifndef AS_MEMORY_H
 #define AS_MEMORY_H
@@ -46,7 +43,7 @@
 BEGIN_AS_NAMESPACE
 
 extern asALLOCFUNC_t userAlloc;
-extern asFREEFUNC_t  userFree;
+extern asFREEFUNC_t userFree;
 
 #ifdef WIP_16BYTE_ALIGN
 
@@ -56,14 +53,14 @@ extern asFREEFUNC_t  userFree;
 typedef void *(*asALLOCALIGNEDFUNC_t)(size_t, size_t);
 typedef void (*asFREEALIGNEDFUNC_t)(void *);
 extern asALLOCALIGNEDFUNC_t userAllocAligned;
-extern asFREEALIGNEDFUNC_t  userFreeAligned;
+extern asFREEALIGNEDFUNC_t userFreeAligned;
 typedef void *(*asALLOCALIGNEDFUNCDEBUG_t)(size_t, size_t, const char *, unsigned int);
 
 // The maximum type alignment supported.
 const int MAX_TYPE_ALIGNMENT = 16;
 
 // Utility function used for assertions.
-bool isAligned(const void* const pointer, asUINT alignment);
+bool isAligned(const void *const pointer, asUINT alignment);
 
 #endif // WIP_16BYTE_ALIGN
 
@@ -71,46 +68,56 @@ bool isAligned(const void* const pointer, asUINT alignment);
 
 #ifndef AS_DEBUG
 
-	#define asNEW(x)        new(userAlloc(sizeof(x))) x
-	#define asDELETE(ptr,x) {void *tmp = ptr; (ptr)->~x(); userFree(tmp);}
+#define asNEW(x) new (userAlloc(sizeof(x))) x
+#define asDELETE(ptr, x)                                                                                               \
+	{                                                                                                              \
+		void *tmp = ptr;                                                                                       \
+		(ptr)->~x();                                                                                           \
+		userFree(tmp);                                                                                         \
+	}
 
-	#define asNEWARRAY(x,cnt)  (x*)userAlloc(sizeof(x)*cnt)
-	#define asDELETEARRAY(ptr) userFree(ptr)
+#define asNEWARRAY(x, cnt) (x *)userAlloc(sizeof(x) * cnt)
+#define asDELETEARRAY(ptr) userFree(ptr)
 
 #ifdef WIP_16BYTE_ALIGN
-	#define asNEWARRAYALIGNED(x,cnt, alignment)  (x*)userAllocAligned(sizeof(x)*cnt, alignment)
-	#define asDELETEARRAYALIGNED(ptr) userFreeAligned(ptr)
+#define asNEWARRAYALIGNED(x, cnt, alignment) (x *)userAllocAligned(sizeof(x) * cnt, alignment)
+#define asDELETEARRAYALIGNED(ptr) userFreeAligned(ptr)
 #endif
 
 #else
 
-	typedef void *(*asALLOCFUNCDEBUG_t)(size_t, const char *, unsigned int);
+typedef void *(*asALLOCFUNCDEBUG_t)(size_t, const char *, unsigned int);
 
-	#define asNEW(x)        new(((asALLOCFUNCDEBUG_t)(userAlloc))(sizeof(x), __FILE__, __LINE__)) x
-	#define asDELETE(ptr,x) {void *tmp = ptr; (ptr)->~x(); userFree(tmp);}
+#define asNEW(x) new (((asALLOCFUNCDEBUG_t)(userAlloc))(sizeof(x), __FILE__, __LINE__)) x
+#define asDELETE(ptr, x)                                                                                               \
+	{                                                                                                              \
+		void *tmp = ptr;                                                                                       \
+		(ptr)->~x();                                                                                           \
+		userFree(tmp);                                                                                         \
+	}
 
-	#define asNEWARRAY(x,cnt)  (x*)((asALLOCFUNCDEBUG_t)(userAlloc))(sizeof(x)*cnt, __FILE__, __LINE__)
-	#define asDELETEARRAY(ptr) userFree(ptr)
+#define asNEWARRAY(x, cnt) (x *)((asALLOCFUNCDEBUG_t)(userAlloc))(sizeof(x) * cnt, __FILE__, __LINE__)
+#define asDELETEARRAY(ptr) userFree(ptr)
 
 #ifdef WIP_16BYTE_ALIGN
-	//TODO: Equivalent of debug allocation function with alignment?
-	#define asNEWARRAYALIGNED(x,cnt, alignment)  (x*)userAllocAligned(sizeof(x)*cnt, alignment)
-	#define asDELETEARRAYALIGNED(ptr) userFreeAligned(ptr)
+//TODO: Equivalent of debug allocation function with alignment?
+#define asNEWARRAYALIGNED(x, cnt, alignment) (x *)userAllocAligned(sizeof(x) * cnt, alignment)
+#define asDELETEARRAYALIGNED(ptr) userFreeAligned(ptr)
 #endif
 
 #endif
 
 END_AS_NAMESPACE
 
-#include <new>
-#include "as_criticalsection.h"
 #include "as_array.h"
+#include "as_criticalsection.h"
+#include <new>
 
 BEGIN_AS_NAMESPACE
 
 class asCMemoryMgr
 {
-public:
+      public:
 	asCMemoryMgr();
 	~asCMemoryMgr();
 
@@ -124,7 +131,7 @@ public:
 	void FreeByteInstruction(void *ptr);
 #endif
 
-protected:
+      protected:
 	DECLARECRITICALSECTION(cs)
 	asCArray<void *> scriptNodePool;
 	asCArray<void *> byteInstructionPool;

@@ -18,7 +18,8 @@
 #include <cmath>
 #include <vector>
 
-enum class HitscanOffset {
+enum class HitscanOffset
+{
 	HEAD = 0,
 	CHEST,
 	// PELVIS
@@ -27,11 +28,8 @@ enum class HitscanOffset {
 
 namespace AimbotHitscan
 {
-	HitscanOffset GetInitialOffset (CTFPlayer *pLocal,
-					CTFWeaponBase *pWeapon);
-	bool GetShotPosition (CTFPlayer *pLocal, CBaseEntity *pTarget,
-			      CTFWeaponBase *pWeapon, Vector eyePos,
-			      Vector &shotPosition);
-	void Run (CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCmd,
-		  AimbotState &state);
-};
+	HitscanOffset GetInitialOffset(CTFPlayer *pLocal, CTFWeaponBase *pWeapon);
+	bool GetShotPosition(CTFPlayer *pLocal, CBaseEntity *pTarget, CTFWeaponBase *pWeapon, Vector eyePos,
+			     Vector &shotPosition);
+	void Run(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCmd, AimbotState &state);
+}; // namespace AimbotHitscan

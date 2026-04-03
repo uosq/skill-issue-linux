@@ -4,7 +4,7 @@
 #include "ipanel.h"
 class EditablePanel : public Panel
 {
-public:
+      public:
 	EditablePanel(Panel *parent, const char *panelName);
 	EditablePanel(Panel *parent, const char *panelName, HScheme hScheme);
 
@@ -13,7 +13,8 @@ public:
 	// Load the control settings - should be done after all the children are added
 	// If you pass in pPreloadedKeyValues, it won't actually load the file. That way, you can cache
 	// the keyvalues outside of here if you want to prevent file accesses in the middle of the game.
-	virtual void LoadControlSettings(const char *dialogResourceName, const char *pathID = NULL, KeyValues *pPreloadedKeyValues = NULL, KeyValues *pConditions = NULL);
+	virtual void LoadControlSettings(const char *dialogResourceName, const char *pathID = NULL,
+					 KeyValues *pPreloadedKeyValues = NULL, KeyValues *pConditions = NULL);
 	virtual void ApplySettings(KeyValues *inResourceData);
 
 	// sets the name of this dialog so it can be saved in the user config area
@@ -49,7 +50,7 @@ public:
 	virtual void GetControlString(const char *controlName, char *buf, int bufSize, const char *defaultString = "");
 	// sets the enabled state of a control
 	virtual void SetControlEnabled(const char *controlName, bool enabled);
-	virtual void SetControlVisible(const char *controlName, bool visible, bool bRecurseDown = false );
+	virtual void SetControlVisible(const char *controlName, bool visible, bool bRecurseDown = false);
 
 	// localization variables (used in constructing UI strings)
 	// after the variable is set, causes all the necessary sub-panels to update
@@ -72,7 +73,7 @@ public:
 	// Get the panel with the specified hotkey
 	virtual Panel *HasHotkey(wchar_t key);
 
-	virtual void OnKeyCodePressed( int code );
+	virtual void OnKeyCodePressed(int code);
 
 	// Handle information requests
 	virtual bool RequestInfo(KeyValues *data);
@@ -88,19 +89,23 @@ public:
 				"ControlName" - class name of the control to create
 			returns:
 				"PanelPtr" - pointer to the newly created panel, or NULL if no such class exists
-	*/	
+	*/
 	// registers a file in the list of control settings, so the vgui dialog can choose between them to edit
 	virtual void RegisterControlSettingsFile(const char *dialogResourceName, const char *pathID = NULL);
 
 	// localization variables - only use this if you need to iterate the variables, use the SetLoc*() to set them
 	KeyValues *GetDialogVariables();
 
-	bool ShouldSkipAutoResize() const { return m_bShouldSkipAutoResize; }
-protected:
+	bool ShouldSkipAutoResize() const
+	{
+		return m_bShouldSkipAutoResize;
+	}
+
+      protected:
 	virtual void PaintBackground();
 
 	// nav group access
-	virtual void** GetFocusNavGroup();
+	virtual void **GetFocusNavGroup();
 
 	// overrides
 	virtual void OnChildAdded(VPANEL child);
@@ -119,11 +124,11 @@ protected:
 	// disabled for now
 	// virtual bool ShouldFlushText();
 
-private:
+      private:
 	void ForceSubPanelsToUpdateWithNewDialogVariables();
 
 	void *_buildGroup;
-	void* m_NavGroup;
+	void *m_NavGroup;
 	KeyValues *m_pDialogVariables;
 
 	// the wide and tall to which all controls are locked - used for autolayout deltas

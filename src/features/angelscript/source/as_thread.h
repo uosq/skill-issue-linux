@@ -28,8 +28,6 @@
    andreas@angelcode.com
 */
 
-
-
 //
 // as_thread.h
 //
@@ -39,11 +37,11 @@
 #ifndef AS_THREAD_H
 #define AS_THREAD_H
 
-#include "as_config.h"
-#include "as_string.h"
 #include "as_array.h"
-#include "as_map.h"
+#include "as_config.h"
 #include "as_criticalsection.h"
+#include "as_map.h"
+#include "as_string.h"
 
 BEGIN_AS_NAMESPACE
 
@@ -51,17 +49,17 @@ class asCThreadLocalData;
 
 class asCThreadManager : public asIThreadManager
 {
-public:
+      public:
 	static asCThreadLocalData *GetLocalData();
 	static int CleanupLocalData();
 
-	static int  Prepare(asIThreadManager *externalThreadMgr);
+	static int Prepare(asIThreadManager *externalThreadMgr);
 	static void Unprepare();
 
 	// This read/write lock can be used by the application to provide simple synchronization
 	DECLAREREADWRITELOCK(appRWLock)
 
-protected:
+      protected:
 	asCThreadManager();
 	~asCThreadManager();
 
@@ -92,11 +90,11 @@ class asIScriptContext;
 
 class asCThreadLocalData
 {
-public:
+      public:
 	asCArray<asIScriptContext *> activeContexts;
 	asCString string;
 
-protected:
+      protected:
 	friend class asCThreadManager;
 
 	asCThreadLocalData();

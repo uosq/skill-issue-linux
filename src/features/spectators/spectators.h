@@ -6,12 +6,12 @@
 namespace Spectators
 {
 	// call from FrameStageNotify
-	void RunMain (CTFPlayer *pLocal);
+	void RunMain(CTFPlayer *pLocal);
 	// call from ImGui
-	void DrawList ();
-	bool IsSpectated (CTFPlayer *pTarget, std::vector<CTFPlayer *> &out);
-	void Reset ();
-	void OnLevelInitPostEntity ();
-	void OnLevelShutdown ();
-	bool IsLocalPlayerSpectated ();
-} // namespace end
+	void DrawList();
+	bool IsSpectated(CTFPlayer *pTarget, std::vector<CTFPlayer *> &out);
+	void Reset();
+	void OnLevelInitPostEntity();
+	void OnLevelShutdown();
+	bool IsLocalPlayerSpectated();
+} // namespace Spectators

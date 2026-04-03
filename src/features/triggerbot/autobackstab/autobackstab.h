@@ -10,16 +10,13 @@
 
 namespace AutoBackstab
 {
-	bool IsBehindEntity (CTFPlayer *pLocal, CTFPlayer *pTarget);
-	bool IsBehindEntity (Vector localCenter, Vector targetCenter,
-			     Vector targetViewAngles);
-	bool IsBehindAndFacingEntity (Vector localCenter, Vector targetCenter,
-				      Vector localViewAngles,
-				      Vector targetViewAngles);
-	bool IsBehindAndFacingEntity (CTFPlayer *pLocal, CTFPlayer *pTarget);
-	bool CanBackstabEntity (CTFPlayer *pLocal, CTFPlayer *pTarget);
+	bool IsBehindEntity(CTFPlayer *pLocal, CTFPlayer *pTarget);
+	bool IsBehindEntity(Vector localCenter, Vector targetCenter, Vector targetViewAngles);
+	bool IsBehindAndFacingEntity(Vector localCenter, Vector targetCenter, Vector localViewAngles,
+				     Vector targetViewAngles);
+	bool IsBehindAndFacingEntity(CTFPlayer *pLocal, CTFPlayer *pTarget);
+	bool CanBackstabEntity(CTFPlayer *pLocal, CTFPlayer *pTarget);
 
-	void Run (CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCmd,
-		  bool *pSendPacket);
-	std::string GetModeName ();
-};
+	void Run(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCmd, bool *pSendPacket);
+	std::string GetModeName();
+}; // namespace AutoBackstab

@@ -28,17 +28,14 @@
    andreas@angelcode.com
 */
 
-
 //
 // as_configgroup.cpp
 //
 // This class holds configuration groups for the engine
 //
 
-
-
-#include "as_config.h"
 #include "as_configgroup.h"
+#include "as_config.h"
 #include "as_scriptengine.h"
 #include "as_texts.h"
 
@@ -68,8 +65,8 @@ int asCConfigGroup::Release()
 
 asCTypeInfo *asCConfigGroup::FindType(const char *obj)
 {
-	for( asUINT n = 0; n < types.GetLength(); n++ )
-		if( types[n]->name == obj )
+	for (asUINT n = 0; n < types.GetLength(); n++)
+		if (types[n]->name == obj)
 			return types[n];
 
 	return 0;
@@ -77,11 +74,12 @@ asCTypeInfo *asCConfigGroup::FindType(const char *obj)
 
 void asCConfigGroup::RefConfigGroup(asCConfigGroup *group)
 {
-	if( group == this || group == 0 ) return;
+	if (group == this || group == 0)
+		return;
 
 	// Verify if the group is already referenced
-	for( asUINT n = 0; n < referencedConfigGroups.GetLength(); n++ )
-		if( referencedConfigGroups[n] == group )
+	for (asUINT n = 0; n < referencedConfigGroups.GetLength(); n++)
+		if (referencedConfigGroups[n] == group)
 			return;
 
 	referencedConfigGroups.PushLast(group);
@@ -91,52 +89,62 @@ void asCConfigGroup::RefConfigGroup(asCConfigGroup *group)
 void asCConfigGroup::AddReferencesForFunc(asCScriptEngine *engine, asCScriptFunction *func)
 {
 	AddReferencesForType(engine, func->returnType.GetTypeInfo());
-	for( asUINT n = 0; n < func->parameterTypes.GetLength(); n++ )
+	for (asUINT n = 0; n < func->parameterTypes.GetLength(); n++)
 		AddReferencesForType(engine, func->parameterTypes[n].GetTypeInfo());
 }
 
 void asCConfigGroup::AddReferencesForType(asCScriptEngine *engine, asCTypeInfo *type)
 {
-	if( type == 0 ) return;
+	if (type == 0)
+		return;
 
 	// Keep reference to other groups
 	RefConfigGroup(engine->FindConfigGroupForTypeInfo(type));
 
 	// Keep track of which generated template instances the config group uses
-	if ((type->flags & asOBJ_TEMPLATE) && engine->generatedTemplateTypes.Exists(CastToObjectType(type)) && !generatedTemplateInstances.Exists(CastToObjectType(type)))
+	if ((type->flags & asOBJ_TEMPLATE) && engine->generatedTemplateTypes.Exists(CastToObjectType(type)) &&
+	    !generatedTemplateInstances.Exists(CastToObjectType(type)))
 	{
 		generatedTemplateInstances.PushLast(CastToObjectType(type));
 
 		// Enumerate through the members of the template instance and register other template instances also used.
 		// This is needed when a template instance refers to another template instance, and thus is created at the same time.
 		// Without adding the reference to the referred template instance, it may be deleted when the module deletes the top template instance.
-		asCObjectType* ot = CastToObjectType(type);
+		asCObjectType *ot = CastToObjectType(type);
 		for (asUINT n = 0; n < ot->beh.constructors.GetLength(); n++)
 		{
-			asCScriptFunction* f = engine->scriptFunctions[ot->beh.constructors[n]];
-			if (!f) continue;
+			asCScriptFunction *f = engine->scriptFunctions[ot->beh.constructors[n]];
+			if (!f)
+				continue;
 
 			for (asUINT p = 0; p < f->parameterTypes.GetLength(); p++)
 			{
-				asCTypeInfo* ti = f->parameterTypes[p].GetTypeInfo();
-				if (ti && (ti->flags & asOBJ_TEMPLATE) && engine->generatedTemplateTypes.Exists(CastToObjectType(ti)) && !generatedTemplateInstances.Exists(CastToObjectType(ti)))
+				asCTypeInfo *ti = f->parameterTypes[p].GetTypeInfo();
+				if (ti && (ti->flags & asOBJ_TEMPLATE) &&
+				    engine->generatedTemplateTypes.Exists(CastToObjectType(ti)) &&
+				    !generatedTemplateInstances.Exists(CastToObjectType(ti)))
 					AddReferencesForType(engine, ti);
 			}
 		}
 
 		for (asUINT n = 0; n < ot->methods.GetLength(); n++)
 		{
-			asCScriptFunction* f = engine->scriptFunctions[ot->methods[n]];
-			if (!f) continue;
+			asCScriptFunction *f = engine->scriptFunctions[ot->methods[n]];
+			if (!f)
+				continue;
 
-			asCTypeInfo* ti = f->returnType.GetTypeInfo();
-			if (ti && (ti->flags & asOBJ_TEMPLATE) && engine->generatedTemplateTypes.Exists(CastToObjectType(ti)) && !generatedTemplateInstances.Exists(CastToObjectType(ti)))
+			asCTypeInfo *ti = f->returnType.GetTypeInfo();
+			if (ti && (ti->flags & asOBJ_TEMPLATE) &&
+			    engine->generatedTemplateTypes.Exists(CastToObjectType(ti)) &&
+			    !generatedTemplateInstances.Exists(CastToObjectType(ti)))
 				AddReferencesForType(engine, ti);
 
 			for (asUINT p = 0; p < f->parameterTypes.GetLength(); p++)
 			{
 				ti = f->parameterTypes[p].GetTypeInfo();
-				if (ti && (ti->flags & asOBJ_TEMPLATE) && engine->generatedTemplateTypes.Exists(CastToObjectType(ti)) && !generatedTemplateInstances.Exists(CastToObjectType(ti)))
+				if (ti && (ti->flags & asOBJ_TEMPLATE) &&
+				    engine->generatedTemplateTypes.Exists(CastToObjectType(ti)) &&
+				    !generatedTemplateInstances.Exists(CastToObjectType(ti)))
 					AddReferencesForType(engine, ti);
 			}
 		}
@@ -145,8 +153,8 @@ void asCConfigGroup::AddReferencesForType(asCScriptEngine *engine, asCTypeInfo *
 
 bool asCConfigGroup::HasLiveObjects()
 {
-	for( asUINT n = 0; n < types.GetLength(); n++ )
-		if( types[n]->externalRefCount.get() != 0 )
+	for (asUINT n = 0; n < types.GetLength(); n++)
+		if (types[n]->externalRefCount.get() != 0)
 			return true;
 
 	return false;
@@ -154,15 +162,15 @@ bool asCConfigGroup::HasLiveObjects()
 
 void asCConfigGroup::RemoveConfiguration(asCScriptEngine *engine, bool notUsed)
 {
-	asASSERT( refCount == 0 );
+	asASSERT(refCount == 0);
 
 	asUINT n;
 
 	// Remove global variables
-	for( n = 0; n < globalProps.GetLength(); n++ )
+	for (n = 0; n < globalProps.GetLength(); n++)
 	{
 		int index = engine->registeredGlobalProps.GetIndex(globalProps[n]);
-		if( index >= 0 )
+		if (index >= 0)
 		{
 			globalProps[n]->Release();
 
@@ -172,41 +180,41 @@ void asCConfigGroup::RemoveConfiguration(asCScriptEngine *engine, bool notUsed)
 	globalProps.SetLength(0);
 
 	// Remove global functions
-	for( n = 0; n < scriptFunctions.GetLength(); n++ )
+	for (n = 0; n < scriptFunctions.GetLength(); n++)
 	{
 		int index = engine->registeredGlobalFuncs.GetIndex(scriptFunctions[n]);
-		if( index >= 0 )
+		if (index >= 0)
 			engine->registeredGlobalFuncs.Erase(index);
 		scriptFunctions[n]->ReleaseInternal();
 	}
 	scriptFunctions.SetLength(0);
 
 	// Remove behaviours and members of object types
-	for( n = 0; n < types.GetLength(); n++ )
+	for (n = 0; n < types.GetLength(); n++)
 	{
 		asCObjectType *obj = CastToObjectType(types[n]);
-		if( obj )
+		if (obj)
 			obj->ReleaseAllFunctions();
 	}
 
 	// Remove object types (skip this if it is possible other groups are still using the types)
-	if( !notUsed )
+	if (!notUsed)
 	{
-		for( n = asUINT(types.GetLength()); n-- > 0; )
+		for (n = asUINT(types.GetLength()); n-- > 0;)
 		{
 			asCTypeInfo *t = types[n];
-			asSMapNode<asSNameSpaceNamePair, asCTypeInfo*> *cursor;
-			if( engine->allRegisteredTypes.MoveTo(&cursor, asSNameSpaceNamePair(t->nameSpace, t->name)) &&
-				cursor->value == t )
+			asSMapNode<asSNameSpaceNamePair, asCTypeInfo *> *cursor;
+			if (engine->allRegisteredTypes.MoveTo(&cursor, asSNameSpaceNamePair(t->nameSpace, t->name)) &&
+			    cursor->value == t)
 			{
 				engine->allRegisteredTypes.Erase(cursor);
 
-				if( engine->defaultArrayObjectType == t )
+				if (engine->defaultArrayObjectType == t)
 					engine->defaultArrayObjectType = 0;
 
-				if( t->flags & asOBJ_TYPEDEF )
+				if (t->flags & asOBJ_TYPEDEF)
 					engine->registeredTypeDefs.RemoveValue(CastToTypedefType(t));
-				else if( t->flags & asOBJ_ENUM )
+				else if (t->flags & asOBJ_ENUM)
 					engine->registeredEnums.RemoveValue(CastToEnumType(t));
 				else if (t->flags & asOBJ_TEMPLATE)
 					engine->registeredTemplateTypes.RemoveValue(CastToObjectType(t));
@@ -224,7 +232,7 @@ void asCConfigGroup::RemoveConfiguration(asCScriptEngine *engine, bool notUsed)
 			else
 			{
 				int idx = engine->templateInstanceTypes.IndexOf(CastToObjectType(t));
-				if( idx >= 0 )
+				if (idx >= 0)
 				{
 					engine->templateInstanceTypes.RemoveIndexUnordered(idx);
 					asCObjectType *ot = CastToObjectType(t);
@@ -237,7 +245,7 @@ void asCConfigGroup::RemoveConfiguration(asCScriptEngine *engine, bool notUsed)
 	}
 
 	// Release other config groups
-	for( n = 0; n < referencedConfigGroups.GetLength(); n++ )
+	for (n = 0; n < referencedConfigGroups.GetLength(); n++)
 		referencedConfigGroups[n]->refCount--;
 	referencedConfigGroups.SetLength(0);
 }

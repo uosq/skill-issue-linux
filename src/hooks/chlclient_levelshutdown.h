@@ -14,27 +14,26 @@
 #include "../features/angelscript/api/api.h"
 #include "../features/angelscript/api/libraries/hooks/hooks.h"
 
-DECLARE_VTABLE_HOOK (LevelShutdown, void, (CHLClient * thisptr))
+DECLARE_VTABLE_HOOK(LevelShutdown, void, (CHLClient * thisptr))
 {
-	EntityList::Clear ();
-	Warp::Reset ();
-	Backtrack::Reset ();
-	gAimProjectile.Reset ();
-	gAimProjectile.ResetIndicator ();
-	Bhop::Reset ();
-	Spectators::OnLevelShutdown ();
+	EntityList::Clear();
+	Warp::Reset();
+	Backtrack::Reset();
+	gAimProjectile.Reset();
+	gAimProjectile.ResetIndicator();
+	Bhop::Reset();
+	Spectators::OnLevelShutdown();
 
-	Hooks_CallHooks ("LevelShutdown");
-	originalLevelShutdown (thisptr);
+	Hooks_CallHooks("LevelShutdown");
+	originalLevelShutdown(thisptr);
 }
 
-static void HookLevelShutdown ()
+static void HookLevelShutdown()
 {
-	INSTALL_VTABLE_HOOK (LevelShutdown, interfaces::ClientDLL, 7);
+	INSTALL_VTABLE_HOOK(LevelShutdown, interfaces::ClientDLL, 7);
 
 #ifdef DEBUG
-	constexpr Color_t color = { 100, 255, 100, 255 };
-	helper::console::ColoredPrint ("BaseClientDll::LevelShutdown hooked\n",
-				       color);
+	constexpr Color_t color = {100, 255, 100, 255};
+	helper::console::ColoredPrint("BaseClientDll::LevelShutdown hooked\n", color);
 #endif
 }

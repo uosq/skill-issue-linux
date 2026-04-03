@@ -7,7 +7,7 @@
 
 class CBaseAnimating : public CBaseEntity
 {
-public:
+      public:
 	NETVAR(m_nSequence, "CBaseAnimating->m_nSequence", int)
 	NETVAR(m_nForceBone, "CBaseAnimating->m_nForceBone", int)
 	NETVAR(m_vecForce, "CBaseAnimating->m_vecForce", Vec3)
@@ -17,7 +17,7 @@ public:
 	NETVAR(m_flModelScale, "CBaseAnimating->m_flModelScale", float)
 	NETVAR(m_flModelWidthScale, "CBaseAnimating->m_flModelWidthScale", float)
 	NETVAR(m_flPlaybackRate, "CBaseAnimating->m_flPlaybackRate", float)
-	NETVAR(m_flEncodedController, "CBaseAnimating->m_flEncodedController", void*)
+	NETVAR(m_flEncodedController, "CBaseAnimating->m_flEncodedController", void *)
 	NETVAR(m_bClientSideAnimation, "CBaseAnimating->m_bClientSideAnimation", bool)
 	NETVAR(m_bClientSideFrameReset, "CBaseAnimating->m_bClientSideFrameReset", bool)
 	NETVAR(m_nNewSequenceParity, "CBaseAnimating->m_nNewSequenceParity", int)
@@ -29,13 +29,13 @@ public:
 	NETVAR(m_fadeMinDist, "CBaseAnimating->m_fadeMinDist", float)
 	NETVAR(m_fadeMaxDist, "CBaseAnimating->m_fadeMaxDist", float)
 	NETVAR(m_flFadeScale, "CBaseAnimating->m_flFadeScale", float)
-	inline std::array<float, 24>& m_flPoseParameter()
+	inline std::array<float, 24> &m_flPoseParameter()
 	{
 		static int nOffset = Netvars::m_netvarMap[fnv::HashConst("CBaseAnimating->m_flPoseParameter")];
-		return *reinterpret_cast<std::array<float, 24>*>(uintptr_t(this) + nOffset);
+		return *reinterpret_cast<std::array<float, 24> *>(uintptr_t(this) + nOffset);
 	}
 
-	inline bool GetHitboxCenter(matrix3x4* bones, int hitbox, Vector& outPos)
+	inline bool GetHitboxCenter(matrix3x4 *bones, int hitbox, Vector &outPos)
 	{
 		auto model = GetModel();
 		if (model == nullptr)
@@ -60,8 +60,8 @@ public:
 
 class CBaseAnimatingOverlay : public CBaseAnimating
 {
-public:
-	void* GetAnimOverlay(int iIndex)
+      public:
+	void *GetAnimOverlay(int iIndex)
 	{
 		/*
 		go to CMultiPlayerAnimState::VerifyAnimLayerInSlot
@@ -79,8 +79,9 @@ public:
 			}
 		*/
 
-		using GetAnimOverlayFn = void*(*)(CBaseAnimatingOverlay* self, int iIndex);
-		static GetAnimOverlayFn original = reinterpret_cast<GetAnimOverlayFn>(sigscan_module("client.so", "89 F0 48 6B C0 2C"));
+		using GetAnimOverlayFn = void *(*)(CBaseAnimatingOverlay * self, int iIndex);
+		static GetAnimOverlayFn original =
+		    reinterpret_cast<GetAnimOverlayFn>(sigscan_module("client.so", "89 F0 48 6B C0 2C"));
 		return original(this, iIndex);
 	}
 
@@ -98,25 +99,26 @@ public:
 			if ((int)iGestureSlot < numAnimLayers) {
 		*/
 
-		using GetNumAnimOverlaysFn = int(*)(CBaseAnimatingOverlay* self);
-		static GetNumAnimOverlaysFn original = reinterpret_cast<GetNumAnimOverlaysFn>(sigscan_module("client.so", "E8 ? ? ? ? 39 C3 7C ? 45 85 F6 75 ? 48 8B 45 D8 48 85 C0 74 ? 48 8B 75 D0"));
+		using GetNumAnimOverlaysFn	     = int (*)(CBaseAnimatingOverlay *self);
+		static GetNumAnimOverlaysFn original = reinterpret_cast<GetNumAnimOverlaysFn>(sigscan_module(
+		    "client.so", "E8 ? ? ? ? 39 C3 7C ? 45 85 F6 75 ? 48 8B 45 D8 48 85 C0 74 ? 48 8B 75 D0"));
 		return original(this);
 	}
 };
 
 class CCurrencyPack : public CBaseAnimating
 {
-public:
+      public:
 	NETVAR(m_bDistributed, "CCurrencyPack->m_bDistributed", bool)
 };
 
 class CHalloweenPickup : public CBaseAnimating
 {
-public:
+      public:
 };
 
 class CHalloweenGiftPickup : public CHalloweenPickup
 {
-public:
+      public:
 	NETVAR(m_hTargetPlayer, "CHalloweenGiftPickup->m_hTargetPlayer", CBaseHandle)
 };

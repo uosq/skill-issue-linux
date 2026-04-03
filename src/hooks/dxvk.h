@@ -24,73 +24,67 @@ inline LPDIRECT3DDEVICE9 g_pd3dDevice = nullptr;
 inline D3DPRESENT_PARAMETERS g_d3dpp  = {};
 inline bool g_ImGuiInitialized	      = false;
 
-typedef HRESULT (__stdcall *Present_t) (IDirect3DDevice9 *, CONST RECT *,
-					CONST RECT *, HWND, CONST RGNDATA *);
-typedef HRESULT (__stdcall *Reset_t) (IDirect3DDevice9 *,
-				      D3DPRESENT_PARAMETERS *);
+typedef HRESULT(__stdcall *Present_t)(IDirect3DDevice9 *, CONST RECT *, CONST RECT *, HWND, CONST RGNDATA *);
+typedef HRESULT(__stdcall *Reset_t)(IDirect3DDevice9 *, D3DPRESENT_PARAMETERS *);
 
-DETOUR_DECL_TYPE (HRESULT, original_Present, IDirect3DDevice9 *, CONST RECT *,
-		  CONST RECT *, HWND, CONST RGNDATA *);
-DETOUR_DECL_TYPE (HRESULT, original_Reset, IDirect3DDevice9 *,
-		  D3DPRESENT_PARAMETERS *);
+DETOUR_DECL_TYPE(HRESULT, original_Present, IDirect3DDevice9 *, CONST RECT *, CONST RECT *, HWND, CONST RGNDATA *);
+DETOUR_DECL_TYPE(HRESULT, original_Reset, IDirect3DDevice9 *, D3DPRESENT_PARAMETERS *);
 
 inline detour_ctx_t present_ctx;
 inline detour_ctx_t reset_ctx;
 
-inline void InitImGui ()
+inline void InitImGui()
 {
 	if (g_ImGuiInitialized || !g_pd3dDevice)
 		return;
 
 #ifdef DEBUG
 	if (!tfwindow)
-		return interfaces::Cvar->ConsolePrintf (
-		    "SDL window is NULL!\n");
+		return interfaces::Cvar->ConsolePrintf("SDL window is NULL!\n");
 #else
 	if (!tfwindow)
 		return;
 #endif
 
-	if (ImGui::GetCurrentContext () == nullptr)
-		ImGui::CreateContext ();
+	if (ImGui::GetCurrentContext() == nullptr)
+		ImGui::CreateContext();
 
-	ImGui::GetIO ().ConfigWindowsMoveFromTitleBarOnly = true;
+	ImGui::GetIO().ConfigWindowsMoveFromTitleBarOnly = true;
 
 	//if (!ImGui_ImplSDL2_InitForD3D(tfwindow)) {
-	if (!ImGui_ImplSDL2_InitForVulkan (tfwindow))
+	if (!ImGui_ImplSDL2_InitForVulkan(tfwindow))
 	{
-		interfaces::Cvar->ConsolePrintf (
-		    "ImGui_ImplSDL2_InitForVulkan failed!\n");
+		interfaces::Cvar->ConsolePrintf("ImGui_ImplSDL2_InitForVulkan failed!\n");
 		return;
 	}
 
-	ImGui_ImplDX9_Init (g_pd3dDevice);
-	SetupImGuiStyle ();
+	ImGui_ImplDX9_Init(g_pd3dDevice);
+	SetupImGuiStyle();
 
 	g_ImGuiInitialized = true;
 }
 
-inline void CleanupImGui ()
+inline void CleanupImGui()
 {
 	if (!g_ImGuiInitialized)
 		return;
 
-	ImGui_ImplDX9_Shutdown ();
-	ImGui_ImplSDL2_Shutdown ();
+	ImGui_ImplDX9_Shutdown();
+	ImGui_ImplSDL2_Shutdown();
 
 	g_ImGuiInitialized = false;
 }
 
-inline D3DFORMAT GetBackBufferFormat (IDirect3DDevice9 *device)
+inline D3DFORMAT GetBackBufferFormat(IDirect3DDevice9 *device)
 {
 	IDirect3DSurface9 *pBackBuffer = nullptr;
-	device->GetBackBuffer (0, 0, D3DBACKBUFFER_TYPE_MONO, &pBackBuffer);
+	device->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &pBackBuffer);
 
 	if (pBackBuffer)
 	{
 		D3DSURFACE_DESC desc;
-		pBackBuffer->GetDesc (&desc);
-		pBackBuffer->Release ();
+		pBackBuffer->GetDesc(&desc);
+		pBackBuffer->Release();
 
 		//interfaces::Cvar->ConsolePrintf("Backbuffer format: %d\n", desc.Format);
 		return desc.Format;
@@ -99,7 +93,7 @@ inline D3DFORMAT GetBackBufferFormat (IDirect3DDevice9 *device)
 	return D3DFMT_UNKNOWN;
 }
 
-inline void RenderImGui ()
+inline void RenderImGui()
 {
 	if (!g_pd3dDevice || !g_ImGuiInitialized)
 		return;
@@ -109,41 +103,37 @@ inline void RenderImGui ()
 
 	if (!checkedFormat)
 	{
-		D3DFORMAT format = GetBackBufferFormat (g_pd3dDevice);
+		D3DFORMAT format = GetBackBufferFormat(g_pd3dDevice);
 		// If using sRGB, we need gamma correction
-		needsGammaCorrection
-		    = (format == 22 || format == 21); // Common sRGB formats
-		checkedFormat = true;
+		needsGammaCorrection = (format == 22 || format == 21); // Common sRGB formats
+		checkedFormat	     = true;
 
 		//interfaces::Cvar->ConsolePrintf("Gamma correction: %s\n", needsGammaCorrection ? "enabled" : "disabled");
 	}
 
 	// Disable sRGB writes temporarily if needed
 	if (needsGammaCorrection)
-		g_pd3dDevice->SetRenderState (D3DRS_SRGBWRITEENABLE, FALSE);
+		g_pd3dDevice->SetRenderState(D3DRS_SRGBWRITEENABLE, FALSE);
 
-	ImGui_ImplDX9_NewFrame ();
-	ImGui_ImplSDL2_NewFrame ();
-	ImGui::NewFrame ();
+	ImGui_ImplDX9_NewFrame();
+	ImGui_ImplSDL2_NewFrame();
+	ImGui::NewFrame();
 
-	if (ImGui::IsKeyPressed (ImGuiKey_Insert, false)
-	    || ImGui::IsKeyPressed (ImGuiKey_F11, false))
+	if (ImGui::IsKeyPressed(ImGuiKey_Insert, false) || ImGui::IsKeyPressed(ImGuiKey_F11, false))
 	{
 		Settings::menu_open = !Settings::menu_open;
-		interfaces::Surface->SetCursorAlwaysVisible (
-		    Settings::menu_open);
+		interfaces::Surface->SetCursorAlwaysVisible(Settings::menu_open);
 	}
 
-	if (ImGui::IsKeyPressed (ImGuiKey_Escape, false))
+	if (ImGui::IsKeyPressed(ImGuiKey_Escape, false))
 	{
 		Settings::menu_open = false;
-		interfaces::Surface->SetCursorAlwaysVisible (
-		    Settings::menu_open);
+		interfaces::Surface->SetCursorAlwaysVisible(Settings::menu_open);
 	}
 
-	cursor = ImGui::GetMouseCursor ();
+	cursor = ImGui::GetMouseCursor();
 
-	gBinds.Update ();
+	gBinds.Update();
 
 #if 0
 	if (LuaHookManager::HasHooks("ImGui"))
@@ -153,61 +143,54 @@ inline void RenderImGui ()
 	// ts doesnt work
 	//EyeTrace_Run();
 
-	if (Settings::AntiAim.warp_key->IsEnabled ())
-		Warp::RunWindow ();
+	if (Settings::AntiAim.warp_key->IsEnabled())
+		Warp::RunWindow();
 
 	if (Settings::Radar.enabled)
-		Radar::Run ();
+		Radar::Run();
 
 	if (Settings::Misc.spectatorlist)
-		GUI::RunSpectatorList ();
+		GUI::RunSpectatorList();
 
 	if (Settings::Misc.playerlist)
-		GUI::RunPlayerList ();
+		GUI::RunPlayerList();
 
-	GUI::RunMainWindow ();
+	GUI::RunMainWindow();
 
-	gBinds.DrawWindow (Settings::menu_open);
+	gBinds.DrawWindow(Settings::menu_open);
 
-	ImGui::EndFrame ();
-	ImGui::Render ();
-	ImGui_ImplDX9_RenderDrawData (ImGui::GetDrawData ());
+	ImGui::EndFrame();
+	ImGui::Render();
+	ImGui_ImplDX9_RenderDrawData(ImGui::GetDrawData());
 
 	if (needsGammaCorrection)
-		g_pd3dDevice->SetRenderState (D3DRS_SRGBWRITEENABLE, TRUE);
+		g_pd3dDevice->SetRenderState(D3DRS_SRGBWRITEENABLE, TRUE);
 }
 
-inline HRESULT __stdcall Hooked_Present (IDirect3DDevice9 *pDevice,
-					 const RECT *pSourceRect,
-					 const RECT *pDestRect,
-					 HWND hDestWindowOverride,
-					 const RGNDATA *pDirtyRegion)
+inline HRESULT __stdcall Hooked_Present(IDirect3DDevice9 *pDevice, const RECT *pSourceRect, const RECT *pDestRect,
+					HWND hDestWindowOverride, const RGNDATA *pDirtyRegion)
 {
 	if (!g_pd3dDevice)
 		g_pd3dDevice = pDevice;
 
-	InitImGui ();
-	RenderImGui ();
+	InitImGui();
+	RenderImGui();
 
 	HRESULT ret;
-	DETOUR_ORIG_GET (&present_ctx, ret, original_Present, pDevice,
-			 pSourceRect, pDestRect, hDestWindowOverride,
-			 pDirtyRegion);
+	DETOUR_ORIG_GET(&present_ctx, ret, original_Present, pDevice, pSourceRect, pDestRect, hDestWindowOverride,
+			pDirtyRegion);
 	return ret;
 }
 
-inline HRESULT __stdcall
-Hooked_Reset (IDirect3DDevice9 *pDevice,
-	      D3DPRESENT_PARAMETERS *pPresentationParameters)
+inline HRESULT __stdcall Hooked_Reset(IDirect3DDevice9 *pDevice, D3DPRESENT_PARAMETERS *pPresentationParameters)
 {
 	// ImGui needs to be cleaned up before device reset
-	CleanupImGui ();
+	CleanupImGui();
 
 	HRESULT ret;
-	DETOUR_ORIG_GET (&reset_ctx, ret, original_Reset, pDevice,
-			 pPresentationParameters);
+	DETOUR_ORIG_GET(&reset_ctx, ret, original_Reset, pDevice, pPresentationParameters);
 
-	if (SUCCEEDED (ret))
+	if (SUCCEEDED(ret))
 	{
 		g_d3dpp = *pPresentationParameters;
 		// ImGui will be reinitialized on next Present call
@@ -216,24 +199,22 @@ Hooked_Reset (IDirect3DDevice9 *pDevice,
 	return ret;
 }
 
-inline void *GetModuleBaseAddress (const char *module_name)
+inline void *GetModuleBaseAddress(const char *module_name)
 {
-	std::ifstream file ("/proc/self/maps");
-	if (!file.is_open ())
+	std::ifstream file("/proc/self/maps");
+	if (!file.is_open())
 		return nullptr;
 
 	std::string line;
-	while (std::getline (file, line))
+	while (std::getline(file, line))
 	{
-		if (line.find (module_name) != std::string::npos)
+		if (line.find(module_name) != std::string::npos)
 		{
-			size_t dash_pos = line.find ('-');
+			size_t dash_pos = line.find('-');
 			if (dash_pos != std::string::npos)
 			{
-				std::string addr_str
-				    = line.substr (0, dash_pos);
-				return (void *)std::stoull (addr_str, nullptr,
-							    16);
+				std::string addr_str = line.substr(0, dash_pos);
+				return (void *)std::stoull(addr_str, nullptr, 16);
 			}
 		}
 	}
@@ -241,44 +222,41 @@ inline void *GetModuleBaseAddress (const char *module_name)
 	return nullptr;
 }
 
-inline bool HookD3D9VTable ()
+inline bool HookD3D9VTable()
 {
 	// DXVK creates a D3D9 device, we need to get the vtable
-	void *dxvk_base = GetModuleBaseAddress ("libdxvk_d3d9.so");
+	void *dxvk_base = GetModuleBaseAddress("libdxvk_d3d9.so");
 	if (!dxvk_base)
 	{
-		interfaces::Cvar->ConsolePrintf ("DXVK not found\n");
+		interfaces::Cvar->ConsolePrintf("DXVK not found\n");
 		return false;
 	}
 
 #ifdef DEBUG
-	interfaces::Cvar->ConsolePrintf ("DXVK base: %p\n", dxvk_base);
+	interfaces::Cvar->ConsolePrintf("DXVK base: %p\n", dxvk_base);
 #endif
 
 	// Create a temporary D3D9 device to get the vtable
-	void *d3d9_lib = dlopen ("libdxvk_d3d9.so", RTLD_LAZY | RTLD_NOLOAD);
+	void *d3d9_lib = dlopen("libdxvk_d3d9.so", RTLD_LAZY | RTLD_NOLOAD);
 	if (!d3d9_lib)
 	{
-		interfaces::Cvar->ConsolePrintf (
-		    "Could not load libdxvk_d3d9.so\n");
+		interfaces::Cvar->ConsolePrintf("Could not load libdxvk_d3d9.so\n");
 		return false;
 	}
 
-	typedef IDirect3D9 *(__stdcall * Direct3DCreate9_t) (UINT);
-	Direct3DCreate9_t pDirect3DCreate9
-	    = (Direct3DCreate9_t)dlsym (d3d9_lib, "Direct3DCreate9");
+	typedef IDirect3D9 *(__stdcall * Direct3DCreate9_t)(UINT);
+	Direct3DCreate9_t pDirect3DCreate9 = (Direct3DCreate9_t)dlsym(d3d9_lib, "Direct3DCreate9");
 
 	if (!pDirect3DCreate9)
 	{
-		interfaces::Cvar->ConsolePrintf (
-		    "Could not find Direct3DCreate9\n");
+		interfaces::Cvar->ConsolePrintf("Could not find Direct3DCreate9\n");
 		return false;
 	}
 
-	IDirect3D9 *pD3D = pDirect3DCreate9 (D3D_SDK_VERSION);
+	IDirect3D9 *pD3D = pDirect3DCreate9(D3D_SDK_VERSION);
 	if (!pD3D)
 	{
-		interfaces::Cvar->ConsolePrintf ("Direct3DCreate9 failed\n");
+		interfaces::Cvar->ConsolePrintf("Direct3DCreate9 failed\n");
 		return false;
 	}
 
@@ -292,17 +270,14 @@ inline bool HookD3D9VTable ()
 	d3dpp.hDeviceWindow	       = nullptr; // DXVK doesnt require this
 
 	IDirect3DDevice9 *pDummyDevice = nullptr;
-	HRESULT hr		       = pD3D->CreateDevice (
-	    D3DADAPTER_DEFAULT,
-	    D3DDEVTYPE_NULLREF, // Use null reference device for dummy
-	    nullptr, D3DCREATE_SOFTWARE_VERTEXPROCESSING, &d3dpp,
-	    &pDummyDevice);
+	HRESULT hr		       = pD3D->CreateDevice(D3DADAPTER_DEFAULT,
+							    D3DDEVTYPE_NULLREF, // Use null reference device for dummy
+							    nullptr, D3DCREATE_SOFTWARE_VERTEXPROCESSING, &d3dpp, &pDummyDevice);
 
-	if (FAILED (hr) || !pDummyDevice)
+	if (FAILED(hr) || !pDummyDevice)
 	{
-		interfaces::Cvar->ConsolePrintf (
-		    "Failed to create dummy device (0x%X)\n", hr);
-		pD3D->Release ();
+		interfaces::Cvar->ConsolePrintf("Failed to create dummy device (0x%X)\n", hr);
+		pD3D->Release();
 		return false;
 	}
 
@@ -316,41 +291,40 @@ inline bool HookD3D9VTable ()
 	//interfaces::Cvar->ConsolePrintf("Present:%p\n", original_Present);
 	//interfaces::Cvar->ConsolePrintf("Reset:%p\n", original_Reset);
 
-	detour_init (&present_ctx, original_Present, (void *)&Hooked_Present);
-	if (!detour_enable (&present_ctx))
+	detour_init(&present_ctx, original_Present, (void *)&Hooked_Present);
+	if (!detour_enable(&present_ctx))
 	{
-		interfaces::Cvar->ConsolePrintf ("Failed to hook Present\n");
-		pDummyDevice->Release ();
-		pD3D->Release ();
+		interfaces::Cvar->ConsolePrintf("Failed to hook Present\n");
+		pDummyDevice->Release();
+		pD3D->Release();
 		return false;
 	}
 
-	detour_init (&reset_ctx, original_Reset, (void *)&Hooked_Reset);
-	if (!detour_enable (&reset_ctx))
+	detour_init(&reset_ctx, original_Reset, (void *)&Hooked_Reset);
+	if (!detour_enable(&reset_ctx))
 	{
-		interfaces::Cvar->ConsolePrintf ("Failed to hook Reset\n");
-		detour_disable (&present_ctx);
-		pDummyDevice->Release ();
-		pD3D->Release ();
+		interfaces::Cvar->ConsolePrintf("Failed to hook Reset\n");
+		detour_disable(&present_ctx);
+		pDummyDevice->Release();
+		pD3D->Release();
 		return false;
 	}
 
 	// Cleanup dummy resources
-	pDummyDevice->Release ();
-	pD3D->Release ();
+	pDummyDevice->Release();
+	pD3D->Release();
 
 #ifdef DEBUG
-	interfaces::Cvar->ConsolePrintf ("D3D9/DXVK hooked successfully\n");
+	interfaces::Cvar->ConsolePrintf("D3D9/DXVK hooked successfully\n");
 #endif
 	return true;
 }
 
-inline void HookDXVK ()
+inline void HookDXVK()
 {
-	if (GetModuleBaseAddress ("libdxvk_d3d9.so") == nullptr)
-		return interfaces::Cvar->ConsolePrintf ("DXVK not loaded\n");
+	if (GetModuleBaseAddress("libdxvk_d3d9.so") == nullptr)
+		return interfaces::Cvar->ConsolePrintf("DXVK not loaded\n");
 
-	if (!HookD3D9VTable ())
-		return interfaces::Cvar->ConsolePrintf (
-		    "Failed to hook DXVK\n");
+	if (!HookD3D9VTable())
+		return interfaces::Cvar->ConsolePrintf("Failed to hook DXVK\n");
 }

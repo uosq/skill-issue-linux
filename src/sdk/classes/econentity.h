@@ -6,10 +6,9 @@
 class CEconEntity : public CBaseAnimating
 {
       public:
-	NETVAR (m_iItemDefinitionIndex, "CEconEntity->m_iItemDefinitionIndex",
-		int);
-	void UpdateAttachmentModels ()
+	NETVAR(m_iItemDefinitionIndex, "CEconEntity->m_iItemDefinitionIndex", int);
+	void UpdateAttachmentModels()
 	{
-		return vtable::call<213, void> (this);
+		return vtable::call<213, void>(this);
 	}
 };

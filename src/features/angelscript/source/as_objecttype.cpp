@@ -28,44 +28,42 @@
    andreas@angelcode.com
 */
 
-
 //
 // as_objecttype.cpp
 //
 // A class for storing object type information
 //
 
-
 #include <stdio.h>
 
 #include "as_config.h"
-#include "as_objecttype.h"
 #include "as_configgroup.h"
+#include "as_objecttype.h"
 #include "as_scriptengine.h"
 
 BEGIN_AS_NAMESPACE
 
 asCObjectType::asCObjectType() : asCTypeInfo()
 {
-	derivedFrom = 0;
+	derivedFrom	   = 0;
 
 	acceptValueSubType = true;
 	acceptRefSubType   = true;
 
 #ifdef WIP_16BYTE_ALIGN
-	alignment  = 4;
+	alignment = 4;
 #endif
 }
 
 asCObjectType::asCObjectType(asCScriptEngine *in_engine) : asCTypeInfo(in_engine)
 {
-	derivedFrom  = 0;
+	derivedFrom	   = 0;
 
 	acceptValueSubType = true;
-	acceptRefSubType = true;
+	acceptRefSubType   = true;
 
 #ifdef WIP_16BYTE_ALIGN
-	alignment  = 4;
+	alignment = 4;
 #endif
 }
 
@@ -87,10 +85,11 @@ asITypeInfo *asCObjectType::GetChildFuncdef(asUINT index) const
 // internal
 void asCObjectType::DestroyInternal()
 {
-	if( engine == 0 ) return;
+	if (engine == 0)
+		return;
 
 	// Skip this for list patterns as they do not increase the references
-	if( flags & asOBJ_LIST_PATTERN )
+	if (flags & asOBJ_LIST_PATTERN)
 	{
 		// Clear the engine pointer to mark the object type as invalid
 		engine = 0;
@@ -99,9 +98,9 @@ void asCObjectType::DestroyInternal()
 
 	// Release the object types held by the templateSubTypes
 	bool isTemplateInstance = templateSubTypes.GetLength() > 0;
-	for( asUINT subtypeIndex = 0; subtypeIndex < templateSubTypes.GetLength(); subtypeIndex++ )
+	for (asUINT subtypeIndex = 0; subtypeIndex < templateSubTypes.GetLength(); subtypeIndex++)
 	{
-		if( templateSubTypes[subtypeIndex].GetTypeInfo() )
+		if (templateSubTypes[subtypeIndex].GetTypeInfo())
 			templateSubTypes[subtypeIndex].GetTypeInfo()->ReleaseInternal();
 	}
 	templateSubTypes.SetLength(0);
@@ -115,7 +114,7 @@ void asCObjectType::DestroyInternal()
 			func->parentClass = 0;
 			if (isTemplateInstance)
 			{
-				// Any child funcdefs that have been created as part of the template 
+				// Any child funcdefs that have been created as part of the template
 				// instantiation must be destroyed too
 				// TODO: Before destroying the funcdef, make sure no external references to it is held
 				if (func->externalRefCount.get() == 0)
@@ -130,7 +129,7 @@ void asCObjectType::DestroyInternal()
 	}
 	childFuncDefs.SetLength(0);
 
-	if( derivedFrom )
+	if (derivedFrom)
 		derivedFrom->ReleaseInternal();
 	derivedFrom = 0;
 
@@ -141,7 +140,7 @@ void asCObjectType::DestroyInternal()
 	CleanUserData();
 
 	// Remove the type from the engine
-	if( typeId != -1 )
+	if (typeId != -1)
 		engine->RemoveFromTypeIdMap(this);
 
 	// Clear the engine pointer to mark the object type as invalid
@@ -156,11 +155,12 @@ asCObjectType::~asCObjectType()
 // interface
 bool asCObjectType::Implements(const asITypeInfo *objType) const
 {
-	if( this == objType )
+	if (this == objType)
 		return true;
 
-	for( asUINT n = 0; n < interfaces.GetLength(); n++ )
-		if( interfaces[n] == objType ) return true;
+	for (asUINT n = 0; n < interfaces.GetLength(); n++)
+		if (interfaces[n] == objType)
+			return true;
 
 	return false;
 }
@@ -168,13 +168,13 @@ bool asCObjectType::Implements(const asITypeInfo *objType) const
 // interface
 bool asCObjectType::DerivesFrom(const asITypeInfo *objType) const
 {
-	if( this == objType )
+	if (this == objType)
 		return true;
 
 	asCObjectType *base = derivedFrom;
-	while( base )
+	while (base)
 	{
-		if( base == objType )
+		if (base == objType)
 			return true;
 
 		base = base->derivedFrom;
@@ -187,10 +187,10 @@ bool asCObjectType::DerivesFrom(const asITypeInfo *objType) const
 int asCObjectType::GetSubTypeId(asUINT subtypeIndex) const
 {
 	// This method is only supported for templates and template specializations
-	if( templateSubTypes.GetLength() == 0 )
+	if (templateSubTypes.GetLength() == 0)
 		return asERROR;
 
-	if( subtypeIndex >= templateSubTypes.GetLength() )
+	if (subtypeIndex >= templateSubTypes.GetLength())
 		return asINVALID_ARG;
 
 	return engine->GetTypeIdFromDataType(templateSubTypes[subtypeIndex]);
@@ -199,7 +199,7 @@ int asCObjectType::GetSubTypeId(asUINT subtypeIndex) const
 // interface
 asITypeInfo *asCObjectType::GetSubType(asUINT subtypeIndex) const
 {
-	if( subtypeIndex >= templateSubTypes.GetLength() )
+	if (subtypeIndex >= templateSubTypes.GetLength())
 		return 0;
 
 	return templateSubTypes[subtypeIndex].GetTypeInfo();
@@ -223,7 +223,7 @@ asITypeInfo *asCObjectType::GetInterface(asUINT index) const
 // internal
 bool asCObjectType::IsInterface() const
 {
-	if( (flags & asOBJ_SCRIPT_OBJECT) && size == 0 )
+	if ((flags & asOBJ_SCRIPT_OBJECT) && size == 0)
 		return true;
 
 	return false;
@@ -238,7 +238,7 @@ asUINT asCObjectType::GetFactoryCount() const
 // interface
 asIScriptFunction *asCObjectType::GetFactoryByIndex(asUINT index) const
 {
-	if( index >= beh.factories.GetLength() )
+	if (index >= beh.factories.GetLength())
 		return 0;
 
 	return engine->GetFunctionById(beh.factories[index]);
@@ -247,7 +247,7 @@ asIScriptFunction *asCObjectType::GetFactoryByIndex(asUINT index) const
 // interface
 asIScriptFunction *asCObjectType::GetFactoryByDecl(const char *decl) const
 {
-	if( beh.factories.GetLength() == 0 )
+	if (beh.factories.GetLength() == 0)
 		return 0;
 
 	// Let the engine parse the string and find the appropriate factory function
@@ -263,13 +263,13 @@ asUINT asCObjectType::GetMethodCount() const
 // interface
 asIScriptFunction *asCObjectType::GetMethodByIndex(asUINT index, bool getVirtual) const
 {
-	if( index >= methods.GetLength() )
+	if (index >= methods.GetLength())
 		return 0;
 
 	asCScriptFunction *func = engine->scriptFunctions[methods[index]];
-	if( !getVirtual )
+	if (!getVirtual)
 	{
-		if( func && func->funcType == asFUNC_VIRTUAL )
+		if (func && func->funcType == asFUNC_VIRTUAL)
 			return virtualFunctionTable[func->vfTableIdx];
 	}
 
@@ -280,23 +280,24 @@ asIScriptFunction *asCObjectType::GetMethodByIndex(asUINT index, bool getVirtual
 asIScriptFunction *asCObjectType::GetMethodByName(const char *in_name, bool in_getVirtual) const
 {
 	int id = -1;
-	for( asUINT n = 0; n < methods.GetLength(); n++ )
+	for (asUINT n = 0; n < methods.GetLength(); n++)
 	{
-		if( engine->scriptFunctions[methods[n]]->name == in_name )
+		if (engine->scriptFunctions[methods[n]]->name == in_name)
 		{
-			if( id == -1 )
+			if (id == -1)
 				id = methods[n];
 			else
 				return 0;
 		}
 	}
 
-	if( id == -1 ) return 0;
+	if (id == -1)
+		return 0;
 
 	asCScriptFunction *func = engine->scriptFunctions[id];
-	if( !in_getVirtual )
+	if (!in_getVirtual)
 	{
-		if( func && func->funcType == asFUNC_VIRTUAL )
+		if (func && func->funcType == asFUNC_VIRTUAL)
 			return virtualFunctionTable[func->vfTableIdx];
 	}
 
@@ -306,24 +307,24 @@ asIScriptFunction *asCObjectType::GetMethodByName(const char *in_name, bool in_g
 // interface
 asIScriptFunction *asCObjectType::GetMethodByDecl(const char *decl, bool getVirtual) const
 {
-	if( methods.GetLength() == 0 )
+	if (methods.GetLength() == 0)
 		return 0;
 
 	// Get the module from one of the methods, but it will only be
 	// used to allow the parsing of types not already known by the object.
-	// It is possible for object types to be orphaned, e.g. by discarding 
-	// the module that created it. In this case it is still possible to 
+	// It is possible for object types to be orphaned, e.g. by discarding
+	// the module that created it. In this case it is still possible to
 	// find the methods, but any type not known by the object will result in
 	// an invalid declaration.
 	asCModule *mod = engine->scriptFunctions[methods[0]]->module;
-	int id = engine->GetMethodIdByDecl(this, decl, mod);
-	if( id <= 0 )
+	int id	       = engine->GetMethodIdByDecl(this, decl, mod);
+	if (id <= 0)
 		return 0;
 
-	if( !getVirtual )
+	if (!getVirtual)
 	{
 		asCScriptFunction *func = engine->scriptFunctions[id];
-		if( func && func->funcType == asFUNC_VIRTUAL )
+		if (func && func->funcType == asFUNC_VIRTUAL)
 			return virtualFunctionTable[func->vfTableIdx];
 	}
 
@@ -337,25 +338,27 @@ asUINT asCObjectType::GetPropertyCount() const
 }
 
 // interface
-int asCObjectType::GetProperty(asUINT index, const char **out_name, int *out_typeId, bool *out_isPrivate, bool *out_isProtected, int *out_offset, bool *out_isReference, asDWORD *out_accessMask, int *out_compositeOffset, bool *out_isCompositeIndirect, bool *out_isConst) const
+int asCObjectType::GetProperty(asUINT index, const char **out_name, int *out_typeId, bool *out_isPrivate,
+			       bool *out_isProtected, int *out_offset, bool *out_isReference, asDWORD *out_accessMask,
+			       int *out_compositeOffset, bool *out_isCompositeIndirect, bool *out_isConst) const
 {
-	if( index >= properties.GetLength() )
+	if (index >= properties.GetLength())
 		return asINVALID_ARG;
 
 	asCObjectProperty *prop = properties[index];
-	if( out_name )
+	if (out_name)
 		*out_name = prop->name.AddressOf();
-	if( out_typeId )
+	if (out_typeId)
 		*out_typeId = engine->GetTypeIdFromDataType(prop->type);
-	if( out_isPrivate )
+	if (out_isPrivate)
 		*out_isPrivate = prop->isPrivate;
-	if( out_isProtected )
+	if (out_isProtected)
 		*out_isProtected = prop->isProtected;
-	if( out_offset )
+	if (out_offset)
 		*out_offset = prop->byteOffset;
-	if( out_isReference )
+	if (out_isReference)
 		*out_isReference = prop->type.IsReference();
-	if( out_accessMask )
+	if (out_accessMask)
 		*out_accessMask = prop->accessMask;
 	if (out_compositeOffset)
 		*out_compositeOffset = prop->compositeOffset;
@@ -370,13 +373,13 @@ int asCObjectType::GetProperty(asUINT index, const char **out_name, int *out_typ
 // interface
 const char *asCObjectType::GetPropertyDeclaration(asUINT index, bool includeNamespace) const
 {
-	if( index >= properties.GetLength() )
+	if (index >= properties.GetLength())
 		return 0;
 
 	asCString *tempString = &asCThreadManager::GetLocalData()->string;
-	if( properties[index]->isPrivate )
+	if (properties[index]->isPrivate)
 		*tempString = "private ";
-	else if( properties[index]->isProtected )
+	else if (properties[index]->isProtected)
 		*tempString = "protected ";
 	else
 		*tempString = "";
@@ -389,25 +392,36 @@ const char *asCObjectType::GetPropertyDeclaration(asUINT index, bool includeName
 
 asITypeInfo *asCObjectType::GetBaseType() const
 {
-	return derivedFrom; 
+	return derivedFrom;
 }
 
 asUINT asCObjectType::GetBehaviourCount() const
 {
 	// Count the number of behaviours (except factory functions)
 	asUINT count = 0;
-	
-	if( beh.destruct )               count++;
-	if( beh.addref )                 count++;
-	if( beh.release )                count++;
-	if( beh.gcGetRefCount )          count++;
-	if( beh.gcSetFlag )              count++;
-	if( beh.gcGetFlag )              count++;
-	if( beh.gcEnumReferences )       count++;
-	if( beh.gcReleaseAllReferences ) count++; 
-	if( beh.templateCallback )       count++;
-	if( beh.listFactory )            count++;
-	if( beh.getWeakRefFlag )         count++;
+
+	if (beh.destruct)
+		count++;
+	if (beh.addref)
+		count++;
+	if (beh.release)
+		count++;
+	if (beh.gcGetRefCount)
+		count++;
+	if (beh.gcSetFlag)
+		count++;
+	if (beh.gcGetFlag)
+		count++;
+	if (beh.gcEnumReferences)
+		count++;
+	if (beh.gcReleaseAllReferences)
+		count++;
+	if (beh.templateCallback)
+		count++;
+	if (beh.listFactory)
+		count++;
+	if (beh.getWeakRefFlag)
+		count++;
 
 	// For reference types, the factories are also stored in the constructor
 	// list, so it is sufficient to enumerate only those
@@ -421,65 +435,74 @@ asIScriptFunction *asCObjectType::GetBehaviourByIndex(asUINT index, asEBehaviour
 	// Find the correct behaviour
 	asUINT count = 0;
 
-	if( beh.destruct && count++ == index ) // only increase count if the behaviour is registered
-	{ 
-		if( outBehaviour ) *outBehaviour = asBEHAVE_DESTRUCT;
+	if (beh.destruct && count++ == index) // only increase count if the behaviour is registered
+	{
+		if (outBehaviour)
+			*outBehaviour = asBEHAVE_DESTRUCT;
 		return engine->scriptFunctions[beh.destruct];
 	}
 
-	if( beh.addref && count++ == index )
+	if (beh.addref && count++ == index)
 	{
-		if( outBehaviour ) *outBehaviour = asBEHAVE_ADDREF;
+		if (outBehaviour)
+			*outBehaviour = asBEHAVE_ADDREF;
 		return engine->scriptFunctions[beh.addref];
 	}
 
-	if( beh.release && count++ == index )
+	if (beh.release && count++ == index)
 	{
-		if( outBehaviour ) *outBehaviour = asBEHAVE_RELEASE;
+		if (outBehaviour)
+			*outBehaviour = asBEHAVE_RELEASE;
 		return engine->scriptFunctions[beh.release];
 	}
 
-	if( beh.gcGetRefCount && count++ == index )
+	if (beh.gcGetRefCount && count++ == index)
 	{
-		if( outBehaviour ) *outBehaviour = asBEHAVE_GETREFCOUNT;
+		if (outBehaviour)
+			*outBehaviour = asBEHAVE_GETREFCOUNT;
 		return engine->scriptFunctions[beh.gcGetRefCount];
 	}
 
-	if( beh.gcSetFlag && count++ == index )
+	if (beh.gcSetFlag && count++ == index)
 	{
-		if( outBehaviour ) *outBehaviour = asBEHAVE_SETGCFLAG;
+		if (outBehaviour)
+			*outBehaviour = asBEHAVE_SETGCFLAG;
 		return engine->scriptFunctions[beh.gcSetFlag];
 	}
 
-	if( beh.gcGetFlag && count++ == index )
+	if (beh.gcGetFlag && count++ == index)
 	{
-		if( outBehaviour ) *outBehaviour = asBEHAVE_GETGCFLAG;
+		if (outBehaviour)
+			*outBehaviour = asBEHAVE_GETGCFLAG;
 		return engine->scriptFunctions[beh.gcGetFlag];
 	}
 
-	if( beh.gcEnumReferences && count++ == index )
+	if (beh.gcEnumReferences && count++ == index)
 	{
-		if( outBehaviour ) *outBehaviour = asBEHAVE_ENUMREFS;
+		if (outBehaviour)
+			*outBehaviour = asBEHAVE_ENUMREFS;
 		return engine->scriptFunctions[beh.gcEnumReferences];
 	}
 
-	if( beh.gcReleaseAllReferences && count++ == index )
+	if (beh.gcReleaseAllReferences && count++ == index)
 	{
-		if( outBehaviour ) *outBehaviour = asBEHAVE_RELEASEREFS;
+		if (outBehaviour)
+			*outBehaviour = asBEHAVE_RELEASEREFS;
 		return engine->scriptFunctions[beh.gcReleaseAllReferences];
 	}
 
-	if( beh.templateCallback && count++ == index )
+	if (beh.templateCallback && count++ == index)
 	{
-		if( outBehaviour ) *outBehaviour = asBEHAVE_TEMPLATE_CALLBACK;
+		if (outBehaviour)
+			*outBehaviour = asBEHAVE_TEMPLATE_CALLBACK;
 		return engine->scriptFunctions[beh.templateCallback];
 	}
 
-	if( beh.listFactory && count++ == index )
+	if (beh.listFactory && count++ == index)
 	{
-		if( outBehaviour ) 
+		if (outBehaviour)
 		{
-			if( flags & asOBJ_VALUE )
+			if (flags & asOBJ_VALUE)
 				*outBehaviour = asBEHAVE_LIST_CONSTRUCT;
 			else
 				*outBehaviour = asBEHAVE_LIST_FACTORY;
@@ -488,59 +511,62 @@ asIScriptFunction *asCObjectType::GetBehaviourByIndex(asUINT index, asEBehaviour
 		return engine->scriptFunctions[beh.listFactory];
 	}
 
-	if( beh.getWeakRefFlag && count++ == index )
+	if (beh.getWeakRefFlag && count++ == index)
 	{
-		if( outBehaviour ) *outBehaviour = asBEHAVE_GET_WEAKREF_FLAG;
+		if (outBehaviour)
+			*outBehaviour = asBEHAVE_GET_WEAKREF_FLAG;
 		return engine->scriptFunctions[beh.getWeakRefFlag];
 	}
 
 	// For reference types, the factories are also stored in the constructor
 	// list, so it is sufficient to enumerate only those
-	if( index - count < beh.constructors.GetLength() )
+	if (index - count < beh.constructors.GetLength())
 	{
-		if( outBehaviour ) *outBehaviour = asBEHAVE_CONSTRUCT;
+		if (outBehaviour)
+			*outBehaviour = asBEHAVE_CONSTRUCT;
 		return engine->scriptFunctions[beh.constructors[index - count]];
 	}
-	else 
+	else
 		count += (asUINT)beh.constructors.GetLength();
 
 	return 0;
 }
 
 // internal
-asCObjectProperty *asCObjectType::AddPropertyToClass(const asCString &propName, const asCDataType &dt, bool isPrivate, bool isProtected, bool isInherited)
+asCObjectProperty *asCObjectType::AddPropertyToClass(const asCString &propName, const asCDataType &dt, bool isPrivate,
+						     bool isProtected, bool isInherited)
 {
-	asASSERT( flags & asOBJ_SCRIPT_OBJECT );
-	asASSERT( dt.CanBeInstantiated() );
-	asASSERT( !IsInterface() );
+	asASSERT(flags & asOBJ_SCRIPT_OBJECT);
+	asASSERT(dt.CanBeInstantiated());
+	asASSERT(!IsInterface());
 
 	// Store the properties in the object type descriptor
 	asCObjectProperty *prop = asNEW(asCObjectProperty);
-	if( prop == 0 )
+	if (prop == 0)
 	{
 		// Out of memory
 		return 0;
 	}
 
-	prop->name        = propName;
-	prop->type        = dt;
-	prop->isPrivate   = isPrivate;
+	prop->name	  = propName;
+	prop->type	  = dt;
+	prop->isPrivate	  = isPrivate;
 	prop->isProtected = isProtected;
 	prop->isInherited = isInherited;
 
 	int propSize;
-	if( dt.IsObject() )
+	if (dt.IsObject())
 	{
 		// Non-POD value types can't be allocated inline,
 		// because there is a risk that the script might
 		// try to access the content without knowing that
 		// it hasn't been initialized yet.
-		if( dt.GetTypeInfo()->flags & asOBJ_POD )
+		if (dt.GetTypeInfo()->flags & asOBJ_POD)
 			propSize = dt.GetSizeInMemoryBytes();
 		else
 		{
-			propSize = dt.GetSizeOnStackDWords()*4;
-			if( !dt.IsObjectHandle() )
+			propSize = dt.GetSizeOnStackDWords() * 4;
+			if (!dt.IsObjectHandle())
 				prop->type.MakeReference(true);
 		}
 	}
@@ -555,12 +581,14 @@ asCObjectProperty *asCObjectType::AddPropertyToClass(const asCString &propName, 
 
 	// Add extra bytes so that the property will be properly aligned
 #ifndef WIP_16BYTE_ALIGN
-	if( propSize == 2 && (size & 1) ) size += 1;
-	if( propSize > 2 && (size & 3) ) size += 4 - (size & 3);
+	if (propSize == 2 && (size & 1))
+		size += 1;
+	if (propSize > 2 && (size & 3))
+		size += 4 - (size & 3);
 #else
-	asUINT alignment = dt.GetAlignment();
-	const asUINT propSizeAlignmentDifference = size & (alignment-1);
-	if( propSizeAlignmentDifference != 0 )
+	asUINT alignment			 = dt.GetAlignment();
+	const asUINT propSizeAlignmentDifference = size & (alignment - 1);
+	if (propSizeAlignmentDifference != 0)
 	{
 		size += (alignment - propSizeAlignmentDifference);
 	}
@@ -575,11 +603,12 @@ asCObjectProperty *asCObjectType::AddPropertyToClass(const asCString &propName, 
 
 	// Make sure the struct holds a reference to the config group where the object is registered
 	asCConfigGroup *group = engine->FindConfigGroupForTypeInfo(prop->type.GetTypeInfo());
-	if( group != 0 ) group->AddRef();
+	if (group != 0)
+		group->AddRef();
 
 	// Add reference to object types
 	asCTypeInfo *type = prop->type.GetTypeInfo();
-	if( type )
+	if (type)
 		type->AddRefInternal();
 
 	return prop;
@@ -588,30 +617,32 @@ asCObjectProperty *asCObjectType::AddPropertyToClass(const asCString &propName, 
 // internal
 void asCObjectType::ReleaseAllProperties()
 {
-	for( asUINT n = 0; n < properties.GetLength(); n++ )
+	for (asUINT n = 0; n < properties.GetLength(); n++)
 	{
-		if( properties[n] ) 
+		if (properties[n])
 		{
-			if( flags & asOBJ_SCRIPT_OBJECT )
+			if (flags & asOBJ_SCRIPT_OBJECT)
 			{
 				// Release the config group for script classes that are being destroyed
-				asCConfigGroup *group = engine->FindConfigGroupForTypeInfo(properties[n]->type.GetTypeInfo());
-				if( group != 0 ) group->Release();
+				asCConfigGroup *group =
+				    engine->FindConfigGroupForTypeInfo(properties[n]->type.GetTypeInfo());
+				if (group != 0)
+					group->Release();
 
 				// Release references to objects types
 				asCTypeInfo *type = properties[n]->type.GetTypeInfo();
-				if( type )
+				if (type)
 					type->ReleaseInternal();
 			}
 			else
 			{
 				// Release template instance types (ref increased by RegisterObjectProperty)
 				asCTypeInfo *type = properties[n]->type.GetTypeInfo();
-				if( type )
+				if (type)
 					type->ReleaseInternal();
 			}
 
-			asDELETE(properties[n],asCObjectProperty);
+			asDELETE(properties[n], asCObjectProperty);
 		}
 	}
 
@@ -621,89 +652,86 @@ void asCObjectType::ReleaseAllProperties()
 // internal
 void asCObjectType::ReleaseAllFunctions()
 {
-	beh.factory     = 0;
+	beh.factory	= 0;
 	beh.copyfactory = 0;
-	for( asUINT a = 0; a < beh.factories.GetLength(); a++ )
+	for (asUINT a = 0; a < beh.factories.GetLength(); a++)
 	{
-		if( engine->scriptFunctions[beh.factories[a]] ) 
+		if (engine->scriptFunctions[beh.factories[a]])
 			engine->scriptFunctions[beh.factories[a]]->ReleaseInternal();
 	}
 	beh.factories.SetLength(0);
 
-	beh.construct     = 0;
+	beh.construct	  = 0;
 	beh.copyconstruct = 0;
-	for( asUINT b = 0; b < beh.constructors.GetLength(); b++ )
+	for (asUINT b = 0; b < beh.constructors.GetLength(); b++)
 	{
-		if( engine->scriptFunctions[beh.constructors[b]] ) 
+		if (engine->scriptFunctions[beh.constructors[b]])
 			engine->scriptFunctions[beh.constructors[b]]->ReleaseInternal();
 	}
 	beh.constructors.SetLength(0);
 
-	if( beh.templateCallback )
+	if (beh.templateCallback)
 		engine->scriptFunctions[beh.templateCallback]->ReleaseInternal();
 	beh.templateCallback = 0;
 
-	if( beh.listFactory )
+	if (beh.listFactory)
 		engine->scriptFunctions[beh.listFactory]->ReleaseInternal();
 	beh.listFactory = 0;
 
-	if( beh.destruct )
+	if (beh.destruct)
 		engine->scriptFunctions[beh.destruct]->ReleaseInternal();
-	beh.destruct  = 0;
+	beh.destruct = 0;
 
-	if( beh.copy )
+	if (beh.copy)
 		engine->scriptFunctions[beh.copy]->ReleaseInternal();
 	beh.copy = 0;
 
-	for( asUINT c = 0; c < methods.GetLength(); c++ )
+	for (asUINT c = 0; c < methods.GetLength(); c++)
 	{
-		if( engine->scriptFunctions[methods[c]] ) 
+		if (engine->scriptFunctions[methods[c]])
 			engine->scriptFunctions[methods[c]]->ReleaseInternal();
 	}
 	methods.SetLength(0);
 
-	for( asUINT d = 0; d < virtualFunctionTable.GetLength(); d++ )
+	for (asUINT d = 0; d < virtualFunctionTable.GetLength(); d++)
 	{
-		if( virtualFunctionTable[d] )
+		if (virtualFunctionTable[d])
 			virtualFunctionTable[d]->ReleaseInternal();
 	}
 	virtualFunctionTable.SetLength(0);
 
 	// GC behaviours
-	if( beh.addref )
+	if (beh.addref)
 		engine->scriptFunctions[beh.addref]->ReleaseInternal();
 	beh.addref = 0;
 
-	if( beh.release )
+	if (beh.release)
 		engine->scriptFunctions[beh.release]->ReleaseInternal();
 	beh.release = 0;
 
-	if( beh.gcEnumReferences )
+	if (beh.gcEnumReferences)
 		engine->scriptFunctions[beh.gcEnumReferences]->ReleaseInternal();
 	beh.gcEnumReferences = 0;
 
-	if( beh.gcGetFlag )
+	if (beh.gcGetFlag)
 		engine->scriptFunctions[beh.gcGetFlag]->ReleaseInternal();
 	beh.gcGetFlag = 0;
 
-	if( beh.gcGetRefCount )
+	if (beh.gcGetRefCount)
 		engine->scriptFunctions[beh.gcGetRefCount]->ReleaseInternal();
 	beh.gcGetRefCount = 0;
 
-	if( beh.gcReleaseAllReferences )
+	if (beh.gcReleaseAllReferences)
 		engine->scriptFunctions[beh.gcReleaseAllReferences]->ReleaseInternal();
 	beh.gcReleaseAllReferences = 0;
 
-	if( beh.gcSetFlag )
+	if (beh.gcSetFlag)
 		engine->scriptFunctions[beh.gcSetFlag]->ReleaseInternal();
 	beh.gcSetFlag = 0;
 
-	if ( beh.getWeakRefFlag )
+	if (beh.getWeakRefFlag)
 		engine->scriptFunctions[beh.getWeakRefFlag]->ReleaseInternal();
 	beh.getWeakRefFlag = 0;
 }
 
 END_AS_NAMESPACE
-
-
-

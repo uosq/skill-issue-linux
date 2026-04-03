@@ -6,15 +6,15 @@
 
 #include "../imgui/imgui.h"
 
-DECLARE_VTABLE_HOOK (ISurface_LockCursor, void, (void *thisptr))
+DECLARE_VTABLE_HOOK(ISurface_LockCursor, void, (void *thisptr))
 {
 	if (Settings::menu_open)
-		return interfaces::Surface->UnlockCursor ();
+		return interfaces::Surface->UnlockCursor();
 
-	originalISurface_LockCursor (thisptr);
+	originalISurface_LockCursor(thisptr);
 }
 
-DECLARE_VTABLE_HOOK (ISurface_SetCursor, void, (void *thisptr, HCursor cursor))
+DECLARE_VTABLE_HOOK(ISurface_SetCursor, void, (void *thisptr, HCursor cursor))
 {
 	if (Settings::menu_open)
 	{
@@ -50,11 +50,11 @@ DECLARE_VTABLE_HOOK (ISurface_SetCursor, void, (void *thisptr, HCursor cursor))
 		}
 	}
 
-	originalISurface_SetCursor (thisptr, cursor);
+	originalISurface_SetCursor(thisptr, cursor);
 }
 
-inline void HookLockCursor ()
+inline void HookLockCursor()
 {
-	INSTALL_VTABLE_HOOK (ISurface_LockCursor, interfaces::Surface, 62);
-	INSTALL_VTABLE_HOOK (ISurface_SetCursor, interfaces::Surface, 51);
+	INSTALL_VTABLE_HOOK(ISurface_LockCursor, interfaces::Surface, 62);
+	INSTALL_VTABLE_HOOK(ISurface_SetCursor, interfaces::Surface, 51);
 }

@@ -33,14 +33,10 @@ typedef std::unordered_map<dictKey_t, AS_NAMESPACE_QUALIFIER CScriptDictValue> d
 typedef std::map<dictKey_t, AS_NAMESPACE_QUALIFIER CScriptDictValue> dictMap_t;
 #endif
 
-
 #ifdef _MSC_VER
 // Turn off annoying warnings about truncated symbol names
-#pragma warning (disable:4786)
+#pragma warning(disable : 4786)
 #endif
-
-
-
 
 // Sometimes it may be desired to use the same method names as used by C++ STL.
 // This may for example reduce time when converting code from script to C++ or
@@ -53,7 +49,6 @@ typedef std::map<dictKey_t, AS_NAMESPACE_QUALIFIER CScriptDictValue> dictMap_t;
 #define AS_USE_STLNAMES 0
 #endif
 
-
 BEGIN_AS_NAMESPACE
 
 class CScriptArray;
@@ -61,7 +56,7 @@ class CScriptDictionary;
 
 class CScriptDictValue
 {
-public:
+      public:
 	// This class must not be declared as local variable in C++, because it needs
 	// to receive the script engine pointer in all operations. The engine pointer
 	// is not kept as member in order to keep the size down
@@ -86,7 +81,7 @@ public:
 	const void *GetAddressOfValue() const;
 
 	// Returns the type id of the stored value
-	int  GetTypeId() const;
+	int GetTypeId() const;
 
 	// Free the stored value
 	void FreeValue(asIScriptEngine *engine);
@@ -94,21 +89,20 @@ public:
 	// GC callback
 	void EnumReferences(asIScriptEngine *engine);
 
-protected:
+      protected:
 	friend class CScriptDictionary;
 
-	union
-	{
+	union {
 		asINT64 m_valueInt;
-		double  m_valueFlt;
-		void   *m_valueObj;
+		double m_valueFlt;
+		void *m_valueObj;
 	};
 	int m_typeId;
 };
 
 class CScriptDictionary
 {
-public:
+      public:
 	// Factory functions
 	static CScriptDictionary *Create(asIScriptEngine *engine);
 
@@ -120,7 +114,7 @@ public:
 	void Release() const;
 
 	// Reassign the dictionary
-	CScriptDictionary &operator =(const CScriptDictionary &other);
+	CScriptDictionary &operator=(const CScriptDictionary &other);
 
 	// Sets a key/value pair
 	void Set(const dictKey_t &key, void *value, int typeId);
@@ -161,7 +155,7 @@ public:
 	// STL style iterator
 	class CIterator
 	{
-	public:
+	      public:
 		void operator++();    // Pre-increment
 		void operator++(int); // Post-increment
 
@@ -173,20 +167,22 @@ public:
 
 		// Accessors
 		const dictKey_t &GetKey() const;
-		int              GetTypeId() const;
-		bool             GetValue(asINT64 &value) const;
-		bool             GetValue(double &value) const;
-		bool             GetValue(void *value, int typeId) const;
-		const void *     GetAddressOfValue() const;
+		int GetTypeId() const;
+		bool GetValue(asINT64 &value) const;
+		bool GetValue(double &value) const;
+		bool GetValue(void *value, int typeId) const;
+		const void *GetAddressOfValue() const;
 
-	protected:
+	      protected:
 		friend class CScriptDictionary;
 
 		CIterator();
-		CIterator(const CScriptDictionary &dict,
-		          dictMap_t::const_iterator it);
+		CIterator(const CScriptDictionary &dict, dictMap_t::const_iterator it);
 
-		CIterator &operator=(const CIterator &) {return *this;} // Not used
+		CIterator &operator=(const CIterator &)
+		{
+			return *this;
+		} // Not used
 
 		dictMap_t::const_iterator m_it;
 		const CScriptDictionary &m_dict;
@@ -199,27 +195,27 @@ public:
 	// Iterator to support foreach in script
 	class CScriptDictIter
 	{
-	public: 
+	      public:
 		// Reference counting
 		void AddRef() const;
 		void Release() const;
 
-	protected:
+	      protected:
 		friend class CScriptDictionary;
 
 		CIterator iter;
 		mutable int refCount;
 		asUINT iterGuard;
 
-		CScriptDictIter(const CScriptDictionary* dict);
+		CScriptDictIter(const CScriptDictionary *dict);
 		~CScriptDictIter();
 	};
 
-	CScriptDictIter* opForBegin() const;
+	CScriptDictIter *opForBegin() const;
 	bool opForEnd(const CScriptDictIter &iter) const;
-	CScriptDictIter* opForNext(CScriptDictIter& iter) const;
-	const CScriptDictValue& opForValue0(const CScriptDictIter& iter) const;
-	const dictKey_t& opForValue1(const CScriptDictIter& iter) const;
+	CScriptDictIter *opForNext(CScriptDictIter &iter) const;
+	const CScriptDictValue &opForValue0(const CScriptDictIter &iter) const;
+	const dictKey_t &opForValue1(const CScriptDictIter &iter) const;
 
 	// Garbage collections behaviours
 	int GetRefCount();
@@ -228,7 +224,7 @@ public:
 	void EnumReferences(asIScriptEngine *engine);
 	void ReleaseAllReferences(asIScriptEngine *engine);
 
-protected:
+      protected:
 	// Since the dictionary uses the asAllocMem and asFreeMem functions to allocate memory
 	// the constructors are made protected so that the application cannot allocate it
 	// manually in a different way
@@ -243,10 +239,10 @@ protected:
 
 	// Our properties
 	asIScriptEngine *engine;
-	mutable int      refCount;
-	mutable bool     gcFlag;
-	dictMap_t        dict;
-	asUINT           iterGuard;
+	mutable int refCount;
+	mutable bool gcFlag;
+	dictMap_t dict;
+	asUINT iterGuard;
 };
 
 // This function will determine the configuration of the engine

@@ -13,7 +13,6 @@
 
 namespace Triggerbot
 {
-	void Hitscan (CTFPlayer *pLocal, CTFWeaponBase *pWeapon,
-		      CUserCmd *pCmd);
-	void Run (CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCmd);
-}
+	void Hitscan(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCmd);
+	void Run(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCmd);
+} // namespace Triggerbot

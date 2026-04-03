@@ -13,12 +13,12 @@ namespace EntityList
 	extern CTFPlayerResource *m_pPlayerResource;
 	extern CBaseEntity *m_pAimbotTarget;
 
-	void Reserve ();
-	void Clear ();
-	void Store (); // Call in FrameStageNotify -> FRAME_NET_UPDATE_END
-	const std::vector<EntityListEntry> &GetEntities ();
-	CTFPlayer *GetLocal ();
-	CTFPlayerResource *GetPlayerResources ();
-	std::vector<EntityListEntry> GetTeammates ();
-	std::vector<EntityListEntry> GetEnemies ();
-}
+	void Reserve();
+	void Clear();
+	void Store(); // Call in FrameStageNotify -> FRAME_NET_UPDATE_END
+	const std::vector<EntityListEntry> &GetEntities();
+	CTFPlayer *GetLocal();
+	CTFPlayerResource *GetPlayerResources();
+	std::vector<EntityListEntry> GetTeammates();
+	std::vector<EntityListEntry> GetEnemies();
+} // namespace EntityList

@@ -16,33 +16,28 @@
 #include "../features/angelscript/api/api.h"
 #include "../features/angelscript/api/libraries/hooks/hooks.h"
 
-DECLARE_VTABLE_HOOK (DrawModelExecute, void,
-		     (IVModelRender * thisptr, const DrawModelState_t &state,
-		      const ModelRenderInfo_t &pInfo,
-		      matrix3x4 *pCustomBoneToWorld))
+DECLARE_VTABLE_HOOK(DrawModelExecute, void,
+		    (IVModelRender * thisptr, const DrawModelState_t &state, const ModelRenderInfo_t &pInfo,
+		     matrix3x4 *pCustomBoneToWorld))
 {
 	//if (settings.esp.chams && !Chams::m_bRunning && Chams::ShouldHide(pInfo.entity_index))
 	//return;
 
-	if (AS_ShouldCallOriginal ())
-		return originalDrawModelExecute (thisptr, state, pInfo,
-						 pCustomBoneToWorld);
+	if (AS_ShouldCallOriginal())
+		return originalDrawModelExecute(thisptr, state, pInfo, pCustomBoneToWorld);
 
-	if (interfaces::Engine->IsTakingScreenshot ())
-		return originalDrawModelExecute (thisptr, state, pInfo,
-						 pCustomBoneToWorld);
+	if (interfaces::Engine->IsTakingScreenshot())
+		return originalDrawModelExecute(thisptr, state, pInfo, pCustomBoneToWorld);
 
 	if (Backtrack::m_drawing)
-		return originalDrawModelExecute (
-		    thisptr, state, pInfo,
-		    Backtrack::m_current_drawing_record->m_Bones);
+		return originalDrawModelExecute(thisptr, state, pInfo, Backtrack::m_current_drawing_record->m_Bones);
 
 	if (!Chams::m_bRunning && !Glow::m_bRunning)
 	{
-		float color[3] = { 1, 1, 1 };
-		interfaces::RenderView->SetColorModulation (color);
-		interfaces::RenderView->SetBlend (1.0f);
-		interfaces::ModelRender->ForcedMaterialOverride (nullptr);
+		float color[3] = {1, 1, 1};
+		interfaces::RenderView->SetColorModulation(color);
+		interfaces::RenderView->SetBlend(1.0f);
+		interfaces::ModelRender->ForcedMaterialOverride(nullptr);
 	}
 
 	{
@@ -52,20 +47,16 @@ DECLARE_VTABLE_HOOK (DrawModelExecute, void,
 		ctx.pCustomBoneToWorld = pCustomBoneToWorld;
 		ctx.pInfo	       = pInfo;
 		ctx.thisptr	       = thisptr;
-		Hooks_CallHooks ("DrawModel", [&] (asIScriptContext *ctx) {
-			ctx->SetArgObject (0, &ctx);
-		});
+		Hooks_CallHooks("DrawModel", [&](asIScriptContext *ctx) { ctx->SetArgObject(0, &ctx); });
 	}
 
 	if (Chams::m_bRunning || Glow::m_bRunning)
-		return originalDrawModelExecute (thisptr, state, pInfo,
-						 pCustomBoneToWorld);
+		return originalDrawModelExecute(thisptr, state, pInfo, pCustomBoneToWorld);
 
-	if (Chams::ShouldHide (pInfo.entity_index)
-	    || Glow::ShouldHide (pInfo.entity_index))
+	if (Chams::ShouldHide(pInfo.entity_index) || Glow::ShouldHide(pInfo.entity_index))
 		return;
 
-	originalDrawModelExecute (thisptr, state, pInfo, pCustomBoneToWorld);
+	originalDrawModelExecute(thisptr, state, pInfo, pCustomBoneToWorld);
 }
 
 #if 0
@@ -76,13 +67,12 @@ static int LuaCallDME(lua_State* L)
 }
 #endif
 
-inline void HookDrawModelExecute (void)
+inline void HookDrawModelExecute(void)
 {
-	INSTALL_VTABLE_HOOK (DrawModelExecute, interfaces::ModelRender, 19);
+	INSTALL_VTABLE_HOOK(DrawModelExecute, interfaces::ModelRender, 19);
 
 #ifdef DEBUG
-	constexpr Color_t color = { 100, 255, 100, 255 };
-	helper::console::ColoredPrint (
-	    "IModelRender::DrawModelExecute hooked\n", color);
+	constexpr Color_t color = {100, 255, 100, 255};
+	helper::console::ColoredPrint("IModelRender::DrawModelExecute hooked\n", color);
 #endif
 }

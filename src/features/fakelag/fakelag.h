@@ -4,7 +4,7 @@
 
 namespace FakeLag
 {
-	void Run ();
+	void Run();
 
 	extern bool m_bFakeLagging;
-}
+} // namespace FakeLag

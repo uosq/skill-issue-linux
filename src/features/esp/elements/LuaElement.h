@@ -19,7 +19,7 @@ end): bool
 class LuaElement : public IBaseElement
 {
       public:
-	LuaElement ()
+	LuaElement()
 	{
 		m_text		 = "";
 		m_id		 = "";
@@ -27,8 +27,7 @@ class LuaElement : public IBaseElement
 		m_shoulddraw_ref = LUA_NOREF;
 	}
 
-	LuaElement (const std::string &id, const std::string &text, int ref,
-		    ESP_ALIGNMENT alignment, const Color &color)
+	LuaElement(const std::string &id, const std::string &text, int ref, ESP_ALIGNMENT alignment, const Color &color)
 	{
 		m_id		 = id;
 		m_text		 = text;
@@ -37,68 +36,77 @@ class LuaElement : public IBaseElement
 		m_color		 = color;
 	}
 
-	bool ShouldDraw (CBaseEntity *entity,
-			 const ESP_Data &data) const override
+	bool ShouldDraw(CBaseEntity *entity, const ESP_Data &data) const override
 	{
 		lua_State *L = Lua::m_luaState;
 
 		if (!L || m_shoulddraw_ref == LUA_NOREF)
 			return false;
 
-		int top = lua_gettop (L);
+		int top = lua_gettop(L);
 
 		// push function
-		lua_rawgeti (L, LUA_REGISTRYINDEX, m_shoulddraw_ref);
+		lua_rawgeti(L, LUA_REGISTRYINDEX, m_shoulddraw_ref);
 
-		LuaClasses::EntityLua::push_entity (L, entity);
+		LuaClasses::EntityLua::push_entity(L, entity);
 
 		ESP_Data copy	    = data;
-		Lua_ESP_Data *ldata = LuaClasses::ESP_Data::push (L, copy);
+		Lua_ESP_Data *ldata = LuaClasses::ESP_Data::push(L, copy);
 
-		if (lua_pcall (L, 2, 1, 0) != LUA_OK)
+		if (lua_pcall(L, 2, 1, 0) != LUA_OK)
 		{
-			const char *err = lua_tostring (L, -1);
+			const char *err = lua_tostring(L, -1);
 			if (err)
-				consoleText += std::string (err) + "\n";
+				consoleText += std::string(err) + "\n";
 
 			ldata->valid = false;
-			lua_settop (L, top);
+			lua_settop(L, top);
 			return false;
 		}
 
 		ldata->valid = false;
 
-		bool result  = lua_toboolean (L, -1);
+		bool result  = lua_toboolean(L, -1);
 
 		// clean stack
-		lua_settop (L, top);
+		lua_settop(L, top);
 
 		return result;
 	}
 
-	void Draw (Vec2 &pos, CBaseEntity *ent, const ESP_Data &data,
-		   ESPContext &ctx) const override
+	void Draw(Vec2 &pos, CBaseEntity *ent, const ESP_Data &data, ESPContext &ctx) const override
 	{
-		helper::draw::TextShadow (pos.x, pos.y, GetColor (ent, data),
-					  m_text);
+		helper::draw::TextShadow(pos.x, pos.y, GetColor(ent, data), m_text);
 	}
 
-	Vec2 GetSize (const ESP_Data &data) const override
+	Vec2 GetSize(const ESP_Data &data) const override
 	{
 		int w, h;
-		helper::draw::GetTextSize (m_text, w, h);
-		return Vec2 (w, h);
+		helper::draw::GetTextSize(m_text, w, h);
+		return Vec2(w, h);
 	}
 
-	ESP_ALIGNMENT GetAlignment () const override { return m_alignment; }
+	ESP_ALIGNMENT GetAlignment() const override
+	{
+		return m_alignment;
+	}
 
-	const std::string &GetText () { return m_text; }
+	const std::string &GetText()
+	{
+		return m_text;
+	}
 
-	const std::string &GetID () { return m_id; }
+	const std::string &GetID()
+	{
+		return m_id;
+	}
 
-	int GetRef () { return m_shoulddraw_ref; }
+	int GetRef()
+	{
+		return m_shoulddraw_ref;
+	}
 
-	Color GetColor (CBaseEntity *pEnt, const ESP_Data &data) const override
+	Color GetColor(CBaseEntity *pEnt, const ESP_Data &data) const override
 	{
 		return m_color;
 	}

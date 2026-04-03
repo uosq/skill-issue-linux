@@ -51,76 +51,84 @@
 //#include "../hooks/ctfmatchsummary_ontick.h"
 //#include "../hooks/cbaseentity_shoulddraw.h"
 
-CApp::CApp () : m_bInitialized (false) {}
-
-bool CApp::IsInitialized () { return m_bInitialized; }
-
-bool CApp::StartInterfaces () { return InitializeInterfaces (); }
-
-void CApp::Setup ()
+CApp::CApp() : m_bInitialized(false)
 {
-	if (!Sigs_InitAll ())
-		return;
-
-	Netvars::Setup ();
-
-	Settings::InitBinds ();
-	API::Initialize ();
-
-	GUI::Init ();
-	TickManager::Init ();
-	MaterialManager::Init ();
-	FontManager::Init ();
-
-	Backtrack::Init ();
-	ViewmodelInterp::Init ();
-	ViewmodelAim::Init ();
-	Radar::Init ();
-	ESP::Init ();
-	Glow::Init ();
-	Chams::Init ();
-
-	StartHooks ();
 }
 
-bool CApp::StartHooks ()
+bool CApp::IsInitialized()
 {
-	HookSDL ();
-	HookDXVK ();
+	return m_bInitialized;
+}
+
+bool CApp::StartInterfaces()
+{
+	return InitializeInterfaces();
+}
+
+void CApp::Setup()
+{
+	if (!Sigs_InitAll())
+		return;
+
+	Netvars::Setup();
+
+	Settings::InitBinds();
+	API::Initialize();
+
+	GUI::Init();
+	TickManager::Init();
+	MaterialManager::Init();
+	FontManager::Init();
+
+	Backtrack::Init();
+	ViewmodelInterp::Init();
+	ViewmodelAim::Init();
+	Radar::Init();
+	ESP::Init();
+	Glow::Init();
+	Chams::Init();
+
+	StartHooks();
+}
+
+bool CApp::StartHooks()
+{
+	HookSDL();
+	HookDXVK();
 
 	//HookEngineVGuiPaint(); Already initialized
-	HookFrameStageNotify ();
-	HookOverrideView ();
-	HookCalcViewModelView ();
-	HookCTFPlayerInventory_MaxItemCount ();
-	HookPaintTraverse ();
-	HookCheckForPure ();
-	HookDrawModelExecute ();
-	HookDoPostScreenSpaceEffects ();
-	HookLockCursor ();
-	HookLevelShutdown ();
-	HookShowItemsPickedUp ();
-	HookSendNetMsg ();
-	HookLevelInitPostEntity ();
-	HookLevelInitPreEntity ();
-	HookFireGameEvent ();
-	HookForcedMaterialOverride ();
-	HookHost_Shutdown ();
-	HookCMaterial_Uncache ();
-	Hook_ExecuteStringCommand ();
-	Hook_RunCommand ();
-	Hook_GetUserCmd ();
-	Hook_ValidateUserCmd ();
-	HookCL_Move ();
-	Hook_BaseInterpolatePart1 ();
-	Hook_Interpolate ();
-	Hook_DataTable_Warning ();
-	Hook_CThirdPersonManager_Update ();
-	Hook_SleepUntilInput ();
-	Hook_CTFWearable_ShouldDraw ();
-	Hook_ShouldDrawViewModel ();
-	Hook_CBasePlayer_ShouldDrawLocalPlayer ();
-	Hook_CalcViewModelBobHelper ();
+	HookFrameStageNotify();
+	HookOverrideView();
+	HookCalcViewModelView();
+	HookCTFPlayerInventory_MaxItemCount();
+	HookPaintTraverse();
+	HookCheckForPure();
+	HookDrawModelExecute();
+	HookDoPostScreenSpaceEffects();
+	HookLockCursor();
+	HookLevelShutdown();
+	HookShowItemsPickedUp();
+	HookSendNetMsg();
+	HookLevelInitPostEntity();
+	HookLevelInitPreEntity();
+	HookFireGameEvent();
+	HookForcedMaterialOverride();
+	HookHost_Shutdown();
+	HookCMaterial_Uncache();
+	Hook_ExecuteStringCommand();
+	Hook_RunCommand();
+	Hook_GetUserCmd();
+	Hook_ValidateUserCmd();
+	HookCL_Move();
+	Hook_BaseInterpolatePart1();
+	Hook_Interpolate();
+	Hook_DataTable_Warning();
+	Hook_CThirdPersonManager_Update();
+	Hook_SleepUntilInput();
+	Hook_CTFWearable_ShouldDraw();
+	Hook_ShouldDrawViewModel();
+	Hook_CBasePlayer_ShouldDrawLocalPlayer();
+	Hook_CalcViewModelBobHelper();
 	//Hook_CTFMatchSummary_OnTick();
 	//Hook_CBaseEntity_ShouldDraw();
 

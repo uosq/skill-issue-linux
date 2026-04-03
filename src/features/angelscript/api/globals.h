@@ -2,7 +2,8 @@
 
 #include "../include/angelscript.h"
 
-enum ScriptAccessMask {
+enum ScriptAccessMask
+{
 	SCRIPT_MASK_ALLOW_ENGINE      = 1 << 0,
 	SCRIPT_MASK_ALLOW_CLIENT      = 1 << 1,
 	SCRIPT_MASK_ALLOW_CLIENTSTATE = 1 << 2,
@@ -22,6 +23,6 @@ enum ScriptAccessMask {
 	SCRIPT_MASK_ALLOW_STRING      = 1 << 16,
 };
 
-asIScriptEngine *GetScriptEngine ();
-asIScriptContext *GetScriptContext ();
-int &GetScriptAccessMask ();
+asIScriptEngine *GetScriptEngine();
+asIScriptContext *GetScriptContext();
+int &GetScriptAccessMask();

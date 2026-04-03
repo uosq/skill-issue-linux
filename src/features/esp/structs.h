@@ -15,7 +15,8 @@ struct ESP_Data
 	Vec2 bottom;
 };
 
-enum class ESP_ALIGNMENT {
+enum class ESP_ALIGNMENT
+{
 	INVALID = -1, // anythng equal or below this is invalid
 	LEFT	= 0,
 	RIGHT,
@@ -33,7 +34,7 @@ struct ESPContext
 	/*Vector absMins;
 	Vector absMaxs;*/
 
-	ESPContext ()
+	ESPContext()
 	{
 		/*absMins = {0, 0};
 		absMaxs = {0, 0};*/

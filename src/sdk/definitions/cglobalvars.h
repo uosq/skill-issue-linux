@@ -13,7 +13,7 @@ struct CGlobalVars
 	float interpolation_amount;
 	int sim_ticks_this_frame;
 	int network_protocol;
-	void* save_data; //CSaveRestoreData
+	void *save_data; //CSaveRestoreData
 	bool client;
 	int nTimestampNetworkingBase;
 	int nTimestampRandomizeWindow;

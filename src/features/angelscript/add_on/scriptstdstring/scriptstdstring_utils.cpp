@@ -1,6 +1,6 @@
-#include <assert.h>
-#include "scriptstdstring.h"
 #include "../scriptarray/scriptarray.h"
+#include "scriptstdstring.h"
+#include <assert.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -23,7 +23,7 @@ BEGIN_AS_NAMESPACE
 static CScriptArray *StringSplit(const string &delim, const string &str)
 {
 	// Obtain a pointer to the engine
-	asIScriptContext *ctx = asGetActiveContext();
+	asIScriptContext *ctx	= asGetActiveContext();
 	asIScriptEngine *engine = ctx->GetEngine();
 
 	// TODO: This should only be done once
@@ -36,11 +36,11 @@ static CScriptArray *StringSplit(const string &delim, const string &str)
 	// Find the existence of the delimiter in the input string
 	size_t pos = 0, prev = 0;
 	asUINT count = 0;
-	while( (pos = str.find(delim, prev)) != string::npos )
+	while ((pos = str.find(delim, prev)) != string::npos)
 	{
 		// Add the part to the array
-		array->Resize(array->GetSize()+1);
-		((string*)array->At(count))->assign(&str[prev], pos-prev);
+		array->Resize(array->GetSize() + 1);
+		((string *)array->At(count))->assign(&str[prev], pos - prev);
 
 		// Find the next part
 		count++;
@@ -48,8 +48,8 @@ static CScriptArray *StringSplit(const string &delim, const string &str)
 	}
 
 	// Add the remaining part
-	array->Resize(array->GetSize()+1);
-	((string*)array->At(count))->assign(&str[prev]);
+	array->Resize(array->GetSize() + 1);
+	((string *)array->At(count))->assign(&str[prev]);
 
 	return array;
 }
@@ -57,14 +57,12 @@ static CScriptArray *StringSplit(const string &delim, const string &str)
 static void StringSplit_Generic(asIScriptGeneric *gen)
 {
 	// Get the arguments
-	string *str   = (string*)gen->GetObject();
-	string *delim = *(string**)gen->GetAddressOfArg(0);
+	string *str   = (string *)gen->GetObject();
+	string *delim = *(string **)gen->GetAddressOfArg(0);
 
 	// Return the array by handle
-	*(CScriptArray**)gen->GetAddressOfReturnLocation() = StringSplit(*delim, *str);
+	*(CScriptArray **)gen->GetAddressOfReturnLocation() = StringSplit(*delim, *str);
 }
-
-
 
 // This function takes as input an array of string handles as well as a
 // delimiter and concatenates the array elements into one delimited string.
@@ -83,17 +81,17 @@ static string StringJoin(const CScriptArray &array, const string &delim)
 {
 	// Create the new string
 	string str = "";
-	if( array.GetSize() )
+	if (array.GetSize())
 	{
 		int n;
-		for( n = 0; n < (int)array.GetSize() - 1; n++ )
+		for (n = 0; n < (int)array.GetSize() - 1; n++)
 		{
-			str += *(const string*)array.At(n);
+			str += *(const string *)array.At(n);
 			str += delim;
 		}
 
 		// Add the last part
-		str += *(const string*)array.At(n);
+		str += *(const string *)array.At(n);
 	}
 
 	return str;
@@ -102,11 +100,11 @@ static string StringJoin(const CScriptArray &array, const string &delim)
 static void StringJoin_Generic(asIScriptGeneric *gen)
 {
 	// Get the arguments
-	CScriptArray  *array = *(CScriptArray**)gen->GetAddressOfArg(0);
-	string *delim = *(string**)gen->GetAddressOfArg(1);
+	CScriptArray *array = *(CScriptArray **)gen->GetAddressOfArg(0);
+	string *delim	    = *(string **)gen->GetAddressOfArg(1);
 
 	// Return the string
-	new(gen->GetAddressOfReturnLocation()) string(StringJoin(*array, *delim));
+	new (gen->GetAddressOfReturnLocation()) string(StringJoin(*array, *delim));
 }
 
 // This is where the utility functions are registered.
@@ -115,15 +113,23 @@ void RegisterStdStringUtils(asIScriptEngine *engine)
 {
 	int r;
 
-	if( strstr(asGetLibraryOptions(), "AS_MAX_PORTABILITY") )
+	if (strstr(asGetLibraryOptions(), "AS_MAX_PORTABILITY"))
 	{
-		r = engine->RegisterObjectMethod("string", "array<string>@ split(const string &in) const", asFUNCTION(StringSplit_Generic), asCALL_GENERIC); assert(r >= 0);
-		r = engine->RegisterGlobalFunction("string join(const array<string> &in, const string &in)", asFUNCTION(StringJoin_Generic), asCALL_GENERIC); assert(r >= 0);
+		r = engine->RegisterObjectMethod("string", "array<string>@ split(const string &in) const",
+						 asFUNCTION(StringSplit_Generic), asCALL_GENERIC);
+		assert(r >= 0);
+		r = engine->RegisterGlobalFunction("string join(const array<string> &in, const string &in)",
+						   asFUNCTION(StringJoin_Generic), asCALL_GENERIC);
+		assert(r >= 0);
 	}
 	else
 	{
-		r = engine->RegisterObjectMethod("string", "array<string>@ split(const string &in) const", asFUNCTION(StringSplit), asCALL_CDECL_OBJLAST); assert(r >= 0);
-		r = engine->RegisterGlobalFunction("string join(const array<string> &in, const string &in)", asFUNCTION(StringJoin), asCALL_CDECL); assert(r >= 0);
+		r = engine->RegisterObjectMethod("string", "array<string>@ split(const string &in) const",
+						 asFUNCTION(StringSplit), asCALL_CDECL_OBJLAST);
+		assert(r >= 0);
+		r = engine->RegisterGlobalFunction("string join(const array<string> &in, const string &in)",
+						   asFUNCTION(StringJoin), asCALL_CDECL);
+		assert(r >= 0);
 	}
 }
 

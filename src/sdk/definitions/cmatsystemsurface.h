@@ -4,6 +4,5 @@
 
 class CMatSystemSurface
 {
-public:
-
+      public:
 };

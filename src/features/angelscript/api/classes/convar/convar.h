@@ -2,4 +2,4 @@
 
 #include "../../../include/angelscript.h"
 
-void ConVar_RegisterClass (asIScriptEngine *engine);
+void ConVar_RegisterClass(asIScriptEngine *engine);

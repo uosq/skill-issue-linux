@@ -10,15 +10,15 @@
 
 #include "../features/entitylist/entitylist.h"
 
-DECLARE_VTABLE_HOOK (ShouldDrawViewModel, bool, (IClientMode * self))
+DECLARE_VTABLE_HOOK(ShouldDrawViewModel, bool, (IClientMode * self))
 {
 	//if (Settings::Misc.no_zoom)
 	return true;
 
-	return originalShouldDrawViewModel (self);
+	return originalShouldDrawViewModel(self);
 }
 
-static void Hook_ShouldDrawViewModel ()
+static void Hook_ShouldDrawViewModel()
 {
-	INSTALL_VTABLE_HOOK (ShouldDrawViewModel, interfaces::ClientMode, 25);
+	INSTALL_VTABLE_HOOK(ShouldDrawViewModel, interfaces::ClientMode, 25);
 }

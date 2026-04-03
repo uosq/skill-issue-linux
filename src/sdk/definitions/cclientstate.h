@@ -1,28 +1,28 @@
 #pragma once
 
+#include "../defs.h"
 #include "datatable.h"
 #include "inetchannel.h"
 #include "ivmodelinfoclient.h"
 #include "utlvector.h"
-#include "../defs.h"
 
 class IChangeFrameList;
 
 class PackedEntity
 {
-public:
-	ServerClass* m_pServerClass;
-	ClientClass* m_pClientClass;
+      public:
+	ServerClass *m_pServerClass;
+	ClientClass *m_pClientClass;
 
 	int m_nEntityIndex;
 	int m_ReferenceCount;
 
-private:
-	CUtlVector<void*> m_Recipients;
+      private:
+	CUtlVector<void *> m_Recipients;
 
-	void* m_pData;
+	void *m_pData;
 	int m_nBits;
-	IChangeFrameList* m_pChangeFrameList;
+	IChangeFrameList *m_pChangeFrameList;
 
 	unsigned int m_nSnapshotCreationTick : 31;
 	unsigned int m_nShouldCheckCreationTick : 1;
@@ -38,15 +38,15 @@ struct CClockDriftMgr
 
 class CClientState
 {
-public:
+      public:
 	byte pad0[24];
 	int m_Socket;
-	INetChannel* m_NetChannel;
+	INetChannel *m_NetChannel;
 	unsigned int m_nChallengeNr;
 	double m_flConnectTime;
 	int m_nRetryNumber;
 	char m_szRetryAddress[MAX_OSPATH];
-	void* m_sRetrySourceTag;
+	void *m_sRetrySourceTag;
 	int m_retryChallenge;
 	int m_nSignonState;
 	double m_flNextCmdTime;
@@ -64,9 +64,9 @@ public:
 	char m_szLevelBaseName[128];
 	byte pad2[132];
 	int m_nMaxClients;
-	PackedEntity* m_pEntityBaselines[2][MAX_EDICTS];
+	PackedEntity *m_pEntityBaselines[2][MAX_EDICTS];
 	byte pad3[2068];
-	void* m_StringTableContainer;
+	void *m_StringTableContainer;
 	bool m_bRestrictServerCommands;
 	bool m_bRestrictClientCommands;
 	byte pad4[106];
@@ -83,7 +83,7 @@ public:
 	bool isreplay;
 	byte pad5[278];
 	int demonum;
-	void* demos[32];
+	void *demos[32];
 	byte pad6[344184];
 	bool m_bMarkedCRCsUnverified;
 };

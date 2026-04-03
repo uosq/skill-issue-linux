@@ -9,49 +9,45 @@ namespace EntityList
 	CBaseEntity *m_pAimbotTarget	     = nullptr;
 	std::vector<EntityListEntry> m_vecEntities;
 
-	void Clear ()
+	void Clear()
 	{
-		m_vecEntities.clear ();
+		m_vecEntities.clear();
 		m_pLocalPlayer	  = nullptr;
 		m_pPlayerResource = nullptr;
 	}
 
 	// Call in LevelInitPostEntity
-	void Reserve ()
+	void Reserve()
 	{
-		int maxentities = interfaces::EntityList->GetMaxEntities ();
-		m_vecEntities.reserve (maxentities);
+		int maxentities = interfaces::EntityList->GetMaxEntities();
+		m_vecEntities.reserve(maxentities);
 
 		// interfaces::Cvar->ConsolePrintf("Reserved %i entities\n",
 		// maxentities);
 	}
 
 	// Call in FrameStageNotify -> FRAME_NET_UPDATE_END
-	void Store ()
+	void Store()
 	{
-		Clear ();
+		Clear();
 
-		m_pLocalPlayer = helper::engine::GetLocalPlayer ();
+		m_pLocalPlayer = helper::engine::GetLocalPlayer();
 		if (m_pLocalPlayer == nullptr)
 			return;
 
-		int localTeam = m_pLocalPlayer->m_iTeamNum ();
+		int localTeam = m_pLocalPlayer->m_iTeamNum();
 
-		for (int i = 1;
-		     i <= interfaces::EntityList->GetHighestEntityIndex ();
-		     i++)
+		for (int i = 1; i <= interfaces::EntityList->GetHighestEntityIndex(); i++)
 		{
-			IClientEntity *entity
-			    = interfaces::EntityList->GetClientEntity (i);
-			if (entity == nullptr || entity->IsDormant ())
+			IClientEntity *entity = interfaces::EntityList->GetClientEntity(i);
+			if (entity == nullptr || entity->IsDormant())
 				continue;
 
-			switch (entity->GetClassID ())
+			switch (entity->GetClassID())
 			{
 			case ETFClassID::CTFPlayer:
 			{
-				CTFPlayer *player
-				    = static_cast<CTFPlayer *> (entity);
+				CTFPlayer *player = static_cast<CTFPlayer *>(entity);
 
 				// cant skip lp or else ESP, Chams and Glow
 				// don't highlight us skip localplayer
@@ -62,22 +58,20 @@ namespace EntityList
 				entry.flags = EntityFlags::IsPlayer;
 				entry.ptr   = player;
 
-				if (player->m_iTeamNum () != localTeam)
+				if (player->m_iTeamNum() != localTeam)
 					entry.flags |= EntityFlags::IsEnemy;
 
-				if (player->IsAlive ())
+				if (player->IsAlive())
 					entry.flags |= EntityFlags::IsAlive;
 
-				m_vecEntities.emplace_back (entry);
+				m_vecEntities.emplace_back(entry);
 
 				// skip localplayer :))
 				// btw this is fucking bullshit
 				// calling Backtrack::Store() directly on
 				// FrameStageNotify does not work
-				if (player->GetIndex ()
-				    != m_pLocalPlayer->GetIndex ())
-					Backtrack::Store (m_pLocalPlayer,
-							  entry);
+				if (player->GetIndex() != m_pLocalPlayer->GetIndex())
+					Backtrack::Store(m_pLocalPlayer, entry);
 
 				break;
 			}
@@ -86,28 +80,24 @@ namespace EntityList
 			case ETFClassID::CObjectDispenser:
 			case ETFClassID::CObjectTeleporter:
 			{
-				CBaseObject *building
-				    = static_cast<CBaseObject *> (entity);
-				if (building->m_iHealth () <= 0)
+				CBaseObject *building = static_cast<CBaseObject *>(entity);
+				if (building->m_iHealth() <= 0)
 					break;
 
 				EntityListEntry entry = {};
-				entry.flags	      = EntityFlags::IsBuilding
-							| EntityFlags::IsAlive;
+				entry.flags	      = EntityFlags::IsBuilding | EntityFlags::IsAlive;
 				entry.ptr	      = building;
 
-				if (building->m_iTeamNum () != localTeam)
+				if (building->m_iTeamNum() != localTeam)
 					entry.flags |= EntityFlags::IsEnemy;
 
-				m_vecEntities.emplace_back (entry);
+				m_vecEntities.emplace_back(entry);
 				break;
 			}
 
 			case ETFClassID::CTFPlayerResource:
 			{
-				m_pPlayerResource
-				    = static_cast<CTFPlayerResource *> (
-					entity);
+				m_pPlayerResource = static_cast<CTFPlayerResource *>(entity);
 				break;
 			}
 
@@ -122,18 +112,16 @@ namespace EntityList
 			case ETFClassID::CTFProjectile_SentryRocket:
 			case ETFClassID::CTFStickBomb:
 			{
-				CBaseProjectile *baseEnt
-				    = static_cast<CBaseProjectile *> (entity);
+				CBaseProjectile *baseEnt = static_cast<CBaseProjectile *>(entity);
 
-				EntityListEntry entry = {};
-				entry.flags = EntityFlags::IsProjectile
-					      | EntityFlags::IsAlive;
-				entry.ptr   = baseEnt;
+				EntityListEntry entry	 = {};
+				entry.flags		 = EntityFlags::IsProjectile | EntityFlags::IsAlive;
+				entry.ptr		 = baseEnt;
 
-				if (baseEnt->m_iTeamNum () != localTeam)
+				if (baseEnt->m_iTeamNum() != localTeam)
 					entry.flags |= EntityFlags::IsEnemy;
 
-				m_vecEntities.emplace_back (entry);
+				m_vecEntities.emplace_back(entry);
 				break;
 			}
 
@@ -143,16 +131,22 @@ namespace EntityList
 		}
 	}
 
-	CTFPlayer *GetLocal () { return m_pLocalPlayer; }
+	CTFPlayer *GetLocal()
+	{
+		return m_pLocalPlayer;
+	}
 
-	CTFPlayerResource *GetPlayerResources () { return m_pPlayerResource; }
+	CTFPlayerResource *GetPlayerResources()
+	{
+		return m_pPlayerResource;
+	}
 
-	const std::vector<EntityListEntry> &GetEntities ()
+	const std::vector<EntityListEntry> &GetEntities()
 	{
 		return m_vecEntities;
 	}
 
-	std::vector<EntityListEntry> GetTeammates ()
+	std::vector<EntityListEntry> GetTeammates()
 	{
 		std::vector<EntityListEntry> teammates;
 
@@ -161,13 +155,13 @@ namespace EntityList
 			if (entry.flags & EntityFlags::IsEnemy)
 				continue;
 
-			teammates.emplace_back (entry);
+			teammates.emplace_back(entry);
 		}
 
 		return teammates;
 	}
 
-	std::vector<EntityListEntry> GetEnemies ()
+	std::vector<EntityListEntry> GetEnemies()
 	{
 		std::vector<EntityListEntry> enemies;
 
@@ -176,9 +170,9 @@ namespace EntityList
 			if (!(entry.flags & EntityFlags::IsEnemy))
 				continue;
 
-			enemies.emplace_back (entry);
+			enemies.emplace_back(entry);
 		}
 
 		return enemies;
 	}
-}
+} // namespace EntityList

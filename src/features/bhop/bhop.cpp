@@ -5,20 +5,20 @@ namespace Bhop
 	bool m_bUsedAirJump  = false;
 	bool m_bJumpReleased = false;
 
-	void Reset ()
+	void Reset()
 	{
 		m_bUsedAirJump	= false;
 		m_bJumpReleased = false;
 	}
 
-	void Run (CTFPlayer *pLocal, CUserCmd *pCmd)
+	void Run(CTFPlayer *pLocal, CUserCmd *pCmd)
 	{
-		if (!Settings::Misc.bhop || pLocal->GetWaterLevel () > WL_Feet)
+		if (!Settings::Misc.bhop || pLocal->GetWaterLevel() > WL_Feet)
 			return;
 
 		bool wantsJump	= pCmd->buttons & IN_JUMP;
-		bool isOnGround = pLocal->GetFlags () & FL_ONGROUND;
-		bool isScout	= pLocal->m_iClass () == TF_CLASS_SCOUT;
+		bool isOnGround = pLocal->GetFlags() & FL_ONGROUND;
+		bool isScout	= pLocal->m_iClass() == TF_CLASS_SCOUT;
 
 		if (isOnGround)
 		{
@@ -27,20 +27,21 @@ namespace Bhop
 
 			if (wantsJump)
 				pCmd->buttons |= IN_JUMP;
-		} else
+		}
+		else
 		{
 			if (!wantsJump)
 				m_bJumpReleased = true;
 
-			if (isScout && wantsJump && !m_bUsedAirJump
-			    && m_bJumpReleased)
+			if (isScout && wantsJump && !m_bUsedAirJump && m_bJumpReleased)
 			{
 				pCmd->buttons |= IN_JUMP;
 				m_bUsedAirJump = true;
-			} else
+			}
+			else
 			{
 				pCmd->buttons &= ~IN_JUMP;
 			}
 		}
 	}
-}
+} // namespace Bhop

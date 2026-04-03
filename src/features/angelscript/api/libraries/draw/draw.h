@@ -2,4 +2,4 @@
 
 #include "../../../include/angelscript.h"
 
-void Draw_RegisterLibrary (asIScriptEngine *engine);
+void Draw_RegisterLibrary(asIScriptEngine *engine);

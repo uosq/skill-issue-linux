@@ -28,7 +28,6 @@
    andreas@angelcode.com
 */
 
-
 //
 // as_memory.cpp
 //
@@ -38,14 +37,15 @@
 
 #include <stdlib.h>
 
-#if !defined(__APPLE__) && !defined(__SNC__) && !defined(__ghs__) && !defined(__FreeBSD__) && !defined(__OpenBSD__) && !defined(__DragonFly__)
+#if !defined(__APPLE__) && !defined(__SNC__) && !defined(__ghs__) && !defined(__FreeBSD__) && !defined(__OpenBSD__) && \
+    !defined(__DragonFly__)
 #include <malloc.h>
 #endif
 
+#include "as_bytecode.h"
 #include "as_config.h"
 #include "as_memory.h"
 #include "as_scriptnode.h"
-#include "as_bytecode.h"
 
 BEGIN_AS_NAMESPACE
 
@@ -60,7 +60,7 @@ BEGIN_AS_NAMESPACE
 //  ok  - Script global properties must allocate memory on 16byte boundaries if holding these types (asCGlobalProperty::AllocateMemory)
 // TODO - The script compiler must make sure to allocate the local variables on 16byte boundaries (asCCompiler::AllocateVariable)
 // TODO - The script compiler must add pad bytes on the stack for all function calls to guarantee that the stack position is 16byte aligned on entry in the called function (asCCompiler)
-// TODO - The bytecode serializer must be capable of adjusting these pad bytes to guarantee platform independent saved bytecode. Remember that the registered type may not be 16byte aligned on all platforms (asCWriter & asCReader) 
+// TODO - The bytecode serializer must be capable of adjusting these pad bytes to guarantee platform independent saved bytecode. Remember that the registered type may not be 16byte aligned on all platforms (asCWriter & asCReader)
 // TODO - The bytecode serializer must also be prepared to adjust the position of the local variables according to the need fro 16byte alignment (asCWriter & asCReader)
 // TODO - The code for the native calling conventions must be adjusted for all platforms that should support 16byte aligned types (as_callfunc...)
 //  ok  - When the context needs to grow the local stack memory it must copy the function arguments so that the stack entry position is 16byte aligned (asCContext::CallScriptFunction)
@@ -68,39 +68,38 @@ BEGIN_AS_NAMESPACE
 //
 // http://www.gamedev.net/topic/650555-alignment-requirements/
 
-
 // TODO: Allow user to register its own aligned memory routines
 // Wrappers for aligned allocations
 void *debugAlignedMalloc(size_t size, size_t align, const char *file, int line)
 {
-	void *mem = ((asALLOCFUNCDEBUG_t)userAlloc)(size + (align-1) + sizeof(void*), file, line);
+	void *mem  = ((asALLOCFUNCDEBUG_t)userAlloc)(size + (align - 1) + sizeof(void *), file, line);
 
-	char *amem = ((char*)mem) + sizeof(void*);
-	if( (uintptr_t)amem & (align - 1) )
+	char *amem = ((char *)mem) + sizeof(void *);
+	if ((uintptr_t)amem & (align - 1))
 		amem += align - ((uintptr_t)amem & (align - 1));
 
-	((void**)amem)[-1] = mem;
+	((void **)amem)[-1] = mem;
 	return amem;
 }
 
 void *alignedMalloc(size_t size, size_t align)
 {
-	void *mem = userAlloc(size + (align-1) + sizeof(void*));
+	void *mem  = userAlloc(size + (align - 1) + sizeof(void *));
 
-	char *amem = ((char*)mem) + sizeof(void*);
-	if( (uintptr_t)amem & (align - 1) )
+	char *amem = ((char *)mem) + sizeof(void *);
+	if ((uintptr_t)amem & (align - 1))
 		amem += align - ((uintptr_t)amem & (align - 1));
 
-	((void**)amem)[-1] = mem;
+	((void **)amem)[-1] = mem;
 	return amem;
 }
 
 void alignedFree(void *mem)
 {
-	userFree( ((void**)mem)[-1] );
+	userFree(((void **)mem)[-1]);
 }
 
-bool isAligned(const void* const pointer, asUINT alignment)
+bool isAligned(const void *const pointer, asUINT alignment)
 {
 	return (uintptr_t(pointer) % alignment) == 0;
 }
@@ -114,70 +113,70 @@ bool isAligned(const void* const pointer, asUINT alignment)
 
 #ifdef _MSC_VER
 // MSVC let's us choose between a couple of different initialization orders.
-#pragma warning(disable: 4073)
+#pragma warning(disable : 4073)
 #pragma init_seg(lib)
 asALLOCFUNC_t userAlloc = malloc;
-asFREEFUNC_t  userFree  = free;
+asFREEFUNC_t userFree	= free;
 #ifdef WIP_16BYTE_ALIGN
 #ifdef AS_DEBUG
 asALLOCALIGNEDFUNC_t userAllocAligned = (asALLOCALIGNEDFUNC_t)debugAlignedMalloc;
 #else
 asALLOCALIGNEDFUNC_t userAllocAligned = alignedMalloc;
 #endif
-asFREEALIGNEDFUNC_t  userFreeAligned  = alignedFree;
+asFREEALIGNEDFUNC_t userFreeAligned = alignedFree;
 #endif
 #else
 // Other compilers will just have to rely on luck.
 asALLOCFUNC_t userAlloc = malloc;
-asFREEFUNC_t  userFree  = free;
+asFREEFUNC_t userFree	= free;
 #ifdef WIP_16BYTE_ALIGN
 asALLOCALIGNEDFUNC_t userAllocAligned = alignedMalloc;
-asFREEALIGNEDFUNC_t  userFreeAligned  = alignedFree;
+asFREEALIGNEDFUNC_t userFreeAligned   = alignedFree;
 #endif
 #endif
 
 extern "C"
 {
 
-// interface
-int asSetGlobalMemoryFunctions(asALLOCFUNC_t allocFunc, asFREEFUNC_t freeFunc)
-{
-	// Clean-up thread local memory before changing the allocation routines to avoid 
-	// potential problem with trying to free memory using a different allocation
-	// routine than used when allocating it.
-	asThreadCleanup();
+	// interface
+	int asSetGlobalMemoryFunctions(asALLOCFUNC_t allocFunc, asFREEFUNC_t freeFunc)
+	{
+		// Clean-up thread local memory before changing the allocation routines to avoid
+		// potential problem with trying to free memory using a different allocation
+		// routine than used when allocating it.
+		asThreadCleanup();
 
-	userAlloc = allocFunc;
-	userFree  = freeFunc;
+		userAlloc = allocFunc;
+		userFree  = freeFunc;
 
-	return 0;
-}
+		return 0;
+	}
 
-// interface
-int asResetGlobalMemoryFunctions()
-{
-	// Clean-up thread local memory before changing the allocation routines to avoid 
-	// potential problem with trying to free memory using a different allocation
-	// routine than used when allocating it.
-	asThreadCleanup();
+	// interface
+	int asResetGlobalMemoryFunctions()
+	{
+		// Clean-up thread local memory before changing the allocation routines to avoid
+		// potential problem with trying to free memory using a different allocation
+		// routine than used when allocating it.
+		asThreadCleanup();
 
-	userAlloc = malloc;
-	userFree  = free;
+		userAlloc = malloc;
+		userFree  = free;
 
-	return 0;
-}
+		return 0;
+	}
 
-// interface
-void *asAllocMem(size_t size)
-{
-	return asNEWARRAY(asBYTE, size);
-}
+	// interface
+	void *asAllocMem(size_t size)
+	{
+		return asNEWARRAY(asBYTE, size);
+	}
 
-// interface
-void asFreeMem(void *mem)
-{
-	asDELETEARRAY(mem);
-}
+	// interface
+	void asFreeMem(void *mem)
+	{
+		asDELETEARRAY(mem);
+	}
 
 } // extern "C"
 
@@ -192,22 +191,22 @@ asCMemoryMgr::~asCMemoryMgr()
 
 void asCMemoryMgr::FreeUnusedMemory()
 {
-	// It's necessary to protect the scriptNodePool from multiple 
+	// It's necessary to protect the scriptNodePool from multiple
 	// simultaneous accesses, as the parser is used by several methods
 	// that can be executed simultaneously.
 	ENTERCRITICALSECTION(cs);
 
 	int n;
-	for( n = 0; n < (signed)scriptNodePool.GetLength(); n++ )
+	for (n = 0; n < (signed)scriptNodePool.GetLength(); n++)
 		userFree(scriptNodePool[n]);
 	scriptNodePool.Allocate(0, false);
 
 	LEAVECRITICALSECTION(cs);
 
-	// The engine already protects against multiple threads 
-	// compiling scripts simultaneously so this pool doesn't have 
+	// The engine already protects against multiple threads
+	// compiling scripts simultaneously so this pool doesn't have
 	// to be protected again.
-	for( n = 0; n < (signed)byteInstructionPool.GetLength(); n++ )
+	for (n = 0; n < (signed)byteInstructionPool.GetLength(); n++)
 		userFree(byteInstructionPool[n]);
 	byteInstructionPool.Allocate(0, false);
 }
@@ -216,7 +215,7 @@ void *asCMemoryMgr::AllocScriptNode()
 {
 	ENTERCRITICALSECTION(cs);
 
-	if( scriptNodePool.GetLength() )
+	if (scriptNodePool.GetLength())
 	{
 		void *tRet = scriptNodePool.PopLast();
 		LEAVECRITICALSECTION(cs);
@@ -225,7 +224,7 @@ void *asCMemoryMgr::AllocScriptNode()
 
 	LEAVECRITICALSECTION(cs);
 
-#if defined(AS_DEBUG) 
+#if defined(AS_DEBUG)
 	return ((asALLOCFUNCDEBUG_t)(userAlloc))(sizeof(asCScriptNode), __FILE__, __LINE__);
 #else
 	return userAlloc(sizeof(asCScriptNode));
@@ -237,11 +236,11 @@ void asCMemoryMgr::FreeScriptNode(void *ptr)
 	ENTERCRITICALSECTION(cs);
 
 	// Pre allocate memory for the array to avoid slow growth
-	if( scriptNodePool.GetLength() == 0 )
+	if (scriptNodePool.GetLength() == 0)
 		scriptNodePool.Allocate(100, 0);
 
 	scriptNodePool.PushLast(ptr);
-	
+
 #ifdef AS_DEBUG
 	// clear the memory to facilitate identification of use after free
 	memset(ptr, 0xCDCDCDCD, sizeof(asCScriptNode));
@@ -255,11 +254,11 @@ void asCMemoryMgr::FreeScriptNode(void *ptr)
 void *asCMemoryMgr::AllocByteInstruction()
 {
 	// This doesn't need a critical section because, only one compilation is allowed at a time
-	
-	if( byteInstructionPool.GetLength() )
+
+	if (byteInstructionPool.GetLength())
 		return byteInstructionPool.PopLast();
 
-#if defined(AS_DEBUG) 
+#if defined(AS_DEBUG)
 	return ((asALLOCFUNCDEBUG_t)(userAlloc))(sizeof(asCByteInstruction), __FILE__, __LINE__);
 #else
 	return userAlloc(sizeof(asCByteInstruction));
@@ -269,11 +268,11 @@ void *asCMemoryMgr::AllocByteInstruction()
 void asCMemoryMgr::FreeByteInstruction(void *ptr)
 {
 	// Pre allocate memory for the array to avoid slow growth
-	if( byteInstructionPool.GetLength() == 0 )
+	if (byteInstructionPool.GetLength() == 0)
 		byteInstructionPool.Allocate(100, 0);
 
 	byteInstructionPool.PushLast(ptr);
-	
+
 #ifdef AS_DEBUG
 	// clear the memory to facilitate identification of use after free
 	memset(ptr, 0xCDCDCDCD, sizeof(asCByteInstruction));
@@ -283,6 +282,3 @@ void asCMemoryMgr::FreeByteInstruction(void *ptr)
 #endif // AS_NO_COMPILER
 
 END_AS_NAMESPACE
-
-
-

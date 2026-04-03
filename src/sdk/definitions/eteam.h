@@ -1,6 +1,7 @@
 #pragma once
 
-typedef enum ETeam {
+typedef enum ETeam
+{
 	TEAM_UNASSIGNED = 0,
 	TEAM_SPECTATOR,
 	TEAM_RED,

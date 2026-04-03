@@ -27,11 +27,11 @@ namespace Glow
 	extern bool m_bRunning;
 	extern bool m_bInitialized;
 
-	void Init ();
-	bool ShouldHide (int entindex);
-	void DrawEntities ();
-	void GetEntities ();
+	void Init();
+	bool ShouldHide(int entindex);
+	void DrawEntities();
+	void GetEntities();
 
 	// Call in DoPostScreenSpaceEffects
-	void Run ();
-}
+	void Run();
+} // namespace Glow

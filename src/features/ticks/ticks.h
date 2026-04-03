@@ -7,12 +7,12 @@ namespace TickManager
 	extern bool m_bSendPacket;
 	extern uint8_t m_iChokedCommands;
 
-	void CL_Move (float accumulated_extra_samples, bool bFinalTick);
-	void CL_SendMove (void);
-	void Post_CreateMove (int sequence_number);
+	void CL_Move(float accumulated_extra_samples, bool bFinalTick);
+	void CL_SendMove(void);
+	void Post_CreateMove(int sequence_number);
 
-	void Init (void);
+	void Init(void);
 
 	// call in CL_Move
-	void Run (float accumulated_extra_samples, bool bFinalTick);
-}
+	void Run(float accumulated_extra_samples, bool bFinalTick);
+} // namespace TickManager

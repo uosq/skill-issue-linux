@@ -1,7 +1,7 @@
 #pragma once
 
-#include "types.h"
 #include "iconvar.h"
+#include "types.h"
 
 class ConVar;
 class CCommand;
@@ -11,106 +11,107 @@ struct characterset_t;
 
 class IConCommandBaseAccessor
 {
-public:
-	virtual bool RegisterConCommandBase(ConCommandBase* pVar) = 0;
+      public:
+	virtual bool RegisterConCommandBase(ConCommandBase *pVar) = 0;
 };
 
 typedef void (*FnCommandCallbackVoid_t)(void);
-typedef void (*FnCommandCallback_t)(const CCommand& command);
+typedef void (*FnCommandCallback_t)(const CCommand &command);
 
 #define COMMAND_COMPLETION_MAXITEMS 64
 #define COMMAND_COMPLETION_ITEM_LENGTH 64
 
-typedef int  (*FnCommandCompletionCallback)(const char* partial, char commands[COMMAND_COMPLETION_MAXITEMS][COMMAND_COMPLETION_ITEM_LENGTH]);
+typedef int (*FnCommandCompletionCallback)(const char *partial,
+					   char commands[COMMAND_COMPLETION_MAXITEMS][COMMAND_COMPLETION_ITEM_LENGTH]);
 
 class ICommandCallback
 {
-public:
-	virtual void CommandCallback(const CCommand& command) = 0;
+      public:
+	virtual void CommandCallback(const CCommand &command) = 0;
 };
 
 class ICommandCompletionCallback
 {
-public:
-	virtual int CommandCompletionCallback(const char* pPartial, void* commands) = 0;
+      public:
+	virtual int CommandCompletionCallback(const char *pPartial, void *commands) = 0;
 };
 
 class ConCommandBase
 {
-public:
-	virtual ~ConCommandBase(void) = 0;
-	virtual	bool IsCommand(void) const = 0;
-	virtual bool IsFlagSet(int flag) const = 0;
-	virtual void AddFlags(int flags) = 0;
-	virtual const char* GetName(void) const = 0;
-	virtual const char* GetHelpText(void) const = 0;
-	virtual bool IsRegistered(void) const = 0;
-	virtual void* GetDLLIdentifier() const = 0;
-	virtual void CreateBase(const char* pName, const char* pHelpString = 0, int flags = 0) = 0;
-	virtual void Init() = 0;
+      public:
+	virtual ~ConCommandBase(void)							       = 0;
+	virtual bool IsCommand(void) const						       = 0;
+	virtual bool IsFlagSet(int flag) const						       = 0;
+	virtual void AddFlags(int flags)						       = 0;
+	virtual const char *GetName(void) const						       = 0;
+	virtual const char *GetHelpText(void) const					       = 0;
+	virtual bool IsRegistered(void) const						       = 0;
+	virtual void *GetDLLIdentifier() const						       = 0;
+	virtual void CreateBase(const char *pName, const char *pHelpString = 0, int flags = 0) = 0;
+	virtual void Init()								       = 0;
 
-public:
-	ConCommandBase* m_pNext;
+      public:
+	ConCommandBase *m_pNext;
 	bool m_bRegistered;
-	const char* m_pszName;
-	const char* m_pszHelpString;
+	const char *m_pszName;
+	const char *m_pszHelpString;
 	int m_nFlags;
 
-protected:
-	static ConCommandBase* s_pConCommandBases;
-	static IConCommandBaseAccessor* s_pAccessor;
+      protected:
+	static ConCommandBase *s_pConCommandBases;
+	static IConCommandBaseAccessor *s_pAccessor;
 };
 
 enum
 {
-	COMMAND_MAX_ARGC = 64,
+	COMMAND_MAX_ARGC   = 64,
 	COMMAND_MAX_LENGTH = 512
 };
 
 enum cmd_source_t
 {
-	src_client,		// came in over a net connection as a clc_stringcmd
-					// host_client will be valid during this state.
-	src_command		// from the command buffer
+	src_client, // came in over a net connection as a clc_stringcmd
+		    // host_client will be valid during this state.
+	src_command // from the command buffer
 };
 
 class CCommand
 {
-public:
+      public:
 	int ArgC() const;
-	const char** ArgV() const;
-	const char* ArgS() const;
-	const char* GetCommandString() const;
-	const char* operator[](int nIndex) const;
-	const char* Arg(int nIndex) const;
+	const char **ArgV() const;
+	const char *ArgS() const;
+	const char *GetCommandString() const;
+	const char *operator[](int nIndex) const;
+	const char *Arg(int nIndex) const;
 
 	int m_nArgc;
 	int m_nArgv0Size;
 	char m_pArgSBuffer[COMMAND_MAX_LENGTH];
 	char m_pArgvBuffer[COMMAND_MAX_LENGTH];
-	const char* m_ppArgv[COMMAND_MAX_ARGC];
+	const char *m_ppArgv[COMMAND_MAX_ARGC];
 };
 inline int CCommand::ArgC() const
 {
 	return m_nArgc;
 }
-inline const char** CCommand::ArgV() const
+inline const char **CCommand::ArgV() const
 {
-	return m_nArgc ? (const char**)m_ppArgv : NULL;
+	return m_nArgc ? (const char **)m_ppArgv : NULL;
 }
-inline const char* CCommand::ArgS() const
+inline const char *CCommand::ArgS() const
 {
 	return m_nArgv0Size ? &m_pArgSBuffer[m_nArgv0Size] : "";
 }
-inline const char* CCommand::GetCommandString() const
+inline const char *CCommand::GetCommandString() const
 {
 	return m_nArgc ? m_pArgSBuffer : "";
 }
-inline const char* CCommand::operator[](int nIndex) const
+inline const char *CCommand::operator[](int nIndex) const
 {
 	return Arg(nIndex);
 }
-inline const char* CCommand::Arg(int nIndex) const
+inline const char *CCommand::Arg(int nIndex) const
 {
 	if (nIndex < 0 || nIndex >= m_nArgc)
 		return "";
@@ -119,25 +120,23 @@ inline const char* CCommand::Arg(int nIndex) const
 
 class ConCommand : public ConCommandBase
 {
-public:
-	virtual ~ConCommand(void) = 0;
-	virtual	bool IsCommand(void) const = 0;
-	virtual int AutoCompleteSuggest(const char* partial, void* commands) = 0;
-	virtual bool CanAutoComplete(void) = 0;
-	virtual void Dispatch(const CCommand& command) = 0;
+      public:
+	virtual ~ConCommand(void)					     = 0;
+	virtual bool IsCommand(void) const				     = 0;
+	virtual int AutoCompleteSuggest(const char *partial, void *commands) = 0;
+	virtual bool CanAutoComplete(void)				     = 0;
+	virtual void Dispatch(const CCommand &command)			     = 0;
 
-private:
-	union
-	{
+      private:
+	union {
 		FnCommandCallbackVoid_t m_fnCommandCallbackV1;
 		FnCommandCallback_t m_fnCommandCallback;
-		ICommandCallback* m_pCommandCallback;
+		ICommandCallback *m_pCommandCallback;
 	};
 
-	union
-	{
-		FnCommandCompletionCallback	m_fnCompletionCallback;
-		ICommandCompletionCallback* m_pCommandCompletionCallback;
+	union {
+		FnCommandCompletionCallback m_fnCompletionCallback;
+		ICommandCompletionCallback *m_pCommandCompletionCallback;
 	};
 
 	bool m_bHasCompletionCallback : 1;
@@ -147,38 +146,44 @@ private:
 
 class ConVar : public ConCommandBase, public IConVar
 {
-public:
+      public:
 	virtual ~ConVar(void) {};
-	virtual bool IsFlagSet(int flag) const = 0;
-	virtual const char* GetHelpText(void) const = 0;
-	virtual bool IsRegistered(void) const = 0;
-	virtual const char* GetName(void) const = 0;
-	virtual void AddFlags(int flags) = 0;
-	virtual	bool IsCommand(void) const = 0;
+	virtual bool IsFlagSet(int flag) const	    = 0;
+	virtual const char *GetHelpText(void) const = 0;
+	virtual bool IsRegistered(void) const	    = 0;
+	virtual const char *GetName(void) const	    = 0;
+	virtual void AddFlags(int flags)	    = 0;
+	virtual bool IsCommand(void) const	    = 0;
 
 	inline float GetFloat(void) const;
 	inline int GetInt(void) const;
-	inline bool GetBool() const { return !!GetInt(); }
-	inline char const* GetString(void) const;
+	inline bool GetBool() const
+	{
+		return !!GetInt();
+	}
+	inline char const *GetString(void) const;
 
-	virtual void SetValue(const char* value) = 0;
-	virtual void SetValue(float value) = 0;
-	virtual void SetValue(int value) = 0;
+	virtual void SetValue(const char *value) = 0;
+	virtual void SetValue(float value)	 = 0;
+	virtual void SetValue(int value)	 = 0;
 
-private:
-	virtual void InternalSetValue(const char* value) = 0;
+      private:
+	virtual void InternalSetValue(const char *value)			 = 0;
 	virtual void InternalSetFloatValue(float fNewValue, bool bForce = false) = 0;
-	virtual void InternalSetIntValue(int nValue) = 0;
-	virtual bool ClampValue(float& value) = 0;
-	virtual void ChangeStringValue(const char* tempVal, float flOldValue) = 0;
-	virtual void Init() = 0;
+	virtual void InternalSetIntValue(int nValue)				 = 0;
+	virtual bool ClampValue(float &value)					 = 0;
+	virtual void ChangeStringValue(const char *tempVal, float flOldValue)	 = 0;
+	virtual void Init()							 = 0;
 
-	int GetFlags() { return m_pParent->m_nFlags; }
+	int GetFlags()
+	{
+		return m_pParent->m_nFlags;
+	}
 
-public:
-	ConVar* m_pParent;
-	const char* m_pszDefaultValue;
-	char* m_pszString;
+      public:
+	ConVar *m_pParent;
+	const char *m_pszDefaultValue;
+	char *m_pszString;
 	int m_StringLength;
 	float m_fValue;
 	int m_nValue;
@@ -204,7 +209,7 @@ inline int ConVar::GetInt(void) const
 	return m_pParent->m_nValue;
 }
 
-inline const char* ConVar::GetString(void) const
+inline const char *ConVar::GetString(void) const
 {
 	if (m_nFlags & FCVAR_NEVER_AS_STRING)
 		return "FCVAR_NEVER_AS_STRING";

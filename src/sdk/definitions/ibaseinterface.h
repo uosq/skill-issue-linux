@@ -2,6 +2,8 @@
 
 class IBaseInterface
 {
-public:
-	virtual	~IBaseInterface() {}
+      public:
+	virtual ~IBaseInterface()
+	{
+	}
 };

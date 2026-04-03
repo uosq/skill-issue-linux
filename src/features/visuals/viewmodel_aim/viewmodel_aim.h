@@ -9,8 +9,8 @@ namespace ViewmodelAim
 {
 	extern float m_flStopTime;
 
-	void Init ();
-	void Run (Vector &angle);
-	void ResetStopTime ();
-	float GetStopTime ();
-};
+	void Init();
+	void Run(Vector &angle);
+	void ResetStopTime();
+	float GetStopTime();
+}; // namespace ViewmodelAim

@@ -14,10 +14,10 @@
 namespace Aimbot
 {
 	extern AimbotState m_state;
-	Vector GetAngle ();
-	bool IsRunning ();
-	bool ShouldSilent ();
-	void Run (CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCmd);
-	void DrawFOVIndicator ();
-	void RunPaint ();
-};
+	Vector GetAngle();
+	bool IsRunning();
+	bool ShouldSilent();
+	void Run(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCmd);
+	void DrawFOVIndicator();
+	void RunPaint();
+}; // namespace Aimbot

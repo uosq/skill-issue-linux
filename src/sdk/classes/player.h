@@ -20,7 +20,8 @@
 #define FL_INWATER (1 << 9)
 #define PLAYER_FLAG_BITS 32
 
-enum {
+enum
+{
 	CLASS_UNDEFINED = 0,
 	CLASS_SCOUT,
 	CLASS_SNIPER,
@@ -52,61 +53,65 @@ struct PlayerInfo
 #define LIFE_RESPAWNABLE 3
 #define LIFE_DISCARDBODY 4
 
-enum { WL_NotInWater = 0, WL_Feet, WL_Waist, WL_Eyes };
+enum
+{
+	WL_NotInWater = 0,
+	WL_Feet,
+	WL_Waist,
+	WL_Eyes
+};
 
 class CTFPlayer : public CBaseCombatCharacter
 {
       public:
-	NETVAR (GetActiveWeapon, "CBaseCombatCharacter->m_hActiveWeapon",
-		EHANDLE)
-	NETVAR (GetTickBase, "CBasePlayer->m_nTickBase", int)
-	NETVAR (GetVelocity, "CBasePlayer->m_vecVelocity[0]", Vector)
-	NETVAR (GetFlags, "CBasePlayer->m_fFlags", int)
-	NETVAR (GetViewModel, "CBasePlayer->m_hViewModel[0]", EHANDLE)
-	NETVAR (GetHealth, "CBasePlayer->m_iHealth", int)
-	NETVAR (GetOrigin, "CTFPlayer->m_vecOrigin", Vector)
-	NETVAR (m_nForceTauntCam, "CTFPlayer->m_nForceTauntCam", bool)
-	NETVAR (m_lifeState, "CBasePlayer->m_lifeState", uint8_t) // 1 byte
-	NETVAR (m_nPlayerCond, "CTFPlayer->m_nPlayerCond", int)
-	NETVAR (m_nPlayerCondEx, "CTFPlayer->m_nPlayerCondEx", int)
-	NETVAR (m_nPlayerCondEx2, "CTFPlayer->m_nPlayerCondEx2", int)
-	NETVAR (m_nPlayerCondEx3, "CTFPlayer->m_nPlayerCondEx3", int)
-	NETVAR (m_nPlayerCondEx4, "CTFPlayer->m_nPlayerCondEx4", int)
-	NETVAR (m_condition_bits, "CTFPlayer->_condition_bits", int)
+	NETVAR(GetActiveWeapon, "CBaseCombatCharacter->m_hActiveWeapon", EHANDLE)
+	NETVAR(GetTickBase, "CBasePlayer->m_nTickBase", int)
+	NETVAR(GetVelocity, "CBasePlayer->m_vecVelocity[0]", Vector)
+	NETVAR(GetFlags, "CBasePlayer->m_fFlags", int)
+	NETVAR(GetViewModel, "CBasePlayer->m_hViewModel[0]", EHANDLE)
+	NETVAR(GetHealth, "CBasePlayer->m_iHealth", int)
+	NETVAR(GetOrigin, "CTFPlayer->m_vecOrigin", Vector)
+	NETVAR(m_nForceTauntCam, "CTFPlayer->m_nForceTauntCam", bool)
+	NETVAR(m_lifeState, "CBasePlayer->m_lifeState", uint8_t) // 1 byte
+	NETVAR(m_nPlayerCond, "CTFPlayer->m_nPlayerCond", int)
+	NETVAR(m_nPlayerCondEx, "CTFPlayer->m_nPlayerCondEx", int)
+	NETVAR(m_nPlayerCondEx2, "CTFPlayer->m_nPlayerCondEx2", int)
+	NETVAR(m_nPlayerCondEx3, "CTFPlayer->m_nPlayerCondEx3", int)
+	NETVAR(m_nPlayerCondEx4, "CTFPlayer->m_nPlayerCondEx4", int)
+	NETVAR(m_condition_bits, "CTFPlayer->_condition_bits", int)
 
 	// !!! Only has 2 fields ([0], [1]) // is it really only 2 fields? TEST
-	NETVAR (m_angEyeAngles, "CTFPlayer->m_angEyeAngles[0]", Vector)
+	NETVAR(m_angEyeAngles, "CTFPlayer->m_angEyeAngles[0]", Vector)
 
-	NETVAR (m_vecViewOffset, "CBasePlayer->m_vecViewOffset[0]", Vector)
-	NETVAR (m_flMaxspeed, "CBasePlayer->m_flMaxspeed", float)
-	NETVAR (m_flStepSize, "CBasePlayer->m_flStepSize", float)
-	NETVAR (m_iDefaultFOV, "CBasePlayer->m_iDefaultFOV", int)
-	NETVAR (m_hObserverTarget, "CBasePlayer->m_hObserverTarget", EHANDLE)
-	NETVAR (m_iObserverMode, "CBasePlayer->m_iObserverMode", int)
-	NETVAR (m_iClass, "CTFPlayer->m_iClass", int)
-	NETVAR (m_hGroundEntity, "CBasePlayer->m_hGroundEntity", EHANDLE)
-	NETVAR (m_nWaterLevel, "CTFPlayer->m_nWaterLevel", uint8_t)
-	NETVAR (m_iFOV, "CBasePlayer->m_iFOV", int)
+	NETVAR(m_vecViewOffset, "CBasePlayer->m_vecViewOffset[0]", Vector)
+	NETVAR(m_flMaxspeed, "CBasePlayer->m_flMaxspeed", float)
+	NETVAR(m_flStepSize, "CBasePlayer->m_flStepSize", float)
+	NETVAR(m_iDefaultFOV, "CBasePlayer->m_iDefaultFOV", int)
+	NETVAR(m_hObserverTarget, "CBasePlayer->m_hObserverTarget", EHANDLE)
+	NETVAR(m_iObserverMode, "CBasePlayer->m_iObserverMode", int)
+	NETVAR(m_iClass, "CTFPlayer->m_iClass", int)
+	NETVAR(m_hGroundEntity, "CBasePlayer->m_hGroundEntity", EHANDLE)
+	NETVAR(m_nWaterLevel, "CTFPlayer->m_nWaterLevel", uint8_t)
+	NETVAR(m_iFOV, "CBasePlayer->m_iFOV", int)
 
-	NETVAR (m_vecPunchAngle, "CBasePlayer->m_vecPunchAngle", Vector)
+	NETVAR(m_vecPunchAngle, "CBasePlayer->m_vecPunchAngle", Vector)
 
-	NETVAR (m_iStunFlags, "CTFPlayer->m_iStunFlags", int)
-	NETVAR (m_vecBaseVelocity, "CBasePlayer->m_vecBaseVelocity", Vector)
-	NETVAR (m_bAllowAutoMovement, "CBasePlayer->m_bAllowAutoMovement",
-		bool)
+	NETVAR(m_iStunFlags, "CTFPlayer->m_iStunFlags", int)
+	NETVAR(m_vecBaseVelocity, "CBasePlayer->m_vecBaseVelocity", Vector)
+	NETVAR(m_bAllowAutoMovement, "CBasePlayer->m_bAllowAutoMovement", bool)
 
-	bool IsAlive ();
-	bool InCond (ETFCond cond);
-	Vector GetCenter ();
-	Vector GetEyePos ();
-	bool IsGhost ();
-	bool IsTaunting ();
-	bool IsUbercharged ();
-	std::string GetName ();
-	void UpdateClientSideAnimation ();
-	int GetWaterLevel ();
-	float GetEffectiveInvisibilityLevel ();
-	uint8_t GetMoveType ();
-	void ThirdPersonSwitch (bool state);
-	CBaseEntity *GetEntityFromLoadoutSlot (int slot);
+	bool IsAlive();
+	bool InCond(ETFCond cond);
+	Vector GetCenter();
+	Vector GetEyePos();
+	bool IsGhost();
+	bool IsTaunting();
+	bool IsUbercharged();
+	std::string GetName();
+	void UpdateClientSideAnimation();
+	int GetWaterLevel();
+	float GetEffectiveInvisibilityLevel();
+	uint8_t GetMoveType();
+	void ThirdPersonSwitch(bool state);
+	CBaseEntity *GetEntityFromLoadoutSlot(int slot);
 };

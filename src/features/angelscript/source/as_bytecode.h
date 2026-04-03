@@ -28,14 +28,11 @@
    andreas@angelcode.com
 */
 
-
 //
 // as_bytecode.h
 //
 // A class for constructing the final byte code
 //
-
-
 
 #ifndef AS_BYTECODE_H
 #define AS_BYTECODE_H
@@ -48,9 +45,9 @@
 
 BEGIN_AS_NAMESPACE
 
-#define BYTECODE_SIZE  4
-#define MAX_DATA_SIZE  8
-#define MAX_INSTR_SIZE (BYTECODE_SIZE+MAX_DATA_SIZE)
+#define BYTECODE_SIZE 4
+#define MAX_DATA_SIZE 8
+#define MAX_INSTR_SIZE (BYTECODE_SIZE + MAX_DATA_SIZE)
 
 class asCScriptEngine;
 class asCScriptFunction;
@@ -58,7 +55,7 @@ class asCByteInstruction;
 
 class asCByteCode
 {
-public:
+      public:
 	asCByteCode(asCScriptEngine *engine);
 	~asCByteCode();
 
@@ -73,8 +70,8 @@ public:
 	void ExtractLineNumbers();
 	void ExtractObjectVariableInfo(asCScriptFunction *outFunc);
 	void ExtractTryCatchInfo(asCScriptFunction *outFunc);
-	int  ResolveJumpAddresses();
-	int  FindLabel(int label, asCByteInstruction *from, asCByteInstruction **dest, int *positionDelta);
+	int ResolveJumpAddresses();
+	int FindLabel(int label, asCByteInstruction *from, asCByteInstruction **dest, int *positionDelta);
 
 	void AddPath(asCArray<asCByteInstruction *> &paths, asCByteInstruction *instr, int stackSize);
 
@@ -88,8 +85,8 @@ public:
 #endif
 
 	asCByteInstruction *GetFirstInstr();
-	int  GetLastInstr();
-	int  RemoveLastInstr();
+	int GetLastInstr();
+	int RemoveLastInstr();
 	asDWORD GetLastInstrValueDW();
 
 	void InsertIfNotExists(asCArray<int> &vars, int var);
@@ -134,15 +131,20 @@ public:
 	int InstrW_W(asEBCInstr bc, int w, int b);
 	int InstrSHORT_DW_DW(asEBCInstr bc, short a, asDWORD b, asDWORD c);
 
-	asCScriptEngine *GetEngine() const { return engine; };
+	asCScriptEngine *GetEngine() const
+	{
+		return engine;
+	};
 
 	asCArray<int> lineNumbers;
 	asCArray<int> sectionIdxs;
 	int largestStackUsed;
 
-protected:
+      protected:
 	// Assignments are not allowed
-	void operator=(const asCByteCode &) {}
+	void operator=(const asCByteCode &)
+	{
+	}
 
 	// Helpers for Optimize
 	bool CanBeSwapped(asCByteInstruction *curr);
@@ -175,15 +177,15 @@ protected:
 
 class asCByteInstruction
 {
-public:
+      public:
 	asCByteInstruction();
 
 	void AddAfter(asCByteInstruction *nextCode);
 	void AddBefore(asCByteInstruction *nextCode);
 	void Remove();
 
-	int  GetSize();
-	int  GetStackIncrease();
+	int GetSize();
+	int GetStackIncrease();
 
 	asCByteInstruction *next;
 	asCByteInstruction *prev;
@@ -196,7 +198,7 @@ public:
 
 	// Testing
 	bool marked;
-	int  stackSize;
+	int stackSize;
 };
 
 END_AS_NAMESPACE

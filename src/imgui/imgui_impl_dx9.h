@@ -16,22 +16,22 @@
 // - Introduction, links and more at the top of imgui.cpp
 
 #pragma once
-#include "imgui.h"      // IMGUI_IMPL_API
+#include "imgui.h" // IMGUI_IMPL_API
 #ifndef IMGUI_DISABLE
 
 struct IDirect3DDevice9;
 
 // Follow "Getting Started" link and check examples/ folder to learn about using backends!
-IMGUI_IMPL_API bool     ImGui_ImplDX9_Init(IDirect3DDevice9* device);
-IMGUI_IMPL_API void     ImGui_ImplDX9_Shutdown();
-IMGUI_IMPL_API void     ImGui_ImplDX9_NewFrame();
-IMGUI_IMPL_API void     ImGui_ImplDX9_RenderDrawData(ImDrawData* draw_data);
+IMGUI_IMPL_API bool ImGui_ImplDX9_Init(IDirect3DDevice9 *device);
+IMGUI_IMPL_API void ImGui_ImplDX9_Shutdown();
+IMGUI_IMPL_API void ImGui_ImplDX9_NewFrame();
+IMGUI_IMPL_API void ImGui_ImplDX9_RenderDrawData(ImDrawData *draw_data);
 
 // Use if you want to reset your rendering device without losing Dear ImGui state.
-IMGUI_IMPL_API bool     ImGui_ImplDX9_CreateDeviceObjects();
-IMGUI_IMPL_API void     ImGui_ImplDX9_InvalidateDeviceObjects();
+IMGUI_IMPL_API bool ImGui_ImplDX9_CreateDeviceObjects();
+IMGUI_IMPL_API void ImGui_ImplDX9_InvalidateDeviceObjects();
 
 // (Advanced) Use e.g. if you need to precisely control the timing of texture updates (e.g. for staged rendering), by setting ImDrawData::Textures = NULL to handle this manually.
-IMGUI_IMPL_API void     ImGui_ImplDX9_UpdateTexture(ImTextureData* tex);
+IMGUI_IMPL_API void ImGui_ImplDX9_UpdateTexture(ImTextureData *tex);
 
 #endif // #ifndef IMGUI_DISABLE

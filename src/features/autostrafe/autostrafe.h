@@ -7,5 +7,5 @@
 
 namespace Autostrafe
 {
-	void Run (CTFPlayer *pLocal, CUserCmd *pCmd);
+	void Run(CTFPlayer *pLocal, CUserCmd *pCmd);
 }

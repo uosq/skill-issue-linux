@@ -20,55 +20,51 @@
 
 #include "../core/core.h"
 
-DECLARE_VTABLE_HOOK (VGuiPaint, void,
-		     (IEngineVGui * thisptr, PaintMode_t paint))
+DECLARE_VTABLE_HOOK(VGuiPaint, void, (IEngineVGui * thisptr, PaintMode_t paint))
 {
-	originalVGuiPaint (thisptr, paint);
+	originalVGuiPaint(thisptr, paint);
 
 	// I don't trust
 	// C++'s static initialization
-	if (!gApp.IsInitialized ())
-		return gApp.Setup ();
+	if (!gApp.IsInitialized())
+		return gApp.Setup();
 
-	if (interfaces::Engine->IsTakingScreenshot ())
+	if (interfaces::Engine->IsTakingScreenshot())
 		return;
 
 	if (paint & PAINT_UIPANELS)
 	{
-		interfaces::Surface->StartDrawing ();
+		interfaces::Surface->StartDrawing();
 
-		Hooks_CallHooks ("Draw");
+		Hooks_CallHooks("Draw");
 
-		FontManager::SetFont (ESP::GetFont ());
+		FontManager::SetFont(ESP::GetFont());
 
-		CTFPlayer *pLocal = EntityList::GetLocal ();
+		CTFPlayer *pLocal = EntityList::GetLocal();
 		if (pLocal)
 		{
-			ESP::Run (pLocal);
-			Aimbot::RunPaint ();
+			ESP::Run(pLocal);
+			Aimbot::RunPaint();
 		}
 
 		// compile time
 		if (Settings::menu_open)
 		{
-			Color color = { 255, 255, 255, 255 };
-			helper::draw::TextShadow (10, 10, color,
-						  "Skill Issue");
-			helper::draw::TextShadow (10, 30, color,
-						  "Build date: " __DATE__
-						  " " __TIME__);
+			Color color = {255, 255, 255, 255};
+			helper::draw::TextShadow(10, 10, color, "Skill Issue");
+			helper::draw::TextShadow(10, 30, color, "Build date: " __DATE__ " " __TIME__);
 		}
 
-		interfaces::Surface->FinishDrawing ();
+		interfaces::Surface->FinishDrawing();
 	}
 }
 
-inline void HookEngineVGuiPaint ()
+inline void HookEngineVGuiPaint()
 {
-	INSTALL_VTABLE_HOOK (VGuiPaint, interfaces::EngineVGui, 15);
+	INSTALL_VTABLE_HOOK(VGuiPaint, interfaces::EngineVGui, 15);
 
 #ifdef DEBUG
-	constexpr Color_t color = { 100, 255, 100, 255 };
-	helper::console::ColoredPrint ("EngineVGui::Paint hooked\n", color);
+	constexpr Color_t color = {100, 255, 100, 255};
+	helper::console::ColoredPrint("EngineVGui::Paint hooked\n", color);
 #endif
 }

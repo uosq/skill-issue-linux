@@ -9,6 +9,6 @@ namespace CustomFov
 	extern float m_flFov;
 	extern float m_flOldFov;
 
-	void Run (CTFPlayer *pLocal, CViewSetup *pView);
-	float GetFov ();
-};
+	void Run(CTFPlayer *pLocal, CViewSetup *pView);
+	float GetFov();
+}; // namespace CustomFov

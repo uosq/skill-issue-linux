@@ -1,6 +1,7 @@
 #pragma once
 
-enum class SettingType {
+enum class SettingType
+{
 	BOOL = 0,
 	INT,
 	FLOAT,

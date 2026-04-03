@@ -2,4 +2,4 @@
 
 #include "../../include/angelscript.h"
 
-void Enums_Register (asIScriptEngine *engine);
+void Enums_Register(asIScriptEngine *engine);

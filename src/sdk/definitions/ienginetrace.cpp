@@ -1,24 +1,27 @@
 #include "ienginetrace.h"
-#include "bspflags.h"
-#include "ctracefilters.h"
 #include "../classes/player.h"
 #include "../classes/weaponbase.h"
 #include "../handle_utils.h"
+#include "bspflags.h"
+#include "ctracefilters.h"
 #include "ihandleentity.h"
 
-bool CTraceFilterHitscan::ShouldHitEntity(IHandleEntity* pServerEntity, int nContentsMask)
+bool CTraceFilterHitscan::ShouldHitEntity(IHandleEntity *pServerEntity, int nContentsMask)
 {
 	if (!pServerEntity || pServerEntity == pSkip)
 		return false;
 
-	auto pEntity = reinterpret_cast<CBaseEntity*>(pServerEntity);
-	if (iTeam == -1) iTeam = pSkip ? pSkip->m_iTeamNum() : 0;
+	auto pEntity = reinterpret_cast<CBaseEntity *>(pServerEntity);
+	if (iTeam == -1)
+		iTeam = pSkip ? pSkip->m_iTeamNum() : 0;
 	if (iType != SKIP_CHECK && !vWeapons.empty())
 	{
-		if (auto pWeapon = pSkip && pSkip->IsPlayer() ? HandleAs<CTFWeaponBase*>(((CTFPlayer*)pSkip)->GetActiveWeapon()) : nullptr)
+		if (auto pWeapon = pSkip && pSkip->IsPlayer()
+				       ? HandleAs<CTFWeaponBase *>(((CTFPlayer *)pSkip)->GetActiveWeapon())
+				       : nullptr)
 		{
 			int iWeaponID = pWeapon->GetWeaponID();
-			bWeapon = std::find(vWeapons.begin(), vWeapons.end(), iWeaponID) != vWeapons.end();
+			bWeapon	      = std::find(vWeapons.begin(), vWeapons.end(), iWeaponID) != vWeapons.end();
 		}
 		vWeapons.clear();
 	}
@@ -28,18 +31,21 @@ bool CTraceFilterHitscan::ShouldHitEntity(IHandleEntity* pServerEntity, int nCon
 	case ETFClassID::CTFAmmoPack:
 	case ETFClassID::CFuncAreaPortalWindow:
 	case ETFClassID::CFuncRespawnRoomVisualizer:
-	case ETFClassID::CTFReviveMarker: return false;
-	case ETFClassID::CTFMedigunShield: return pEntity->m_iTeamNum() != iTeam;
+	case ETFClassID::CTFReviveMarker:
+		return false;
+	case ETFClassID::CTFMedigunShield:
+		return pEntity->m_iTeamNum() != iTeam;
 	case ETFClassID::CTFPlayer:
 	case ETFClassID::CBaseObject:
 	case ETFClassID::CObjectSentrygun:
 	case ETFClassID::CObjectDispenser:
-	case ETFClassID::CObjectTeleporter: 
+	case ETFClassID::CObjectTeleporter:
 		if (iType != SKIP_CHECK && (iWeapon == WEAPON_INCLUDE ? bWeapon : !bWeapon))
 			return iType == FORCE_HIT ? true : false;
 		return pEntity->m_iTeamNum() != iTeam;
 
-	default: return true;
+	default:
+		return true;
 	}
 
 	return true;
@@ -49,19 +55,22 @@ TraceType_t CTraceFilterHitscan::GetTraceType() const
 	return TRACE_EVERYTHING;
 }
 
-bool CTraceFilterCollideable::ShouldHitEntity(IHandleEntity* pServerEntity, int nContentsMask)
+bool CTraceFilterCollideable::ShouldHitEntity(IHandleEntity *pServerEntity, int nContentsMask)
 {
 	if (!pServerEntity || pServerEntity == pSkip)
 		return false;
 
-	auto pEntity = reinterpret_cast<CBaseEntity*>(pServerEntity);
-	if (iTeam == -1) iTeam = pSkip ? pSkip->m_iTeamNum() : 0;
+	auto pEntity = reinterpret_cast<CBaseEntity *>(pServerEntity);
+	if (iTeam == -1)
+		iTeam = pSkip ? pSkip->m_iTeamNum() : 0;
 	if (iType != SKIP_CHECK && !vWeapons.empty())
 	{
-		if (auto pWeapon = pSkip && pSkip->IsPlayer() ? HandleAs<CTFWeaponBase*>(((CTFPlayer*)pSkip)->GetActiveWeapon()) : nullptr)
+		if (auto pWeapon = pSkip && pSkip->IsPlayer()
+				       ? HandleAs<CTFWeaponBase *>(((CTFPlayer *)pSkip)->GetActiveWeapon())
+				       : nullptr)
 		{
 			int iWeaponID = pWeapon->GetWeaponID();
-			bWeapon = std::find(vWeapons.begin(), vWeapons.end(), iWeaponID) != vWeapons.end();
+			bWeapon	      = std::find(vWeapons.begin(), vWeapons.end(), iWeaponID) != vWeapons.end();
 		}
 		vWeapons.clear();
 	}
@@ -78,7 +87,8 @@ bool CTraceFilterCollideable::ShouldHitEntity(IHandleEntity* pServerEntity, int 
 	case ETFClassID::CFuncTrackTrain:
 	case ETFClassID::CFuncConveyor:
 	case ETFClassID::CTFGenericBomb:
-	case ETFClassID::CTFPumpkinBomb: return true;
+	case ETFClassID::CTFPumpkinBomb:
+		return true;
 	case ETFClassID::CFuncRespawnRoomVisualizer:
 		if (nContentsMask & CONTENTS_PLAYERCLIP)
 			return pEntity->m_iTeamNum() != iTeam;
@@ -97,17 +107,21 @@ bool CTraceFilterCollideable::ShouldHitEntity(IHandleEntity* pServerEntity, int 
 		return pEntity->m_iTeamNum() != iTeam;
 	case ETFClassID::CBaseObject:
 	case ETFClassID::CObjectSentrygun:
-	case ETFClassID::CObjectDispenser: return iObject == OBJECT_ALL ? true : iObject == OBJECT_NONE ? false : pEntity->m_iTeamNum() != iTeam;
-	case ETFClassID::CObjectTeleporter: return true;
+	case ETFClassID::CObjectDispenser:
+		return iObject == OBJECT_ALL ? true : iObject == OBJECT_NONE ? false : pEntity->m_iTeamNum() != iTeam;
+	case ETFClassID::CObjectTeleporter:
+		return true;
 	//case ETFClassID::CTFBaseBoss:
 	//case ETFClassID::CTFTankBoss:
 	//case ETFClassID::CMerasmus:
 	//case ETFClassID::CEyeballBoss:
 	//case ETFClassID::CHeadlessHatman:
 	//case ETFClassID::CZombie: return bMisc;
-	case ETFClassID::CTFGrenadePipebombProjectile: return bMisc; //&& pEntity->As<CTFGrenadePipebombProjectile>()->m_iType() == TF_GL_MODE_REMOTE_DETONATE;
+	case ETFClassID::CTFGrenadePipebombProjectile:
+		return bMisc; //&& pEntity->As<CTFGrenadePipebombProjectile>()->m_iType() == TF_GL_MODE_REMOTE_DETONATE;
 
-	default: return true;
+	default:
+		return true;
 	}
 
 	return false;
@@ -117,15 +131,16 @@ TraceType_t CTraceFilterCollideable::GetTraceType() const
 	return TRACE_EVERYTHING;
 }
 
-bool CTraceFilterWorldAndPropsOnly::ShouldHitEntity(IHandleEntity* pServerEntity, int nContentsMask)
+bool CTraceFilterWorldAndPropsOnly::ShouldHitEntity(IHandleEntity *pServerEntity, int nContentsMask)
 {
 	if (!pServerEntity || pServerEntity == pSkip)
 		return false;
 	if (pServerEntity->GetRefEHandle().GetSerialNumber() == (1 << 15))
 		return interfaces::EntityList->GetClientEntity(0) != pSkip;
 
-	auto pEntity = reinterpret_cast<CBaseEntity*>(pServerEntity);
-	if (iTeam == -1) iTeam = pSkip ? pSkip->m_iTeamNum() : 0;
+	auto pEntity = reinterpret_cast<CBaseEntity *>(pServerEntity);
+	if (iTeam == -1)
+		iTeam = pSkip ? pSkip->m_iTeamNum() : 0;
 
 	switch (pEntity->GetClassID())
 	{
@@ -137,9 +152,12 @@ bool CTraceFilterWorldAndPropsOnly::ShouldHitEntity(IHandleEntity* pServerEntity
 	case ETFClassID::CFunc_LOD:
 	case ETFClassID::CObjectCartDispenser:
 	case ETFClassID::CFuncTrackTrain:
-	case ETFClassID::CFuncConveyor: return true;
-	case ETFClassID::CFuncRespawnRoomVisualizer: return nContentsMask & CONTENTS_PLAYERCLIP && pEntity->m_iTeamNum() != iTeam;
-	default: return false;
+	case ETFClassID::CFuncConveyor:
+		return true;
+	case ETFClassID::CFuncRespawnRoomVisualizer:
+		return nContentsMask & CONTENTS_PLAYERCLIP && pEntity->m_iTeamNum() != iTeam;
+	default:
+		return false;
 	}
 
 	return false;
@@ -154,8 +172,7 @@ TraceType_t CTraceFilterLua::GetTraceType() const
 	return TRACE_EVERYTHING;
 }
 
-
-bool CTraceFilterLua::ShouldHitEntity(IHandleEntity* pServerEntity, int nContentsMask)
+bool CTraceFilterLua::ShouldHitEntity(IHandleEntity *pServerEntity, int nContentsMask)
 {
 	/*luaL_checktype(Lua::m_luaState, 4, LUA_TFUNCTION);
 	lua_pushvalue(Lua::m_luaState, 4);

@@ -28,21 +28,17 @@
    andreas@angelcode.com
 */
 
-
-
 //
 // as_scriptobject.h
 //
 // A generic class for handling script declared structures
 //
 
-
-
 #ifndef AS_SCRIPTOBJECT_H
 #define AS_SCRIPTOBJECT_H
 
-#include "as_config.h"
 #include "as_atomic.h"
+#include "as_config.h"
 
 BEGIN_AS_NAMESPACE
 
@@ -53,7 +49,7 @@ class asCObjectType;
 // TODO: weak: Should move to its own file
 class asCLockableSharedBool : public asILockableSharedBool
 {
-public:
+      public:
 	asCLockableSharedBool();
 	int AddRef() const;
 	int Release() const;
@@ -64,45 +60,45 @@ public:
 	void Lock() const;
 	void Unlock() const;
 
-protected:
+      protected:
 	mutable asCAtomic refCount;
-	bool      value;
+	bool value;
 	DECLARECRITICALSECTION(mutable lock)
 };
 
 class asCScriptObject : public asIScriptObject
 {
-public:
-//===================================
-// From asIScriptObject
-//===================================
+      public:
+	//===================================
+	// From asIScriptObject
+	//===================================
 
 	// Memory management
-	int                    AddRef() const;
-	int                    Release() const;
+	int AddRef() const;
+	int Release() const;
 	asILockableSharedBool *GetWeakRefFlag() const;
 
 	// Type info
-	int            GetTypeId() const;
-	asITypeInfo   *GetObjectType() const;
+	int GetTypeId() const;
+	asITypeInfo *GetObjectType() const;
 
 	// Class properties
-	asUINT      GetPropertyCount() const;
-	int         GetPropertyTypeId(asUINT prop) const;
+	asUINT GetPropertyCount() const;
+	int GetPropertyTypeId(asUINT prop) const;
 	const char *GetPropertyName(asUINT prop) const;
-	void       *GetAddressOfProperty(asUINT prop);
+	void *GetAddressOfProperty(asUINT prop);
 
 	// Miscellaneous
 	asIScriptEngine *GetEngine() const;
-	int              CopyFrom(const asIScriptObject *other);
+	int CopyFrom(const asIScriptObject *other);
 
 	// User data
 	void *SetUserData(void *data, asPWORD type = 0);
 	void *GetUserData(asPWORD type = 0) const;
 
-//====================================
-// Internal
-//====================================
+	//====================================
+	// Internal
+	//====================================
 	asCScriptObject(asCObjectType *objType, bool doInitialize = true);
 	virtual ~asCScriptObject();
 
@@ -110,7 +106,7 @@ public:
 
 	// GC methods
 	void Destruct();
-	int  GetRefCount();
+	int GetRefCount();
 	void SetFlag();
 	bool GetFlag();
 	void EnumReferences(asIScriptEngine *engine);
@@ -121,23 +117,23 @@ public:
 	void FreeObject(void *ptr, asCObjectType *objType, asCScriptEngine *engine);
 	void CopyObject(const void *src, void *dst, asCObjectType *objType, asCScriptEngine *engine);
 	void CopyHandle(asPWORD *src, asPWORD *dst, asCObjectType *objType, asCScriptEngine *engine);
-	int  CopyFromAs(const asCScriptObject *other, asCObjectType *objType);
+	int CopyFromAs(const asCScriptObject *other, asCObjectType *objType);
 
 	void CallDestructor();
 
-//=============================================
-// Properties
-//=============================================
-public:
-	// This is public to allow external code (e.g. JIT compiler) to do asOFFSET to 
+	//=============================================
+	// Properties
+	//=============================================
+      public:
+	// This is public to allow external code (e.g. JIT compiler) to do asOFFSET to
 	// access the members directly without having to modify the code to add friend
-	asCObjectType* objType;
+	asCObjectType *objType;
 
-protected:
+      protected:
 	mutable asCAtomic refCount;
-	mutable asBYTE    gcFlag:1;
-	mutable asBYTE    hasRefCountReachedZero:1;
-	bool              isDestructCalled;
+	mutable asBYTE gcFlag : 1;
+	mutable asBYTE hasRefCountReachedZero : 1;
+	bool isDestructCalled;
 
 	// Most script classes instances won't have neither the weakRefFlags nor
 	// userData so we only allocate this if requested. Even when used it is
@@ -147,7 +143,7 @@ protected:
 	{
 		SExtra() : weakRefFlag(0) {};
 		asCLockableSharedBool *weakRefFlag;
-		asCArray<asPWORD>      userData;
+		asCArray<asPWORD> userData;
 	};
 	mutable SExtra *extra;
 };

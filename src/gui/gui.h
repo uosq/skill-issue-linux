@@ -12,7 +12,8 @@
 #include "../features/entitylist/entitylist.h"
 #include "../features/triggerbot/triggerbot.h"
 
-enum TabMenu {
+enum TabMenu
+{
 	TAB_AIMBOT = 0,
 	TAB_ESP,
 	TAB_MISC,
@@ -35,8 +36,8 @@ namespace GUI
 	extern bool firstOpenConfigTab;
 	extern bool openDeletePopup;
 
-	void RunMainWindow ();
-	void RunPlayerList ();
-	void RunSpectatorList ();
-	void Init ();
-}
+	void RunMainWindow();
+	void RunPlayerList();
+	void RunSpectatorList();
+	void Init();
+} // namespace GUI

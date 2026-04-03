@@ -28,20 +28,17 @@
    andreas@angelcode.com
 */
 
-
 //
 // as_gc.h
 //
 // The garbage collector is used to resolve cyclic references
 //
 
-
-
 #ifndef AS_GC_H
 #define AS_GC_H
 
-#include "as_config.h"
 #include "as_array.h"
+#include "as_config.h"
 #include "as_map.h"
 #include "as_thread.h"
 
@@ -52,28 +49,38 @@ class asCObjectType;
 
 class asCGarbageCollector
 {
-public:
+      public:
 	asCGarbageCollector();
 	~asCGarbageCollector();
 
-	int    GarbageCollect(asDWORD flags, asUINT iterations);
-	void   GetStatistics(asUINT *currentSize, asUINT *totalDestroyed, asUINT *totalDetected, asUINT *newObjects, asUINT *totalNewDestroyed) const;
-	void   GCEnumCallback(void *reference);
-	int    AddScriptObjectToGC(void *obj, asCObjectType *objType);
-	int    GetObjectInGC(asUINT idx, asUINT *seqNbr, void **obj, asITypeInfo **type);
+	int GarbageCollect(asDWORD flags, asUINT iterations);
+	void GetStatistics(asUINT *currentSize, asUINT *totalDestroyed, asUINT *totalDetected, asUINT *newObjects,
+			   asUINT *totalNewDestroyed) const;
+	void GCEnumCallback(void *reference);
+	int AddScriptObjectToGC(void *obj, asCObjectType *objType);
+	int GetObjectInGC(asUINT idx, asUINT *seqNbr, void **obj, asITypeInfo **type);
 
-	int    ReportAndReleaseUndestroyedObjects();
+	int ReportAndReleaseUndestroyedObjects();
 
 	asCScriptEngine *engine;
 
 	// Callback for when circular reference are detected
 	asCIRCULARREFFUNC_t circularRefDetectCallbackFunc;
-	void *              circularRefDetectCallbackParam;
+	void *circularRefDetectCallbackParam;
 
-protected:
-	struct asSObjTypePair {void *obj; asCObjectType *type; asUINT seqNbr;};
-	struct asSIntTypePair {int i; asCObjectType *type;};
-	typedef asSMapNode<void*, asSIntTypePair> asSMapNode_t;
+      protected:
+	struct asSObjTypePair
+	{
+		void *obj;
+		asCObjectType *type;
+		asUINT seqNbr;
+	};
+	struct asSIntTypePair
+	{
+		int i;
+		asCObjectType *type;
+	};
+	typedef asSMapNode<void *, asSIntTypePair> asSMapNode_t;
 
 	enum egcDestroyState
 	{
@@ -100,46 +107,46 @@ protected:
 		breakCircles_haveGarbage
 	};
 
-	int            DestroyNewGarbage();
-	int            DestroyOldGarbage();
-	int            IdentifyGarbageWithCyclicRefs();
+	int DestroyNewGarbage();
+	int DestroyOldGarbage();
+	int IdentifyGarbageWithCyclicRefs();
 	asSObjTypePair GetNewObjectAtIdx(int idx);
 	asSObjTypePair GetOldObjectAtIdx(int idx);
-	void           RemoveNewObjectAtIdx(int idx);
-	void           RemoveOldObjectAtIdx(int idx);
-	void           MoveObjectToOldList(int idx);
-	void           MoveAllObjectsToOldList();
+	void RemoveNewObjectAtIdx(int idx);
+	void RemoveOldObjectAtIdx(int idx);
+	void MoveObjectToOldList(int idx);
+	void MoveAllObjectsToOldList();
 
 	// Holds all the objects known by the garbage collector
-	asCArray<asSObjTypePair>           gcNewObjects;
-	asCArray<asSObjTypePair>           gcOldObjects;
+	asCArray<asSObjTypePair> gcNewObjects;
+	asCArray<asSObjTypePair> gcOldObjects;
 
 	// This array temporarily holds references to objects known to be live objects
-	asCArray<void*>                    liveObjects;
+	asCArray<void *> liveObjects;
 
-	// This map holds objects currently being searched for cyclic references, it also holds a 
+	// This map holds objects currently being searched for cyclic references, it also holds a
 	// counter that gives the number of references to the object that the GC can't reach
-	asCMap<void*, asSIntTypePair>      gcMap;
+	asCMap<void *, asSIntTypePair> gcMap;
 
 	// State variables
-	egcDestroyState                    destroyNewState;
-	egcDestroyState                    destroyOldState;
-	asUINT                             destroyNewIdx;
-	asUINT                             destroyOldIdx;
-	asUINT                             numDestroyed;
-	asUINT                             numNewDestroyed;
-	egcDetectState                     detectState;
-	asUINT                             detectIdx;
-	asUINT                             numDetected;
-	asUINT                             numAdded;
-	asUINT                             seqAtSweepStart[3];
-	asSMapNode_t                      *gcMapCursor;
-	bool                               isProcessing;
+	egcDestroyState destroyNewState;
+	egcDestroyState destroyOldState;
+	asUINT destroyNewIdx;
+	asUINT destroyOldIdx;
+	asUINT numDestroyed;
+	asUINT numNewDestroyed;
+	egcDetectState detectState;
+	asUINT detectIdx;
+	asUINT numDetected;
+	asUINT numAdded;
+	asUINT seqAtSweepStart[3];
+	asSMapNode_t *gcMapCursor;
+	bool isProcessing;
 
 	// We'll keep a pool of nodes to avoid allocating memory all the time
-	asSMapNode_t            *GetNode(void *obj, asSIntTypePair it);
-	void                     ReturnNode(asSMapNode_t *node);
-	asCArray<asSMapNode_t*>  freeNodes;
+	asSMapNode_t *GetNode(void *obj, asSIntTypePair it);
+	void ReturnNode(asSMapNode_t *node);
+	asCArray<asSMapNode_t *> freeNodes;
 
 	// Critical section for multithreaded access
 	DECLARECRITICALSECTION(gcCritical)   // Used for adding/removing objects

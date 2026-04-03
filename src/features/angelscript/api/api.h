@@ -5,9 +5,9 @@
 
 namespace API
 {
-	asIScriptEngine *GetScriptEngine ();
-	asIScriptContext *GetScriptContext ();
-	void Initialize ();
-	void Unitialize ();
-	bool IsInitialized ();
-} // api end
+	asIScriptEngine *GetScriptEngine();
+	asIScriptContext *GetScriptContext();
+	void Initialize();
+	void Unitialize();
+	bool IsInitialized();
+} // namespace API

@@ -4,38 +4,33 @@
 
 typedef interface IUnknown IUnknown;
 
-DEFINE_GUID(IID_IUnknown, 0x00000000,0x0000,0x0000,0xC0,0x00,0x00,0x00,0x00,0x00,0x00,0x46)
+DEFINE_GUID(IID_IUnknown, 0x00000000, 0x0000, 0x0000, 0xC0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x46)
 
 #ifdef __cplusplus
-struct IUnknown {
+struct IUnknown
+{
 
-public:
+      public:
+	virtual HRESULT QueryInterface(REFIID riid, void **ppvObject) = 0;
 
-  virtual HRESULT QueryInterface(REFIID riid, void** ppvObject) = 0;
-
-  virtual uint32_t AddRef()  = 0;
-  virtual uint32_t Release() = 0;
-
+	virtual uint32_t AddRef()				      = 0;
+	virtual uint32_t Release()				      = 0;
 };
 #else
 typedef struct IUnknownVtbl
 {
-BEGIN_INTERFACE
+	BEGIN_INTERFACE
 
-  HRESULT (STDMETHODCALLTYPE *QueryInterface)(
-    IUnknown *This,
-    REFIID riid,
-    void **ppvObject
-  );
-  uint32_t (STDMETHODCALLTYPE *AddRef)(IUnknown *This);
-  uint32_t (STDMETHODCALLTYPE *Release)(IUnknown *This);
+	HRESULT(STDMETHODCALLTYPE *QueryInterface)(IUnknown *This, REFIID riid, void **ppvObject);
+	uint32_t(STDMETHODCALLTYPE *AddRef)(IUnknown *This);
+	uint32_t(STDMETHODCALLTYPE *Release)(IUnknown *This);
 
-END_INTERFACE
+	END_INTERFACE
 } IUnknownVtbl;
 
 interface IUnknown
 {
-    CONST_VTBL struct IUnknownVtbl *lpVtbl;
+	CONST_VTBL struct IUnknownVtbl *lpVtbl;
 };
 
 #define IUnknown_AddRef(This) ((This)->lpVtbl->AddRef(This))
@@ -43,6 +38,10 @@ interface IUnknown
 
 #endif // __cplusplus
 
-DECLARE_UUIDOF_HELPER(IUnknown, 0x00000000,0x0000,0x0000,0xC0,0x00,0x00,0x00,0x00,0x00,0x00,0x46)
+DECLARE_UUIDOF_HELPER(IUnknown, 0x00000000, 0x0000, 0x0000, 0xC0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x46)
 
-#define IID_PPV_ARGS(ppType) __uuidof(decltype(**(ppType))), [](auto** pp) { (void)static_cast<IUnknown*>(*pp); return reinterpret_cast<void**>(pp); }(ppType)
+#define IID_PPV_ARGS(ppType)                                                                                           \
+	__uuidof(decltype(**(ppType))), [](auto **pp) {                                                                \
+		(void)static_cast<IUnknown *>(*pp);                                                                    \
+		return reinterpret_cast<void **>(pp);                                                                  \
+	}(ppType)

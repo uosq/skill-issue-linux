@@ -1,7 +1,7 @@
 #ifndef SCRIPTARRAY_H
 #define SCRIPTARRAY_H
 
-#ifndef ANGELSCRIPT_H 
+#ifndef ANGELSCRIPT_H
 // Avoid having to inform include path if header is already include before
 #include "../../include/angelscript.h"
 #endif
@@ -29,7 +29,7 @@ struct SArrayCache;
 
 class CScriptArray
 {
-public:
+      public:
 	// Set the memory functions that should be used by all CScriptArrays
 	static void SetMemoryFunctions(asALLOCFUNC_t allocFunc, asFREEFUNC_t freeFunc);
 
@@ -45,33 +45,33 @@ public:
 
 	// Type information
 	asITypeInfo *GetArrayObjectType() const;
-	int          GetArrayTypeId() const;
-	int          GetElementTypeId() const;
+	int GetArrayTypeId() const;
+	int GetElementTypeId() const;
 
 	// Get the current size
 	asUINT GetSize() const;
 
 	// Returns true if the array is empty
-	bool   IsEmpty() const;
+	bool IsEmpty() const;
 
 	// Pre-allocates memory for elements
-	void   Reserve(asUINT maxElements);
+	void Reserve(asUINT maxElements);
 
 	// Resize the array
-	void   Resize(asUINT numElements);
+	void Resize(asUINT numElements);
 
 	// Get a pointer to an element. Returns 0 if out of bounds
-	void       *At(asUINT index);
+	void *At(asUINT index);
 	const void *At(asUINT index) const;
 
-	// Set value of an element. 
+	// Set value of an element.
 	// The value arg should be a pointer to the value that will be copied to the element.
-	// Remember, if the array holds handles the value parameter should be the 
+	// Remember, if the array holds handles the value parameter should be the
 	// address of the handle. The refCount of the object will also be incremented
-	void  SetValue(asUINT index, void *value);
+	void SetValue(asUINT index, void *value);
 
 	// Copy the contents of one array to another (only if the types are the same)
-	CScriptArray &operator=(const CScriptArray&);
+	CScriptArray &operator=(const CScriptArray &);
 
 	// Compare two arrays
 	bool operator==(const CScriptArray &) const;
@@ -90,28 +90,28 @@ public:
 	void Sort(asUINT startAt, asUINT count, bool asc);
 	void Sort(asIScriptFunction *less, asUINT startAt, asUINT count);
 	void Reverse();
-	int  Find(const void *value) const;
-	int  Find(asUINT startAt, const void *value) const;
-	int  FindByRef(const void *ref) const;
-	int  FindByRef(asUINT startAt, const void *ref) const;
+	int Find(const void *value) const;
+	int Find(asUINT startAt, const void *value) const;
+	int FindByRef(const void *ref) const;
+	int FindByRef(asUINT startAt, const void *ref) const;
 
 	// Return the address of internal buffer for direct manipulation of elements
 	void *GetBuffer();
 
 	// GC methods
-	int  GetRefCount();
+	int GetRefCount();
 	void SetFlag();
 	bool GetFlag();
 	void EnumReferences(asIScriptEngine *engine);
 	void ReleaseAllHandles(asIScriptEngine *engine);
 
-protected:
-	mutable int     refCount;
-	mutable bool    gcFlag;
-	asITypeInfo    *objType;
-	SArrayBuffer   *buffer;
-	int             elementSize;
-	int             subTypeId;
+      protected:
+	mutable int refCount;
+	mutable bool gcFlag;
+	asITypeInfo *objType;
+	SArrayBuffer *buffer;
+	int elementSize;
+	int subTypeId;
 
 	// Constructors
 	CScriptArray(asITypeInfo *ot, void *initBuf); // Called from script when initialized with list
@@ -120,20 +120,20 @@ protected:
 	CScriptArray(const CScriptArray &other);
 	virtual ~CScriptArray();
 
-	bool  Less(const void *a, const void *b, bool asc);
+	bool Less(const void *a, const void *b, bool asc);
 	void *GetArrayItemPointer(int index);
 	void *GetDataPointer(void *buffer);
-	void  Copy(void *dst, void *src);
-	void  Swap(void *a, void *b);
-	void  Precache();
-	bool  CheckMaxSize(asUINT numElements);
-	void  Resize(int delta, asUINT at);
-	void  CreateBuffer(SArrayBuffer **buf, asUINT numElements);
-	void  DeleteBuffer(SArrayBuffer *buf);
-	void  CopyBuffer(SArrayBuffer *dst, SArrayBuffer *src);
-	void  Construct(SArrayBuffer *buf, asUINT start, asUINT end);
-	void  Destruct(SArrayBuffer *buf, asUINT start, asUINT end);
-	bool  Equals(const void *a, const void *b, asIScriptContext *ctx, SArrayCache *cache) const;
+	void Copy(void *dst, void *src);
+	void Swap(void *a, void *b);
+	void Precache();
+	bool CheckMaxSize(asUINT numElements);
+	void Resize(int delta, asUINT at);
+	void CreateBuffer(SArrayBuffer **buf, asUINT numElements);
+	void DeleteBuffer(SArrayBuffer *buf);
+	void CopyBuffer(SArrayBuffer *dst, SArrayBuffer *src);
+	void Construct(SArrayBuffer *buf, asUINT start, asUINT end);
+	void Destruct(SArrayBuffer *buf, asUINT start, asUINT end);
+	bool Equals(const void *a, const void *b, asIScriptContext *ctx, SArrayCache *cache) const;
 };
 
 void RegisterScriptArray(asIScriptEngine *engine, bool defaultArray);

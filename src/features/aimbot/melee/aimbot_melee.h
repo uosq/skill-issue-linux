@@ -18,7 +18,6 @@
 
 namespace AimbotMelee
 {
-	void Run (CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCmd,
-		  AimbotState &state);
-	std::string GetMeleeModeName ();
-};
+	void Run(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCmd, AimbotState &state);
+	std::string GetMeleeModeName();
+}; // namespace AimbotMelee

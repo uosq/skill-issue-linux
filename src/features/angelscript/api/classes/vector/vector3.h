@@ -2,4 +2,4 @@
 
 #include "../../../include/angelscript.h"
 
-void Vector3_RegisterClass (asIScriptEngine *engine);
+void Vector3_RegisterClass(asIScriptEngine *engine);

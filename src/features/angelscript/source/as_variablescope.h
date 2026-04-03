@@ -28,13 +28,11 @@
    andreas@angelcode.com
 */
 
-
 //
 // as_variablescope.h
 //
 // A manager class for variable declarations
 //
-
 
 #ifndef AS_VARIABLESCOPE_H
 #define AS_VARIABLESCOPE_H
@@ -44,25 +42,25 @@
 #ifndef AS_NO_COMPILER
 
 #include "as_array.h"
-#include "as_string.h"
 #include "as_datatype.h"
+#include "as_string.h"
 
 BEGIN_AS_NAMESPACE
 
 struct sVariable
 {
-	asCString   name;
+	asCString name;
 	asCDataType type;
-	int         stackOffset;
-	bool        isInitialized;
-	bool        isPureConstant;
-	asQWORD     constantValue;
-	bool        onHeap;
+	int stackOffset;
+	bool isInitialized;
+	bool isPureConstant;
+	asQWORD constantValue;
+	bool onHeap;
 };
 
 class asCVariableScope
 {
-public:
+      public:
 	asCVariableScope(asCVariableScope *parent);
 	~asCVariableScope();
 

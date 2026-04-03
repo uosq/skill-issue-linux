@@ -39,11 +39,17 @@ static bool s_bInitialized = false;
 
 // I don't like singletons, but I couldn't
 // think of a better way of doing it
-asIScriptContext *API::GetScriptContext () { return ::GetScriptContext (); }
+asIScriptContext *API::GetScriptContext()
+{
+	return ::GetScriptContext();
+}
 
-asIScriptEngine *API::GetScriptEngine () { return ::GetScriptEngine (); }
+asIScriptEngine *API::GetScriptEngine()
+{
+	return ::GetScriptEngine();
+}
 
-void MessageCallback (const asSMessageInfo *msg, void *param)
+void MessageCallback(const asSMessageInfo *msg, void *param)
 {
 	const char *type = "ERR";
 	if (msg->type == asMSGTYPE_WARNING)
@@ -51,80 +57,80 @@ void MessageCallback (const asSMessageInfo *msg, void *param)
 	else if (msg->type == asMSGTYPE_INFORMATION)
 		type = "INFO";
 
-	interfaces::Cvar->ConsolePrintf ("%s (line: %d, column: %d): %s\n",
-					 type, msg->row, msg->col,
-					 msg->message);
+	interfaces::Cvar->ConsolePrintf("%s (line: %d, column: %d): %s\n", type, msg->row, msg->col, msg->message);
 }
 
-void API::Initialize ()
+void API::Initialize()
 {
 	if (s_bInitialized)
 		return;
 
-	auto engine = GetScriptEngine ();
+	auto engine = GetScriptEngine();
 
-	engine->SetMessageCallback (asFUNCTION (MessageCallback), 0,
-				    asCALL_CDECL);
+	engine->SetMessageCallback(asFUNCTION(MessageCallback), 0, asCALL_CDECL);
 
 	{
-		engine->SetDefaultAccessMask (SCRIPT_MASK_ALLOW_STRING);
-		RegisterStdString (engine);
+		engine->SetDefaultAccessMask(SCRIPT_MASK_ALLOW_STRING);
+		RegisterStdString(engine);
 
-		engine->SetDefaultAccessMask (SCRIPT_MASK_ALLOW_ARRAY);
-		RegisterScriptArray (engine, true);
+		engine->SetDefaultAccessMask(SCRIPT_MASK_ALLOW_ARRAY);
+		RegisterScriptArray(engine, true);
 
-		engine->SetDefaultAccessMask (SCRIPT_MASK_ALLOW_DICT);
-		RegisterScriptDictionary (engine);
+		engine->SetDefaultAccessMask(SCRIPT_MASK_ALLOW_DICT);
+		RegisterScriptDictionary(engine);
 
-		engine->SetDefaultAccessMask (SCRIPT_MASK_ALLOW_MATH);
-		RegisterScriptMath (engine);
-		RegisterScriptMathComplex (engine);
+		engine->SetDefaultAccessMask(SCRIPT_MASK_ALLOW_MATH);
+		RegisterScriptMath(engine);
+		RegisterScriptMathComplex(engine);
 
-		engine->SetDefaultAccessMask (SCRIPT_MASK_ALLOW_DATETIME);
-		RegisterScriptDateTime (engine);
+		engine->SetDefaultAccessMask(SCRIPT_MASK_ALLOW_DATETIME);
+		RegisterScriptDateTime(engine);
 
-		engine->SetDefaultAccessMask (SCRIPT_MASK_ALLOW_FILESYSTEM);
-		RegisterScriptFile (engine);
-		RegisterScriptFileSystem (engine);
+		engine->SetDefaultAccessMask(SCRIPT_MASK_ALLOW_FILESYSTEM);
+		RegisterScriptFile(engine);
+		RegisterScriptFileSystem(engine);
 	}
 
 	// enums
-	Enums_Register (engine);
+	Enums_Register(engine);
 
 	// classes
-	Vector2_RegisterClass (engine);
-	Vector3_RegisterClass (engine);
-	Entity_RegisterClass (engine);
-	UserCmd_RegisterClass (engine);
-	ViewSetup_RegisterClass (engine);
-	Material_RegisterClass (engine);
-	GameEvent_RegisterClass (engine);
-	DrawModelContext_RegisterClass (engine);
-	Texture_RegisterClass (engine);
-	ConVar_RegisterClass (engine);
+	Vector2_RegisterClass(engine);
+	Vector3_RegisterClass(engine);
+	Entity_RegisterClass(engine);
+	UserCmd_RegisterClass(engine);
+	ViewSetup_RegisterClass(engine);
+	Material_RegisterClass(engine);
+	GameEvent_RegisterClass(engine);
+	DrawModelContext_RegisterClass(engine);
+	Texture_RegisterClass(engine);
+	ConVar_RegisterClass(engine);
 
 	// libraries
-	Common_RegisterLibrary (engine);
-	Engine_RegisterLibrary (engine);
-	ClientState_RegisterLibrary (engine);
-	Hooks_RegisterLibrary (engine);
-	Draw_RegisterLibrary (engine);
-	Materials_RegisterLibrary (engine);
-	Interface_EntityList_Register (engine);
-	Render_RegisterLibrary (engine);
-	Input_RegisterLibrary (engine);
-	Client_RegisterLibrary (engine);
-	ImGui_RegisterLibrary (engine);
+	Common_RegisterLibrary(engine);
+	Engine_RegisterLibrary(engine);
+	ClientState_RegisterLibrary(engine);
+	Hooks_RegisterLibrary(engine);
+	Draw_RegisterLibrary(engine);
+	Materials_RegisterLibrary(engine);
+	Interface_EntityList_Register(engine);
+	Render_RegisterLibrary(engine);
+	Input_RegisterLibrary(engine);
+	Client_RegisterLibrary(engine);
+	ImGui_RegisterLibrary(engine);
 
 	s_bInitialized = true;
 }
 
-void API::Unitialize ()
+void API::Unitialize()
 {
-	GetScriptContext ()->Release ();
-	GetScriptEngine ()->ShutDownAndRelease ();
+	GetScriptContext()->Release();
+	GetScriptEngine()->ShutDownAndRelease();
 
 	s_bInitialized = false;
 }
 
-bool API::IsInitialized () { return s_bInitialized; }
+bool API::IsInitialized()
+{
+	return s_bInitialized;
+}

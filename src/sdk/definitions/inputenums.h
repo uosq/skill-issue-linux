@@ -4,7 +4,7 @@
 
 enum
 {
-	MAX_JOYSTICKS = 1,
+	MAX_JOYSTICKS	   = 1,
 	MOUSE_BUTTON_COUNT = 5,
 	MAX_NOVINT_DEVICES = 2
 };
@@ -22,11 +22,11 @@ enum JoystickAxis_t
 
 enum
 {
-	MS_WM_XBUTTONDOWN = 0x020B,
-	MS_WM_XBUTTONUP = 0x020C,
+	MS_WM_XBUTTONDOWN   = 0x020B,
+	MS_WM_XBUTTONUP	    = 0x020C,
 	MS_WM_XBUTTONDBLCLK = 0x020D,
-	MS_MK_BUTTON4 = 0x0020,
-	MS_MK_BUTTON5 = 0x0040
+	MS_MK_BUTTON4	    = 0x0020,
+	MS_MK_BUTTON5	    = 0x0040
 };
 
 enum InputEventType_t
@@ -36,18 +36,18 @@ enum InputEventType_t
 	IE_ButtonDoubleClicked,
 	IE_AnalogValueChanged,
 	IE_FirstSystemEvent = 100,
-	IE_Quit = IE_FirstSystemEvent,
+	IE_Quit		    = IE_FirstSystemEvent,
 	IE_ControllerInserted,
 	IE_ControllerUnplugged,
 	IE_FirstVguiEvent = 1000,
-	IE_FirstAppEvent = 2000
+	IE_FirstAppEvent  = 2000
 };
 
 struct InputEvent_t
 {
-	int m_nType = 0;
-	int m_nTick = 0;
-	int m_nData = 0;
+	int m_nType  = 0;
+	int m_nTick  = 0;
+	int m_nData  = 0;
 	int m_nData2 = 0;
 	int m_nData3 = 0;
 };
@@ -116,14 +116,14 @@ enum ESteamPadAxis
 
 enum
 {
-	LASTINPUT_KBMOUSE = 0,
-	LASTINPUT_CONTROLLER = 1,
+	LASTINPUT_KBMOUSE	  = 0,
+	LASTINPUT_CONTROLLER	  = 1,
 	LASTINPUT_STEAMCONTROLLER = 2
 };
 
 enum GameActionSet_t
 {
-	GAME_ACTION_SET_NONE = -1,
+	GAME_ACTION_SET_NONE	     = -1,
 	GAME_ACTION_SET_MENUCONTROLS = 0,
 	GAME_ACTION_SET_FPSCONTROLS,
 	GAME_ACTION_SET_IN_GAME_HUD,
@@ -132,7 +132,7 @@ enum GameActionSet_t
 
 enum GameActionSetFlags_t
 {
-	GAME_ACTION_SET_FLAGS_NONE = 0,
+	GAME_ACTION_SET_FLAGS_NONE     = 0,
 	GAME_ACTION_SET_FLAGS_TAUNTING = (1 << 0)
 };
 

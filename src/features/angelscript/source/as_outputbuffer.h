@@ -28,14 +28,12 @@
    andreas@angelcode.com
 */
 
-
 //
 // as_outputbuffer.h
 //
 // This class appends strings to one large buffer that can later
 // be sent to the real output stream
 //
-
 
 #ifndef AS_OUTPUTBUFFER_H
 #define AS_OUTPUTBUFFER_H
@@ -44,8 +42,8 @@
 
 #ifndef AS_NO_COMPILER
 
-#include "as_string.h"
 #include "as_array.h"
+#include "as_string.h"
 
 BEGIN_AS_NAMESPACE
 
@@ -54,11 +52,14 @@ class asCScriptEngine;
 
 class asCOutputBuffer
 {
-public:
-	~asCOutputBuffer ();
+      public:
+	~asCOutputBuffer();
 	void Clear();
 	void Callback(asSMessageInfo *msg);
-	static void CDeclCallback(asSMessageInfo* msg, asCOutputBuffer* buf) { buf->Callback(msg); }
+	static void CDeclCallback(asSMessageInfo *msg, asCOutputBuffer *buf)
+	{
+		buf->Callback(msg);
+	}
 	void Append(asCOutputBuffer &in);
 	void SendToCallback(asCScriptEngine *engine, asSSystemFunctionInterface *func, void *obj);
 
@@ -71,7 +72,7 @@ public:
 		asCString msg;
 	};
 
-	asCArray<message_t*> messages;
+	asCArray<message_t *> messages;
 };
 
 END_AS_NAMESPACE

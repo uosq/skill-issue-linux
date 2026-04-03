@@ -4,15 +4,15 @@
 
 enum StereoEye_t
 {
-	STEREO_EYE_MONO = 0,
-	STEREO_EYE_LEFT = 1,
+	STEREO_EYE_MONO	 = 0,
+	STEREO_EYE_LEFT	 = 1,
 	STEREO_EYE_RIGHT = 2,
-	STEREO_EYE_MAX = 3
+	STEREO_EYE_MAX	 = 3
 };
 
 class CViewSetup
 {
-public:
+      public:
 	int x;
 	int m_nUnscaledX;
 	int y;

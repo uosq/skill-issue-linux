@@ -6,5 +6,5 @@
 
 namespace ViewmodelOffset
 {
-	void Run (Vector &position, Vector &angle);
+	void Run(Vector &position, Vector &angle);
 };

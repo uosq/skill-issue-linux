@@ -5,7 +5,7 @@
 
 bool FakeLag::m_bFakeLagging = false;
 
-void FakeLag::Run ()
+void FakeLag::Run()
 {
 	m_bFakeLagging = false;
 

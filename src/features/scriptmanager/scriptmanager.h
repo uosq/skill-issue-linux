@@ -15,11 +15,11 @@ struct Script
 
 namespace ScriptManager
 {
-	bool Load (Script &script);
-	bool Unload (Script &script);
-	bool Reload (Script &script);
-	Script *Find (const std::string &path);
-	Script &GetOrCreate (const std::string &fullPath);
+	bool Load(Script &script);
+	bool Unload(Script &script);
+	bool Reload(Script &script);
+	Script *Find(const std::string &path);
+	Script &GetOrCreate(const std::string &fullPath);
 
-	std::vector<Script> &GetScripts ();
+	std::vector<Script> &GetScripts();
 }; // namespace ScriptManager

@@ -2,4 +2,4 @@
 
 #include "../../../include/angelscript.h"
 
-void Material_RegisterClass (asIScriptEngine *engine);
+void Material_RegisterClass(asIScriptEngine *engine);

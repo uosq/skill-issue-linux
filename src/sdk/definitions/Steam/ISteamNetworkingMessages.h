@@ -35,7 +35,7 @@
 ///
 class ISteamNetworkingMessages
 {
-public:
+      public:
 	/// Sends a message to the specified host.  If we don't already have a session with that user,
 	/// a session is implicitly created.  There might be some handshaking that needs to happen
 	/// before we can actually begin sending message data.  If this handshaking fails and we can't
@@ -80,13 +80,15 @@ public:
 	///   repeat the call with k_nSteamNetworkingSend_AutoRestartBrokenSession.  See
 	///   k_nSteamNetworkingSend_AutoRestartBrokenSession for more details.
 	/// - See ISteamNetworkingSockets::SendMessageToConnection for more possible return values
-	virtual EResult SendMessageToUser( const SteamNetworkingIdentity &identityRemote, const void *pubData, uint32 cubData, int nSendFlags, int nRemoteChannel ) = 0;
+	virtual EResult SendMessageToUser(const SteamNetworkingIdentity &identityRemote, const void *pubData,
+					  uint32 cubData, int nSendFlags, int nRemoteChannel) = 0;
 
 	/// Reads the next message that has been sent from another user via SendMessageToUser() on the given channel.
 	/// Returns number of messages returned into your list.  (0 if no message are available on that channel.)
 	///
 	/// When you're done with the message object(s), make sure and call SteamNetworkingMessage_t::Release()!
-	virtual int ReceiveMessagesOnChannel( int nLocalChannel, SteamNetworkingMessage_t **ppOutMessages, int nMaxMessages ) = 0;
+	virtual int ReceiveMessagesOnChannel(int nLocalChannel, SteamNetworkingMessage_t **ppOutMessages,
+					     int nMaxMessages) = 0;
 
 	/// Call this in response to a SteamNetworkingMessagesSessionRequest_t callback.
 	/// SteamNetworkingMessagesSessionRequest_t are posted when a user tries to send you a message,
@@ -98,20 +100,20 @@ public:
 	/// existing active session, this function will return true, even if it is not pending.
 	///
 	/// Calling SendMessageToUser() will implicitly accepts any pending session request to that user.
-	virtual bool AcceptSessionWithUser( const SteamNetworkingIdentity &identityRemote ) = 0;
+	virtual bool AcceptSessionWithUser(const SteamNetworkingIdentity &identityRemote) = 0;
 
 	/// Call this when you're done talking to a user to immediately free up resources under-the-hood.
 	/// If the remote user tries to send data to you again, another SteamNetworkingMessagesSessionRequest_t
 	/// callback will be posted.
 	///
 	/// Note that sessions that go unused for a few minutes are automatically timed out.
-	virtual bool CloseSessionWithUser( const SteamNetworkingIdentity &identityRemote ) = 0;
+	virtual bool CloseSessionWithUser(const SteamNetworkingIdentity &identityRemote) = 0;
 
 	/// Call this  when you're done talking to a user on a specific channel.  Once all
 	/// open channels to a user have been closed, the open session to the user will be
 	/// closed, and any new data from this user will trigger a
 	/// SteamSteamNetworkingMessagesSessionRequest_t callback
-	virtual bool CloseChannelWithUser( const SteamNetworkingIdentity &identityRemote, int nLocalChannel ) = 0;
+	virtual bool CloseChannelWithUser(const SteamNetworkingIdentity &identityRemote, int nLocalChannel) = 0;
 
 	/// Returns information about the latest state of a connection, if any, with the given peer.
 	/// Primarily intended for debugging purposes, but can also be used to get more detailed
@@ -122,7 +124,9 @@ public:
 	/// you do not need the corresponding details.  Note that sessions time out after a while,
 	/// so if a connection fails, or SendMessageToUser returns k_EResultNoConnection, you cannot wait
 	/// indefinitely to obtain the reason for failure.
-	virtual ESteamNetworkingConnectionState GetSessionConnectionInfo( const SteamNetworkingIdentity &identityRemote, SteamNetConnectionInfo_t *pConnectionInfo, SteamNetConnectionRealTimeStatus_t *pQuickStatus ) = 0;
+	virtual ESteamNetworkingConnectionState GetSessionConnectionInfo(
+	    const SteamNetworkingIdentity &identityRemote, SteamNetConnectionInfo_t *pConnectionInfo,
+	    SteamNetConnectionRealTimeStatus_t *pQuickStatus) = 0;
 };
 #define STEAMNETWORKINGMESSAGES_INTERFACE_VERSION "SteamNetworkingMessages002"
 
@@ -130,13 +134,16 @@ public:
 // Callbacks
 //
 
-#pragma pack( push, 1 )
+#pragma pack(push, 1)
 
 /// Posted when a remote host is sending us a message, and we do not already have a session with them
 struct SteamNetworkingMessagesSessionRequest_t
-{ 
-	enum { k_iCallback = k_iSteamNetworkingMessagesCallbacks + 1 };
-	SteamNetworkingIdentity m_identityRemote;			// user who wants to talk to us
+{
+	enum
+	{
+		k_iCallback = k_iSteamNetworkingMessagesCallbacks + 1
+	};
+	SteamNetworkingIdentity m_identityRemote; // user who wants to talk to us
 };
 
 /// Posted when we fail to establish a connection, or we detect that communications
@@ -151,8 +158,11 @@ struct SteamNetworkingMessagesSessionRequest_t
 /// way to detect that this is happening is that querying the session state may return
 /// none, connecting, and findingroute again.
 struct SteamNetworkingMessagesSessionFailed_t
-{ 
-	enum { k_iCallback = k_iSteamNetworkingMessagesCallbacks + 2 };
+{
+	enum
+	{
+		k_iCallback = k_iSteamNetworkingMessagesCallbacks + 2
+	};
 
 	/// Detailed info about the session that failed.
 	/// SteamNetConnectionInfo_t::m_identityRemote indicates who this session
@@ -167,32 +177,52 @@ struct SteamNetworkingMessagesSessionFailed_t
 // Using standalone lib
 #ifdef STEAMNETWORKINGSOCKETS_STANDALONELIB
 
-	static_assert( STEAMNETWORKINGMESSAGES_INTERFACE_VERSION[25] == '2', "Version mismatch" );
+static_assert(STEAMNETWORKINGMESSAGES_INTERFACE_VERSION[25] == '2', "Version mismatch");
 
-	STEAMNETWORKINGSOCKETS_INTERFACE ISteamNetworkingMessages *SteamNetworkingMessages_LibV2();
-	inline ISteamNetworkingMessages *SteamNetworkingMessages_Lib() { return SteamNetworkingMessages_LibV2(); }
+STEAMNETWORKINGSOCKETS_INTERFACE ISteamNetworkingMessages *SteamNetworkingMessages_LibV2();
+inline ISteamNetworkingMessages *SteamNetworkingMessages_Lib()
+{
+	return SteamNetworkingMessages_LibV2();
+}
 
-	// If running in context of steam, we also define a gameserver instance.
-	STEAMNETWORKINGSOCKETS_INTERFACE ISteamNetworkingMessages *SteamGameServerNetworkingMessages_LibV2();
-	inline ISteamNetworkingMessages *SteamGameServerNetworkingMessages_Lib() { return SteamGameServerNetworkingMessages_LibV2(); }
+// If running in context of steam, we also define a gameserver instance.
+STEAMNETWORKINGSOCKETS_INTERFACE ISteamNetworkingMessages *SteamGameServerNetworkingMessages_LibV2();
+inline ISteamNetworkingMessages *SteamGameServerNetworkingMessages_Lib()
+{
+	return SteamGameServerNetworkingMessages_LibV2();
+}
 
-	#ifndef STEAMNETWORKINGSOCKETS_STEAMAPI
-		inline ISteamNetworkingMessages *SteamNetworkingMessages() { return SteamNetworkingMessages_LibV2(); }
-		inline ISteamNetworkingMessages *SteamGameServerNetworkingMessages() { return SteamGameServerNetworkingMessages_LibV2(); }
-	#endif
+#ifndef STEAMNETWORKINGSOCKETS_STEAMAPI
+inline ISteamNetworkingMessages *SteamNetworkingMessages()
+{
+	return SteamNetworkingMessages_LibV2();
+}
+inline ISteamNetworkingMessages *SteamGameServerNetworkingMessages()
+{
+	return SteamGameServerNetworkingMessages_LibV2();
+}
+#endif
 #endif
 
 // Using Steamworks SDK
 #ifdef STEAMNETWORKINGSOCKETS_STEAMAPI
 
-	// Steamworks SDK
-	STEAM_DEFINE_USER_INTERFACE_ACCESSOR( ISteamNetworkingMessages *, SteamNetworkingMessages_SteamAPI, STEAMNETWORKINGMESSAGES_INTERFACE_VERSION );
-	STEAM_DEFINE_GAMESERVER_INTERFACE_ACCESSOR( ISteamNetworkingMessages *, SteamGameServerNetworkingMessages_SteamAPI, STEAMNETWORKINGMESSAGES_INTERFACE_VERSION );
+// Steamworks SDK
+STEAM_DEFINE_USER_INTERFACE_ACCESSOR(ISteamNetworkingMessages *, SteamNetworkingMessages_SteamAPI,
+				     STEAMNETWORKINGMESSAGES_INTERFACE_VERSION);
+STEAM_DEFINE_GAMESERVER_INTERFACE_ACCESSOR(ISteamNetworkingMessages *, SteamGameServerNetworkingMessages_SteamAPI,
+					   STEAMNETWORKINGMESSAGES_INTERFACE_VERSION);
 
-	#ifndef STEAMNETWORKINGSOCKETS_STANDALONELIB
-		inline ISteamNetworkingMessages *SteamNetworkingMessages() { return SteamNetworkingMessages_SteamAPI(); }
-		inline ISteamNetworkingMessages *SteamGameServerNetworkingMessages() { return SteamGameServerNetworkingMessages_SteamAPI(); }
-	#endif
+#ifndef STEAMNETWORKINGSOCKETS_STANDALONELIB
+inline ISteamNetworkingMessages *SteamNetworkingMessages()
+{
+	return SteamNetworkingMessages_SteamAPI();
+}
+inline ISteamNetworkingMessages *SteamGameServerNetworkingMessages()
+{
+	return SteamGameServerNetworkingMessages_SteamAPI();
+}
+#endif
 #endif
 
 #endif // ISTEAMNETWORKINGMESSAGES

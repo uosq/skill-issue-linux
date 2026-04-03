@@ -6,72 +6,74 @@
 std::unordered_map<std::string, unsigned long> FontManager::m_Fonts;
 std::string FontManager::m_currentFontID = "";
 
-int FontManager::CreateFont (const std::string &id,
-			     const std::string &fontName, int height,
-			     int weight, int flags)
+int FontManager::CreateFont(const std::string &id, const std::string &fontName, int height, int weight, int flags)
 {
-	if (id.empty () || fontName.empty ())
+	if (id.empty() || fontName.empty())
 		return 0;
 
-	auto it = m_Fonts.find (id);
-	if (it != m_Fonts.end ())
+	auto it = m_Fonts.find(id);
+	if (it != m_Fonts.end())
 		return it->second;
 
-	HFont font = interfaces::Surface->CreateFont ();
-	interfaces::Surface->SetFontGlyphSet (font, fontName.c_str (), height,
-					      weight, 0, 0, flags);
+	HFont font = interfaces::Surface->CreateFont();
+	interfaces::Surface->SetFontGlyphSet(font, fontName.c_str(), height, weight, 0, 0, flags);
 
 	m_Fonts[id] = font;
 	return font;
 }
 
-int FontManager::GetFont (const std::string &id)
+int FontManager::GetFont(const std::string &id)
 {
-	auto it = m_Fonts.find (id);
-	if (it == m_Fonts.end ())
+	auto it = m_Fonts.find(id);
+	if (it == m_Fonts.end())
 		return 0;
 
 	return it->second;
 }
 
-int FontManager::SetFont (const std::string &id)
+int FontManager::SetFont(const std::string &id)
 {
-	auto it = m_Fonts.find (id);
-	if (it == m_Fonts.end ())
+	auto it = m_Fonts.find(id);
+	if (it == m_Fonts.end())
 		return false;
 
 	m_currentFontID = id;
-	interfaces::Surface->DrawSetTextFont (it->second);
+	interfaces::Surface->DrawSetTextFont(it->second);
 	return true;
 }
 
-int FontManager::SetFont (int id)
+int FontManager::SetFont(int id)
 {
-	for (auto it = m_Fonts.begin (); it != m_Fonts.end (); it++)
+	for (auto it = m_Fonts.begin(); it != m_Fonts.end(); it++)
 	{
 		if (it->second != id)
 			continue;
 
 		m_currentFontID = it->first;
-		interfaces::Surface->DrawSetTextFont (it->second);
+		interfaces::Surface->DrawSetTextFont(it->second);
 		return true;
 	}
 
 	return false;
 }
 
-const std::string &FontManager::GetCurrentFontID () { return m_currentFontID; }
+const std::string &FontManager::GetCurrentFontID()
+{
+	return m_currentFontID;
+}
 
-const std::unordered_map<std::string, unsigned long> &
-FontManager::GetAllFonts ()
+const std::unordered_map<std::string, unsigned long> &FontManager::GetAllFonts()
 {
 	return m_Fonts;
 }
 
-void FontManager::Init () { m_Fonts.reserve (10); }
-
-void FontManager::Unitialize ()
+void FontManager::Init()
 {
-	m_Fonts.clear ();
-	m_currentFontID.clear ();
+	m_Fonts.reserve(10);
+}
+
+void FontManager::Unitialize()
+{
+	m_Fonts.clear();
+	m_currentFontID.clear();
 }

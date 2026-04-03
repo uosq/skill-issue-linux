@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 //=============================================================================//
 
@@ -14,7 +14,7 @@ class CTFPlayer;
 
 class CPlayerAnimState
 {
-public:
+      public:
 	enum
 	{
 		TURN_NONE = 0,
@@ -22,50 +22,50 @@ public:
 		TURN_RIGHT
 	};
 
-						CPlayerAnimState( CTFPlayer *outer );
+	CPlayerAnimState(CTFPlayer *outer);
 
-	Activity			BodyYawTranslateActivity( Activity activity );
+	Activity BodyYawTranslateActivity(Activity activity);
 
-	void				Update();
+	void Update();
 
-	const QAngle&		GetRenderAngles();
-				
-	void				GetPoseParameters( float poseParameter[MAXSTUDIOPOSEPARAM] );
+	const QAngle &GetRenderAngles();
 
-	CTFPlayer		*GetOuter();
+	void GetPoseParameters(float poseParameter[MAXSTUDIOPOSEPARAM]);
 
-private:
-	void				GetOuterAbsVelocity( Vector& vel );
+	CTFPlayer *GetOuter();
 
-	int					ConvergeAngles( float goal,float maxrate, float dt, float& current );
+      private:
+	void GetOuterAbsVelocity(Vector &vel);
 
-	void				EstimateYaw( void );
-	void				ComputePoseParam_BodyYaw( void );
-	void				ComputePoseParam_BodyPitch( void );
-	void				ComputePoseParam_BodyLookYaw( void );
+	int ConvergeAngles(float goal, float maxrate, float dt, float &current);
 
-	void				ComputePlaybackRate();
+	void EstimateYaw(void);
+	void ComputePoseParam_BodyYaw(void);
+	void ComputePoseParam_BodyPitch(void);
+	void ComputePoseParam_BodyLookYaw(void);
 
-	CTFPlayer		*m_pOuter;
+	void ComputePlaybackRate();
 
-	float				m_flGaitYaw;
-	float				m_flStoredCycle;
+	CTFPlayer *m_pOuter;
+
+	float m_flGaitYaw;
+	float m_flStoredCycle;
 
 	// The following variables are used for tweaking the yaw of the upper body when standing still and
 	//  making sure that it smoothly blends in and out once the player starts moving
 	// Direction feet were facing when we stopped moving
-	float				m_flGoalFeetYaw;
-	float				m_flCurrentFeetYaw;
+	float m_flGoalFeetYaw;
+	float m_flCurrentFeetYaw;
 
-	float				m_flCurrentTorsoYaw;
+	float m_flCurrentTorsoYaw;
 
 	// To check if they are rotating in place
-	float				m_flLastYaw;
+	float m_flLastYaw;
 	// Time when we stopped moving
-	float				m_flLastTurnTime;
+	float m_flLastTurnTime;
 
 	// One of the above enums
-	int					m_nTurningInPlace;
+	int m_nTurningInPlace;
 
-	QAngle				m_angRender;
+	QAngle m_angRender;
 };

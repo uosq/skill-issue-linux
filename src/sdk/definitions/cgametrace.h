@@ -1,20 +1,20 @@
 #pragma once
+#include "cbasetrace.h"
 #include "cmodel.h"
 #include "ihandleentity.h"
-#include "cbasetrace.h"
 
 class CBaseEntity;
 
 class CGameTrace : public CBaseTrace
 {
-public:
+      public:
 	bool DidHit() const;
 
 	float fractionleftsolid{};
 	csurface_t surface{};
 	int hitgroup{};
 	short physicsbone{};
-	CBaseEntity* m_pEnt{};
+	CBaseEntity *m_pEnt{};
 	int hitbox{};
 };
 

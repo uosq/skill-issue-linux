@@ -1,7 +1,7 @@
 #ifndef SCRIPTDATETIME_H
 #define SCRIPTDATETIME_H
 
-#ifndef ANGELSCRIPT_H 
+#ifndef ANGELSCRIPT_H
 // Avoid having to inform include path if header is already include before
 #include "../../include/angelscript.h"
 #endif
@@ -16,7 +16,7 @@ BEGIN_AS_NAMESPACE
 
 class CDateTime
 {
-public:
+      public:
 	// Constructors
 	CDateTime();
 	CDateTime(const CDateTime &other);
@@ -41,17 +41,17 @@ public:
 
 	// Operators
 	// Return difference in seconds
-	asINT64          operator-(const CDateTime &other) const;
-	CDateTime        operator+(asINT64 seconds) const;
+	asINT64 operator-(const CDateTime &other) const;
+	CDateTime operator+(asINT64 seconds) const;
 	friend CDateTime operator+(asINT64 seconds, const CDateTime &other);
-	CDateTime &      operator+=(asINT64 seconds);
-	CDateTime        operator-(asINT64 seconds) const;
+	CDateTime &operator+=(asINT64 seconds);
+	CDateTime operator-(asINT64 seconds) const;
 	friend CDateTime operator-(asINT64 seconds, const CDateTime &other);
-	CDateTime &      operator-=(asINT64 seconds);
-	bool             operator==(const CDateTime &other) const;
-	bool             operator<(const CDateTime &other) const;
+	CDateTime &operator-=(asINT64 seconds);
+	bool operator==(const CDateTime &other) const;
+	bool operator<(const CDateTime &other) const;
 
-protected:
+      protected:
 	std::chrono::system_clock::time_point tp;
 };
 

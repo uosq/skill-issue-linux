@@ -6,8 +6,8 @@ class CTFPlayer;
 
 class MoveHelper
 {
-public:
-	void SetHost(CTFPlayer* player)
+      public:
+	void SetHost(CTFPlayer *player)
 	{
 		vtable::call<12, void>(this);
 	}

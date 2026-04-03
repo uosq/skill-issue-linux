@@ -28,7 +28,6 @@
    andreas@angelcode.com
 */
 
-
 #ifndef AS_NAMESPACE_H
 #define AS_NAMESPACE_H
 
@@ -44,14 +43,17 @@ struct asSNameSpace
 	//                  able to restrict specific namespaces from access to specific modules
 };
 
-
 struct asSNameSpaceNamePair
 {
 	const asSNameSpace *ns;
-	asCString           name;
+	asCString name;
 
-	asSNameSpaceNamePair() : ns(0) {}
-	asSNameSpaceNamePair(const asSNameSpace *_ns, const asCString &_name) : ns(_ns), name(_name) {}
+	asSNameSpaceNamePair() : ns(0)
+	{
+	}
+	asSNameSpaceNamePair(const asSNameSpace *_ns, const asCString &_name) : ns(_ns), name(_name)
+	{
+	}
 
 	asSNameSpaceNamePair &operator=(const asSNameSpaceNamePair &other)
 	{
@@ -74,4 +76,3 @@ struct asSNameSpaceNamePair
 END_AS_NAMESPACE
 
 #endif
-

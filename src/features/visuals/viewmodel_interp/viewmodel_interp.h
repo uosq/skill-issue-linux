@@ -8,6 +8,6 @@ namespace ViewmodelInterp
 {
 	extern Vector m_vecOldAngle;
 
-	void Init ();
-	void Run (Vector &angle);
-};
+	void Init();
+	void Run(Vector &angle);
+}; // namespace ViewmodelInterp

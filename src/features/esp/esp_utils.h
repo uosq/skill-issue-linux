@@ -14,11 +14,11 @@
 
 namespace ESP_Utils
 {
-	Color GetEntityColor (CBaseEntity *entity);
+	Color GetEntityColor(CBaseEntity *entity);
 
-	bool IsValidPlayer (CTFPlayer *pLocal, CBaseEntity *entity);
-	bool IsValidBuilding (CTFPlayer *pLocal, CBaseObject *entity);
-	bool IsValidEntity (CTFPlayer *pLocal, const EntityListEntry &entry);
+	bool IsValidPlayer(CTFPlayer *pLocal, CBaseEntity *entity);
+	bool IsValidBuilding(CTFPlayer *pLocal, CBaseObject *entity);
+	bool IsValidEntity(CTFPlayer *pLocal, const EntityListEntry &entry);
 
-	bool GetEntityBounds (CBaseEntity *entity, ESP_Data &out);
-}
+	bool GetEntityBounds(CBaseEntity *entity, ESP_Data &out);
+} // namespace ESP_Utils

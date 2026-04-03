@@ -3,7 +3,8 @@
 #include "../../sdk/classes/entity.h"
 #include <cstdint>
 
-enum EntityFlags {
+enum EntityFlags
+{
 	IsPlayer     = 1,
 	IsBuilding   = 1 << 1,
 	IsEnemy	     = 1 << 2,
@@ -16,7 +17,7 @@ struct EntityListEntry
 	CBaseEntity *ptr;
 	uint8_t flags;
 
-	EntityListEntry ()
+	EntityListEntry()
 	{
 		flags = 0;
 		ptr   = nullptr;

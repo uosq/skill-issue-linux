@@ -38,4 +38,4 @@ namespace helper
 	namespace input
 	{
 	}
-};
+}; // namespace helper

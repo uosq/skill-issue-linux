@@ -28,28 +28,25 @@
    andreas@angelcode.com
 */
 
-
 //
 // as_configgroup.h
 //
 // This class holds configuration groups for the engine
 //
 
-
-
 #ifndef AS_CONFIGGROUP_H
 #define AS_CONFIGGROUP_H
 
-#include "as_config.h"
-#include "as_string.h"
 #include "as_array.h"
+#include "as_config.h"
 #include "as_objecttype.h"
+#include "as_string.h"
 
 BEGIN_AS_NAMESPACE
 
 class asCConfigGroup
 {
-public:
+      public:
 	asCConfigGroup();
 	~asCConfigGroup();
 
@@ -69,14 +66,14 @@ public:
 	asCString groupName;
 	int refCount;
 
-	asCArray<asCTypeInfo*>       types;
-	asCArray<asCScriptFunction*> scriptFunctions;
-	asCArray<asCGlobalProperty*> globalProps;
-	asCArray<asCConfigGroup*>    referencedConfigGroups;
+	asCArray<asCTypeInfo *> types;
+	asCArray<asCScriptFunction *> scriptFunctions;
+	asCArray<asCGlobalProperty *> globalProps;
+	asCArray<asCConfigGroup *> referencedConfigGroups;
 
-	// This array holds the generated template instances that are used 
+	// This array holds the generated template instances that are used
 	// by the config group as part of function signature or property
-	asCArray<asCObjectType*>     generatedTemplateInstances;
+	asCArray<asCObjectType *> generatedTemplateInstances;
 };
 
 END_AS_NAMESPACE

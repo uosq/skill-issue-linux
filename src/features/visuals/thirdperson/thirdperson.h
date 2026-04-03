@@ -7,11 +7,11 @@
 namespace Thirdperson
 {
 	// Call in FrameStageNotify -> FRAME_NET_UPDATE_END
-	void FrameStageNotify (CTFPlayer *pLocal);
-	void OverrideView (CTFPlayer *pLocal, CViewSetup *pView);
+	void FrameStageNotify(CTFPlayer *pLocal);
+	void OverrideView(CTFPlayer *pLocal, CViewSetup *pView);
 
-	bool IsThirdPerson (CTFPlayer *pLocal);
-	bool ShouldIgnoreBind (CTFPlayer *pLocal);
+	bool IsThirdPerson(CTFPlayer *pLocal);
+	bool ShouldIgnoreBind(CTFPlayer *pLocal);
 
-	Vector GetCameraOffset ();
-};
+	Vector GetCameraOffset();
+}; // namespace Thirdperson

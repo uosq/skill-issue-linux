@@ -4,9 +4,9 @@
 
 class VectorAligned : public Vector
 {
-public:
+      public:
 	inline VectorAligned(void) {};
-	inline VectorAligned(Vector X, Vector Y, Vector Z) 
+	inline VectorAligned(Vector X, Vector Y, Vector Z)
 	{
 		//Init(X,Y,Z);
 		X.x = 0;
@@ -21,16 +21,17 @@ public:
 		Z.y = 0;
 		Z.z = 0;
 	}
-public:
-	explicit VectorAligned(const Vector &vOther) 
+
+      public:
+	explicit VectorAligned(const Vector &vOther)
 	{
 		//Init(vOther.x, vOther.y, vOther.z);
 		x = vOther.x;
 		y = vOther.y;
 		z = vOther.z;
 	}
-	
-	VectorAligned& operator=(const Vector &vOther)	
+
+	VectorAligned &operator=(const Vector &vOther)
 	{
 		//Init(vOther.x, vOther.y, vOther.z);
 		x = vOther.x;
@@ -38,5 +39,5 @@ public:
 		z = vOther.z;
 		return *this;
 	}
-	float w;	// this space is used anyway
+	float w; // this space is used anyway
 };

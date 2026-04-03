@@ -2,7 +2,7 @@
 
 #include "types.h"
 
-inline void Vector4DCopy( Vector4D const& src, Vector4D& dst )
+inline void Vector4DCopy(Vector4D const &src, Vector4D &dst)
 {
 	dst.x = src.x;
 	dst.y = src.y;

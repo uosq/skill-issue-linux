@@ -1,8 +1,8 @@
 #pragma once
-#include "inetworksystem.h"
-#include "utlvector.h"
 #include "bitbuf.h"
+#include "inetworksystem.h"
 #include "types.h"
+#include "utlvector.h"
 
 enum
 {
@@ -14,16 +14,16 @@ enum
 #define NET_MAX_DATAGRAM_PAYLOAD 1400
 #define NET_MAX_PAYLOAD_BITS 11
 #define DEFAULT_RATE 10000
-#define SIGNON_TIME_OUT	120.0f
-#define CONNECTION_PROBLEM_TIME	15.0f
+#define SIGNON_TIME_OUT 120.0f
+#define CONNECTION_PROBLEM_TIME 15.0f
 
 #define MAX_RATE 50000
 #define MIN_RATE 100
 
 #define FRAGMENT_BITS 8
-#define FRAGMENT_SIZE (1<<FRAGMENT_BITS)
-#define MAX_FILE_SIZE_BITS	26
-#define MAX_FILE_SIZE ((1<<MAX_FILE_SIZE_BITS)-1)
+#define FRAGMENT_SIZE (1 << FRAGMENT_BITS)
+#define MAX_FILE_SIZE_BITS 26
+#define MAX_FILE_SIZE ((1 << MAX_FILE_SIZE_BITS) - 1)
 
 #define NET_MAX_PAYLOAD 4000
 #define NET_MAX_MESSAGE 4096
@@ -31,8 +31,8 @@ enum
 #define MAX_ROUTEABLE_PACKET 1400
 #define UDP_HEADER_SIZE 28
 
-#define PACKET_FLAG_RELIABLE (1<<0)
-#define PACKET_FLAG_CHOKED (1<<1)
+#define PACKET_FLAG_RELIABLE (1 << 0)
+#define PACKET_FLAG_CHOKED (1 << 1)
 
 class CUDPSocket;
 class CUtlBuffer;
@@ -42,12 +42,14 @@ class INetChannel;
 
 class INetworkMessageHandler
 {
-public:
-	virtual void OnConnectionClosing(INetChannel* channel, char const* reason) = 0;
-	virtual void OnConnectionStarted(INetChannel* channel) = 0;
-	virtual void OnPacketStarted(int inseq, int outseq) = 0;
-	virtual void OnPacketFinished() = 0;
-	virtual ~INetworkMessageHandler() {}
+      public:
+	virtual void OnConnectionClosing(INetChannel *channel, char const *reason) = 0;
+	virtual void OnConnectionStarted(INetChannel *channel)			   = 0;
+	virtual void OnPacketStarted(int inseq, int outseq)			   = 0;
+	virtual void OnPacketFinished()						   = 0;
+	virtual ~INetworkMessageHandler()
+	{
+	}
 };
 
 class CNetPacket;
@@ -68,6 +70,6 @@ class CNetPacket;
 
 class ILookupChannel
 {
-public:
-	virtual INetChannel* FindNetChannel(const netadr_t& from) = 0;
+      public:
+	virtual INetChannel *FindNetChannel(const netadr_t &from) = 0;
 };

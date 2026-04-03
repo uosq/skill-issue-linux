@@ -10,28 +10,28 @@ enum
 
 class INetworkMessage
 {
-public:
-	virtual void SetNetChannel(INetChannel* netchan) = 0;
-	virtual void SetReliable(bool state) = 0;
-	virtual	bool ReadFromBuffer(bf_read& buffer) = 0;
-	virtual	bool WriteToBuffer(bf_write& buffer) = 0;
-	virtual bool IsReliable(void) const = 0;
-	virtual int GetGroup(void) const = 0;
-	virtual int GetType(void) const = 0;
-	virtual const char* GetGroupName(void) const = 0;
-	virtual const char* GetName(void) const = 0;
-	virtual INetChannel* GetNetChannel(void) const = 0;
-	virtual const char* ToString(void) const = 0;
-	virtual void Release() = 0;
-	virtual	~INetworkMessage() {};
+      public:
+	virtual void SetNetChannel(INetChannel *netchan) = 0;
+	virtual void SetReliable(bool state)		 = 0;
+	virtual bool ReadFromBuffer(bf_read &buffer)	 = 0;
+	virtual bool WriteToBuffer(bf_write &buffer)	 = 0;
+	virtual bool IsReliable(void) const		 = 0;
+	virtual int GetGroup(void) const		 = 0;
+	virtual int GetType(void) const			 = 0;
+	virtual const char *GetGroupName(void) const	 = 0;
+	virtual const char *GetName(void) const		 = 0;
+	virtual INetChannel *GetNetChannel(void) const	 = 0;
+	virtual const char *ToString(void) const	 = 0;
+	virtual void Release()				 = 0;
+	virtual ~INetworkMessage() {};
 };
 
 class CNetworkMessage : public INetworkMessage
 {
-public:
+      public:
 	CNetworkMessage()
 	{
-		m_bReliable = true;
+		m_bReliable   = true;
 		m_pNetChannel = nullptr;
 	}
 
@@ -52,7 +52,7 @@ public:
 		return m_bReliable;
 	}
 
-	virtual void SetNetChannel(INetChannel* netchan)
+	virtual void SetNetChannel(INetChannel *netchan)
 	{
 		m_pNetChannel = netchan;
 	}
@@ -62,12 +62,12 @@ public:
 		return false;
 	}
 
-	INetChannel* GetNetChannel() const
+	INetChannel *GetNetChannel() const
 	{
 		return m_pNetChannel;
 	}
 
-protected:
+      protected:
 	bool m_bReliable;
-	INetChannel* m_pNetChannel;
+	INetChannel *m_pNetChannel;
 };

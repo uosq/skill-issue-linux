@@ -3,12 +3,12 @@
 class CApp
 {
       public:
-	CApp ();
+	CApp();
 
-	bool IsInitialized ();
-	void Setup ();
-	bool StartInterfaces ();
-	bool StartHooks ();
+	bool IsInitialized();
+	void Setup();
+	bool StartInterfaces();
+	bool StartHooks();
 
       private:
 	bool m_bInitialized;

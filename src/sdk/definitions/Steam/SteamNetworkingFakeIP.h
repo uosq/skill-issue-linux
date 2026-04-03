@@ -23,12 +23,12 @@ constexpr int k_cbSteamNetworkingSocketsFakeUDPPortMaxMessageSize = 4096;
 ///
 /// Acts like a UDP port, sending and receiving datagrams addressed using
 /// FakeIP addresses.
-/// 
+///
 /// See: ISteamNetworkingSockets::CreateFakeUDPPort
 
 class ISteamNetworkingFakeUDPPort
 {
-public:
+      public:
 	/// Destroy the object and cleanup any internal connections.
 	/// Note that this function call is not threadsafe with respect
 	/// to any other method of this interface.  (However, in general
@@ -36,10 +36,10 @@ public:
 	virtual void DestroyFakeUDPPort() = 0;
 
 	/// Send a datagram to the specified FakeIP.
-	/// 
+	///
 	/// See ISteamNetworkingSockets::SendMessageToConnection for the meaning of
 	/// nSendFlags and possible return codes.
-	/// 
+	///
 	/// Notes:
 	/// - datagrams larger than the underlying MTU are supported, but
 	///   reliable messages (k_nSteamNetworkingSend_Reliable) are not supported.
@@ -56,15 +56,16 @@ public:
 	///   Expect the ping time to fluctuate during this period, and it's possible
 	///   that messages will be delivered out of order (which is also possible with
 	///   ordinary UDP).
-	virtual EResult SendMessageToFakeIP( const SteamNetworkingIPAddr &remoteAddress, const void *pData, uint32 cbData, int nSendFlags ) = 0;
+	virtual EResult SendMessageToFakeIP(const SteamNetworkingIPAddr &remoteAddress, const void *pData,
+					    uint32 cbData, int nSendFlags) = 0;
 
 	/// Receive messages on the port.
-	/// 
+	///
 	/// Returns the number of messages returned into your array, up to nMaxMessages.
-	/// 
+	///
 	/// SteamNetworkingMessage_t::m_identity in the returned message(s) will always contain
 	/// a FakeIP.  See ISteamNetworkingUtils::GetRealIdentityForFakeIP.
-	virtual int ReceiveMessages( SteamNetworkingMessage_t **ppOutMessages, int nMaxMessages ) = 0;
+	virtual int ReceiveMessages(SteamNetworkingMessage_t **ppOutMessages, int nMaxMessages) = 0;
 
 	/// Schedule the internal connection for a given peer to be cleaned up in a few seconds.
 	///
@@ -74,14 +75,14 @@ public:
 	/// sent or received from the peer, the cleanup is canceled and the usual timeout
 	/// value is restored.  Thus you will usually call this immediately after sending
 	/// or receiving application-layer "close connection" packets.
-	virtual void ScheduleCleanup( const SteamNetworkingIPAddr &remoteAddress ) = 0;
+	virtual void ScheduleCleanup(const SteamNetworkingIPAddr &remoteAddress) = 0;
 };
 
 /// Callback struct used to notify when a connection has changed state
-#if defined( VALVE_CALLBACK_PACK_SMALL )
-#pragma pack( push, 4 )
-#elif defined( VALVE_CALLBACK_PACK_LARGE )
-#pragma pack( push, 8 )
+#if defined(VALVE_CALLBACK_PACK_SMALL)
+#pragma pack(push, 4)
+#elif defined(VALVE_CALLBACK_PACK_LARGE)
+#pragma pack(push, 8)
 #else
 #error "Must define VALVE_CALLBACK_PACK_SMALL or VALVE_CALLBACK_PACK_LARGE"
 #endif
@@ -92,7 +93,10 @@ public:
 /// See also ISteamNetworkingSockets::GetFakeIP
 struct SteamNetworkingFakeIPResult_t
 {
-	enum { k_iCallback = k_iSteamNetworkingSocketsCallbacks + 3 };
+	enum
+	{
+		k_iCallback = k_iSteamNetworkingSocketsCallbacks + 3
+	};
 
 	/// Status/result of the allocation request.  Possible failure values are:
 	/// - k_EResultBusy - you called GetFakeIP but the request has not completed.
@@ -126,10 +130,13 @@ struct SteamNetworkingFakeIPResult_t
 	///
 	/// (NOTE: At the time of this writing, the maximum number of ports you may
 	/// request is 4.)
-	enum { k_nMaxReturnPorts = 8 };
+	enum
+	{
+		k_nMaxReturnPorts = 8
+	};
 	uint16 m_unPorts[k_nMaxReturnPorts];
 };
 
-#pragma pack( pop )
+#pragma pack(pop)
 
 #endif // _H

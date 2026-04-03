@@ -8,41 +8,41 @@
 #define STEAMNETWORKINGTYPES
 #pragma once
 
-#include <string.h>
-#include <stdint.h>
-#include "SteamTypes.h"
 #include "SteamClientPublic.h"
+#include "SteamTypes.h"
+#include <stdint.h>
+#include <string.h>
 
 //-----------------------------------------------------------------------------
 // SteamNetworkingSockets config.
 #if !defined(STEAMNETWORKINGSOCKETS_STANDALONELIB) && !defined(STEAMNETWORKINGSOCKETS_STEAMAPI)
-	#define STEAMNETWORKINGSOCKETS_STEAMAPI
+#define STEAMNETWORKINGSOCKETS_STEAMAPI
 #endif
 //-----------------------------------------------------------------------------
 
 #ifdef NN_NINTENDO_SDK // We always static link on Nintendo
-	#define STEAMNETWORKINGSOCKETS_STATIC_LINK
+#define STEAMNETWORKINGSOCKETS_STATIC_LINK
 #endif
-#if defined( STEAMNETWORKINGSOCKETS_STATIC_LINK )
-	#define STEAMNETWORKINGSOCKETS_INTERFACE extern "C"
-#elif defined( STEAMNETWORKINGSOCKETS_FOREXPORT )
-	#ifdef _WIN32
-		#define STEAMNETWORKINGSOCKETS_INTERFACE extern "C" __declspec( dllexport )
-	#else
-		#define STEAMNETWORKINGSOCKETS_INTERFACE extern "C" __attribute__((visibility("default")))
-	#endif
+#if defined(STEAMNETWORKINGSOCKETS_STATIC_LINK)
+#define STEAMNETWORKINGSOCKETS_INTERFACE extern "C"
+#elif defined(STEAMNETWORKINGSOCKETS_FOREXPORT)
+#ifdef _WIN32
+#define STEAMNETWORKINGSOCKETS_INTERFACE extern "C" __declspec(dllexport)
 #else
-	#ifdef _WIN32
-		#define STEAMNETWORKINGSOCKETS_INTERFACE extern "C" __declspec( dllimport )
-	#else
-		#define STEAMNETWORKINGSOCKETS_INTERFACE extern "C"
-	#endif
+#define STEAMNETWORKINGSOCKETS_INTERFACE extern "C" __attribute__((visibility("default")))
+#endif
+#else
+#ifdef _WIN32
+#define STEAMNETWORKINGSOCKETS_INTERFACE extern "C" __declspec(dllimport)
+#else
+#define STEAMNETWORKINGSOCKETS_INTERFACE extern "C"
+#endif
 #endif
 
-#if defined( VALVE_CALLBACK_PACK_SMALL )
-#pragma pack( push, 4 )
-#elif defined( VALVE_CALLBACK_PACK_LARGE )
-#pragma pack( push, 8 )
+#if defined(VALVE_CALLBACK_PACK_SMALL)
+#pragma pack(push, 4)
+#elif defined(VALVE_CALLBACK_PACK_LARGE)
+#pragma pack(push, 8)
 #else
 #error "Must define VALVE_CALLBACK_PACK_SMALL or VALVE_CALLBACK_PACK_LARGE"
 #endif
@@ -57,8 +57,8 @@ struct SteamNetworkingMessagesSessionRequest_t;
 struct SteamNetworkingMessagesSessionFailed_t;
 struct SteamNetworkingFakeIPResult_t;
 
-typedef void (*FnSteamNetConnectionStatusChanged)( SteamNetConnectionStatusChangedCallback_t * );
-typedef void (*FnSteamNetAuthenticationStatusChanged)( SteamNetAuthenticationStatus_t * );
+typedef void (*FnSteamNetConnectionStatusChanged)(SteamNetConnectionStatusChangedCallback_t *);
+typedef void (*FnSteamNetAuthenticationStatusChanged)(SteamNetAuthenticationStatus_t *);
 typedef void (*FnSteamRelayNetworkStatusChanged)(SteamRelayNetworkStatus_t *);
 typedef void (*FnSteamNetworkingMessagesSessionRequest)(SteamNetworkingMessagesSessionRequest_t *);
 typedef void (*FnSteamNetworkingMessagesSessionFailed)(SteamNetworkingMessagesSessionFailed_t *);
@@ -84,7 +84,7 @@ const int k_cchMaxSteamNetworkingErrMsg = 1024;
 
 /// Used to return English-language diagnostic error messages to caller.
 /// (For debugging or spewing to a console, etc.  Not intended for UI.)
-typedef char SteamNetworkingErrMsg[ k_cchMaxSteamNetworkingErrMsg ];
+typedef char SteamNetworkingErrMsg[k_cchMaxSteamNetworkingErrMsg];
 
 /// Identifier used for a network location point of presence.  (E.g. a Valve data center.)
 /// Typically you won't need to directly manipulate these.
@@ -106,21 +106,25 @@ enum ESteamNetworkingAvailability
 	// depends on of requests this resource, such as querying the status, attempting
 	// to initiate a connection, receive a connection, etc.  If you do not take any
 	// action at all, we do not automatically retry in the background.
-	k_ESteamNetworkingAvailability_CannotTry = -102,		// A dependent resource is missing, so this service is unavailable.  (E.g. we cannot talk to routers because Internet is down or we don't have the network config.)
-	k_ESteamNetworkingAvailability_Failed = -101,			// We have tried for enough time that we would expect to have been successful by now.  We have never been successful
-	k_ESteamNetworkingAvailability_Previously = -100,		// We tried and were successful at one time, but now it looks like we have a problem
+	k_ESteamNetworkingAvailability_CannotTry =
+	    -102, // A dependent resource is missing, so this service is unavailable.  (E.g. we cannot talk to routers because Internet is down or we don't have the network config.)
+	k_ESteamNetworkingAvailability_Failed =
+	    -101, // We have tried for enough time that we would expect to have been successful by now.  We have never been successful
+	k_ESteamNetworkingAvailability_Previously =
+	    -100, // We tried and were successful at one time, but now it looks like we have a problem
 
-	k_ESteamNetworkingAvailability_Retrying = -10,		// We previously failed and are currently retrying
+	k_ESteamNetworkingAvailability_Retrying = -10, // We previously failed and are currently retrying
 
 	// Not a problem, but not ready either
-	k_ESteamNetworkingAvailability_NeverTried = 1,		// We don't know because we haven't ever checked/tried
-	k_ESteamNetworkingAvailability_Waiting = 2,			// We're waiting on a dependent resource to be acquired.  (E.g. we cannot obtain a cert until we are logged into Steam.  We cannot measure latency to relays until we have the network config.)
-	k_ESteamNetworkingAvailability_Attempting = 3,		// We're actively trying now, but are not yet successful.
+	k_ESteamNetworkingAvailability_NeverTried = 1, // We don't know because we haven't ever checked/tried
+	k_ESteamNetworkingAvailability_Waiting =
+	    2, // We're waiting on a dependent resource to be acquired.  (E.g. we cannot obtain a cert until we are logged into Steam.  We cannot measure latency to relays until we have the network config.)
+	k_ESteamNetworkingAvailability_Attempting = 3, // We're actively trying now, but are not yet successful.
 
-	k_ESteamNetworkingAvailability_Current = 100,			// Resource is online/available
+	k_ESteamNetworkingAvailability_Current	  = 100, // Resource is online/available
 
-
-	k_ESteamNetworkingAvailability_Unknown = 0,			// Internal dummy/sentinel, or value is not applicable in this context
+	k_ESteamNetworkingAvailability_Unknown =
+	    0, // Internal dummy/sentinel, or value is not applicable in this context
 	k_ESteamNetworkingAvailability__Force32bit = 0x7fffffff,
 };
 
@@ -140,10 +144,10 @@ enum ESteamNetworkingIdentityType
 	//
 	// Basic platform-specific identifiers.
 	//
-	k_ESteamNetworkingIdentityType_SteamID = 16, // 64-bit CSteamID
+	k_ESteamNetworkingIdentityType_SteamID	      = 16, // 64-bit CSteamID
 	k_ESteamNetworkingIdentityType_XboxPairwiseID = 17, // Publisher-specific user identity, as string
-	k_ESteamNetworkingIdentityType_SonyPSN = 18, // 64-bit ID
-	k_ESteamNetworkingIdentityType_GoogleStadia = 19, // 64-bit ID
+	k_ESteamNetworkingIdentityType_SonyPSN	      = 18, // 64-bit ID
+	k_ESteamNetworkingIdentityType_GoogleStadia   = 19, // 64-bit ID
 	//k_ESteamNetworkingIdentityType_NintendoNetworkServiceAccount,
 	//k_ESteamNetworkingIdentityType_EpicGameStore
 	//k_ESteamNetworkingIdentityType_WeGame
@@ -169,7 +173,7 @@ enum ESteamNetworkingIdentityType
 	// signed by somebody you have chosen to trust, with this identity on it.
 	// It's up to you to ultimately decide what this identity means.
 	k_ESteamNetworkingIdentityType_GenericString = 2,
-	k_ESteamNetworkingIdentityType_GenericBytes = 3,
+	k_ESteamNetworkingIdentityType_GenericBytes  = 3,
 
 	// This identity type is used when we parse a string that looks like is a
 	// valid identity, just of a kind that we don't recognize.  In this case, we
@@ -194,25 +198,32 @@ enum ESteamNetworkingFakeIPType
 	k_ESteamNetworkingFakeIPType__Force32Bit = 0x7fffffff
 };
 
-#pragma pack(push,1)
+#pragma pack(push, 1)
 
 /// Store an IP and port.  IPv6 is always used; IPv4 is represented using
 /// "IPv4-mapped" addresses: IPv4 aa.bb.cc.dd => IPv6 ::ffff:aabb:ccdd
 /// (RFC 4291 section 2.5.5.2.)
 struct SteamNetworkingIPAddr
 {
-	void Clear(); // Set everything to zero.  E.g. [::]:0
-	bool IsIPv6AllZeros() const;  // Return true if the IP is ::0.  (Doesn't check port.)
-	void SetIPv6( const uint8 *ipv6, uint16 nPort ); // Set IPv6 address.  IP is interpreted as bytes, so there are no endian issues.  (Same as inaddr_in6.)  The IP can be a mapped IPv4 address
-	void SetIPv4( uint32 nIP, uint16 nPort ); // Sets to IPv4 mapped address.  IP and port are in host byte order.
-	bool IsIPv4() const; // Return true if IP is mapped IPv4
-	uint32 GetIPv4() const; // Returns IP in host byte order (e.g. aa.bb.cc.dd as 0xaabbccdd).  Returns 0 if IP is not mapped IPv4.
-	void SetIPv6LocalHost( uint16 nPort = 0); // Set to the IPv6 localhost address ::1, and the specified port.
+	void Clear();		     // Set everything to zero.  E.g. [::]:0
+	bool IsIPv6AllZeros() const; // Return true if the IP is ::0.  (Doesn't check port.)
+	void SetIPv6(
+	    const uint8 *ipv6,
+	    uint16
+		nPort); // Set IPv6 address.  IP is interpreted as bytes, so there are no endian issues.  (Same as inaddr_in6.)  The IP can be a mapped IPv4 address
+	void SetIPv4(uint32 nIP, uint16 nPort); // Sets to IPv4 mapped address.  IP and port are in host byte order.
+	bool IsIPv4() const;			// Return true if IP is mapped IPv4
+	uint32 GetIPv4()
+	    const; // Returns IP in host byte order (e.g. aa.bb.cc.dd as 0xaabbccdd).  Returns 0 if IP is not mapped IPv4.
+	void SetIPv6LocalHost(uint16 nPort = 0); // Set to the IPv6 localhost address ::1, and the specified port.
 	bool IsLocalHost() const; // Return true if this identity is localhost.  (Either IPv6 ::1, or IPv4 127.0.0.1)
 
 	// Max length of the buffer needed to hold IP formatted using ToString, including '\0'
 	// ([0123:4567:89ab:cdef:0123:4567:89ab:cdef]:12345)
-	enum { k_cchMaxString = 48 };
+	enum
+	{
+		k_cchMaxString = 48
+	};
 
 	/// Print to a string, with or without the port.  Mapped IPv4 addresses are printed
 	/// as dotted decimal (12.34.56.78), otherwise this will print the canonical
@@ -221,36 +232,39 @@ struct SteamNetworkingIPAddr
 	/// to avoid truncation
 	///
 	/// See also SteamNetworkingIdentityRender
-	inline void ToString( char *buf, size_t cbBuf, bool bWithPort ) const;
+	inline void ToString(char *buf, size_t cbBuf, bool bWithPort) const;
 
 	/// Parse an IP address and optional port.  If a port is not present, it is set to 0.
 	/// (This means that you cannot tell if a zero port was explicitly specified.)
-	inline bool ParseString( const char *pszStr );
+	inline bool ParseString(const char *pszStr);
 
 	/// RFC4038, section 4.2
-	struct IPv4MappedAddress {
+	struct IPv4MappedAddress
+	{
 		uint64 m_8zeros;
 		uint16 m_0000;
 		uint16 m_ffff;
-		uint8 m_ip[ 4 ]; // NOTE: As bytes, i.e. network byte order
+		uint8 m_ip[4]; // NOTE: As bytes, i.e. network byte order
 	};
 
-	union
-	{
-		uint8 m_ipv6[ 16 ];
+	union {
+		uint8 m_ipv6[16];
 		IPv4MappedAddress m_ipv4;
 	};
 	uint16 m_port; // Host byte order
 
 	/// See if two addresses are identical
-	bool operator==(const SteamNetworkingIPAddr &x ) const;
+	bool operator==(const SteamNetworkingIPAddr &x) const;
 
 	/// Classify address as FakeIP.  This function never returns
 	/// k_ESteamNetworkingFakeIPType_Invalid.
 	ESteamNetworkingFakeIPType GetFakeIPType() const;
 
 	/// Return true if we are a FakeIP
-	bool IsFakeIP() const { return GetFakeIPType() > k_ESteamNetworkingFakeIPType_NotFake; }
+	bool IsFakeIP() const
+	{
+		return GetFakeIPType() > k_ESteamNetworkingFakeIPType_NotFake;
+	}
 };
 
 /// An abstract way to represent the identity of a network host.  All identities can
@@ -268,43 +282,47 @@ struct SteamNetworkingIdentity
 	//
 
 	void Clear();
-	bool IsInvalid() const; // Return true if we are the invalid type.  Does not make any other validity checks (e.g. is SteamID actually valid)
+	bool IsInvalid()
+	    const; // Return true if we are the invalid type.  Does not make any other validity checks (e.g. is SteamID actually valid)
 
-	void SetSteamID( CSteamID steamID );
-	CSteamID GetSteamID() const; // Return black CSteamID (!IsValid()) if identity is not a SteamID
-	void SetSteamID64( uint64 steamID ); // Takes SteamID as raw 64-bit number
-	uint64 GetSteamID64() const; // Returns 0 if identity is not SteamID
+	void SetSteamID(CSteamID steamID);
+	CSteamID GetSteamID() const;	   // Return black CSteamID (!IsValid()) if identity is not a SteamID
+	void SetSteamID64(uint64 steamID); // Takes SteamID as raw 64-bit number
+	uint64 GetSteamID64() const;	   // Returns 0 if identity is not SteamID
 
-	bool SetXboxPairwiseID( const char *pszString ); // Returns false if invalid length
-	const char *GetXboxPairwiseID() const; // Returns nullptr if not Xbox ID
+	bool SetXboxPairwiseID(const char *pszString); // Returns false if invalid length
+	const char *GetXboxPairwiseID() const;	       // Returns nullptr if not Xbox ID
 
-	void SetPSNID( uint64 id );
+	void SetPSNID(uint64 id);
 	uint64 GetPSNID() const; // Returns 0 if not PSN
 
-	void SetStadiaID( uint64 id );
+	void SetStadiaID(uint64 id);
 	uint64 GetStadiaID() const; // Returns 0 if not Stadia
 
-	void SetIPAddr( const SteamNetworkingIPAddr &addr ); // Set to specified IP:port
-	const SteamNetworkingIPAddr *GetIPAddr() const; // returns null if we are not an IP address.
-	void SetIPv4Addr( uint32 nIPv4, uint16 nPort ); // Set to specified IPv4:port
-	uint32 GetIPv4() const; // returns 0 if we are not an IPv4 address.
+	void SetIPAddr(const SteamNetworkingIPAddr &addr); // Set to specified IP:port
+	const SteamNetworkingIPAddr *GetIPAddr() const;	   // returns null if we are not an IP address.
+	void SetIPv4Addr(uint32 nIPv4, uint16 nPort);	   // Set to specified IPv4:port
+	uint32 GetIPv4() const;				   // returns 0 if we are not an IPv4 address.
 
 	ESteamNetworkingFakeIPType GetFakeIPType() const;
-	bool IsFakeIP() const { return GetFakeIPType() > k_ESteamNetworkingFakeIPType_NotFake; }
+	bool IsFakeIP() const
+	{
+		return GetFakeIPType() > k_ESteamNetworkingFakeIPType_NotFake;
+	}
 
 	// "localhost" is equivalent for many purposes to "anonymous."  Our remote
 	// will identify us by the network address we use.
-	void SetLocalHost(); // Set to localhost.  (We always use IPv6 ::1 for this, not 127.0.0.1)
+	void SetLocalHost();	  // Set to localhost.  (We always use IPv6 ::1 for this, not 127.0.0.1)
 	bool IsLocalHost() const; // Return true if this identity is localhost.
 
-	bool SetGenericString( const char *pszString ); // Returns false if invalid length
-	const char *GetGenericString() const; // Returns nullptr if not generic string type
+	bool SetGenericString(const char *pszString); // Returns false if invalid length
+	const char *GetGenericString() const;	      // Returns nullptr if not generic string type
 
-	bool SetGenericBytes( const void *data, size_t cbLen ); // Returns false if invalid size.
-	const uint8 *GetGenericBytes( int &cbLen ) const; // Returns null if not generic bytes type
+	bool SetGenericBytes(const void *data, size_t cbLen); // Returns false if invalid size.
+	const uint8 *GetGenericBytes(int &cbLen) const;	      // Returns null if not generic bytes type
 
 	/// See if two identities are identical
-	bool operator==(const SteamNetworkingIdentity &x ) const;
+	bool operator==(const SteamNetworkingIdentity &x) const;
 
 	/// Print to a human-readable string.  This is suitable for debug messages
 	/// or any other time you need to encode the identity as a string.  It has a
@@ -312,21 +330,24 @@ struct SteamNetworkingIdentity
 	/// k_cchMaxString bytes big to avoid truncation.
 	///
 	/// See also SteamNetworkingIPAddrRender
-	void ToString( char *buf, size_t cbBuf ) const;
+	void ToString(char *buf, size_t cbBuf) const;
 
 	/// Parse back a string that was generated using ToString.  If we don't understand the
 	/// string, but it looks "reasonable" (it matches the pattern type:<type-data> and doesn't
 	/// have any funky characters, etc), then we will return true, and the type is set to
 	/// k_ESteamNetworkingIdentityType_UnknownType.  false will only be returned if the string
 	/// looks invalid.
-	bool ParseString( const char *pszStr );
+	bool ParseString(const char *pszStr);
 
 	// Max sizes
-	enum {
-		k_cchMaxString = 128, // Max length of the buffer needed to hold any identity, formatted in string format by ToString
-		k_cchMaxGenericString = 32, // Max length of the string for generic string identities.  Including terminating '\0'
+	enum
+	{
+		k_cchMaxString =
+		    128, // Max length of the buffer needed to hold any identity, formatted in string format by ToString
+		k_cchMaxGenericString =
+		    32, // Max length of the string for generic string identities.  Including terminating '\0'
 		k_cchMaxXboxPairwiseID = 33, // Including terminating '\0'
-		k_cbMaxGenericBytes = 32,
+		k_cbMaxGenericBytes    = 32,
 	};
 
 	//
@@ -340,12 +361,12 @@ struct SteamNetworkingIdentity
 		uint64 m_steamID64;
 		uint64 m_PSNID;
 		uint64 m_stadiaID;
-		char m_szGenericString[ k_cchMaxGenericString ];
-		char m_szXboxPairwiseID[ k_cchMaxXboxPairwiseID ];
-		uint8 m_genericBytes[ k_cbMaxGenericBytes ];
-		char m_szUnknownRawString[ k_cchMaxString ];
+		char m_szGenericString[k_cchMaxGenericString];
+		char m_szXboxPairwiseID[k_cchMaxXboxPairwiseID];
+		uint8 m_genericBytes[k_cbMaxGenericBytes];
+		char m_szUnknownRawString[k_cchMaxString];
 		SteamNetworkingIPAddr m_ip;
-		uint32 m_reserved[ 32 ]; // Pad structure to leave easy room for future expansion
+		uint32 m_reserved[32]; // Pad structure to leave easy room for future expansion
 	};
 };
 #pragma pack(pop)
@@ -422,11 +443,11 @@ enum ESteamNetworkingConnectionState
 	/// in the queue are available.
 	k_ESteamNetworkingConnectionState_ProblemDetectedLocally = 5,
 
-//
-// The following values are used internally and will not be returned by any API.
-// We document them here to provide a little insight into the state machine that is used
-// under the hood.
-//
+	//
+	// The following values are used internally and will not be returned by any API.
+	// We document them here to provide a little insight into the state machine that is used
+	// under the hood.
+	//
 
 	/// We've disconnected on our side, and from an API perspective the connection is closed.
 	/// No more data may be sent or received.  All reliable data has been flushed, or else
@@ -451,10 +472,10 @@ enum ESteamNetworkingConnectionState
 	/// read it back.  Typically this is not a problem, as application protocols that utilize
 	/// the lingering functionality are designed for the remote host to wait for the response
 	/// before sending any more data.
-	k_ESteamNetworkingConnectionState_Linger = -2, 
+	k_ESteamNetworkingConnectionState_Linger = -2,
 
 	/// Connection is completely inactive and ready to be destroyed
-	k_ESteamNetworkingConnectionState_Dead = -3,
+	k_ESteamNetworkingConnectionState_Dead	      = -3,
 
 	k_ESteamNetworkingConnectionState__Force32Bit = 0x7fffffff
 };
@@ -485,18 +506,18 @@ enum ESteamNetConnectionEnd
 	// 1xxx: Application ended the connection in a "usual" manner.
 	//       E.g.: user intentionally disconnected from the server,
 	//             gameplay ended normally, etc
-	k_ESteamNetConnectionEnd_App_Min = 1000,
-		k_ESteamNetConnectionEnd_App_Generic = k_ESteamNetConnectionEnd_App_Min,
-		// Use codes in this range for "normal" disconnection
+	k_ESteamNetConnectionEnd_App_Min     = 1000,
+	k_ESteamNetConnectionEnd_App_Generic = k_ESteamNetConnectionEnd_App_Min,
+	// Use codes in this range for "normal" disconnection
 	k_ESteamNetConnectionEnd_App_Max = 1999,
 
 	// 2xxx: Application ended the connection in some sort of exceptional
 	//       or unusual manner that might indicate a bug or configuration
 	//       issue.
-	// 
-	k_ESteamNetConnectionEnd_AppException_Min = 2000,
-		k_ESteamNetConnectionEnd_AppException_Generic = k_ESteamNetConnectionEnd_AppException_Min,
-		// Use codes in this range for "unusual" disconnection
+	//
+	k_ESteamNetConnectionEnd_AppException_Min     = 2000,
+	k_ESteamNetConnectionEnd_AppException_Generic = k_ESteamNetConnectionEnd_AppException_Min,
+	// Use codes in this range for "unusual" disconnection
 	k_ESteamNetConnectionEnd_AppException_Max = 2999,
 
 	//
@@ -510,45 +531,45 @@ enum ESteamNetConnectionEnd
 	//       local host or their connection to the Internet.
 	k_ESteamNetConnectionEnd_Local_Min = 3000,
 
-		// You cannot do what you want to do because you're running in offline mode.
-		k_ESteamNetConnectionEnd_Local_OfflineMode = 3001,
+	// You cannot do what you want to do because you're running in offline mode.
+	k_ESteamNetConnectionEnd_Local_OfflineMode = 3001,
 
-		// We're having trouble contacting many (perhaps all) relays.
-		// Since it's unlikely that they all went offline at once, the best
-		// explanation is that we have a problem on our end.  Note that we don't
-		// bother distinguishing between "many" and "all", because in practice,
-		// it takes time to detect a connection problem, and by the time
-		// the connection has timed out, we might not have been able to
-		// actively probe all of the relay clusters, even if we were able to
-		// contact them at one time.  So this code just means that:
-		//
-		// * We don't have any recent successful communication with any relay.
-		// * We have evidence of recent failures to communicate with multiple relays.
-		k_ESteamNetConnectionEnd_Local_ManyRelayConnectivity = 3002,
+	// We're having trouble contacting many (perhaps all) relays.
+	// Since it's unlikely that they all went offline at once, the best
+	// explanation is that we have a problem on our end.  Note that we don't
+	// bother distinguishing between "many" and "all", because in practice,
+	// it takes time to detect a connection problem, and by the time
+	// the connection has timed out, we might not have been able to
+	// actively probe all of the relay clusters, even if we were able to
+	// contact them at one time.  So this code just means that:
+	//
+	// * We don't have any recent successful communication with any relay.
+	// * We have evidence of recent failures to communicate with multiple relays.
+	k_ESteamNetConnectionEnd_Local_ManyRelayConnectivity = 3002,
 
-		// A hosted server is having trouble talking to the relay
-		// that the client was using, so the problem is most likely
-		// on our end
-		k_ESteamNetConnectionEnd_Local_HostedServerPrimaryRelay = 3003,
+	// A hosted server is having trouble talking to the relay
+	// that the client was using, so the problem is most likely
+	// on our end
+	k_ESteamNetConnectionEnd_Local_HostedServerPrimaryRelay = 3003,
 
-		// We're not able to get the SDR network config.  This is
-		// *almost* always a local issue, since the network config
-		// comes from the CDN, which is pretty darn reliable.
-		k_ESteamNetConnectionEnd_Local_NetworkConfig = 3004,
+	// We're not able to get the SDR network config.  This is
+	// *almost* always a local issue, since the network config
+	// comes from the CDN, which is pretty darn reliable.
+	k_ESteamNetConnectionEnd_Local_NetworkConfig = 3004,
 
-		// Steam rejected our request because we don't have rights
-		// to do this.
-		k_ESteamNetConnectionEnd_Local_Rights = 3005,
+	// Steam rejected our request because we don't have rights
+	// to do this.
+	k_ESteamNetConnectionEnd_Local_Rights = 3005,
 
-		// ICE P2P rendezvous failed because we were not able to
-		// determine our "public" address (e.g. reflexive address via STUN)
-		//
-		// If relay fallback is available (it always is on Steam), then
-		// this is only used internally and will not be returned as a high
-		// level failure.
-		k_ESteamNetConnectionEnd_Local_P2P_ICE_NoPublicAddresses = 3006,
+	// ICE P2P rendezvous failed because we were not able to
+	// determine our "public" address (e.g. reflexive address via STUN)
+	//
+	// If relay fallback is available (it always is on Steam), then
+	// this is only used internally and will not be returned as a high
+	// level failure.
+	k_ESteamNetConnectionEnd_Local_P2P_ICE_NoPublicAddresses = 3006,
 
-	k_ESteamNetConnectionEnd_Local_Max = 3999,
+	k_ESteamNetConnectionEnd_Local_Max			 = 3999,
 
 	// 4xxx: Connection failed or ended, and it appears that the
 	//       cause does NOT have to do with the local host or their
@@ -556,107 +577,107 @@ enum ESteamNetConnectionEnd
 	//       remote host, or it could be somewhere in between.
 	k_ESteamNetConnectionEnd_Remote_Min = 4000,
 
-		// The connection was lost, and as far as we can tell our connection
-		// to relevant services (relays) has not been disrupted.  This doesn't
-		// mean that the problem is "their fault", it just means that it doesn't
-		// appear that we are having network issues on our end.
-		k_ESteamNetConnectionEnd_Remote_Timeout = 4001,
+	// The connection was lost, and as far as we can tell our connection
+	// to relevant services (relays) has not been disrupted.  This doesn't
+	// mean that the problem is "their fault", it just means that it doesn't
+	// appear that we are having network issues on our end.
+	k_ESteamNetConnectionEnd_Remote_Timeout = 4001,
 
-		// Something was invalid with the cert or crypt handshake
-		// info you gave me, I don't understand or like your key types,
-		// etc.
-		k_ESteamNetConnectionEnd_Remote_BadCrypt = 4002,
+	// Something was invalid with the cert or crypt handshake
+	// info you gave me, I don't understand or like your key types,
+	// etc.
+	k_ESteamNetConnectionEnd_Remote_BadCrypt = 4002,
 
-		// You presented me with a cert that was I was able to parse
-		// and *technically* we could use encrypted communication.
-		// But there was a problem that prevents me from checking your identity
-		// or ensuring that somebody int he middle can't observe our communication.
-		// E.g.: - the CA key was missing (and I don't accept unsigned certs)
-		// - The CA key isn't one that I trust,
-		// - The cert doesn't was appropriately restricted by app, user, time, data center, etc.
-		// - The cert wasn't issued to you.
-		// - etc
-		k_ESteamNetConnectionEnd_Remote_BadCert = 4003,
+	// You presented me with a cert that was I was able to parse
+	// and *technically* we could use encrypted communication.
+	// But there was a problem that prevents me from checking your identity
+	// or ensuring that somebody int he middle can't observe our communication.
+	// E.g.: - the CA key was missing (and I don't accept unsigned certs)
+	// - The CA key isn't one that I trust,
+	// - The cert doesn't was appropriately restricted by app, user, time, data center, etc.
+	// - The cert wasn't issued to you.
+	// - etc
+	k_ESteamNetConnectionEnd_Remote_BadCert = 4003,
 
-		// These will never be returned
-		//k_ESteamNetConnectionEnd_Remote_NotLoggedIn_DEPRECATED = 4004,
-		//k_ESteamNetConnectionEnd_Remote_NotRunningApp_DEPRECATED = 4005,
+	// These will never be returned
+	//k_ESteamNetConnectionEnd_Remote_NotLoggedIn_DEPRECATED = 4004,
+	//k_ESteamNetConnectionEnd_Remote_NotRunningApp_DEPRECATED = 4005,
 
-		// Something wrong with the protocol version you are using.
-		// (Probably the code you are running is too old.)
-		k_ESteamNetConnectionEnd_Remote_BadProtocolVersion = 4006,
+	// Something wrong with the protocol version you are using.
+	// (Probably the code you are running is too old.)
+	k_ESteamNetConnectionEnd_Remote_BadProtocolVersion = 4006,
 
-		// NAT punch failed failed because we never received any public
-		// addresses from the remote host.  (But we did receive some
-		// signals form them.)
-		//
-		// If relay fallback is available (it always is on Steam), then
-		// this is only used internally and will not be returned as a high
-		// level failure.
-		k_ESteamNetConnectionEnd_Remote_P2P_ICE_NoPublicAddresses = 4007,
+	// NAT punch failed failed because we never received any public
+	// addresses from the remote host.  (But we did receive some
+	// signals form them.)
+	//
+	// If relay fallback is available (it always is on Steam), then
+	// this is only used internally and will not be returned as a high
+	// level failure.
+	k_ESteamNetConnectionEnd_Remote_P2P_ICE_NoPublicAddresses = 4007,
 
-	k_ESteamNetConnectionEnd_Remote_Max = 4999,
+	k_ESteamNetConnectionEnd_Remote_Max			  = 4999,
 
 	// 5xxx: Connection failed for some other reason.
 	k_ESteamNetConnectionEnd_Misc_Min = 5000,
 
-		// A failure that isn't necessarily the result of a software bug,
-		// but that should happen rarely enough that it isn't worth specifically
-		// writing UI or making a localized message for.
-		// The debug string should contain further details.
-		k_ESteamNetConnectionEnd_Misc_Generic = 5001,
+	// A failure that isn't necessarily the result of a software bug,
+	// but that should happen rarely enough that it isn't worth specifically
+	// writing UI or making a localized message for.
+	// The debug string should contain further details.
+	k_ESteamNetConnectionEnd_Misc_Generic = 5001,
 
-		// Generic failure that is most likely a software bug.
-		k_ESteamNetConnectionEnd_Misc_InternalError = 5002,
+	// Generic failure that is most likely a software bug.
+	k_ESteamNetConnectionEnd_Misc_InternalError = 5002,
 
-		// The connection to the remote host timed out, but we
-		// don't know if the problem is on our end, in the middle,
-		// or on their end.
-		k_ESteamNetConnectionEnd_Misc_Timeout = 5003,
+	// The connection to the remote host timed out, but we
+	// don't know if the problem is on our end, in the middle,
+	// or on their end.
+	k_ESteamNetConnectionEnd_Misc_Timeout = 5003,
 
-		//k_ESteamNetConnectionEnd_Misc_RelayConnectivity_DEPRECATED = 5004,
+	//k_ESteamNetConnectionEnd_Misc_RelayConnectivity_DEPRECATED = 5004,
 
-		// There's some trouble talking to Steam.
-		k_ESteamNetConnectionEnd_Misc_SteamConnectivity = 5005,
+	// There's some trouble talking to Steam.
+	k_ESteamNetConnectionEnd_Misc_SteamConnectivity = 5005,
 
-		// A server in a dedicated hosting situation has no relay sessions
-		// active with which to talk back to a client.  (It's the client's
-		// job to open and maintain those sessions.)
-		k_ESteamNetConnectionEnd_Misc_NoRelaySessionsToClient = 5006,
+	// A server in a dedicated hosting situation has no relay sessions
+	// active with which to talk back to a client.  (It's the client's
+	// job to open and maintain those sessions.)
+	k_ESteamNetConnectionEnd_Misc_NoRelaySessionsToClient = 5006,
 
-		// While trying to initiate a connection, we never received
-		// *any* communication from the peer.
-		//k_ESteamNetConnectionEnd_Misc_ServerNeverReplied = 5007,
+	// While trying to initiate a connection, we never received
+	// *any* communication from the peer.
+	//k_ESteamNetConnectionEnd_Misc_ServerNeverReplied = 5007,
 
-		// P2P rendezvous failed in a way that we don't have more specific
-		// information
-		k_ESteamNetConnectionEnd_Misc_P2P_Rendezvous = 5008,
+	// P2P rendezvous failed in a way that we don't have more specific
+	// information
+	k_ESteamNetConnectionEnd_Misc_P2P_Rendezvous = 5008,
 
-		// NAT punch failed, probably due to NAT/firewall configuration.
-		//
-		// If relay fallback is available (it always is on Steam), then
-		// this is only used internally and will not be returned as a high
-		// level failure.
-		k_ESteamNetConnectionEnd_Misc_P2P_NAT_Firewall = 5009,
+	// NAT punch failed, probably due to NAT/firewall configuration.
+	//
+	// If relay fallback is available (it always is on Steam), then
+	// this is only used internally and will not be returned as a high
+	// level failure.
+	k_ESteamNetConnectionEnd_Misc_P2P_NAT_Firewall = 5009,
 
-		// Our peer replied that it has no record of the connection.
-		// This should not happen ordinarily, but can happen in a few
-		// exception cases:
-		//
-		// - This is an old connection, and the peer has already cleaned
-		//   up and forgotten about it.  (Perhaps it timed out and they
-		//   closed it and were not able to communicate this to us.)
-		// - A bug or internal protocol error has caused us to try to
-		//   talk to the peer about the connection before we received
-		//   confirmation that the peer has accepted the connection.
-		// - The peer thinks that we have closed the connection for some
-		//   reason (perhaps a bug), and believes that is it is
-		//   acknowledging our closure.
-		k_ESteamNetConnectionEnd_Misc_PeerSentNoConnection = 5010,
+	// Our peer replied that it has no record of the connection.
+	// This should not happen ordinarily, but can happen in a few
+	// exception cases:
+	//
+	// - This is an old connection, and the peer has already cleaned
+	//   up and forgotten about it.  (Perhaps it timed out and they
+	//   closed it and were not able to communicate this to us.)
+	// - A bug or internal protocol error has caused us to try to
+	//   talk to the peer about the connection before we received
+	//   confirmation that the peer has accepted the connection.
+	// - The peer thinks that we have closed the connection for some
+	//   reason (perhaps a bug), and believes that is it is
+	//   acknowledging our closure.
+	k_ESteamNetConnectionEnd_Misc_PeerSentNoConnection = 5010,
 
-	k_ESteamNetConnectionEnd_Misc_Max = 5999,
+	k_ESteamNetConnectionEnd_Misc_Max		   = 5999,
 
-	k_ESteamNetConnectionEnd__Force32Bit = 0x7fffffff
+	k_ESteamNetConnectionEnd__Force32Bit		   = 0x7fffffff
 };
 
 /// Max length, in bytes (including null terminator) of the reason string
@@ -668,13 +689,16 @@ const int k_cchSteamNetworkingMaxConnectionCloseReason = 128;
 const int k_cchSteamNetworkingMaxConnectionDescription = 128;
 
 /// Max length of the app's part of the description
-const int k_cchSteamNetworkingMaxConnectionAppName = 32;
+const int k_cchSteamNetworkingMaxConnectionAppName	     = 32;
 
 const int k_nSteamNetworkConnectionInfoFlags_Unauthenticated = 1; // We don't have a certificate for the remote host.
-const int k_nSteamNetworkConnectionInfoFlags_Unencrypted = 2; // Information is being sent out over a wire unencrypted (by this library)
-const int k_nSteamNetworkConnectionInfoFlags_LoopbackBuffers = 4; // Internal loopback buffers.  Won't be true for localhost.  (You can check the address to determine that.)  This implies k_nSteamNetworkConnectionInfoFlags_FastLAN
-const int k_nSteamNetworkConnectionInfoFlags_Fast = 8; // The connection is "fast" and "reliable".  Either internal/localhost (check the address to find out), or the peer is on the same LAN.  (Probably.  It's based on the address and the ping time, this is actually hard to determine unambiguously).
-const int k_nSteamNetworkConnectionInfoFlags_Relayed = 16; // The connection is relayed somehow (SDR or TURN).
+const int k_nSteamNetworkConnectionInfoFlags_Unencrypted =
+    2; // Information is being sent out over a wire unencrypted (by this library)
+const int k_nSteamNetworkConnectionInfoFlags_LoopbackBuffers =
+    4; // Internal loopback buffers.  Won't be true for localhost.  (You can check the address to determine that.)  This implies k_nSteamNetworkConnectionInfoFlags_FastLAN
+const int k_nSteamNetworkConnectionInfoFlags_Fast =
+    8; // The connection is "fast" and "reliable".  Either internal/localhost (check the address to find out), or the peer is on the same LAN.  (Probably.  It's based on the address and the ping time, this is actually hard to determine unambiguously).
+const int k_nSteamNetworkConnectionInfoFlags_Relayed  = 16; // The connection is relayed somehow (SDR or TURN).
 const int k_nSteamNetworkConnectionInfoFlags_DualWifi = 32; // We're taking advantage of dual-wifi multi-path
 
 /// Describe the state of a connection.
@@ -713,7 +737,7 @@ struct SteamNetConnectionInfo_t
 	/// termination or problem.  This is intended for debugging /
 	/// diagnostic purposes only, not to display to users.  It might
 	/// have some details specific to the issue.
-	char m_szEndDebug[ k_cchSteamNetworkingMaxConnectionCloseReason ];
+	char m_szEndDebug[k_cchSteamNetworkingMaxConnectionCloseReason];
 
 	/// Debug description.  This includes the internal connection ID,
 	/// connection type (and peer information), and any name
@@ -722,7 +746,7 @@ struct SteamNetConnectionInfo_t
 	///
 	/// Note that the connection ID *usually* matches the HSteamNetConnection
 	/// handle, but in certain cases with symmetric connections it might not.
-	char m_szConnectionDescription[ k_cchSteamNetworkingMaxConnectionDescription ];
+	char m_szConnectionDescription[k_cchSteamNetworkingMaxConnectionDescription];
 
 	/// Misc flags.  Bitmask of k_nSteamNetworkConnectionInfoFlags_Xxxx
 	int m_nFlags;
@@ -784,7 +808,7 @@ struct SteamNetConnectionRealTimeStatus_t
 	/// of the channel.  If you send data faster than this, it must be queued and
 	/// put on the wire at a metered rate.  Even sending a small amount of data (e.g.
 	/// a few MTU, say ~3k) will require some of the data to be delayed a bit.
-	/// 
+	///
 	/// Ignoring multiple lanes, the estimated delay will be approximately equal to
 	///
 	///		( m_cbPendingUnreliable+m_cbPendingReliable ) / m_nSendRateBytesPerSecond
@@ -801,7 +825,7 @@ struct SteamNetConnectionRealTimeStatus_t
 	/// This value is only valid if multiple lanes are not used.  If multiple lanes are
 	/// in use, then the queue time will be different for each lane, and you must use
 	/// the value in SteamNetConnectionRealTimeLaneStatus_t.
-	/// 
+	///
 	/// Nagle delay is ignored for the purposes of this calculation.
 	SteamNetworkingMicroseconds m_usecQueueTime;
 
@@ -828,7 +852,7 @@ struct SteamNetConnectionRealTimeLaneStatus_t
 	uint32 reserved[10];
 };
 
-#pragma pack( pop )
+#pragma pack(pop)
 
 //
 // Network messages
@@ -893,12 +917,12 @@ struct SteamNetworkingMessage_t
 	/// usually be something like:
 	///
 	/// free( pMsg->m_pData );
-	void (*m_pfnFreeData)( SteamNetworkingMessage_t *pMsg );
+	void (*m_pfnFreeData)(SteamNetworkingMessage_t *pMsg);
 
 	/// Function to used to decrement the internal reference count and, if
 	/// it's zero, release the message.  You should not set this function pointer,
 	/// or need to access this directly!  Use the Release() function instead!
-	void (*m_pfnRelease)( SteamNetworkingMessage_t *pMsg );
+	void (*m_pfnRelease)(SteamNetworkingMessage_t *pMsg);
 
 	/// When using ISteamNetworkingMessages, the channel number the message was received on
 	/// (Not used for messages sent or received on "connections")
@@ -927,21 +951,44 @@ struct SteamNetworkingMessage_t
 
 	// For code compatibility, some accessors
 #ifndef API_GEN
-	inline uint32 GetSize() const { return m_cbSize; }
-	inline const void *GetData() const { return m_pData; }
-	inline int GetChannel() const { return m_nChannel; }
-	inline HSteamNetConnection GetConnection() const { return m_conn; }
-	inline int64 GetConnectionUserData() const { return m_nConnUserData; }
-	inline SteamNetworkingMicroseconds GetTimeReceived() const { return m_usecTimeReceived; }
-	inline int64 GetMessageNumber() const { return m_nMessageNumber; }
+	inline uint32 GetSize() const
+	{
+		return m_cbSize;
+	}
+	inline const void *GetData() const
+	{
+		return m_pData;
+	}
+	inline int GetChannel() const
+	{
+		return m_nChannel;
+	}
+	inline HSteamNetConnection GetConnection() const
+	{
+		return m_conn;
+	}
+	inline int64 GetConnectionUserData() const
+	{
+		return m_nConnUserData;
+	}
+	inline SteamNetworkingMicroseconds GetTimeReceived() const
+	{
+		return m_usecTimeReceived;
+	}
+	inline int64 GetMessageNumber() const
+	{
+		return m_nMessageNumber;
+	}
 #endif
-protected:
+      protected:
 	// Declare destructor protected.  You should never need to declare a message
 	// object on the stack or create one yourself.
 	// - You will receive a pointer to a message object when you receive messages (e.g. ISteamNetworkingSockets::ReceiveMessagesOnConnection)
 	// - You can allocate a message object for efficient sending using ISteamNetworkingUtils::AllocateMessage
 	// - Call Release() to free the object
-	inline ~SteamNetworkingMessage_t() {}
+	inline ~SteamNetworkingMessage_t()
+	{
+	}
 };
 
 //
@@ -983,7 +1030,7 @@ const int k_nSteamNetworkingSend_NoNagle = 1;
 // and then immediately flushing the messages using ISteamNetworkingSockets::FlushMessagesOnConnection
 // or ISteamNetworkingMessages::FlushMessagesToUser.  (But using this flag is more efficient since you
 // only make one API call.)
-const int k_nSteamNetworkingSend_UnreliableNoNagle = k_nSteamNetworkingSend_Unreliable|k_nSteamNetworkingSend_NoNagle;
+const int k_nSteamNetworkingSend_UnreliableNoNagle = k_nSteamNetworkingSend_Unreliable | k_nSteamNetworkingSend_NoNagle;
 
 // If the message cannot be sent very soon (because the connection is still doing some initial
 // handshaking, route negotiations, etc), then just drop it.  This is only applicable for unreliable
@@ -1001,9 +1048,10 @@ const int k_nSteamNetworkingSend_NoDelay = 4;
 //   will not be placed on the wire in the next ~200ms or so.
 //
 // If a message is dropped for these reasons, k_EResultIgnored will be returned.
-const int k_nSteamNetworkingSend_UnreliableNoDelay = k_nSteamNetworkingSend_Unreliable|k_nSteamNetworkingSend_NoDelay|k_nSteamNetworkingSend_NoNagle;
+const int k_nSteamNetworkingSend_UnreliableNoDelay =
+    k_nSteamNetworkingSend_Unreliable | k_nSteamNetworkingSend_NoDelay | k_nSteamNetworkingSend_NoNagle;
 
-// Reliable message send. Can send up to k_cbMaxSteamNetworkingSocketsMessageSizeSend bytes in a single message. 
+// Reliable message send. Can send up to k_cbMaxSteamNetworkingSocketsMessageSizeSend bytes in a single message.
 // Does fragmentation/re-assembly of messages under the hood, as well as a sliding window for
 // efficient sends of large chunks of data.
 //
@@ -1017,7 +1065,7 @@ const int k_nSteamNetworkingSend_Reliable = 8;
 // Send a message reliably, but bypass Nagle's algorithm.
 //
 // Migration note: This is equivalent to k_EP2PSendReliable
-const int k_nSteamNetworkingSend_ReliableNoNagle = k_nSteamNetworkingSend_Reliable|k_nSteamNetworkingSend_NoNagle;
+const int k_nSteamNetworkingSend_ReliableNoNagle = k_nSteamNetworkingSend_Reliable | k_nSteamNetworkingSend_NoNagle;
 
 // By default, message sending is queued, and the work of encryption and talking to
 // the operating system sockets, etc is done on a service thread.  This is usually a
@@ -1074,7 +1122,7 @@ const int k_nSteamNetworkingSend_AutoRestartBrokenSession = 32;
 /// ISteamNetworkingUtils().
 struct SteamNetworkPingLocation_t
 {
-	uint8 m_data[ 512 ];
+	uint8 m_data[512];
 };
 
 /// Max possible length of a ping location, in string format.  This is
@@ -1085,7 +1133,7 @@ struct SteamNetworkPingLocation_t
 const int k_cchMaxSteamNetworkingPingLocationString = 1024;
 
 /// Special values that are returned by some functions that return a ping.
-const int k_nSteamNetworkingPing_Failed = -1;
+const int k_nSteamNetworkingPing_Failed	 = -1;
 const int k_nSteamNetworkingPing_Unknown = -2;
 
 //
@@ -1115,7 +1163,7 @@ enum ESteamNetworkingConfigScope
 	k_ESteamNetworkingConfig_ListenSocket = 3,
 
 	/// Options for a specific connection.
-	k_ESteamNetworkingConfig_Connection = 4,
+	k_ESteamNetworkingConfig_Connection	  = 4,
 
 	k_ESteamNetworkingConfigScope__Force32Bit = 0x7fffffff
 };
@@ -1123,11 +1171,11 @@ enum ESteamNetworkingConfigScope
 // Different configuration values have different data types
 enum ESteamNetworkingConfigDataType
 {
-	k_ESteamNetworkingConfig_Int32 = 1,
-	k_ESteamNetworkingConfig_Int64 = 2,
-	k_ESteamNetworkingConfig_Float = 3,
-	k_ESteamNetworkingConfig_String = 4,
-	k_ESteamNetworkingConfig_Ptr = 5,
+	k_ESteamNetworkingConfig_Int32		     = 1,
+	k_ESteamNetworkingConfig_Int64		     = 2,
+	k_ESteamNetworkingConfig_Float		     = 3,
+	k_ESteamNetworkingConfig_String		     = 4,
+	k_ESteamNetworkingConfig_Ptr		     = 5,
 
 	k_ESteamNetworkingConfigDataType__Force32Bit = 0x7fffffff
 };
@@ -1137,9 +1185,9 @@ enum ESteamNetworkingConfigValue
 {
 	k_ESteamNetworkingConfig_Invalid = 0,
 
-//
-// Connection options
-//
+	//
+	// Connection options
+	//
 
 	/// [connection int32] Timeout value (in ms) to use when first connecting
 	k_ESteamNetworkingConfig_TimeoutInitial = 24,
@@ -1188,7 +1236,7 @@ enum ESteamNetworkingConfigValue
 	k_ESteamNetworkingConfig_ConnectionUserData = 40,
 
 	/// [connection int32] Minimum/maximum send rate clamp, 0 is no limit.
-	/// This value will control the min/max allowed sending rate that 
+	/// This value will control the min/max allowed sending rate that
 	/// bandwidth estimation is allowed to reach.  Default is 0 (no-limit)
 	k_ESteamNetworkingConfig_SendRateMin = 10,
 	k_ESteamNetworkingConfig_SendRateMax = 11,
@@ -1198,7 +1246,7 @@ enum ESteamNetworkingConfigValue
 	/// queued for a delay equal to the Nagle timer value.  This is to ensure
 	/// that if the application sends several small messages rapidly, they are
 	/// coalesced into a single packet.
-	/// See historical RFC 896.  Value is in microseconds. 
+	/// See historical RFC 896.  Value is in microseconds.
 	/// Default is 5000us (5ms).
 	k_ESteamNetworkingConfig_NagleTime = 12,
 
@@ -1341,12 +1389,12 @@ enum ESteamNetworkingConfigValue
 	/// generic platform UI.  (Only available on Steam.)
 	k_ESteamNetworkingConfig_EnableDiagnosticsUI = 46,
 
-//
-// Simulating network conditions
-//
-// These are global (not per-connection) because they apply at
-// a relatively low UDP layer.
-//
+	//
+	// Simulating network conditions
+	//
+	// These are global (not per-connection) because they apply at
+	// a relatively low UDP layer.
+	//
 
 	/// [global float, 0--100] Randomly discard N pct of packets instead of sending/recv
 	/// This is a global option only, since it is applied at a low level
@@ -1379,7 +1427,6 @@ enum ESteamNetworkingConfigValue
 	// 0 only traces the info but no actual data bytes
 	k_ESteamNetworkingConfig_PacketTraceMaxBytes = 41,
 
-
 	// [global int32] Global UDP token bucket rate limits.
 	// "Rate" refers to the steady state rate. (Bytes/sec, the
 	// rate that tokens are put into the bucket.)  "Burst"
@@ -1388,14 +1435,14 @@ enum ESteamNetworkingConfigValue
 	// Rate=0 disables the limiter entirely, which is the default.
 	// Burst=0 disables burst.  (This is not realistic.  A
 	// burst of at least 4K is recommended; the default is higher.)
-	k_ESteamNetworkingConfig_FakeRateLimit_Send_Rate = 42,
+	k_ESteamNetworkingConfig_FakeRateLimit_Send_Rate  = 42,
 	k_ESteamNetworkingConfig_FakeRateLimit_Send_Burst = 43,
-	k_ESteamNetworkingConfig_FakeRateLimit_Recv_Rate = 44,
+	k_ESteamNetworkingConfig_FakeRateLimit_Recv_Rate  = 44,
 	k_ESteamNetworkingConfig_FakeRateLimit_Recv_Burst = 45,
 
-//
-// Callbacks
-//
+	//
+	// Callbacks
+	//
 
 	// On Steam, you may use the default Steam callback dispatch mechanism.  If you prefer
 	// to not use this dispatch mechanism (or you are not running with Steam), or you want
@@ -1465,20 +1512,20 @@ enum ESteamNetworkingConfigValue
 	/// ISteamNetworkingUtils::SetGlobalCallback_FakeIPResult
 	k_ESteamNetworkingConfig_Callback_FakeIPResult = 207,
 
-//
-// P2P connection settings
-//
+	//
+	// P2P connection settings
+	//
 
-//	/// [listen socket int32] When you create a P2P listen socket, we will automatically
-//	/// open up a UDP port to listen for LAN connections.  LAN connections can be made
-//	/// without any signaling: both sides can be disconnected from the Internet.
-//	///
-//	/// This value can be set to zero to disable the feature.
-//	k_ESteamNetworkingConfig_P2P_Discovery_Server_LocalPort = 101,
-//
-//	/// [connection int32] P2P connections can perform broadcasts looking for the peer
-//	/// on the LAN.
-//	k_ESteamNetworkingConfig_P2P_Discovery_Client_RemotePort = 102,
+	//	/// [listen socket int32] When you create a P2P listen socket, we will automatically
+	//	/// open up a UDP port to listen for LAN connections.  LAN connections can be made
+	//	/// without any signaling: both sides can be disconnected from the Internet.
+	//	///
+	//	/// This value can be set to zero to disable the feature.
+	//	k_ESteamNetworkingConfig_P2P_Discovery_Server_LocalPort = 101,
+	//
+	//	/// [connection int32] P2P connections can perform broadcasts looking for the peer
+	//	/// on the LAN.
+	//	k_ESteamNetworkingConfig_P2P_Discovery_Client_RemotePort = 102,
 
 	/// [connection string] Comma-separated list of STUN servers that can be used
 	/// for NAT piercing.  If you set this to an empty string, NAT piercing will
@@ -1496,23 +1543,23 @@ enum ESteamNetworkingConfigValue
 	/// route ping time and is then adjusted.)
 	k_ESteamNetworkingConfig_P2P_Transport_ICE_Penalty = 105,
 	k_ESteamNetworkingConfig_P2P_Transport_SDR_Penalty = 106,
-	k_ESteamNetworkingConfig_P2P_TURN_ServerList = 107,
-	k_ESteamNetworkingConfig_P2P_TURN_UserList = 108,
-	k_ESteamNetworkingConfig_P2P_TURN_PassList = 109,
+	k_ESteamNetworkingConfig_P2P_TURN_ServerList	   = 107,
+	k_ESteamNetworkingConfig_P2P_TURN_UserList	   = 108,
+	k_ESteamNetworkingConfig_P2P_TURN_PassList	   = 109,
 	//k_ESteamNetworkingConfig_P2P_Transport_LANBeacon_Penalty = 107,
 	k_ESteamNetworkingConfig_P2P_Transport_ICE_Implementation = 110,
 
-//
-// Settings for SDR relayed connections
-//
+	//
+	// Settings for SDR relayed connections
+	//
 
 	/// [int32 global] If the first N pings to a port all fail, mark that port as unavailable for
 	/// a while, and try a different one.  Some ISPs and routers may drop the first
 	/// packet, so setting this to 1 may greatly disrupt communications.
 	k_ESteamNetworkingConfig_SDRClient_ConsecutitivePingTimeoutsFailInitial = 19,
 
-	/// [int32 global] If N consecutive pings to a port fail, after having received successful 
-	/// communication, mark that port as unavailable for a while, and try a 
+	/// [int32 global] If N consecutive pings to a port fail, after having received successful
+	/// communication, mark that port as unavailable for a while, and try a
 	/// different one.
 	k_ESteamNetworkingConfig_SDRClient_ConsecutitivePingTimeoutsFail = 20,
 
@@ -1551,34 +1598,37 @@ enum ESteamNetworkingConfigValue
 	/// in production.
 	k_ESteamNetworkingConfig_SDRClient_FakeClusterPing = 36,
 
-//
-// Log levels for debugging information of various subsystems.
-// Higher numeric values will cause more stuff to be printed.
-// See ISteamNetworkingUtils::SetDebugOutputFunction for more
-// information
-//
-// The default for all values is k_ESteamNetworkingSocketsDebugOutputType_Warning.
-//
-	k_ESteamNetworkingConfig_LogLevel_AckRTT = 13, // [connection int32] RTT calculations for inline pings and replies
-	k_ESteamNetworkingConfig_LogLevel_PacketDecode = 14, // [connection int32] log SNP packets send/recv
-	k_ESteamNetworkingConfig_LogLevel_Message = 15, // [connection int32] log each message send/recv
-	k_ESteamNetworkingConfig_LogLevel_PacketGaps = 16, // [connection int32] dropped packets
+	//
+	// Log levels for debugging information of various subsystems.
+	// Higher numeric values will cause more stuff to be printed.
+	// See ISteamNetworkingUtils::SetDebugOutputFunction for more
+	// information
+	//
+	// The default for all values is k_ESteamNetworkingSocketsDebugOutputType_Warning.
+	//
+	k_ESteamNetworkingConfig_LogLevel_AckRTT =
+	    13, // [connection int32] RTT calculations for inline pings and replies
+	k_ESteamNetworkingConfig_LogLevel_PacketDecode	= 14, // [connection int32] log SNP packets send/recv
+	k_ESteamNetworkingConfig_LogLevel_Message	= 15, // [connection int32] log each message send/recv
+	k_ESteamNetworkingConfig_LogLevel_PacketGaps	= 16, // [connection int32] dropped packets
 	k_ESteamNetworkingConfig_LogLevel_P2PRendezvous = 17, // [connection int32] P2P rendezvous messages
 	k_ESteamNetworkingConfig_LogLevel_SDRRelayPings = 18, // [global int32] Ping relays
-
 
 	// Deleted, do not use
 	k_ESteamNetworkingConfig_DELETED_EnumerateDevVars = 35,
 
-	k_ESteamNetworkingConfigValue__Force32Bit = 0x7fffffff
+	k_ESteamNetworkingConfigValue__Force32Bit	  = 0x7fffffff
 };
 
 // Bitmask of types to share
 const int k_nSteamNetworkingConfig_P2P_Transport_ICE_Enable_Default = -1; // Special value - use user defaults
-const int k_nSteamNetworkingConfig_P2P_Transport_ICE_Enable_Disable = 0; // Do not do any ICE work at all or share any IP addresses with peer
+const int k_nSteamNetworkingConfig_P2P_Transport_ICE_Enable_Disable =
+    0; // Do not do any ICE work at all or share any IP addresses with peer
 const int k_nSteamNetworkingConfig_P2P_Transport_ICE_Enable_Relay = 1; // Relayed connection via TURN server.
-const int k_nSteamNetworkingConfig_P2P_Transport_ICE_Enable_Private = 2; // host addresses that appear to be link-local or RFC1918 addresses
-const int k_nSteamNetworkingConfig_P2P_Transport_ICE_Enable_Public = 4; // STUN reflexive addresses, or host address that isn't a "private" address
+const int k_nSteamNetworkingConfig_P2P_Transport_ICE_Enable_Private =
+    2; // host addresses that appear to be link-local or RFC1918 addresses
+const int k_nSteamNetworkingConfig_P2P_Transport_ICE_Enable_Public =
+    4; // STUN reflexive addresses, or host address that isn't a "private" address
 const int k_nSteamNetworkingConfig_P2P_Transport_ICE_Enable_All = 0x7fffffff;
 
 /// In a few places we need to set configuration options on listen sockets and connections, and
@@ -1601,8 +1651,7 @@ struct SteamNetworkingConfigValue_t
 	ESteamNetworkingConfigDataType m_eDataType;
 
 	/// Option value
-	union
-	{
+	union {
 		int32_t m_int32;
 		int64_t m_int64;
 		float m_float;
@@ -1613,34 +1662,36 @@ struct SteamNetworkingConfigValue_t
 	//
 	// Shortcut helpers to set the type and value in a single call
 	//
-	inline void SetInt32( ESteamNetworkingConfigValue eVal, int32_t data )
+	inline void SetInt32(ESteamNetworkingConfigValue eVal, int32_t data)
 	{
-		m_eValue = eVal;
-		m_eDataType = k_ESteamNetworkingConfig_Int32;
+		m_eValue      = eVal;
+		m_eDataType   = k_ESteamNetworkingConfig_Int32;
 		m_val.m_int32 = data;
 	}
-	inline void SetInt64( ESteamNetworkingConfigValue eVal, int64_t data )
+	inline void SetInt64(ESteamNetworkingConfigValue eVal, int64_t data)
 	{
-		m_eValue = eVal;
-		m_eDataType = k_ESteamNetworkingConfig_Int64;
+		m_eValue      = eVal;
+		m_eDataType   = k_ESteamNetworkingConfig_Int64;
 		m_val.m_int64 = data;
 	}
-	inline void SetFloat( ESteamNetworkingConfigValue eVal, float data )
+	inline void SetFloat(ESteamNetworkingConfigValue eVal, float data)
 	{
-		m_eValue = eVal;
-		m_eDataType = k_ESteamNetworkingConfig_Float;
+		m_eValue      = eVal;
+		m_eDataType   = k_ESteamNetworkingConfig_Float;
 		m_val.m_float = data;
 	}
-	inline void SetPtr( ESteamNetworkingConfigValue eVal, void *data )
+	inline void SetPtr(ESteamNetworkingConfigValue eVal, void *data)
 	{
-		m_eValue = eVal;
+		m_eValue    = eVal;
 		m_eDataType = k_ESteamNetworkingConfig_Ptr;
 		m_val.m_ptr = data;
 	}
-	inline void SetString( ESteamNetworkingConfigValue eVal, const char *data ) // WARNING - Just saves your pointer.  Does NOT make a copy of the string
+	inline void SetString(
+	    ESteamNetworkingConfigValue eVal,
+	    const char *data) // WARNING - Just saves your pointer.  Does NOT make a copy of the string
 	{
-		m_eValue = eVal;
-		m_eDataType = k_ESteamNetworkingConfig_Ptr;
+		m_eValue       = eVal;
+		m_eDataType    = k_ESteamNetworkingConfig_Ptr;
 		m_val.m_string = data;
 	}
 };
@@ -1648,11 +1699,12 @@ struct SteamNetworkingConfigValue_t
 /// Return value of ISteamNetworkintgUtils::GetConfigValue
 enum ESteamNetworkingGetConfigValueResult
 {
-	k_ESteamNetworkingGetConfigValue_BadValue = -1,	// No such configuration value
-	k_ESteamNetworkingGetConfigValue_BadScopeObj = -2,	// Bad connection handle, etc
+	k_ESteamNetworkingGetConfigValue_BadValue	= -1, // No such configuration value
+	k_ESteamNetworkingGetConfigValue_BadScopeObj	= -2, // Bad connection handle, etc
 	k_ESteamNetworkingGetConfigValue_BufferTooSmall = -3, // Couldn't fit the result in your buffer
-	k_ESteamNetworkingGetConfigValue_OK = 1,
-	k_ESteamNetworkingGetConfigValue_OKInherited = 2, // A value was not set at this level, but the effective (inherited) value was returned.
+	k_ESteamNetworkingGetConfigValue_OK		= 1,
+	k_ESteamNetworkingGetConfigValue_OKInherited =
+	    2, // A value was not set at this level, but the effective (inherited) value was returned.
 
 	k_ESteamNetworkingGetConfigValueResult__Force32Bit = 0x7fffffff
 };
@@ -1667,26 +1719,29 @@ enum ESteamNetworkingSocketsDebugOutputType
 {
 	k_ESteamNetworkingSocketsDebugOutputType_None = 0,
 	k_ESteamNetworkingSocketsDebugOutputType_Bug = 1, // You used the API incorrectly, or an internal error happened
-	k_ESteamNetworkingSocketsDebugOutputType_Error = 2, // Run-time error condition that isn't the result of a bug.  (E.g. we are offline, cannot bind a port, etc)
-	k_ESteamNetworkingSocketsDebugOutputType_Important = 3, // Nothing is wrong, but this is an important notification
+	k_ESteamNetworkingSocketsDebugOutputType_Error =
+	    2, // Run-time error condition that isn't the result of a bug.  (E.g. we are offline, cannot bind a port, etc)
+	k_ESteamNetworkingSocketsDebugOutputType_Important =
+	    3, // Nothing is wrong, but this is an important notification
 	k_ESteamNetworkingSocketsDebugOutputType_Warning = 4,
-	k_ESteamNetworkingSocketsDebugOutputType_Msg = 5, // Recommended amount
+	k_ESteamNetworkingSocketsDebugOutputType_Msg	 = 5, // Recommended amount
 	k_ESteamNetworkingSocketsDebugOutputType_Verbose = 6, // Quite a bit
-	k_ESteamNetworkingSocketsDebugOutputType_Debug = 7, // Practically everything
-	k_ESteamNetworkingSocketsDebugOutputType_Everything = 8, // Wall of text, detailed packet contents breakdown, etc
+	k_ESteamNetworkingSocketsDebugOutputType_Debug	 = 7, // Practically everything
+	k_ESteamNetworkingSocketsDebugOutputType_Everything =
+	    8, // Wall of text, detailed packet contents breakdown, etc
 
 	k_ESteamNetworkingSocketsDebugOutputType__Force32Bit = 0x7fffffff
 };
 
 /// Setup callback for debug output, and the desired verbosity you want.
-typedef void (*FSteamNetworkingSocketsDebugOutput)( ESteamNetworkingSocketsDebugOutputType nType, const char *pszMsg );
+typedef void (*FSteamNetworkingSocketsDebugOutput)(ESteamNetworkingSocketsDebugOutputType nType, const char *pszMsg);
 
 //
 // Valve data centers
 //
 
 /// Convert 3- or 4-character ID to 32-bit int.
-inline SteamNetworkingPOPID CalculateSteamNetworkingPOPIDFromString( const char *pszCode )
+inline SteamNetworkingPOPID CalculateSteamNetworkingPOPIDFromString(const char *pszCode)
 {
 	// OK we made a bad decision when we decided how to pack 3-character codes into a uint32.  We'd like to support
 	// 4-character codes, but we don't want to break compatibility.  The migration path has some subtleties that make
@@ -1699,12 +1754,12 @@ inline SteamNetworkingPOPID CalculateSteamNetworkingPOPIDFromString( const char 
 	//
 	// There is also extra paranoia to make sure the bytes are not treated as signed.
 	SteamNetworkingPOPID result = (uint32)(uint8)pszCode[0] << 16U;
-	if ( result && pszCode[1] )
+	if (result && pszCode[1])
 	{
-		result |= ( (uint32)(uint8)pszCode[1] << 8U );
-		if ( pszCode[2] )
+		result |= ((uint32)(uint8)pszCode[1] << 8U);
+		if (pszCode[2])
 		{
-			result |= (uint32)(uint8)pszCode[2] | ( (uint32)(uint8)pszCode[3] << 24U );
+			result |= (uint32)(uint8)pszCode[2] | ((uint32)(uint8)pszCode[3] << 24U);
 		}
 	}
 	return result;
@@ -1713,29 +1768,35 @@ inline SteamNetworkingPOPID CalculateSteamNetworkingPOPIDFromString( const char 
 /// Unpack integer to string representation, including terminating '\0'
 ///
 /// See also SteamNetworkingPOPIDRender
-template <int N>
-inline void GetSteamNetworkingLocationPOPStringFromID( SteamNetworkingPOPID id, char (&szCode)[N] )
+template <int N> inline void GetSteamNetworkingLocationPOPStringFromID(SteamNetworkingPOPID id, char (&szCode)[N])
 {
-	static_assert( N >= 5, "Fixed-size buffer not big enough to hold SDR POP ID" );
-	szCode[0] = char( id >> 16U );
-	szCode[1] = char( id >> 8U );
-	szCode[2] = char( id );
-	szCode[3] = char( id >> 24U ); // See comment above about deep regret and sadness
+	static_assert(N >= 5, "Fixed-size buffer not big enough to hold SDR POP ID");
+	szCode[0] = char(id >> 16U);
+	szCode[1] = char(id >> 8U);
+	szCode[2] = char(id);
+	szCode[3] = char(id >> 24U); // See comment above about deep regret and sadness
 	szCode[4] = 0;
 }
 
 /// The POPID "dev" is used in non-production environments for testing.
-const SteamNetworkingPOPID k_SteamDatagramPOPID_dev = ( (uint32)'d' << 16U ) | ( (uint32)'e' << 8U ) | (uint32)'v';
+const SteamNetworkingPOPID k_SteamDatagramPOPID_dev = ((uint32)'d' << 16U) | ((uint32)'e' << 8U) | (uint32)'v';
 
 #ifndef API_GEN
 
 /// Utility class for printing a SteamNetworkingPOPID.
 struct SteamNetworkingPOPIDRender
 {
-	SteamNetworkingPOPIDRender( SteamNetworkingPOPID x ) { GetSteamNetworkingLocationPOPStringFromID( x, buf ); }
-	inline const char *c_str() const { return buf; }
-private:
-	char buf[ 8 ];
+	SteamNetworkingPOPIDRender(SteamNetworkingPOPID x)
+	{
+		GetSteamNetworkingLocationPOPStringFromID(x, buf);
+	}
+	inline const char *c_str() const
+	{
+		return buf;
+	}
+
+      private:
+	char buf[8];
 };
 
 #endif
@@ -1749,45 +1810,197 @@ private:
 typedef SteamNetworkingMessage_t ISteamNetworkingMessage;
 typedef SteamNetworkingErrMsg SteamDatagramErrMsg;
 
-inline void SteamNetworkingIPAddr::Clear() { memset( this, 0, sizeof(*this) ); }
-inline bool SteamNetworkingIPAddr::IsIPv6AllZeros() const { const uint64 *q = (const uint64 *)m_ipv6; return q[0] == 0 && q[1] == 0; }
-inline void SteamNetworkingIPAddr::SetIPv6( const uint8 *ipv6, uint16 nPort ) { memcpy( m_ipv6, ipv6, 16 ); m_port = nPort; }
-inline void SteamNetworkingIPAddr::SetIPv4( uint32 nIP, uint16 nPort ) { m_ipv4.m_8zeros = 0; m_ipv4.m_0000 = 0; m_ipv4.m_ffff = 0xffff; m_ipv4.m_ip[0] = uint8(nIP>>24); m_ipv4.m_ip[1] = uint8(nIP>>16); m_ipv4.m_ip[2] = uint8(nIP>>8); m_ipv4.m_ip[3] = uint8(nIP); m_port = nPort; }
-inline bool SteamNetworkingIPAddr::IsIPv4() const { return m_ipv4.m_8zeros == 0 && m_ipv4.m_0000 == 0 && m_ipv4.m_ffff == 0xffff; }
-inline uint32 SteamNetworkingIPAddr::GetIPv4() const { return IsIPv4() ? ( (uint32(m_ipv4.m_ip[0])<<24) | (uint32(m_ipv4.m_ip[1])<<16) | (uint32(m_ipv4.m_ip[2])<<8) | uint32(m_ipv4.m_ip[3]) ) : 0; }
-inline void SteamNetworkingIPAddr::SetIPv6LocalHost( uint16 nPort ) { m_ipv4.m_8zeros = 0; m_ipv4.m_0000 = 0; m_ipv4.m_ffff = 0; m_ipv6[12] = 0; m_ipv6[13] = 0; m_ipv6[14] = 0; m_ipv6[15] = 1; m_port = nPort; }
-inline bool SteamNetworkingIPAddr::IsLocalHost() const { return ( m_ipv4.m_8zeros == 0 && m_ipv4.m_0000 == 0 && m_ipv4.m_ffff == 0 && m_ipv6[12] == 0 && m_ipv6[13] == 0 && m_ipv6[14] == 0 && m_ipv6[15] == 1 ) || ( GetIPv4() == 0x7f000001 ); }
-inline bool SteamNetworkingIPAddr::operator==(const SteamNetworkingIPAddr &x ) const { return memcmp( this, &x, sizeof(SteamNetworkingIPAddr) ) == 0; }
+inline void SteamNetworkingIPAddr::Clear()
+{
+	memset(this, 0, sizeof(*this));
+}
+inline bool SteamNetworkingIPAddr::IsIPv6AllZeros() const
+{
+	const uint64 *q = (const uint64 *)m_ipv6;
+	return q[0] == 0 && q[1] == 0;
+}
+inline void SteamNetworkingIPAddr::SetIPv6(const uint8 *ipv6, uint16 nPort)
+{
+	memcpy(m_ipv6, ipv6, 16);
+	m_port = nPort;
+}
+inline void SteamNetworkingIPAddr::SetIPv4(uint32 nIP, uint16 nPort)
+{
+	m_ipv4.m_8zeros = 0;
+	m_ipv4.m_0000	= 0;
+	m_ipv4.m_ffff	= 0xffff;
+	m_ipv4.m_ip[0]	= uint8(nIP >> 24);
+	m_ipv4.m_ip[1]	= uint8(nIP >> 16);
+	m_ipv4.m_ip[2]	= uint8(nIP >> 8);
+	m_ipv4.m_ip[3]	= uint8(nIP);
+	m_port		= nPort;
+}
+inline bool SteamNetworkingIPAddr::IsIPv4() const
+{
+	return m_ipv4.m_8zeros == 0 && m_ipv4.m_0000 == 0 && m_ipv4.m_ffff == 0xffff;
+}
+inline uint32 SteamNetworkingIPAddr::GetIPv4() const
+{
+	return IsIPv4() ? ((uint32(m_ipv4.m_ip[0]) << 24) | (uint32(m_ipv4.m_ip[1]) << 16) |
+			   (uint32(m_ipv4.m_ip[2]) << 8) | uint32(m_ipv4.m_ip[3]))
+			: 0;
+}
+inline void SteamNetworkingIPAddr::SetIPv6LocalHost(uint16 nPort)
+{
+	m_ipv4.m_8zeros = 0;
+	m_ipv4.m_0000	= 0;
+	m_ipv4.m_ffff	= 0;
+	m_ipv6[12]	= 0;
+	m_ipv6[13]	= 0;
+	m_ipv6[14]	= 0;
+	m_ipv6[15]	= 1;
+	m_port		= nPort;
+}
+inline bool SteamNetworkingIPAddr::IsLocalHost() const
+{
+	return (m_ipv4.m_8zeros == 0 && m_ipv4.m_0000 == 0 && m_ipv4.m_ffff == 0 && m_ipv6[12] == 0 &&
+		m_ipv6[13] == 0 && m_ipv6[14] == 0 && m_ipv6[15] == 1) ||
+	       (GetIPv4() == 0x7f000001);
+}
+inline bool SteamNetworkingIPAddr::operator==(const SteamNetworkingIPAddr &x) const
+{
+	return memcmp(this, &x, sizeof(SteamNetworkingIPAddr)) == 0;
+}
 
-inline void SteamNetworkingIdentity::Clear() { memset( this, 0, sizeof(*this) ); }
-inline bool SteamNetworkingIdentity::IsInvalid() const { return m_eType == k_ESteamNetworkingIdentityType_Invalid; }
-inline void SteamNetworkingIdentity::SetSteamID( CSteamID steamID ) { SetSteamID64( steamID.ConvertToUint64() ); }
-inline CSteamID SteamNetworkingIdentity::GetSteamID() const { return CSteamID( GetSteamID64() ); }
-inline void SteamNetworkingIdentity::SetSteamID64( uint64 steamID ) { m_eType = k_ESteamNetworkingIdentityType_SteamID; m_cbSize = sizeof( m_steamID64 ); m_steamID64 = steamID; }
-inline uint64 SteamNetworkingIdentity::GetSteamID64() const { return m_eType == k_ESteamNetworkingIdentityType_SteamID ? m_steamID64 : 0; }
-inline bool SteamNetworkingIdentity::SetXboxPairwiseID( const char *pszString ) { size_t l = strlen( pszString ); if ( l < 1 || l >= sizeof(m_szXboxPairwiseID) ) return false;
-	m_eType = k_ESteamNetworkingIdentityType_XboxPairwiseID; m_cbSize = int(l+1); memcpy( m_szXboxPairwiseID, pszString, m_cbSize ); return true; }
-inline const char *SteamNetworkingIdentity::GetXboxPairwiseID() const { return m_eType == k_ESteamNetworkingIdentityType_XboxPairwiseID ? m_szXboxPairwiseID : NULL; }
-inline void SteamNetworkingIdentity::SetPSNID( uint64 id ) { m_eType = k_ESteamNetworkingIdentityType_SonyPSN; m_cbSize = sizeof( m_PSNID ); m_PSNID = id; }
-inline uint64 SteamNetworkingIdentity::GetPSNID() const { return m_eType == k_ESteamNetworkingIdentityType_SonyPSN ? m_PSNID : 0; }
-inline void SteamNetworkingIdentity::SetStadiaID( uint64 id ) { m_eType = k_ESteamNetworkingIdentityType_GoogleStadia; m_cbSize = sizeof( m_stadiaID ); m_stadiaID = id; }
-inline uint64 SteamNetworkingIdentity::GetStadiaID() const { return m_eType == k_ESteamNetworkingIdentityType_GoogleStadia ? m_stadiaID : 0; }
-inline void SteamNetworkingIdentity::SetIPAddr( const SteamNetworkingIPAddr &addr ) { m_eType = k_ESteamNetworkingIdentityType_IPAddress; m_cbSize = (int)sizeof(m_ip); m_ip = addr; }
-inline const SteamNetworkingIPAddr *SteamNetworkingIdentity::GetIPAddr() const { return m_eType == k_ESteamNetworkingIdentityType_IPAddress ? &m_ip : NULL; }
-inline void SteamNetworkingIdentity::SetIPv4Addr( uint32 nIPv4, uint16 nPort ) { m_eType = k_ESteamNetworkingIdentityType_IPAddress; m_cbSize = (int)sizeof(m_ip); m_ip.SetIPv4( nIPv4, nPort ); }
-inline uint32 SteamNetworkingIdentity::GetIPv4() const { return m_eType == k_ESteamNetworkingIdentityType_IPAddress ? m_ip.GetIPv4() : 0; }
-inline ESteamNetworkingFakeIPType SteamNetworkingIdentity::GetFakeIPType() const { return m_eType == k_ESteamNetworkingIdentityType_IPAddress ? m_ip.GetFakeIPType() : k_ESteamNetworkingFakeIPType_Invalid; }
-inline void SteamNetworkingIdentity::SetLocalHost() { m_eType = k_ESteamNetworkingIdentityType_IPAddress; m_cbSize = (int)sizeof(m_ip); m_ip.SetIPv6LocalHost(); }
-inline bool SteamNetworkingIdentity::IsLocalHost() const { return m_eType == k_ESteamNetworkingIdentityType_IPAddress && m_ip.IsLocalHost(); }
-inline bool SteamNetworkingIdentity::SetGenericString( const char *pszString ) { size_t l = strlen( pszString ); if ( l >= sizeof(m_szGenericString) ) return false;
-	m_eType = k_ESteamNetworkingIdentityType_GenericString; m_cbSize = int(l+1); memcpy( m_szGenericString, pszString, m_cbSize ); return true; }
-inline const char *SteamNetworkingIdentity::GetGenericString() const { return m_eType == k_ESteamNetworkingIdentityType_GenericString ? m_szGenericString : NULL; }
-inline bool SteamNetworkingIdentity::SetGenericBytes( const void *data, size_t cbLen ) { if ( cbLen > sizeof(m_genericBytes) ) return false;
-	m_eType = k_ESteamNetworkingIdentityType_GenericBytes; m_cbSize = int(cbLen); memcpy( m_genericBytes, data, m_cbSize ); return true; }
-inline const uint8 *SteamNetworkingIdentity::GetGenericBytes( int &cbLen ) const { if ( m_eType != k_ESteamNetworkingIdentityType_GenericBytes ) return NULL;
-	cbLen = m_cbSize; return m_genericBytes; }
-inline bool SteamNetworkingIdentity::operator==(const SteamNetworkingIdentity &x ) const { return m_eType == x.m_eType && m_cbSize == x.m_cbSize && memcmp( m_genericBytes, x.m_genericBytes, m_cbSize ) == 0; }
-inline void SteamNetworkingMessage_t::Release() { (*m_pfnRelease)( this ); }
+inline void SteamNetworkingIdentity::Clear()
+{
+	memset(this, 0, sizeof(*this));
+}
+inline bool SteamNetworkingIdentity::IsInvalid() const
+{
+	return m_eType == k_ESteamNetworkingIdentityType_Invalid;
+}
+inline void SteamNetworkingIdentity::SetSteamID(CSteamID steamID)
+{
+	SetSteamID64(steamID.ConvertToUint64());
+}
+inline CSteamID SteamNetworkingIdentity::GetSteamID() const
+{
+	return CSteamID(GetSteamID64());
+}
+inline void SteamNetworkingIdentity::SetSteamID64(uint64 steamID)
+{
+	m_eType	    = k_ESteamNetworkingIdentityType_SteamID;
+	m_cbSize    = sizeof(m_steamID64);
+	m_steamID64 = steamID;
+}
+inline uint64 SteamNetworkingIdentity::GetSteamID64() const
+{
+	return m_eType == k_ESteamNetworkingIdentityType_SteamID ? m_steamID64 : 0;
+}
+inline bool SteamNetworkingIdentity::SetXboxPairwiseID(const char *pszString)
+{
+	size_t l = strlen(pszString);
+	if (l < 1 || l >= sizeof(m_szXboxPairwiseID))
+		return false;
+	m_eType	 = k_ESteamNetworkingIdentityType_XboxPairwiseID;
+	m_cbSize = int(l + 1);
+	memcpy(m_szXboxPairwiseID, pszString, m_cbSize);
+	return true;
+}
+inline const char *SteamNetworkingIdentity::GetXboxPairwiseID() const
+{
+	return m_eType == k_ESteamNetworkingIdentityType_XboxPairwiseID ? m_szXboxPairwiseID : NULL;
+}
+inline void SteamNetworkingIdentity::SetPSNID(uint64 id)
+{
+	m_eType	 = k_ESteamNetworkingIdentityType_SonyPSN;
+	m_cbSize = sizeof(m_PSNID);
+	m_PSNID	 = id;
+}
+inline uint64 SteamNetworkingIdentity::GetPSNID() const
+{
+	return m_eType == k_ESteamNetworkingIdentityType_SonyPSN ? m_PSNID : 0;
+}
+inline void SteamNetworkingIdentity::SetStadiaID(uint64 id)
+{
+	m_eType	   = k_ESteamNetworkingIdentityType_GoogleStadia;
+	m_cbSize   = sizeof(m_stadiaID);
+	m_stadiaID = id;
+}
+inline uint64 SteamNetworkingIdentity::GetStadiaID() const
+{
+	return m_eType == k_ESteamNetworkingIdentityType_GoogleStadia ? m_stadiaID : 0;
+}
+inline void SteamNetworkingIdentity::SetIPAddr(const SteamNetworkingIPAddr &addr)
+{
+	m_eType	 = k_ESteamNetworkingIdentityType_IPAddress;
+	m_cbSize = (int)sizeof(m_ip);
+	m_ip	 = addr;
+}
+inline const SteamNetworkingIPAddr *SteamNetworkingIdentity::GetIPAddr() const
+{
+	return m_eType == k_ESteamNetworkingIdentityType_IPAddress ? &m_ip : NULL;
+}
+inline void SteamNetworkingIdentity::SetIPv4Addr(uint32 nIPv4, uint16 nPort)
+{
+	m_eType	 = k_ESteamNetworkingIdentityType_IPAddress;
+	m_cbSize = (int)sizeof(m_ip);
+	m_ip.SetIPv4(nIPv4, nPort);
+}
+inline uint32 SteamNetworkingIdentity::GetIPv4() const
+{
+	return m_eType == k_ESteamNetworkingIdentityType_IPAddress ? m_ip.GetIPv4() : 0;
+}
+inline ESteamNetworkingFakeIPType SteamNetworkingIdentity::GetFakeIPType() const
+{
+	return m_eType == k_ESteamNetworkingIdentityType_IPAddress ? m_ip.GetFakeIPType()
+								   : k_ESteamNetworkingFakeIPType_Invalid;
+}
+inline void SteamNetworkingIdentity::SetLocalHost()
+{
+	m_eType	 = k_ESteamNetworkingIdentityType_IPAddress;
+	m_cbSize = (int)sizeof(m_ip);
+	m_ip.SetIPv6LocalHost();
+}
+inline bool SteamNetworkingIdentity::IsLocalHost() const
+{
+	return m_eType == k_ESteamNetworkingIdentityType_IPAddress && m_ip.IsLocalHost();
+}
+inline bool SteamNetworkingIdentity::SetGenericString(const char *pszString)
+{
+	size_t l = strlen(pszString);
+	if (l >= sizeof(m_szGenericString))
+		return false;
+	m_eType	 = k_ESteamNetworkingIdentityType_GenericString;
+	m_cbSize = int(l + 1);
+	memcpy(m_szGenericString, pszString, m_cbSize);
+	return true;
+}
+inline const char *SteamNetworkingIdentity::GetGenericString() const
+{
+	return m_eType == k_ESteamNetworkingIdentityType_GenericString ? m_szGenericString : NULL;
+}
+inline bool SteamNetworkingIdentity::SetGenericBytes(const void *data, size_t cbLen)
+{
+	if (cbLen > sizeof(m_genericBytes))
+		return false;
+	m_eType	 = k_ESteamNetworkingIdentityType_GenericBytes;
+	m_cbSize = int(cbLen);
+	memcpy(m_genericBytes, data, m_cbSize);
+	return true;
+}
+inline const uint8 *SteamNetworkingIdentity::GetGenericBytes(int &cbLen) const
+{
+	if (m_eType != k_ESteamNetworkingIdentityType_GenericBytes)
+		return NULL;
+	cbLen = m_cbSize;
+	return m_genericBytes;
+}
+inline bool SteamNetworkingIdentity::operator==(const SteamNetworkingIdentity &x) const
+{
+	return m_eType == x.m_eType && m_cbSize == x.m_cbSize &&
+	       memcmp(m_genericBytes, x.m_genericBytes, m_cbSize) == 0;
+}
+inline void SteamNetworkingMessage_t::Release()
+{
+	(*m_pfnRelease)(this);
+}
 
 #endif // #ifndef API_GEN
 

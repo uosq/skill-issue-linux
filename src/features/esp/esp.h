@@ -20,15 +20,15 @@ namespace ESP
 	extern std::vector<std::unique_ptr<IBaseElement>> m_builtinElements;
 	// extern std::vector<std::unique_ptr<LuaElement>> m_luaElements;
 
-	void PaintBox (Color color, const ESP_Data &data);
+	void PaintBox(Color color, const ESP_Data &data);
 
-	bool GetData (const EntityListEntry &entry, ESP_Data &out);
+	bool GetData(const EntityListEntry &entry, ESP_Data &out);
 
-	const char *GetHealthMode ();
-	const char *GetTeamMode ();
+	const char *GetHealthMode();
+	const char *GetTeamMode();
 
-	void Init ();
-	void Run (CTFPlayer *pLocal);
+	void Init();
+	void Run(CTFPlayer *pLocal);
 
-	int GetFont ();
-};
+	int GetFont();
+}; // namespace ESP

@@ -28,21 +28,17 @@
    andreas@angelcode.com
 */
 
-
-
 //
 // as_objecttype.h
 //
 // A class for storing object type information
 //
 
-
-
 #ifndef AS_OBJECTTYPE_H
 #define AS_OBJECTTYPE_H
 
-#include "as_property.h"
 #include "as_array.h"
+#include "as_property.h"
 #include "as_scriptfunction.h"
 #include "as_typeinfo.h"
 
@@ -50,24 +46,24 @@ BEGIN_AS_NAMESPACE
 
 struct asSTypeBehaviour
 {
-	asSTypeBehaviour() 
+	asSTypeBehaviour()
 	{
-		factory = 0;
-		listFactory = 0;
-		copyfactory = 0;
-		construct = 0; 
-		copyconstruct = 0;
-		destruct = 0; 
-		copy = 0; 
-		addref = 0; 
-		release = 0; 
-		gcGetRefCount = 0; 
-		gcSetFlag = 0; 
-		gcGetFlag = 0; 
-		gcEnumReferences = 0; 
+		factory		       = 0;
+		listFactory	       = 0;
+		copyfactory	       = 0;
+		construct	       = 0;
+		copyconstruct	       = 0;
+		destruct	       = 0;
+		copy		       = 0;
+		addref		       = 0;
+		release		       = 0;
+		gcGetRefCount	       = 0;
+		gcSetFlag	       = 0;
+		gcGetFlag	       = 0;
+		gcEnumReferences       = 0;
 		gcReleaseAllReferences = 0;
-		templateCallback = 0;
-		getWeakRefFlag = 0;
+		templateCallback       = 0;
+		getWeakRefFlag	       = 0;
 	}
 
 	int factory;
@@ -100,31 +96,33 @@ struct asSNameSpace;
 
 class asCObjectType : public asCTypeInfo
 {
-public:
-	asITypeInfo       *GetBaseType() const;
-	bool               DerivesFrom(const asITypeInfo *objType) const;
-	int                GetSubTypeId(asUINT subtypeIndex = 0) const;
-	asITypeInfo       *GetSubType(asUINT subtypeIndex = 0) const;
-	asUINT             GetSubTypeCount() const;
-	asUINT             GetInterfaceCount() const;
-	asITypeInfo       *GetInterface(asUINT index) const;
-	bool               Implements(const asITypeInfo *objType) const;
-	asUINT             GetFactoryCount() const;
+      public:
+	asITypeInfo *GetBaseType() const;
+	bool DerivesFrom(const asITypeInfo *objType) const;
+	int GetSubTypeId(asUINT subtypeIndex = 0) const;
+	asITypeInfo *GetSubType(asUINT subtypeIndex = 0) const;
+	asUINT GetSubTypeCount() const;
+	asUINT GetInterfaceCount() const;
+	asITypeInfo *GetInterface(asUINT index) const;
+	bool Implements(const asITypeInfo *objType) const;
+	asUINT GetFactoryCount() const;
 	asIScriptFunction *GetFactoryByIndex(asUINT index) const;
 	asIScriptFunction *GetFactoryByDecl(const char *decl) const;
-	asUINT             GetMethodCount() const;
+	asUINT GetMethodCount() const;
 	asIScriptFunction *GetMethodByIndex(asUINT index, bool getVirtual) const;
 	asIScriptFunction *GetMethodByName(const char *name, bool getVirtual) const;
 	asIScriptFunction *GetMethodByDecl(const char *decl, bool getVirtual) const;
-	asUINT             GetPropertyCount() const;
-	int                GetProperty(asUINT index, const char **name, int *typeId, bool *isPrivate, bool *isProtected, int *offset, bool *isReference, asDWORD *accessMask, int *compositeOffset, bool *isCompositeIndirect, bool *isConst) const;
-	const char        *GetPropertyDeclaration(asUINT index, bool includeNamespace = false) const;
-	asUINT             GetBehaviourCount() const;
+	asUINT GetPropertyCount() const;
+	int GetProperty(asUINT index, const char **name, int *typeId, bool *isPrivate, bool *isProtected, int *offset,
+			bool *isReference, asDWORD *accessMask, int *compositeOffset, bool *isCompositeIndirect,
+			bool *isConst) const;
+	const char *GetPropertyDeclaration(asUINT index, bool includeNamespace = false) const;
+	asUINT GetBehaviourCount() const;
 	asIScriptFunction *GetBehaviourByIndex(asUINT index, asEBehaviours *outBehaviour) const;
-	asUINT             GetChildFuncdefCount() const;
-	asITypeInfo       *GetChildFuncdef(asUINT index) const;
+	asUINT GetChildFuncdefCount() const;
+	asITypeInfo *GetChildFuncdef(asUINT index) const;
 
-public:
+      public:
 	asCObjectType(asCScriptEngine *engine);
 	~asCObjectType();
 	void DestroyInternal();
@@ -133,33 +131,34 @@ public:
 
 	bool IsInterface() const;
 
-	asCObjectProperty *AddPropertyToClass(const asCString &name, const asCDataType &dt, bool isPrivate, bool isProtected, bool isInherited);
+	asCObjectProperty *AddPropertyToClass(const asCString &name, const asCDataType &dt, bool isPrivate,
+					      bool isProtected, bool isInherited);
 	void ReleaseAllProperties();
 
 #ifdef WIP_16BYTE_ALIGN
-	int                          alignment;
+	int alignment;
 #endif
-	asCArray<asCObjectProperty*> properties;
-	asCArray<int>                methods;
+	asCArray<asCObjectProperty *> properties;
+	asCArray<int> methods;
 
 	// TODO: These are not used by template types. Should perhaps create a derived class to save memory on ordinary object types
-	asCArray<asCObjectType*>     interfaces;
-	asCArray<asUINT>             interfaceVFTOffsets;
-	asCObjectType *              derivedFrom;
-	asCArray<asCScriptFunction*> virtualFunctionTable;
+	asCArray<asCObjectType *> interfaces;
+	asCArray<asUINT> interfaceVFTOffsets;
+	asCObjectType *derivedFrom;
+	asCArray<asCScriptFunction *> virtualFunctionTable;
 
 	// Used for funcdefs declared as members of class.
 	// TODO: child funcdef: Should be possible to enumerate these from application
-	asCArray<asCFuncdefType*> childFuncDefs;
+	asCArray<asCFuncdefType *> childFuncDefs;
 
 	asSTypeBehaviour beh;
 
 	// Used for template types
-	asCArray<asCDataType> templateSubTypes;   // increases refCount for typeinfo held in datatype
-	bool                  acceptValueSubType;
-	bool                  acceptRefSubType;
+	asCArray<asCDataType> templateSubTypes; // increases refCount for typeinfo held in datatype
+	bool acceptValueSubType;
+	bool acceptRefSubType;
 
-protected:
+      protected:
 	friend class asCScriptEngine;
 	friend class asCConfigGroup;
 	friend class asCModule;

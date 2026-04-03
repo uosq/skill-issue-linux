@@ -22,30 +22,32 @@
 #define LIBDETOUR_H_ 1
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
-#include <stdint.h>
 #include <stdbool.h>
+#include <stdint.h>
 
 #if defined(__i386__)
 #define LIBDETOUR_JMP_SZ_ 7  /* Size of `jmp' instructions in 32-bit */
 #elif defined(__x86_64__)    /* !defined(__i386__) */
 #define LIBDETOUR_JMP_SZ_ 12 /* Size of `jmp' instructions in 64-bit */
-#else                        /* !defined(__x86_64__) */
+#else			     /* !defined(__x86_64__) */
 #error "libdetour: The current architecture is not supported"
 #endif /* !defined(__x86_64__) */
 
-typedef struct {
-    bool detoured;
-    void* orig;
-    void* hook;
-    uint8_t saved_bytes[LIBDETOUR_JMP_SZ_];
-} detour_ctx_t;
+	typedef struct
+	{
+		bool detoured;
+		void *orig;
+		void *hook;
+		uint8_t saved_bytes[LIBDETOUR_JMP_SZ_];
+	} detour_ctx_t;
 
-/*----------------------------------------------------------------------------*/
+	/*----------------------------------------------------------------------------*/
 
-/*
+	/*
  * Initialize the specified `detour_ctx_t' structure with the specified original
  * and hook functions. Although the structure is initialized, the `hook'
  * function is not yet hooked to `orig'; use `detour_add' for that.
@@ -53,21 +55,21 @@ typedef struct {
  * Naturally, the `orig' function should not be hooked when calling
  * `detour_init'.
  */
-void detour_init(detour_ctx_t* ctx, void* orig, void* hook);
+	void detour_init(detour_ctx_t *ctx, void *orig, void *hook);
 
-/*
+	/*
  * Enable the detour hook associated to the specified `detour_ctx_t' structure.
  * The function returns `true' if the function was hooked successfully, or
  * `false' otherwise.
  */
-bool detour_enable(detour_ctx_t* ctx);
+	bool detour_enable(detour_ctx_t *ctx);
 
-/*
+	/*
  * Disable the detour hook associated to the specified `detour_ctx_t' structure.
  * The function returns `true' if the function was unhooked successfully, or
  * `false' otherwise.
  */
-bool detour_disable(detour_ctx_t* ctx);
+	bool detour_disable(detour_ctx_t *ctx);
 
 /*----------------------------------------------------------------------------*/
 
@@ -75,8 +77,7 @@ bool detour_disable(detour_ctx_t* ctx);
  * Declare the prototype of the original function, used when calling the
  * original.
  */
-#define DETOUR_DECL_TYPE(FUNCRET, FUNCNAME, ...)                               \
-    typedef FUNCRET (*libdetour_##FUNCNAME##_t)(__VA_ARGS__)
+#define DETOUR_DECL_TYPE(FUNCRET, FUNCNAME, ...) typedef FUNCRET (*libdetour_##FUNCNAME##_t)(__VA_ARGS__)
 
 /*
  * Call the original function named FUNCNAME, using its associated
@@ -90,23 +91,25 @@ bool detour_disable(detour_ctx_t* ctx);
  * The FUNCNAME argument should be the same symbol passed to `DETOUR_DECL_TYPE',
  * without prefixes or suffixes.
  */
-#define DETOUR_ORIG_CALL(CTX_PTR, FUNCNAME, ...)                               \
-    do {                                                                       \
-        detour_disable(CTX_PTR);                                               \
-        ((libdetour_##FUNCNAME##_t)((CTX_PTR)->orig))(__VA_ARGS__);            \
-        detour_enable(CTX_PTR);                                                \
-    } while (0)
+#define DETOUR_ORIG_CALL(CTX_PTR, FUNCNAME, ...)                                                                       \
+	do                                                                                                             \
+	{                                                                                                              \
+		detour_disable(CTX_PTR);                                                                               \
+		((libdetour_##FUNCNAME##_t)((CTX_PTR)->orig))(__VA_ARGS__);                                            \
+		detour_enable(CTX_PTR);                                                                                \
+	} while (0)
 
 /*
  * Same as `DETOUR_ORIG_CALL', but accepts an extra parameter for storing the
  * returned value of the original function.
  */
-#define DETOUR_ORIG_GET(CTX_PTR, OUT_VAR, FUNCNAME, ...)                       \
-    do {                                                                       \
-        detour_disable(CTX_PTR);                                               \
-        OUT_VAR = ((libdetour_##FUNCNAME##_t)((CTX_PTR)->orig))(__VA_ARGS__);  \
-        detour_enable(CTX_PTR);                                                \
-    } while (0)
+#define DETOUR_ORIG_GET(CTX_PTR, OUT_VAR, FUNCNAME, ...)                                                               \
+	do                                                                                                             \
+	{                                                                                                              \
+		detour_disable(CTX_PTR);                                                                               \
+		OUT_VAR = ((libdetour_##FUNCNAME##_t)((CTX_PTR)->orig))(__VA_ARGS__);                                  \
+		detour_enable(CTX_PTR);                                                                                \
+	} while (0)
 
 #ifdef __cplusplus
 }

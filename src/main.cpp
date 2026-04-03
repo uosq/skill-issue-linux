@@ -1,9 +1,9 @@
 #include "core/core.h"
 #include "hooks/enginevgui_paint.h"
 
-__attribute__ ((constructor)) void init (void)
+__attribute__((constructor)) void init(void)
 {
-	gApp.StartInterfaces ();
+	gApp.StartInterfaces();
 
-	HookEngineVGuiPaint ();
+	HookEngineVGuiPaint();
 }
