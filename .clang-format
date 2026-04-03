@@ -1,4 +1,4 @@
-BasedOnStyle: GNU
+BasedOnStyle: Microsoft
 
 TabWidth: 8
 IndentWidth: 8
