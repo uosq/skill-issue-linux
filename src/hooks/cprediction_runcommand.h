@@ -16,31 +16,7 @@ ADD_SIG(CPrediction_RunCommand, "client.so",
 // args CPrediction *self,  C_BasePlayer *player, CUserCmd *ucmd, IMoveHelper *moveHelper
 // xref: CPrediction::RunCommand
 
-DETOUR_DECL_TYPE(void, RunCommand, IPrediction *self, CTFPlayer *player, CUserCmd *ucmd, void *moveHelper);
-inline detour_ctx_t runcommand_ctx;
-
-inline void Hooked_RunCommand(IPrediction *self, CTFPlayer *player, CUserCmd *ucmd, void *moveHelper)
-{
-	if (Warp::m_bShifting)
-		player->GetTickBase() -= Warp::m_iShiftAmount;
-
-	if (Warp::m_bRecharging)
-		player->GetTickBase()--;
-
-	DETOUR_ORIG_CALL(&runcommand_ctx, RunCommand, self, player, ucmd, moveHelper);
-}
+void Hooked_RunCommand(IPrediction *self, CTFPlayer *player, CUserCmd *ucmd, void *moveHelper);
 
 // I should probably just vtable hook it but oh well :p
-inline void Hook_RunCommand(void)
-{
-	detour_init(&runcommand_ctx, Sigs::CPrediction_RunCommand.GetPointer(), (void *)&Hooked_RunCommand);
-	if (!detour_enable(&runcommand_ctx))
-	{
-		interfaces::Cvar->ConsolePrintf("Failed to hook CPrediction::RunCommand\n");
-		return;
-	}
-
-#ifdef DEBUG
-	interfaces::Cvar->ConsolePrintf("Hooked CPrediction::RunCommand\n");
-#endif
-}
+void Hook_RunCommand(void);

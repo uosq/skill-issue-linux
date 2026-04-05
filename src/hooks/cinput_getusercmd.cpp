@@ -1,0 +1,15 @@
+#include "cinput_getusercmd.h"
+
+DECLARE_VTABLE_HOOK(GetUserCmd, CUserCmd *, (void *input, int sequence_number))
+{
+	return &(static_cast<IInput *>(interfaces::CInput)->m_pCommands[sequence_number % 90]);
+}
+
+void Hook_GetUserCmd(void)
+{
+	INSTALL_VTABLE_HOOK(GetUserCmd, interfaces::CInput, 8);
+
+#ifdef DEBUG
+	interfaces::Cvar->ConsolePrintf("Hooked CInput::GetUserCmd\n");
+#endif
+}

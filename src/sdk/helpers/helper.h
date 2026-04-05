@@ -18,6 +18,8 @@
 #include "localplayer/localplayer.h"
 #include "materials/materials.h"
 
+#include "../../libdetour/libdetour.h"
+
 namespace helper
 {
 	namespace console

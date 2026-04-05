@@ -8,6 +8,7 @@
 #include "../features/logs/logs.h"
 #include "../features/scriptmanager/scriptmanager.h"
 #include "../features/spectators/spectators.h"
+
 #include "../imgui/imgui_stdlib.h"
 
 #define BASE_DIR "./skill-issue/"

@@ -61,28 +61,10 @@ void C_TFViewModel::AddViewModelBob
 #include "../sdk/signatures/signatures.h"
 
 #include "../features/logs/logs.h"
+
 #include "../settings/settings.h"
 
-DETOUR_DECL_TYPE(float, CalcViewModelBobHelper, CTFPlayer *pPlayer, BobState_t *pBobState);
 ADD_SIG(CalcViewModelBobHelper, "client.so", "48 85 F6 0F 84 ? ? ? ? 55 66 0F EF DB")
 
-static detour_ctx_t calcbobhelper;
-
-static float Hooked_CalcViewModelBobHelper(CTFPlayer *pPlayer, BobState_t *pBobState)
-{
-	if (!Settings::Misc.no_viewmodel_bob)
-	{
-		DETOUR_ORIG_CALL(&calcbobhelper, CalcViewModelBobHelper, pPlayer, pBobState);
-		return 0.0f;
-	}
-
-	memset(pBobState, 0, sizeof(BobState_t));
-	return 0.0f;
-}
-
-static void Hook_CalcViewModelBobHelper()
-{
-	detour_init(&calcbobhelper, Sigs::CalcViewModelBobHelper.GetPointer(), (void *)&Hooked_CalcViewModelBobHelper);
-	if (!detour_enable(&calcbobhelper))
-		Logs::Error("Couldn't hook CalcViewModelBobHelper");
-}
+float Hooked_CalcViewModelBobHelper(CTFPlayer *pPlayer, BobState_t *pBobState);
+void Hook_CalcViewModelBobHelper();

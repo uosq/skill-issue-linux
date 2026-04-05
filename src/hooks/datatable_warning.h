@@ -19,26 +19,5 @@ ADD_SIG(DataTable_Warning, "engine.so",
 	"29 55 90 0F 29 5D A0 0F 29 65 B0 0F 29 6D C0 0F 29 75 D0 0F 29 7D "
 	"E0 4C 8D A5 40 EF FF FF")
 
-DETOUR_DECL_TYPE(void, DataTable_Warning, const char *pInMessage, ...);
-inline detour_ctx_t warning_ctx;
-
-inline void Hooked_DataTable_Warning(const char *pInMessage, ...)
-{
-	/*
-	do nothing
-	*/
-}
-
-inline void Hook_DataTable_Warning(void)
-{
-	detour_init(&warning_ctx, Sigs::DataTable_Warning.GetPointer(), (void *)&Hooked_DataTable_Warning);
-	if (!detour_enable(&warning_ctx))
-	{
-		interfaces::Cvar->ConsolePrintf("Failed to hook DataTable_Warning\n");
-		return;
-	}
-
-#ifdef DEBUG
-	interfaces::Cvar->ConsolePrintf("DataTable_Warning hooked\n");
-#endif
-}
+void Hooked_DataTable_Warning(const char *pInMessage, ...);
+void Hook_DataTable_Warning(void);

@@ -7,8 +7,8 @@
 
 #define DECLARE_VTABLE_HOOK(name, ret, args)                                                                           \
 	using name##Fn		       = ret(*) args;                                                                  \
-	inline name##Fn original##name = nullptr;                                                                      \
-	inline ret Hooked##name args
+	name##Fn original##name = nullptr;                                                                      \
+	ret Hooked##name args
 
 #define INSTALL_VTABLE_HOOK(name, iface_expr, index)                                                                   \
 	do                                                                                                             \
