@@ -200,6 +200,7 @@ namespace Settings
 		Hotkey *thirdperson_key	    = nullptr;
 		bool customfov_enabled	    = false;
 		float customfov		    = 90.0f;
+		float zoomedfov             = 20.0f;
 		bool spectatorlist	    = false;
 		bool backpack_expander	    = false;
 		bool sv_pure_bypass	    = false;
@@ -361,6 +362,7 @@ namespace Settings
 	    CONFIG_FLOAT3("misc thirdperson offset", Misc.thirdperson_offset),
 	    CONFIG_BOOL("misc customfov enabled", Misc.customfov_enabled),
 	    CONFIG_FLOAT("misc customfov", Misc.customfov),
+	    CONFIG_FLOAT("misc customfov zoom", Misc.zoomedfov),
 	    CONFIG_BOOL("misc spectatorlist", Misc.spectatorlist),
 	    CONFIG_BOOL("misc backpack_expander", Misc.backpack_expander),
 	    CONFIG_BOOL("misc sv pure bypass", Misc.sv_pure_bypass),

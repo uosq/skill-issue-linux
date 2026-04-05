@@ -245,7 +245,8 @@ void DrawMiscTab()
 
 	ImGui::BeginDisabled(!Settings::Misc.customfov_enabled);
 	{
-		ImGui::SliderFloat("Custom Fov", &Settings::Misc.customfov, 54.0f, 120.0f);
+		ImGui::SliderFloat("Custom Fov", &Settings::Misc.customfov, 1.0f, 120.0f);
+		ImGui::SliderFloat("Zoomed Fov", &Settings::Misc.zoomedfov, 1.0f, 120.0f);
 	}
 	ImGui::EndDisabled();
 

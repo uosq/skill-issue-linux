@@ -51,7 +51,7 @@ static void Hooked_CTFMatchSummary_OnTick(void *self)
 	auto match_id = reinterpret_cast<uint32_t *>(gc + 0x818);
 
 	// why the fuck did Valve even make this shitty ass survey??
-	if (Settings::Misc.no_survey && (*match_id & 2))
+	if (*match_id & 2)
 		*match_id &= ~2;
 
 	DETOUR_ORIG_CALL(&summary_ontick_ctx, CTFMatchSummary_OnTick, self);

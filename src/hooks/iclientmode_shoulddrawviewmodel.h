@@ -12,10 +12,8 @@
 
 DECLARE_VTABLE_HOOK(ShouldDrawViewModel, bool, (IClientMode * self))
 {
-	//if (Settings::Misc.no_zoom)
 	return true;
-
-	return originalShouldDrawViewModel(self);
+	//return originalShouldDrawViewModel(self);
 }
 
 static void Hook_ShouldDrawViewModel()

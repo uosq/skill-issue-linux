@@ -23,8 +23,9 @@ static bool Hooked_CBasePlayer_ShouldDrawLocalPlayer(void)
 	bool ret;
 	DETOUR_ORIG_GET(&entity_shoulddraw, ret, CBasePlayer_ShouldDrawLocalPlayer);
 
-	if (auto pLocal = EntityList::GetLocal(); pLocal != nullptr && pLocal->IsAlive())
-		return ret || (pLocal->InCond(TF_COND_ZOOMED) && Settings::Misc.no_zoom);
+	auto pLocal = EntityList::GetLocal();
+	if (pLocal != nullptr && pLocal->IsAlive() && pLocal->InCond(TF_COND_ZOOMED))
+		return true;
 
 	return ret;
 }
