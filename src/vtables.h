@@ -2,6 +2,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <cstdio>
 #include <sys/mman.h>
 #include <unistd.h>
 
@@ -24,15 +25,28 @@ namespace vtable
 		return *reinterpret_cast<void ***>(obj);
 	}
 
-	template <typename T> inline T hook(void **table, int index, T detour)
+	template <typename T>
+	inline T hook(void** table, int index, T detour)
 	{
-		size_t page	= sysconf(_SC_PAGESIZE);
-		uintptr_t start = (uintptr_t)table & ~(page - 1);
+		size_t page = sysconf(_SC_PAGESIZE);
 
-		mprotect((void *)start, page, PROT_READ | PROT_WRITE);
-		T orig	     = (T)table[index];
-		table[index] = (void *)detour;
-		mprotect((void *)start, page, PROT_READ);
+		void** entry = &table[index];
+		uintptr_t addr = (uintptr_t)entry;
+		uintptr_t page_start = addr & ~(page - 1);
+
+		if (mprotect((void*)page_start, page, PROT_READ | PROT_WRITE | PROT_EXEC) != 0)
+			perror("mprotect RWX");
+
+		T orig = (T)table[index];
+
+		// very unlikely, but if the
+		// user attaches in the middle of a match
+		// we might hook shit that is being executed
+		// so do it atomically to not fuck the game
+		__atomic_store_n(&table[index], (void*)detour, __ATOMIC_SEQ_CST);
+
+		if (mprotect((void*)page_start, page, PROT_READ | PROT_EXEC) != 0)
+			perror("mprotect RX");
 
 		return orig;
 	}

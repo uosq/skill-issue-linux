@@ -61,6 +61,7 @@ namespace interfaces
 	//extern IGameMovement* GameMovement;
 	//extern CEconNotificationQueue* g_notificationQueue;
 	extern IPhysics *Physics;
+	extern IPhysicsCollision* PhysicsCollision;
 } // namespace interfaces
 
 namespace factories

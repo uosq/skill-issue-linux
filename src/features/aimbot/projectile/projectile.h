@@ -42,7 +42,10 @@ class CAimbotProjectile
 
 	Vector m_vecOldIndicatorPos;
 	CBaseEntity *m_pOldIndicatorTarget;
-	// IPhysicsEnvironment* m_pPhysEnv;
+
+	#if 0
+	IPhysicsEnvironment* m_pPhysEnv = nullptr;
+	#endif
 };
 
 extern CAimbotProjectile gAimProjectile;

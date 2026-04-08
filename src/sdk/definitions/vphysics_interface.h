@@ -749,7 +749,7 @@ enum callbackflags
 
 class IPhysicsObject
 {
-      public:
+public:
 	virtual ~IPhysicsObject(void)
 	{
 	}
@@ -927,6 +927,38 @@ class IPhysicsObject
 
 	// dumps info about the object to Msg()
 	virtual void OutputDebugInfo() const = 0;
+
+	void* m_pGameData;
+	void* m_pObject;
+	const CPhysCollide* m_pCollide;
+	IPhysicsShadowController* m_pShadow;
+
+	Vec3			m_dragBasis;
+	Vec3			m_angDragBasis;
+
+	// these 5 should pack into a short
+	// pack new bools here
+	bool			m_shadowTempGravityDisable : 5;
+	bool			m_hasTouchedDynamic : 1;
+	bool			m_asleepSinceCreation : 1;
+	bool			m_forceSilentDelete : 1;
+	unsigned char	m_sleepState : 2;
+	unsigned char	m_hingedAxis : 3;
+	unsigned char	m_collideType : 3;
+	unsigned short	m_gameIndex;
+
+private:
+	unsigned short	m_materialIndex;
+	unsigned short	m_activeIndex;
+
+	unsigned short	m_callbacks;
+	unsigned short	m_gameFlags;
+	unsigned int	m_contentsMask;
+
+	float			m_volume;
+	float			m_buoyancyRatio;
+	float			m_dragCoefficient;
+	float			m_angDragCoefficient;
 };
 
 class IPhysicsSpring

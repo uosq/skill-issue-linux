@@ -2,6 +2,7 @@
 
 #include "../../logs/logs.h"
 #include "../../prediction/prediction.h"
+#include "../../../sdk/definitions/vphysics_interface.h"
 
 #include <cmath>
 
@@ -383,6 +384,16 @@ std::vector<PotentialTarget> CAimbotProjectile::GetBestTargets(CTFPlayer *pLocal
 void CAimbotProjectile::RunMain(CTFPlayer *pLocal, CTFWeaponBase *pWeapon)
 {
 	Reset();
+
+	#if 0
+	if (m_pPhysEnv == nullptr)
+	{
+		m_pPhysEnv = interfaces::Physics->CreateEnvironment();
+		m_pPhysEnv->SetGravity(Vec3(0, 0, -800));
+		m_pPhysEnv->SetAirDensity(2.0f);
+		m_pPhysEnv->ResetSimulationClock();
+	}
+	#endif
 
 	if (!Settings::Aimbot.key->IsEnabled())
 		return;

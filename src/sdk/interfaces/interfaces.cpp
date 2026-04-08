@@ -29,6 +29,7 @@ namespace interfaces
 	IStudioRender *StudioRender	   = nullptr;
 	//CEconNotificationQueue* g_notificationQueue = nullptr;
 	IPhysics *Physics = nullptr;
+	IPhysicsCollision *PhysicsCollision;
 } // namespace interfaces
 
 namespace factories
@@ -193,6 +194,9 @@ bool InitializeInterfaces()
 		return false;
 
 	if (!GetInterface(interfaces::Physics, factories::vphysics, VPHYSICS_INTERFACE_VERSION))
+		return false;
+
+	if (!GetInterface(interfaces::Physics, factories::vphysics, VPHYSICS_COLLISION_INTERFACE_VERSION))
 		return false;
 
 	{ // ClientModeShared?
