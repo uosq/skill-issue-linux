@@ -1,5 +1,7 @@
 #include "cbaseanimating_interpolate.h"
 
+#include "../features/entitylist/entitylist.h"
+
 DETOUR_DECL_TYPE(bool, Interpolate, CBaseEntity *self, float currentTime);
 detour_ctx_t interpolate_ctx;
 
@@ -13,7 +15,11 @@ bool Hooked_Interpolate(CBaseAnimating *self, float currentTime)
 	}
 
 	if (Warp::m_bShifting || Warp::m_bRecharging)
-		return true;
+	{
+		auto pLocal = EntityList::GetLocal();
+		if (pLocal && pLocal == self)
+			return true;
+	}
 
 	bool retVal;
 	DETOUR_ORIG_GET(&interpolate_ctx, retVal, Interpolate, self, currentTime);

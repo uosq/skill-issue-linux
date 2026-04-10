@@ -14,7 +14,8 @@ namespace AimHitscan
 {
 	// main
 	void RunMain(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd);
-	void OnAttack(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd);
+	void OnAttack(CTFWeaponBase* pWeapon, CUserCmd* pCmd);
+	bool ApplyAim(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd);
 	void Reset();
 
 	// helpers

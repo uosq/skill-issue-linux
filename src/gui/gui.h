@@ -28,12 +28,6 @@ enum TabMenu {
 namespace GUI {
 	extern int tab;
 
-	extern int selectedIndex;
-	extern std::vector<std::string> configs;
-	extern char newConfigName[64];
-	extern bool firstOpenConfigTab;
-	extern bool openDeletePopup;
-
 	void RunMainWindow();
 	void RunPlayerList();
 	void RunSpectatorList();

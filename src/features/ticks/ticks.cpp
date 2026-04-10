@@ -301,7 +301,7 @@ void TickManager::Run(float accumulated_extra_samples, bool bFinalTick)
 	if (Warp::m_iDesiredState == WarpState::RUNNING && Warp::m_iStoredTicks > 0)
 	{
 		Warp::m_bShifting    = true;
-		Warp::m_iShiftAmount = Settings::AntiAim.warp_speed;
+		Warp::m_iShiftAmount = 0;//Settings::AntiAim.warp_speed;
 
 		for (int n = 0; n < (Settings::AntiAim.warp_speed); n++)
 		{

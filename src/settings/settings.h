@@ -421,8 +421,8 @@ namespace Settings
 	    CONFIG_INT("radar icon size", Radar.icon_size),
 	};
 
-	void Save(const std::string &fullPath);
-	void Load(const std::string &fullPath);
+	int Save(const std::string &fullPath);
+	int Load(const std::string &fullPath);
 
 	template <typename T> bool GetSetting(const std::string &key, T &out)
 	{

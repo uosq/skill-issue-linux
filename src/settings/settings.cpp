@@ -16,7 +16,7 @@ namespace Settings
 	SettingsTriggerbot Trigger{};
 } // namespace Settings
 
-void Settings::Load(const std::string &fullPath)
+int Settings::Load(const std::string &fullPath)
 {
 	CSimpleIniA ini;
 	ini.SetUnicode();
@@ -24,24 +24,36 @@ void Settings::Load(const std::string &fullPath)
 	SI_Error rc = ini.LoadFile(fullPath.c_str());
 
 	if (rc < 0)
-		return Logs::Error("Failed to load settings file");
+	{
+		Logs::Error("Failed to load settings file");
+		return rc;
+	}
 
 	for (auto &setting : m_entries)
 	{
-		const char *val = ini.GetValue("Settings", std::string(setting.name).c_str());
-		if (val)
-			setting.load(val);
+		std::string strName = std::string(setting.name);
+		const char *val = ini.GetValue("Settings", strName.c_str());
+
+		if (val == NULL)
+		{
+			Logs::Warn("Couldn't load setting \"" + strName + "\" with value \"" + setting.get() + "\"");
+			continue;
+		}
+
+		setting.load(val);
 	}
+
+	return SI_OK;
 }
 
-void Settings::Save(const std::string &fullPath)
+int Settings::Save(const std::string &fullPath)
 {
 	CSimpleIniA ini;
 
 	for (const auto &setting : m_entries)
 		ini.SetValue("Settings", std::string(setting.name).c_str(), setting.get().c_str());
 
-	ini.SaveFile(fullPath.c_str());
+	return ini.SaveFile(fullPath.c_str());
 }
 
 void Settings::InitBinds()

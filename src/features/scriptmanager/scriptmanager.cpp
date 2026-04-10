@@ -1,12 +1,16 @@
 #include "scriptmanager.h"
 
+#include <algorithm>
 #include <filesystem>
 #include <fstream>
 
 #include "../angelscript/api/globals.h"
 #include "../angelscript/api/libraries/hooks/hooks.h"
 
+#define SCRIPT_DIR "./skill-issue/scripts/"
+
 static std::vector<Script> m_Scripts;
+static std::vector<std::string> s_vScriptFiles;
 
 bool ScriptManager::Load(Script &script)
 {
@@ -111,4 +115,33 @@ Script &ScriptManager::GetOrCreate(const std::string &fullPath)
 
 	m_Scripts.push_back(script);
 	return m_Scripts.back();
+}
+
+std::vector<std::string>& ScriptManager::GetAvailableAngelScripts()
+{
+	return s_vScriptFiles;
+}
+
+bool ScriptManager::RefreshAngelScripts()
+{
+	s_vScriptFiles.clear();
+
+	const std::filesystem::path dir = SCRIPT_DIR;
+
+	if (!std::filesystem::exists(dir) || !std::filesystem::is_directory(dir))
+		return false;
+
+	for (const auto &entry : std::filesystem::directory_iterator(dir))
+	{
+		if (!entry.is_regular_file())
+			continue;
+
+		const auto &path = entry.path();
+
+		if (path.extension() == ".as")
+			s_vScriptFiles.emplace_back(path.filename().string());
+	}
+
+	std::sort(s_vScriptFiles.begin(), s_vScriptFiles.end());
+	return true;
 }

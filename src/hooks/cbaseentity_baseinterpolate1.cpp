@@ -1,10 +1,11 @@
 #include "cbaseentity_baseinterpolatepart1.h"
 
+#include "../features/entitylist/entitylist.h"
+
 DETOUR_DECL_TYPE(int, BaseInterpolatePart1, CBaseEntity *self, float *currentTime, Vector *oldOrigin, QAngle *oldAngles, Vector *oldVel, int *bNoMoreChanges);
 detour_ctx_t interp_ctx;
 
-int Hooked_BaseInterpolatePart1(CBaseEntity *self, float *currentTime, Vector *oldOrigin, QAngle *oldAngles,
-				       Vector *oldVel, int *bNoMoreChanges)
+int Hooked_BaseInterpolatePart1(CBaseEntity *self, float *currentTime, Vector *oldOrigin, QAngle *oldAngles, Vector *oldVel, int *bNoMoreChanges)
 {
 	const int INTERPOLATE_STOP = 0;
 
@@ -13,11 +14,23 @@ int Hooked_BaseInterpolatePart1(CBaseEntity *self, float *currentTime, Vector *o
 		return INTERPOLATE_STOP;
 
 	if (Warp::m_bShifting || Warp::m_bRecharging)
-		return INTERPOLATE_STOP;
+	{
+		auto pLocal = EntityList::GetLocal();
+		if (pLocal && pLocal == self)
+			return INTERPOLATE_STOP;
+	}
 
 	int retVal;
-	DETOUR_ORIG_GET(&interp_ctx, retVal, BaseInterpolatePart1, self, currentTime, oldOrigin, oldAngles, oldVel,
-			bNoMoreChanges);
+	DETOUR_ORIG_GET
+	(
+		&interp_ctx,
+		retVal,
+		BaseInterpolatePart1,
+		self,
+		currentTime,
+		oldOrigin, oldAngles, oldVel,
+		bNoMoreChanges
+	);
 	return retVal;
 }
 

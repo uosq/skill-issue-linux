@@ -361,4 +361,5 @@ void Entity_RegisterClass(asIScriptEngine *engine)
 	engine->RegisterObjectMethod(ENTITY_CLASSNAME, "string GetClassName()", asFUNCTION(GetClassName), asCALL_CDECL_OBJFIRST);
 	engine->RegisterObjectMethod(ENTITY_CLASSNAME, "string GetName()", asFUNCTION(GetName), asCALL_CDECL_OBJFIRST);
 	engine->RegisterObjectMethod(ENTITY_CLASSNAME, "Entity@ GetEntityFromLoadoutSlot(int index)", asFUNCTION(GetEntityFromLoadoutSlot), asCALL_CDECL_OBJFIRST);
+	//engine->RegisterObjectMethod(ENTITY_CLASSNAME, "");
 }

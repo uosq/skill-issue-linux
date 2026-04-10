@@ -22,4 +22,7 @@ namespace ScriptManager
 	Script &GetOrCreate(const std::string &fullPath);
 
 	std::vector<Script> &GetScripts();
+
+	std::vector<std::string>& GetAvailableAngelScripts();
+	bool RefreshAngelScripts();
 }; // namespace ScriptManager

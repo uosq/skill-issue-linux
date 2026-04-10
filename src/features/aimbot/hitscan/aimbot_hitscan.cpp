@@ -195,34 +195,44 @@ namespace AimbotHitscan
 		case AimbotMode::SMOOTH:
 		{
 			if (mode == AimbotMode::ASSISTANCE)
-			{
 				if (pCmd->mousedx == 0 && pCmd->mousedy == 0)
 					break;
-			}
 
-			auto target	     = targets.front();
-			Vector targetAngle   = target.dir;
+			auto target = targets.front();
+			Vector targetAngle = target.dir;
 
-			Vector delta	     = targetAngle - viewAngles;
-			Vector smoothedAngle = viewAngles + (delta * (100.0f - Settings::Aimbot.smoothness) * 0.01f);
-			state.angle	     = smoothedAngle;
+			Vector delta = targetAngle - viewAngles;
 
+			// fix the 180 flick
+			delta.x = Math::NormalizeAngle(delta.x);
+			delta.y = Math::NormalizeAngle(delta.y);
+			
+			float flDistance = delta.Length();
+
+			// max allowed to move per tick
+			float flMaxStep = Settings::Aimbot.smoothness;
+			float flStepSize = std::min(flDistance, flMaxStep);
+
+			Vector stepAngle = delta * (flStepSize / flDistance);
+			Vector smoothedAngle = viewAngles + stepAngle;
+
+			state.angle = smoothedAngle;
 			interfaces::Engine->SetViewAngles(smoothedAngle);
 			pCmd->viewangles = smoothedAngle;
 
-			state.running	 = true;
+			state.running = true;
 
 			CGameTrace trace;
 			CTraceFilterHitscan filter;
 			filter.pSkip = pLocal;
-			helper::engine::Trace(shootPos, shootPos + (viewForward * 2048), MASK_SHOT | CONTENTS_HITBOX,
-					      &filter, &trace);
+			helper::engine::Trace(shootPos, shootPos + (viewForward * 2048), MASK_SHOT | CONTENTS_HITBOX, &filter, &trace);
 
 			if (!trace.DidHit() || trace.m_pEnt != target.entity)
 				break;
 
 			if (Settings::Aimbot.autoshoot)
 				pCmd->buttons |= IN_ATTACK;
+
 			break;
 		}
 		case AimbotMode::SILENT:
@@ -232,11 +242,11 @@ namespace AimbotHitscan
 
 			if (helper::localplayer::IsAttacking(pLocal, pWeapon, pCmd))
 			{
-				auto target	 = targets.front();
-				Vector angle	 = target.dir;
+				auto target = targets.front();
+				Vector angle = target.dir;
 				pCmd->viewangles = angle;
-				state.angle	 = angle;
-				state.running	 = true;
+				state.angle = angle;
+				state.running = true;
 			}
 
 			break;

@@ -50,6 +50,8 @@
 #include "../hooks/sdl.h"
 //#include "../hooks/ctfmatchsummary_ontick.h"
 //#include "../hooks/cbaseentity_shoulddraw.h"
+#include "../hooks/cbuf_executecommand.h"
+//#include "../hooks/ctfplayeranimstate_update.h"
 
 CApp::CApp() : m_bInitialized(false)
 {
@@ -131,6 +133,8 @@ bool CApp::StartHooks()
 	Hook_CalcViewModelBobHelper();
 	//Hook_CTFMatchSummary_OnTick();
 	//Hook_CBaseEntity_ShouldDraw();
+	Hook_Cbuf_ExecuteCommand();
+	//Hook_CTFPlayerAnimState_Update();
 
 	m_bInitialized = true;
 	return true;

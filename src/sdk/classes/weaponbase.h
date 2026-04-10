@@ -82,12 +82,12 @@ class CTFWeaponBase : public CBaseCombatWeapon
 	NETVAR_OFFSET(m_flLastRapidFireCritCheckTime, "CTFWeaponBase->m_flLastCritCheckTime", float, 12);
 
 	// dentro de CTFWeaponBase!
-	const FileWeaponInfo_t *GetWeaponInfo()
+	const CTFWeaponInfo *GetWeaponInfo()
 	{
-		// offset from EDI,word ptr [RDI + 0xF12] in CCombatWeapon(?)->GetTFWpnData()
+		// offset from EDI,word ptr [RDI + 0xF12] in CTFWeaponBase->GetTFWpnData()
 		uintptr_t handleAddress = reinterpret_cast<uintptr_t>(this) + 0xf12;
 		void *handleValue	= *(void **)handleAddress;
-		return original_GetFileWeaponInfoFromHandle(handleValue);
+		return static_cast<CTFWeaponInfo*>(original_GetFileWeaponInfoFromHandle(handleValue));
 	}
 
 	int GetWeaponID()

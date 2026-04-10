@@ -4,14 +4,15 @@
 
 #include "../sdk/interfaces/interfaces.h"
 
+#if 0
+#include "../features/backtrack/backtrack.h"
+#endif
 #include "../features/entitylist/entitylist.h"
 #include "../features/spectators/spectators.h"
 #include "../features/angelscript/api/libraries/hooks/hooks.h"
 
 DECLARE_VTABLE_HOOK(FrameStageNotify, void, (CHLClient * thisptr, int stage))
 {
-	originalFrameStageNotify(thisptr, stage);
-
 	switch (stage)
 	{
 	case FRAME_RENDER_START:
@@ -55,6 +56,7 @@ DECLARE_VTABLE_HOOK(FrameStageNotify, void, (CHLClient * thisptr, int stage))
 	}
 
 	Hooks_CallHooks("FrameStageNotify", [&](asIScriptContext *ctx) { ctx->SetArgDWord(0, stage); });
+	originalFrameStageNotify(thisptr, stage);
 }
 
 void HookFrameStageNotify()

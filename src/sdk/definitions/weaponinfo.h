@@ -85,8 +85,7 @@ struct WeaponData_t
 	bool m_bDrawCrosshair;	   // Should the weapon draw a crosshair
 	int m_iProjectile;	   // The type of projectile this mode fires
 	int m_iAmmoPerShot;	   // How much ammo each shot consumes
-	float
-	    m_flProjectileSpeed; // Start speed for projectiles (nail, etc.); NOTE: union with something non-projectile
+	float m_flProjectileSpeed; // Start speed for projectiles (nail, etc.); NOTE: union with something non-projectile
 	float m_flSmackDelay;	 // how long after swing should damage happen for melee weapons
 	bool m_bUseRapidFireCrits;
 

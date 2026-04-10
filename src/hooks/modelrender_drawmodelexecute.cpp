@@ -3,10 +3,7 @@
 #include "../sdk/definitions/ivmodelrender.h"
 #include "../sdk/interfaces/interfaces.h"
 
-#if 0
 #include "../features/backtrack/backtrack.h"
-#endif
-
 #include "../features/chams/chams.h"
 #include "../features/glow/glow.h"
 

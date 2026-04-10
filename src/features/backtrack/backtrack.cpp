@@ -246,11 +246,11 @@ void Backtrack::DoPostScreenSpaceEffects()
 	{
 		for (auto &[index, records] : m_records)
 		{
-			CTFPlayer *entity = static_cast<CTFPlayer *>(interfaces::EntityList->GetClientEntity(index));
-			if (entity == nullptr)
+			if (records.empty())
 				continue;
 
-			if (records.empty())
+			CTFPlayer *entity = static_cast<CTFPlayer *>(interfaces::EntityList->GetClientEntity(index));
+			if (entity == nullptr)
 				continue;
 
 			if (!entity->ShouldDraw())
@@ -300,7 +300,7 @@ void Backtrack::DoPostScreenSpaceEffects()
 		break;
 	}
 
-	m_drawing		 = false;
+	m_drawing = false;
 
 	m_current_drawing_record = {};
 	interfaces::RenderView->SetBlend(savedBlend);
