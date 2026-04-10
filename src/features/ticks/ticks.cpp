@@ -310,6 +310,7 @@ void TickManager::Run(float accumulated_extra_samples, bool bFinalTick)
 
 			CL_Move(accumulated_extra_samples, n == Settings::AntiAim.warp_speed);
 			Warp::m_iStoredTicks--;
+			Warp::m_iShiftAmount++;
 		}
 
 		Warp::m_iDesiredState = WarpState::WAITING;
