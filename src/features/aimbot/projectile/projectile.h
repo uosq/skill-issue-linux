@@ -33,6 +33,8 @@ class CAimbotProjectile
 	float GetAimDrop(float flGravity, float flTimeSeconds);
 	void DrawPath(const std::vector<Vector>& vPath);
 	bool IsRightAttack(CTFWeaponBase *pWeapon);
+	bool FindVisiblePosToShoot(const ProjectileInfo_t& prjInfo,
+				CBaseEntity* pTarget, const Vec3& predictedPos, const Vec3& shootPos, float flGravity, Vec3& out);
 
       private:
 	std::vector<Vector> m_vecPath;

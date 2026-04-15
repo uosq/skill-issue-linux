@@ -469,50 +469,63 @@ void CAimbotProjectile::RunMain(CTFPlayer *pLocal, CTFWeaponBase *pWeapon)
 		}
 
 		if (prjInfo.simple_trace)
-		{
-			Vector vecDir = vecAimPos - vecEyePos;
-			vecDir.Normalize();
-			Vector vecAngle = vecDir.ToAngle();
+                {
+                        Vector vecDir = vecAimPos - vecEyePos;
+                        vecDir.Normalize();
+                        Vector vecAngle = vecDir.ToAngle();
 
-			Vector vecForward, vecRight, vecUp;
-			Math::AngleVectors(vecAngle, &vecForward, &vecRight, &vecUp);
+                        Vector vecForward, vecRight, vecUp;
+                        Math::AngleVectors(vecAngle, &vecForward, &vecRight, &vecUp);
 
-			Vector vecSpawnPos = vecEyePos + vecForward * prjInfo.offset.x + vecRight * prjInfo.offset.y +
-					     vecUp * prjInfo.offset.z;
+                        Vector vecSpawnPos = vecEyePos + vecForward * prjInfo.offset.x + vecRight * prjInfo.offset.y +
+                                             vecUp * prjInfo.offset.z;
 
-			if (!CheckTrajectory(target.entity, vecSpawnPos, vecAimPos, vecAngle, prjInfo, 0.0f))
-				continue;
+                        if (!CheckTrajectory(target.entity, vecSpawnPos, vecAimPos, vecAngle, prjInfo, 0.0f))
+                        {
+                                if (!FindVisiblePosToShoot(prjInfo, target.entity, vPath.back(), vecEyePos, 0.0f, vecAimPos))
+                                        continue; // we are a failure
 
-			m_pTarget		    = target.entity;
-			m_vecAimAngle		    = vecAngle;
-			m_vecAimPos		    = vecAimPos;
-			m_vecPath		    = vPath;
-			EntityList::m_pAimbotTarget = target.entity;
-			return;
-		}
+                                vecDir = vecAimPos - vecEyePos;
+                                vecDir.Normalize();
+                                vecAngle = vecDir.ToAngle();
+                        }
+
+                        m_pTarget                   = target.entity;
+                        m_vecAimAngle               = vecAngle;
+                        m_vecAimPos                 = vecAimPos;
+                        m_vecPath                   = vPath;
+                        EntityList::m_pAimbotTarget = target.entity;
+                        return;
+                }
 		else
 		{
 			float flGravity = sv_gravity->GetFloat() * 0.5f * prjInfo.gravity;
 
-			Vector vecAngle;
-			if (!SolveBallisticArc(vecAngle, vecEyePos, vecAimPos, prjInfo.speed, flGravity))
-				continue;
+                        Vector vecAngle;
+                        if (!SolveBallisticArc(vecAngle, vecEyePos, vecAimPos, prjInfo.speed, flGravity))
+                                continue;
 
-			Vector vecForward, vecRight, vecUp;
-			Math::AngleVectors(vecAngle, &vecForward, &vecRight, &vecUp);
+                        Vector vecForward, vecRight, vecUp;
+                        Math::AngleVectors(vecAngle, &vecForward, &vecRight, &vecUp);
 
-			Vector vecSpawnPos = vecEyePos + vecForward * prjInfo.offset.x + vecRight * prjInfo.offset.y +
-					     vecUp * prjInfo.offset.z;
+                        Vector vecSpawnPos = vecEyePos + vecForward * prjInfo.offset.x + vecRight * prjInfo.offset.y +
+                                             vecUp * prjInfo.offset.z;
 
-			if (!CheckTrajectory(target.entity, vecSpawnPos, vecAimPos, vecAngle, prjInfo, flGravity))
-				continue;
+                        if (!CheckTrajectory(target.entity, vecSpawnPos, vecAimPos, vecAngle, prjInfo, flGravity))
+                        {
+                                if (!FindVisiblePosToShoot(prjInfo, target.entity, vPath.back(), vecEyePos, flGravity, vecAimPos))
+                                        continue; // we are fucking failures
+                                
+                                if (!SolveBallisticArc(vecAngle, vecEyePos, vecAimPos, prjInfo.speed, flGravity))
+                                        continue; // math isn't mathing for the new aim position
+                        }
 
-			m_pTarget		    = target.entity;
-			m_vecAimAngle		    = vecAngle;
-			m_vecAimPos		    = vecAimPos + Vector{0, 0, GetAimDrop(flGravity, flTime)};
-			m_vecPath		    = vPath;
-			EntityList::m_pAimbotTarget = target.entity;
-			return;
+                        m_pTarget                   = target.entity;
+                        m_vecAimAngle               = vecAngle;
+                        m_vecAimPos                 = vecAimPos; 
+                        m_vecPath                   = vPath;
+                        EntityList::m_pAimbotTarget = target.entity;
+                        return;
 		}
 	}
 }
@@ -705,6 +718,71 @@ bool CAimbotProjectile::IsRightAttack(CTFWeaponBase *pWeapon)
 	}
 
 	return false;
+}
+
+// this is not good
+bool CAimbotProjectile::FindVisiblePosToShoot(const ProjectileInfo_t& prjInfo,
+	CBaseEntity* pTarget, const Vec3& predictedPos, const Vec3& shootPos, float flGravity, Vec3& out)
+{
+	if (pTarget == nullptr)
+		return false;
+
+	// they are already in another country
+	// no need to bother with them
+	if (shootPos.DistTo(predictedPos) > 2000.0f)
+		return false;
+
+	Vec3 mins = pTarget->m_vecMins();
+	Vec3 maxs = pTarget->m_vecMaxs();
+
+	constexpr int GRID_POINTS = 4;
+	
+	float stepX = (maxs.x - mins.x) / (GRID_POINTS - 1);
+	float stepY = (maxs.y - mins.y) / (GRID_POINTS - 1);
+	float stepZ = (maxs.z - mins.z) / (GRID_POINTS - 1);
+
+	constexpr float HITBOX_SCALE = 0.85f; 
+
+	for (int x = 0; x < GRID_POINTS; x++)
+	{
+		for (int y = 0; y < GRID_POINTS; y++)
+		{
+			for (int z = 0; z < GRID_POINTS; z++)
+			{
+				Vec3 offset
+				(
+					mins.x + (stepX * x),
+					mins.y + (stepY * y),
+					mins.z + (stepZ * z)
+				);
+
+				offset *= HITBOX_SCALE;
+
+				Vec3 testAimPos = predictedPos + offset;
+
+				Vec3 vecAngle;
+				
+				if (!SolveBallisticArc(vecAngle, shootPos, testAimPos, prjInfo.speed, flGravity))
+					continue;
+
+				Vec3 vecForward, vecRight, vecUp;
+				Math::AngleVectors(vecAngle, &vecForward, &vecRight, &vecUp);
+
+				Vec3 vecSpawnPos = shootPos + vecForward * prjInfo.offset.x + 
+						   vecRight * prjInfo.offset.y + 
+						   vecUp * prjInfo.offset.z;
+
+				if (CheckTrajectory(pTarget, vecSpawnPos, testAimPos, vecAngle, prjInfo, flGravity))
+				{
+					out = testAimPos;
+					return true; 
+				}
+			}
+		}
+	}
+
+	// shit
+	return false; 
 }
 
 CAimbotProjectile gAimProjectile{};
