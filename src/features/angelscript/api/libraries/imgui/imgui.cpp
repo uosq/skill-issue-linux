@@ -2,7 +2,8 @@
 #include <string>
 
 #include "../../../../../imgui/imgui.h"
-#include "../../../../../sdk/definitions/vector.h"
+#include "../../../../../imgui/imgui_stdlib.h"
+#include "../../../../../sdk/definitions/types.h"
 #include "../../../add_on/scriptarray/scriptarray.h"
 #include "../../globals.h"
 
@@ -424,6 +425,134 @@ bool Combo(const std::string &label, int &current_item, CScriptArray *items, int
 			    popup_max_height_in_items);
 }
 
+bool DragFloat(const std::string &label, float &v, float v_speed = 1.0f, float v_min = 0.0f, float v_max = 0.0f, const std::string &format = "%.3f", ImGuiSliderFlags flags = 0) {
+	return ImGui::DragFloat(label.c_str(), &v, v_speed, v_min, v_max, format.c_str(), flags);
+}
+
+bool DragFloat2(const std::string &label, float &x, float &y, float v_speed = 1.0f, float v_min = 0.0f, float v_max = 0.0f, const std::string &format = "%.3f", ImGuiSliderFlags flags = 0) {
+	float v[2] = { x, y };
+	bool changed = ImGui::DragFloat2(label.c_str(), v, v_speed, v_min, v_max, format.c_str(), flags);
+	if (changed) { x = v[0]; y = v[1]; }
+	return changed;
+}
+
+bool DragInt(const std::string &label, int &v, float v_speed = 1.0f, int v_min = 0, int v_max = 0, const std::string &format = "%d", ImGuiSliderFlags flags = 0) {
+	return ImGui::DragInt(label.c_str(), &v, v_speed, v_min, v_max, format.c_str(), flags);
+}
+
+bool DragIntRange2(const std::string &label, int &v_current_min, int &v_current_max, float v_speed = 1.0f, int v_min = 0, int v_max = 0, const std::string &format = "%d", const std::string &format_max = "", ImGuiSliderFlags flags = 0) {
+	return ImGui::DragIntRange2(label.c_str(), &v_current_min, &v_current_max, v_speed, v_min, v_max, format.c_str(), format_max.empty() ? NULL : format_max.c_str(), flags);
+}
+
+bool SliderFloat(const std::string &label, float &v, float v_min, float v_max, const std::string &format = "%.3f", ImGuiSliderFlags flags = 0) {
+	return ImGui::SliderFloat(label.c_str(), &v, v_min, v_max, format.c_str(), flags);
+}
+
+bool SliderAngle(const std::string &label, float &v_rad, float v_degrees_min = -360.0f, float v_degrees_max = +360.0f, const std::string &format = "%.0f deg", ImGuiSliderFlags flags = 0) {
+	return ImGui::SliderAngle(label.c_str(), &v_rad, v_degrees_min, v_degrees_max, format.c_str(), flags);
+}
+
+bool SliderInt(const std::string &label, int &v, int v_min, int v_max, const std::string &format = "%d", ImGuiSliderFlags flags = 0) {
+	return ImGui::SliderInt(label.c_str(), &v, v_min, v_max, format.c_str(), flags);
+}
+
+bool VSliderFloat(const std::string &label, const Vec2 &size, float &v, float v_min, float v_max, const std::string &format = "%.3f", ImGuiSliderFlags flags = 0) {
+	return ImGui::VSliderFloat(label.c_str(), ImVec2(size.x, size.y), &v, v_min, v_max, format.c_str(), flags);
+}
+
+bool InputText(const std::string &label, std::string& str, ImGuiInputTextFlags flags = 0) {
+    return ImGui::InputText(label.c_str(), &str, flags);
+}
+
+bool InputTextWithHint(const std::string &label, const std::string &hint, std::string &str, ImGuiInputTextFlags flags = 0) {
+    return ImGui::InputTextWithHint(label.c_str(), hint.c_str(), &str, flags);
+}
+
+bool InputFloat(const std::string &label, float &v, float step = 0.0f, float step_fast = 0.0f, const std::string &format = "%.3f", ImGuiInputTextFlags flags = 0) {
+	return ImGui::InputFloat(label.c_str(), &v, step, step_fast, format.c_str(), flags);
+}
+
+bool InputInt(const std::string &label, int &v, int step = 1, int step_fast = 100, ImGuiInputTextFlags flags = 0) {
+	return ImGui::InputInt(label.c_str(), &v, step, step_fast, flags);
+}
+
+bool InputDouble(const std::string &label, double &v, double step = 0.0, double step_fast = 0.0, const std::string &format = "%.6f", ImGuiInputTextFlags flags = 0) {
+	return ImGui::InputDouble(label.c_str(), &v, step, step_fast, format.c_str(), flags);
+}
+
+bool ColorEdit3(const std::string &label, float &r, float &g, float &b, ImGuiColorEditFlags flags = 0) {
+	float col[3] = { r, g, b };
+	bool changed = ImGui::ColorEdit3(label.c_str(), col, flags);
+	if (changed) { r = col[0]; g = col[1]; b = col[2]; }
+	return changed;
+}
+
+bool ColorEdit4(const std::string &label, float &r, float &g, float &b, float &a, ImGuiColorEditFlags flags = 0) {
+	float col[4] = { r, g, b, a };
+	bool changed = ImGui::ColorEdit4(label.c_str(), col, flags);
+	if (changed) { r = col[0]; g = col[1]; b = col[2]; a = col[3]; }
+	return changed;
+}
+
+bool ColorButton(const std::string &desc_id, float r, float g, float b, float a, ImGuiColorEditFlags flags = 0, const Vec2 &size = Vec2(0, 0)) {
+	return ImGui::ColorButton(desc_id.c_str(), ImVec4(r, g, b, a), flags, ImVec2(size.x, size.y));
+}
+
+bool BeginListBox(const std::string &label, const Vec2 &size = Vec2(0, 0)) {
+	return ImGui::BeginListBox(label.c_str(), ImVec2(size.x, size.y));
+}
+void EndListBox() { ImGui::EndListBox(); }
+
+bool BeginTooltip() { return ImGui::BeginTooltip(); }
+void EndTooltip() { ImGui::EndTooltip(); }
+
+bool BeginPopup(const std::string &str_id, int flags = 0) {
+	return ImGui::BeginPopup(str_id.c_str(), flags);
+}
+bool BeginPopupModal(const std::string &name, bool &p_open, int flags = 0) {
+	return ImGui::BeginPopupModal(name.c_str(), &p_open, flags);
+}
+bool BeginPopupModalSimple(const std::string &name, int flags = 0) {
+	return ImGui::BeginPopupModal(name.c_str(), NULL, flags);
+}
+void EndPopup() { ImGui::EndPopup(); }
+
+bool BeginTable(const std::string &str_id, int columns, int flags = 0, const Vec2 &outer_size = Vec2(0,0), float inner_width = 0.0f) {
+	return ImGui::BeginTable(str_id.c_str(), columns, flags, ImVec2(outer_size.x, outer_size.y), inner_width);
+}
+void EndTable() { ImGui::EndTable(); }
+void TableNextRow(int row_flags = 0, float min_row_height = 0.0f) { ImGui::TableNextRow(row_flags, min_row_height); }
+bool TableNextColumn() { return ImGui::TableNextColumn(); }
+bool TableSetColumnIndex(int column_n) { return ImGui::TableSetColumnIndex(column_n); }
+void TableSetupColumn(const std::string &label, int flags = 0, float init_width_or_weight = 0.0f, uint32_t user_id = 0) {
+	ImGui::TableSetupColumn(label.c_str(), flags, init_width_or_weight, user_id);
+}
+void TableSetupScrollFreeze(int cols, int rows) { ImGui::TableSetupScrollFreeze(cols, rows); }
+void TableHeader(const std::string &label) { ImGui::TableHeader(label.c_str()); }
+void TableHeadersRow() { ImGui::TableHeadersRow(); }
+void TableAngledHeadersRow() { ImGui::TableAngledHeadersRow(); }
+
+// Tabs
+bool BeginTabBar(const std::string &str_id, int flags = 0) { return ImGui::BeginTabBar(str_id.c_str(), flags); }
+void EndTabBar() { ImGui::EndTabBar(); }
+bool BeginTabItem(const std::string &label, bool &p_open, int flags = 0) {
+	return ImGui::BeginTabItem(label.c_str(), &p_open, flags);
+}
+bool BeginTabItemSimple(const std::string &label, int flags = 0) {
+	return ImGui::BeginTabItem(label.c_str(), NULL, flags);
+}
+void EndTabItem() { ImGui::EndTabItem(); }
+bool TabItemButton(const std::string &label, int flags = 0) { return ImGui::TabItemButton(label.c_str(), flags); }
+void SetTabItemClosed(const std::string &label) { ImGui::SetTabItemClosed(label.c_str()); }
+
+// Misc
+void BeginDisabled(bool disabled = true) { ImGui::BeginDisabled(disabled); }
+void EndDisabled() { ImGui::EndDisabled(); }
+Vec2 CalcTextSize(const std::string &text, bool hide_after_hash = false, float wrap_width = -1.0f) {
+	ImVec2 sz = ImGui::CalcTextSize(text.c_str(), NULL, hide_after_hash, wrap_width);
+	return Vec2(sz.x, sz.y);
+}
+
 void ImGui_RegisterLibrary(asIScriptEngine *engine)
 {
 	auto defNamespace = engine->GetDefaultNamespace();
@@ -534,6 +663,60 @@ void ImGui_RegisterLibrary(asIScriptEngine *engine)
 		engine->RegisterGlobalFunction("bool BeginCombo(const string &in label, const string &in preview_value, int flags = 0)", asFUNCTION(BeginCombo), asCALL_CDECL);
 		engine->RegisterGlobalFunction("void EndCombo()", asFUNCTION(EndCombo), asCALL_CDECL);
 		engine->RegisterGlobalFunction("bool Combo(const string &in label, int &out current_item, array<string>@ items, int popup_max_height_in_items = -1)", asFUNCTION(Combo), asCALL_CDECL);
+
+		engine->RegisterGlobalFunction("bool DragFloat(const string &in label, float &out v, float v_speed = 1.0f, float v_min = 0.0f, float v_max = 0.0f, const string &in format = \"%.3f\", int flags = 0)", asFUNCTION(DragFloat), asCALL_CDECL);
+		engine->RegisterGlobalFunction("bool DragFloat2(const string &in label, float &out x, float &out y, float v_speed = 1.0f, float v_min = 0.0f, float v_max = 0.0f, const string &in format = \"%.3f\", int flags = 0)", asFUNCTION(DragFloat2), asCALL_CDECL);
+		engine->RegisterGlobalFunction("bool DragInt(const string &in label, int &out v, float v_speed = 1.0f, int v_min = 0, int v_max = 0, const string &in format = \"%d\", int flags = 0)", asFUNCTION(DragInt), asCALL_CDECL);
+		engine->RegisterGlobalFunction("bool DragIntRange2(const string &in label, int &out v_current_min, int &out v_current_max, float v_speed = 1.0f, int v_min = 0, int v_max = 0, const string &in format = \"%d\", const string &in format_max = \"\", int flags = 0)", asFUNCTION(DragIntRange2), asCALL_CDECL);
+
+		engine->RegisterGlobalFunction("bool SliderFloat(const string &in label, float &out v, float v_min, float v_max, const string &in format = \"%.3f\", int flags = 0)", asFUNCTION(SliderFloat), asCALL_CDECL);
+		engine->RegisterGlobalFunction("bool SliderAngle(const string &in label, float &out v_rad, float v_degrees_min = -360.0f, float v_degrees_max = +360.0f, const string &in format = \"%.0f deg\", int flags = 0)", asFUNCTION(SliderAngle), asCALL_CDECL);
+		engine->RegisterGlobalFunction("bool SliderInt(const string &in label, int &out v, int v_min, int v_max, const string &in format = \"%d\", int flags = 0)", asFUNCTION(SliderInt), asCALL_CDECL);
+		engine->RegisterGlobalFunction("bool VSliderFloat(const string &in label, const Vector2 &in size, float &out v, float v_min, float v_max, const string &in format = \"%.3f\", int flags = 0)", asFUNCTION(VSliderFloat), asCALL_CDECL);
+
+		engine->RegisterGlobalFunction("bool InputText(const string &in label, string &out str, int flags = 0)", asFUNCTION(InputText), asCALL_CDECL);
+		engine->RegisterGlobalFunction("bool InputTextWithHint(const string &in label, const string &in hint, string &out str, int flags = 0)", asFUNCTION(InputTextWithHint), asCALL_CDECL);
+		engine->RegisterGlobalFunction("bool InputFloat(const string &in label, float &out v, float step = 0.0f, float step_fast = 0.0f, const string &in format = \"%.3f\", int flags = 0)", asFUNCTION(InputFloat), asCALL_CDECL);
+		engine->RegisterGlobalFunction("bool InputInt(const string &in label, int &out v, int step = 1, int step_fast = 100, int flags = 0)", asFUNCTION(InputInt), asCALL_CDECL);
+		engine->RegisterGlobalFunction("bool InputDouble(const string &in label, double &out v, double step = 0.0, double step_fast = 0.0, const string &in format = \"%.6f\", int flags = 0)", asFUNCTION(InputDouble), asCALL_CDECL);
+
+		engine->RegisterGlobalFunction("bool ColorEdit3(const string &in label, float &out r, float &out g, float &out b, int flags = 0)", asFUNCTION(ColorEdit3), asCALL_CDECL);
+		engine->RegisterGlobalFunction("bool ColorEdit4(const string &in label, float &out r, float &out g, float &out b, float &out a, int flags = 0)", asFUNCTION(ColorEdit4), asCALL_CDECL);
+		engine->RegisterGlobalFunction("bool ColorButton(const string &in desc_id, float r, float g, float b, float a, int flags = 0, const Vector2 &in size = Vector2(0,0))", asFUNCTION(ColorButton), asCALL_CDECL);
+
+		engine->RegisterGlobalFunction("bool BeginListBox(const string &in label, const Vector2 &in size = Vector2(0,0))", asFUNCTION(BeginListBox), asCALL_CDECL);
+		engine->RegisterGlobalFunction("void EndListBox()", asFUNCTION(EndListBox), asCALL_CDECL);
+
+		engine->RegisterGlobalFunction("bool BeginTooltip()", asFUNCTION(BeginTooltip), asCALL_CDECL);
+		engine->RegisterGlobalFunction("void EndTooltip()", asFUNCTION(EndTooltip), asCALL_CDECL);
+
+		engine->RegisterGlobalFunction("bool BeginPopup(const string &in str_id, int flags = 0)", asFUNCTION(BeginPopup), asCALL_CDECL);
+		engine->RegisterGlobalFunction("bool BeginPopupModal(const string &in name, bool &out p_open, int flags = 0)", asFUNCTION(BeginPopupModal), asCALL_CDECL);
+		engine->RegisterGlobalFunction("bool BeginPopupModal(const string &in name, int flags = 0)", asFUNCTION(BeginPopupModalSimple), asCALL_CDECL);
+		engine->RegisterGlobalFunction("void EndPopup()", asFUNCTION(EndPopup), asCALL_CDECL);
+
+		engine->RegisterGlobalFunction("bool BeginTable(const string &in str_id, int columns, int flags = 0, const Vector2 &in outer_size = Vector2(0,0), float inner_width = 0.0f)", asFUNCTION(BeginTable), asCALL_CDECL);
+		engine->RegisterGlobalFunction("void EndTable()", asFUNCTION(EndTable), asCALL_CDECL);
+		engine->RegisterGlobalFunction("void TableNextRow(int row_flags = 0, float min_row_height = 0.0f)", asFUNCTION(TableNextRow), asCALL_CDECL);
+		engine->RegisterGlobalFunction("bool TableNextColumn()", asFUNCTION(TableNextColumn), asCALL_CDECL);
+		engine->RegisterGlobalFunction("bool TableSetColumnIndex(int column_n)", asFUNCTION(TableSetColumnIndex), asCALL_CDECL);
+		engine->RegisterGlobalFunction("void TableSetupColumn(const string &in label, int flags = 0, float init_width_or_weight = 0.0f, uint user_id = 0)", asFUNCTION(TableSetupColumn), asCALL_CDECL);
+		engine->RegisterGlobalFunction("void TableSetupScrollFreeze(int cols, int rows)", asFUNCTION(TableSetupScrollFreeze), asCALL_CDECL);
+		engine->RegisterGlobalFunction("void TableHeader(const string &in label)", asFUNCTION(TableHeader), asCALL_CDECL);
+		engine->RegisterGlobalFunction("void TableHeadersRow()", asFUNCTION(TableHeadersRow), asCALL_CDECL);
+		engine->RegisterGlobalFunction("void TableAngledHeadersRow()", asFUNCTION(TableAngledHeadersRow), asCALL_CDECL);
+
+		engine->RegisterGlobalFunction("bool BeginTabBar(const string &in str_id, int flags = 0)", asFUNCTION(BeginTabBar), asCALL_CDECL);
+		engine->RegisterGlobalFunction("void EndTabBar()", asFUNCTION(EndTabBar), asCALL_CDECL);
+		engine->RegisterGlobalFunction("bool BeginTabItem(const string &in label, bool &out p_open, int flags = 0)", asFUNCTION(BeginTabItem), asCALL_CDECL);
+		engine->RegisterGlobalFunction("bool BeginTabItem(const string &in label, int flags = 0)", asFUNCTION(BeginTabItemSimple), asCALL_CDECL);
+		engine->RegisterGlobalFunction("void EndTabItem()", asFUNCTION(EndTabItem), asCALL_CDECL);
+		engine->RegisterGlobalFunction("bool TabItemButton(const string &in label, int flags = 0)", asFUNCTION(TabItemButton), asCALL_CDECL);
+		engine->RegisterGlobalFunction("void SetTabItemClosed(const string &in label)", asFUNCTION(SetTabItemClosed), asCALL_CDECL);
+
+		engine->RegisterGlobalFunction("void BeginDisabled(bool disabled = true)", asFUNCTION(BeginDisabled), asCALL_CDECL);
+		engine->RegisterGlobalFunction("void EndDisabled()", asFUNCTION(EndDisabled), asCALL_CDECL);
+		engine->RegisterGlobalFunction("Vector2 CalcTextSize(const string &in text, bool hide_after_hash = false, float wrap_width = -1.0f)", asFUNCTION(CalcTextSize), asCALL_CDECL);
 	}
 
 	engine->SetDefaultNamespace(defNamespace);
