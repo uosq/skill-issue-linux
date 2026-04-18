@@ -385,9 +385,6 @@ void CAimbotProjectile::RunMain(CTFPlayer *pLocal, CTFWeaponBase *pWeapon)
 {
 	Reset();
 
-	if (!Settings::Aimbot.key->IsActive())
-		return;
-
 	#if 0
 	if (m_pPhysEnv == nullptr)
 	{
