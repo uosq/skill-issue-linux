@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 PID=$(pidof tf_linux64)
-SO="$PWD/libvapo.so"
+SO="$PWD/build/libvapo.so"
 
 sudo gdb -q -n -p "$PID" \
 	-ex "set pagination off" \
