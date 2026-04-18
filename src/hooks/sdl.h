@@ -14,5 +14,5 @@ int Hooked_PollEvent(SDL_Event *event);
 
 // Because of Vulkan, gotta get the window from this
 // fuck my life
-int Hooked_GetWindowSize(SDL_Window *window, int *w, int *h);
+void Hooked_GetWindowSize(SDL_Window *window, int *w, int *h);
 void HookSDL();

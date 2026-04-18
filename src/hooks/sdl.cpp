@@ -198,16 +198,12 @@ int Hooked_PollEvent(SDL_Event *event)
 
 // Because of Vulkan, gotta get the window from this
 // fuck my life
-int Hooked_GetWindowSize(SDL_Window *window, int *w, int *h)
+void Hooked_GetWindowSize(SDL_Window *window, int *w, int *h)
 {
-	int ret = 0;
-
-	DETOUR_ORIG_GET(&windowsizedetour, ret, original_GetWindowSize, window, w, h);
-
 	if (window != nullptr)
 		tfwindow = window;
 
-	return ret;
+	DETOUR_ORIG_CALL(&windowsizedetour, original_GetWindowSize, window, w, h);
 }
 
 void HookSDL()
