@@ -47,7 +47,6 @@ void InitImGui()
 
 	ImGui::GetIO().ConfigWindowsMoveFromTitleBarOnly = true;
 
-	//if (!ImGui_ImplSDL2_InitForD3D(tfwindow)) {
 	if (!ImGui_ImplSDL2_InitForVulkan(tfwindow))
 	{
 		interfaces::Cvar->ConsolePrintf("ImGui_ImplSDL2_InitForVulkan failed!\n");

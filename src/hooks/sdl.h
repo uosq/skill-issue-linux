@@ -11,8 +11,4 @@ void SetupImGuiStyle();
 
 void Hooked_SwapWindow(SDL_Window *window);
 int Hooked_PollEvent(SDL_Event *event);
-
-// Because of Vulkan, gotta get the window from this
-// fuck my life
-void Hooked_GetWindowSize(SDL_Window *window, int *w, int *h);
 void HookSDL();

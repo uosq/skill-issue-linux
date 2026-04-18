@@ -1,5 +1,6 @@
 #include "sdl.h"
 
+#include <SDL2/SDL_video.h>
 #include <dlfcn.h>
 
 #include "../libdetour/libdetour.h"
@@ -181,11 +182,27 @@ void Hooked_SwapWindow(SDL_Window *window)
 
 int Hooked_PollEvent(SDL_Event *event)
 {
-	int ret;
+	int ret = 0;
 	DETOUR_ORIG_GET(&polldetour, ret, original_PollEvent, event);
 
-	if (!ret)
-		return ret;
+	if ( ret == 0) return ret;
+
+	if (ret > 0 && event != nullptr)
+	{
+		Uint32 windowID = 0;
+
+		if (event->type == SDL_WINDOWEVENT)
+			windowID = event->window.windowID;
+		if (event->type == SDL_MOUSEMOTION)
+			windowID = event->motion.windowID;
+
+		if (windowID != 0)
+		{
+			SDL_Window* activeWindow = SDL_GetWindowFromID(windowID);
+			if (activeWindow)
+				tfwindow = activeWindow;
+		}
+	}
 
 	if (tfwindow && ImGui::GetCurrentContext())
 		ImGui_ImplSDL2_ProcessEvent(event);
@@ -194,16 +211,6 @@ int Hooked_PollEvent(SDL_Event *event)
 		event->type = 0;
 
 	return ret;
-}
-
-// Because of Vulkan, gotta get the window from this
-// fuck my life
-void Hooked_GetWindowSize(SDL_Window *window, int *w, int *h)
-{
-	if (window != nullptr)
-		tfwindow = window;
-
-	DETOUR_ORIG_CALL(&windowsizedetour, original_GetWindowSize, window, w, h);
 }
 
 void HookSDL()
@@ -220,10 +227,6 @@ void HookSDL()
 	if (original_PollEvent == nullptr)
 		return interfaces::Cvar->ConsolePrintf("Couldn't get PollEvent\n");
 
-	void *original_GetWindowSize = dlsym(sdl, "SDL_GetWindowSize");
-	if (original_GetWindowSize == nullptr)
-		return interfaces::Cvar->ConsolePrintf("Couldn't get GetWindowSize\n");
-
 	detour_init(&swapdetour, original_SwapWindow, (void *)&Hooked_SwapWindow);
 	if (!detour_enable(&swapdetour))
 		return interfaces::Cvar->ConsolePrintf("Couldn't hook SwapWindow\n");
@@ -231,10 +234,6 @@ void HookSDL()
 	detour_init(&polldetour, original_PollEvent, (void *)&Hooked_PollEvent);
 	if (!detour_enable(&polldetour))
 		return interfaces::Cvar->ConsolePrintf("Couldn't hook PollEvent\n");
-
-	detour_init(&windowsizedetour, original_GetWindowSize, (void *)&Hooked_GetWindowSize);
-	if (!detour_enable(&windowsizedetour))
-		return interfaces::Cvar->ConsolePrintf("Couldn't hook GetWindowSize\n");
 
 #ifdef DEBUG
 	interfaces::Cvar->ConsolePrintf("SDL2 hooked\n");
