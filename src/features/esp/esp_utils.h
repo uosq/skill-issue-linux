@@ -9,9 +9,6 @@
 #include "../../settings/settings.h"
 #include "../entitylist/entitylist.h"
 
-#include "elements/BaseElement.h"
-#include "structs.h"
-
 namespace ESP_Utils
 {
 	Color GetEntityColor(CBaseEntity *entity);
@@ -19,6 +16,4 @@ namespace ESP_Utils
 	bool IsValidPlayer(CTFPlayer *pLocal, CBaseEntity *entity);
 	bool IsValidBuilding(CTFPlayer *pLocal, CBaseObject *entity);
 	bool IsValidEntity(CTFPlayer *pLocal, const EntityListEntry &entry);
-
-	bool GetEntityBounds(CBaseEntity *entity, ESP_Data &out);
 } // namespace ESP_Utils

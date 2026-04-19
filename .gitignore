@@ -6,3 +6,5 @@ obj/
 
 # Emacs files
 *~
+
+misc/*.out

@@ -135,7 +135,6 @@ static void DrawAttachments(CBaseEntity* entity, int drawflags, const Color& ori
 		return;
 
 	int passes = 0;
-	bool highlight_weapons = Settings::ESP.weapon;
 
 	while (child && passes < MAX_PASSES)
 	{
@@ -223,7 +222,7 @@ bool Chams::IsValidEntity(CTFPlayer* pLocal, const EntityListEntry& entry)
 	if (entry.ptr == nullptr)
 		return false;
 
-	if (!(entry.flags & EntityFlags::IsAlive | EntityFlags::IsPlayer | EntityFlags::IsBuilding))
+	if (!(entry.flags & (EntityFlags::IsAlive | EntityFlags::IsPlayer | EntityFlags::IsBuilding)))
 		return false;
 
 	if (!entry.ptr->ShouldDraw())

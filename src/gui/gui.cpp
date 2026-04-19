@@ -1,9 +1,5 @@
 #include "gui.h"
 
-#include "../features/angelscript/api/libraries/hooks/hooks.h"
-#include "../features/spectators/spectators.h"
-
-// tabs
 #include "tabs/tab_aimbot.h"
 #include "tabs/tab_esp.h"
 #include "tabs/tab_misc.h"
@@ -14,6 +10,11 @@
 #include "tabs/tab_config.h"
 #include "tabs/tab_logs.h"
 #include "tabs/tab_chams.h"
+
+#include "../features/angelscript/api/libraries/hooks/hooks.h"
+#include "../features/spectators/spectators.h"
+#include "../features/esp/esp.h"
+#include "../features/aimbot/aimbot.h"
 
 int GUI::tab = 0;
 
@@ -115,6 +116,16 @@ void GUI::RunPlayerList()
 void GUI::RunMainWindow()
 {
 	Hooks_CallHooks("ImGui");
+
+	ImDrawList* pDraw = ImGui::GetBackgroundDrawList();
+	if (pDraw == nullptr)
+		return;
+
+	pDraw->AddText(ImVec2(10, 10), IM_COL32(255, 255, 255, 255), "Skill Issue");
+	pDraw->AddText(ImVec2(10, 10 + Settings::ESP.font_size), IM_COL32(255, 255, 255, 255), "Build date: " __DATE__ " " __TIME__);
+
+	Aimbot::DrawFOVIndicator();
+	ESP::OnImGui();
 
 	if (!Settings::menu_open)
 		return;

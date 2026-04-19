@@ -36,17 +36,16 @@ DECLARE_VTABLE_HOOK(VGuiPaint, void, (IEngineVGui * thisptr, PaintMode_t paint))
 		CTFPlayer *pLocal = EntityList::GetLocal();
 		if (pLocal)
 		{
-			ESP::Run(pLocal);
 			Aimbot::RunPaint();
 		}
 
 		// compile time
-		if (Settings::menu_open)
+		/*if (Settings::menu_open)
 		{
 			Color color = {255, 255, 255, 255};
 			helper::draw::TextShadow(10, 10, color, "Skill Issue");
 			helper::draw::TextShadow(10, 30, color, "Build date: " __DATE__ " " __TIME__);
-		}
+		}*/
 
 		interfaces::Surface->FinishDrawing();
 	}

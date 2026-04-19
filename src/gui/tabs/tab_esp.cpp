@@ -21,6 +21,7 @@ void DrawESPTab()
 			ImGui::Checkbox("Ignore Cloaked", &Settings::ESP.ignorecloaked);
 			ImGui::Checkbox("Buildings", &Settings::ESP.buildings);
 			ImGui::Checkbox("Weapon", &Settings::ESP.weapon);
+			ImGui::Checkbox("Class", &Settings::ESP.class_name);
 
 			{
 				constexpr const char *items[]{"None", "Text", "Bar", "Both"};
@@ -36,6 +37,8 @@ void DrawESPTab()
 		{
 			constexpr const char *items[]{"TF2", "Arial"};
 			ImGui::Combo("Font", &Settings::ESP.font, items, 2);
+
+			ImGui::SliderInt("Font Size", &Settings::ESP.font_size, 8, 32);
 		}
 
 		ImGui::TableNextColumn();

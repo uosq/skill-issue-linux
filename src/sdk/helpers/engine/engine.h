@@ -60,7 +60,7 @@ namespace helper
 
 		inline bool GetViewMatrix(VMatrix &out)
 		{
-			CViewSetup view;
+			/*CViewSetup view;
 			if (interfaces::ClientDLL->GetPlayerView(view))
 			{
 				VMatrix mWorldToView, mViewToProjection, mWorldToPixels;
@@ -68,7 +68,9 @@ namespace helper
 									   &out, &mWorldToPixels);
 				return true;
 			}
-			return false;
+			return false;*/
+			out = interfaces::Engine->WorldToScreenMatrix();
+			return true;
 		}
 
 		// pasted from amalgam

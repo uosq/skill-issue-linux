@@ -13,6 +13,9 @@
 #include "../features/binds/binds.h"
 #include "../features/radar/radar.h"
 #include "../features/warp/warp.h"
+#include "../features/logs/logs.h"
+
+#include "sdl.h"
 
 typedef struct IDirect3DDevice9 *LPDIRECT3DDEVICE9;
 
@@ -130,15 +133,20 @@ void RenderImGui()
 
 	gBinds.Update();
 
-#if 0
-	if (LuaHookManager::HasHooks("ImGui"))
-		LuaHookManager::Call(Lua::m_luaState, "ImGui", 0);
-#endif
+	switch (static_cast<ESPFont>(Settings::ESP.font))
+	{
+        	case ESPFont::TF2BUILD:
+		ImGui::PushFont(IMFONT_TF2Build, Settings::ESP.font_size);
+		break;
+        	case ESPFont::ARIAL:
+		ImGui::PushFont(IMFONT_Arial, Settings::ESP.font_size);
+		break;
+		case ESPFont::INVALID:
+        	case ESPFont::COUNT:
+        	return Logs::Error("Invalid font!");
+        }
 
-	// ts doesnt work
-	//EyeTrace_Run();
-
-	if (Settings::AntiAim.warp_key->IsEnabled())
+        if (Settings::AntiAim.warp_key->IsEnabled())
 		Warp::RunWindow();
 
 	if (Settings::Radar.enabled)
@@ -153,6 +161,8 @@ void RenderImGui()
 	GUI::RunMainWindow();
 
 	gBinds.DrawWindow(Settings::menu_open);
+
+	ImGui::PopFont();
 
 	ImGui::EndFrame();
 	ImGui::Render();

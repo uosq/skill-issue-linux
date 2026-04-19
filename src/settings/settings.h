@@ -159,6 +159,8 @@ namespace Settings
 		int team_selection = 0;
 		int fconditions	   = 0;
 		int font	   = 0;
+		int font_size 	   = 12;
+		bool class_name     = false;
 	};
 
 	extern SettingsESP ESP;
@@ -356,6 +358,8 @@ namespace Settings
 	    CONFIG_INT("esp conditions", ESP.fconditions),
 	    CONFIG_INT("esp team", ESP.team_selection),
 	    CONFIG_INT("esp font", ESP.font),
+	    CONFIG_INT("esp font size", ESP.font_size),
+	    CONFIG_BOOL("esp class", ESP.class_name),
 
 	    // misc
 	    CONFIG_KEY("misc thirdperson key", Misc.thirdperson_key),

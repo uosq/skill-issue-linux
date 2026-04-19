@@ -7,9 +7,11 @@
 #if 0
 #include "../features/backtrack/backtrack.h"
 #endif
+
 #include "../features/entitylist/entitylist.h"
 #include "../features/spectators/spectators.h"
 #include "../features/angelscript/api/libraries/hooks/hooks.h"
+#include "../features/esp/esp.h"
 
 DECLARE_VTABLE_HOOK(FrameStageNotify, void, (CHLClient * thisptr, int stage))
 {
@@ -30,11 +32,11 @@ DECLARE_VTABLE_HOOK(FrameStageNotify, void, (CHLClient * thisptr, int stage))
 	case FRAME_NET_UPDATE_END:
 	{
 		EntityList::Store();
-
+		
 		CTFPlayer *pLocal = EntityList::GetLocal();
 		if (pLocal == nullptr)
 			break;
-
+	
 		#if 0
 		// temporary
 		for (const auto& enemy : EntityList::GetEnemies())
@@ -57,6 +59,8 @@ DECLARE_VTABLE_HOOK(FrameStageNotify, void, (CHLClient * thisptr, int stage))
 
 	Hooks_CallHooks("FrameStageNotify", [&](asIScriptContext *ctx) { ctx->SetArgDWord(0, stage); });
 	originalFrameStageNotify(thisptr, stage);
+
+	ESP::OnFrameStageNotify(stage);
 }
 
 void HookFrameStageNotify()

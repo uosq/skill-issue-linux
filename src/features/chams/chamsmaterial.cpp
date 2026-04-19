@@ -3,7 +3,7 @@
 #include "../../sdk/MaterialManager/materialmanager.h"
 
 ChamsMaterial::ChamsMaterial(const std::string& name, const std::string& vmt)
-: m_Vmt(vmt), m_InternalName(name), m_DisplayName(name), m_Alpha(1.0f)
+: m_DisplayName(name), m_InternalName(name), m_Vmt(vmt), m_Alpha(1.0f)
 {
 	m_Mat = MaterialManager::CreateMaterial(name, vmt);
 }

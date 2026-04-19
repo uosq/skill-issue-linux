@@ -15,6 +15,7 @@
 
 #include "../features/radar/radar.h"
 #include "../features/warp/warp.h"
+#include "../features/logs/logs.h"
 
 DETOUR_DECL_TYPE(void, original_SwapWindow, SDL_Window *window);
 DETOUR_DECL_TYPE(int, original_PollEvent, SDL_Event *event);
@@ -24,7 +25,12 @@ detour_ctx_t swapdetour;
 detour_ctx_t polldetour;
 detour_ctx_t windowsizedetour;
 
-SDL_Window *tfwindow;
+extern const unsigned int Arial_compressed_size;
+extern const unsigned char Arial_compressed_data[668199];
+
+SDL_Window* tfwindow = nullptr;
+ImFont* IMFONT_TF2Build = nullptr;
+ImFont* IMFONT_Arial = nullptr;
 
 void SetupImGuiStyle()
 {
@@ -114,6 +120,10 @@ void SetupImGuiStyle()
 	style.Colors[ImGuiCol_NavWindowingHighlight] = ImVec4(1.0f, 1.0f, 1.0f, 0.7f);
 	style.Colors[ImGuiCol_NavWindowingDimBg]     = ImVec4(0.8f, 0.8f, 0.8f, 0.2f);
 	style.Colors[ImGuiCol_ModalWindowDimBg]	     = ImVec4(0.14509805f, 0.14509805f, 0.14901961f, 1.0f);
+
+	ImGuiIO& io = ImGui::GetIO();
+	IMFONT_TF2Build = io.Fonts->AddFontFromFileTTF("tf/resource/tf2build.ttf", 16.0f);
+	IMFONT_Arial = io.Fonts->AddFontFromMemoryCompressedTTF(Arial_compressed_data, Arial_compressed_size);
 }
 
 void Hooked_SwapWindow(SDL_Window *window)
@@ -156,6 +166,19 @@ void Hooked_SwapWindow(SDL_Window *window)
 
 	gBinds.Update();
 
+	switch (static_cast<ESPFont>(Settings::ESP.font))
+	{
+        	case ESPFont::TF2BUILD:
+		ImGui::PushFont(IMFONT_TF2Build, Settings::ESP.font_size);
+		break;
+        	case ESPFont::ARIAL:
+		ImGui::PushFont(IMFONT_Arial, Settings::ESP.font_size);
+		break;
+		case ESPFont::INVALID:
+        	case ESPFont::COUNT:
+        	return Logs::Error("Invalid font!");
+        }
+
 	if (Settings::AntiAim.warp_key->IsEnabled())
 		Warp::RunWindow();
 
@@ -171,6 +194,8 @@ void Hooked_SwapWindow(SDL_Window *window)
 	GUI::RunMainWindow();
 
 	gBinds.DrawWindow(Settings::menu_open);
+
+	ImGui::PopFont();
 
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -199,8 +224,7 @@ int Hooked_PollEvent(SDL_Event *event)
 		if (windowID != 0)
 		{
 			SDL_Window* activeWindow = SDL_GetWindowFromID(windowID);
-			if (activeWindow)
-				tfwindow = activeWindow;
+			if (activeWindow) tfwindow = activeWindow;
 		}
 	}
 

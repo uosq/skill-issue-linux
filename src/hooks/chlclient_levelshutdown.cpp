@@ -9,6 +9,7 @@
 #include "../features/spectators/spectators.h"
 #include "../features/warp/warp.h"
 #include "../features/chams/chams.h"
+#include "../features/esp/esp.h"
 
 #include "../features/angelscript/api/libraries/hooks/hooks.h"
 
@@ -22,6 +23,7 @@ DECLARE_VTABLE_HOOK(LevelShutdown, void, (CHLClient * thisptr))
 	Bhop::Reset();
 	Spectators::OnLevelShutdown();
 	Chams::OnLevelShutdown();
+	ESP::OnLevelShutdown();
 
 	Hooks_CallHooks("LevelShutdown");
 	originalLevelShutdown(thisptr);

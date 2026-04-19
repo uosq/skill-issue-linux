@@ -69,6 +69,10 @@ namespace Aimbot
 		if (Settings::Aimbot.fov >= 90 || !Settings::Aimbot.draw_fov_indicator)
 			return;
 
+		ImDrawList* pDraw = ImGui::GetBackgroundDrawList();
+		if (pDraw == nullptr)
+			return;
+
 		// float aimFov = DEG2RAD(Settings::Aimbot.fov);
 		float aimFov = DEG2RAD(AimbotUtils::GetAimbotFovScaled());
 		float camFov = DEG2RAD(CustomFov::GetFov() * 0.5f);
@@ -81,8 +85,7 @@ namespace Aimbot
 		// fine, but I still need to do more tests
 		float radius = tanf(aimFov) / tanf(camFov) * (float)(w) * (4.f / 6.f) / (16.f / 9.f);
 
-		helper::draw::SetColor(255, 255, 255, 255);
-		interfaces::Surface->DrawOutlinedCircle((int)(w * 0.5f), (int)(h * 0.5f), (int)(radius), 64);
+		pDraw->AddCircle(ImVec2(w * 0.5f, h * 0.5f), radius, IM_COL32(255, 255, 255, 255));
 	}
 
 	void RunPaint()
@@ -90,7 +93,7 @@ namespace Aimbot
 		if (!Settings::Aimbot.key->IsEnabled())
 			return;
 
-		DrawFOVIndicator();
+		//DrawFOVIndicator();
 
 		gAimProjectile.RunPath();
 		gAimProjectile.RunIndicator();

@@ -1,5 +1,8 @@
 #include "glow.h"
 
+#include "../../settings/settings.h"
+#include "../esp/esp_utils.h"
+
 namespace Glow
 {
 	GlowMaterials m_Materials	    = {};

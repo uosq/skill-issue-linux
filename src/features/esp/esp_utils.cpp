@@ -1,5 +1,4 @@
 #include "esp_utils.h"
-#include "structs.h"
 
 Color ESP_Utils::GetEntityColor(CBaseEntity *entity)
 {
@@ -88,27 +87,4 @@ bool ESP_Utils::IsValidEntity(CTFPlayer *pLocal, const EntityListEntry &entry)
 		return IsValidBuilding(pLocal, static_cast<CBaseObject *>(entry.ptr));
 
 	return false;
-}
-
-bool ESP_Utils::GetEntityBounds(CBaseEntity *ent, ESP_Data &out)
-{
-	Vector origin = ent->GetAbsOrigin();
-	Vec2 bottom   = {};
-
-	if (!helper::engine::WorldToScreen(origin, bottom))
-		return false;
-
-	Vec2 top;
-	Vector absHead = origin + Vector{0, 0, ent->m_vecMaxs().z};
-	if (!helper::engine::WorldToScreen(absHead, top))
-		return false;
-
-	float h	   = (bottom - top).Length();
-	float w	   = ent->IsTeleporter() ? (h * 2.0f) : (h * 0.3f);
-
-	out.bottom = Vec2(bottom.x, bottom.y);
-	out.height = h;
-	out.width  = w;
-	out.top	   = Vec2(top.x, top.y);
-	return true;
 }
