@@ -16,6 +16,8 @@ void unload()
 }
 */
 
+typedef uint64 Font;
+
 // gotta do ts to make it not complain about it being undefined
 // https://angelcode.com/angelscript/sdk/docs/manual/doc_script_stdlib_string.html
 // https://angelcode.com/angelscript/sdk/docs/manual/doc_datatypes_strings.html
@@ -309,18 +311,19 @@ namespace ClientState
 namespace Draw
 {
 	void Line(int x0, int y0, int x1, int y1);
-	void SetColor(int r, int g, int b, int a);
-	void GetTextSize(const string &in text, int &out w, int &out h);
+	void SetColor(uint8 r, uint8 g, uint8 b, uint8 a);
+	void GetTextSize(Font font, const string &in text, int &out w, int &out h);
 	void GetCursorPos(int &out x, int &out y);
 	void SetCursorPos(int x, int y);
 	void Circle(int x, int y, int radius, int segments);
 	bool HasFocus();
 	void GetScreenSize(int &out w, int &out h);
-	bool CreateFont(const string &in name, const string &in family, int height, int weight, int flags);
-	bool SetFont(const string &in name);
+	Font CreateFont(const string &in name, int height, int weight, int flags);
+	void SetFont(Font font);
 	void Rect(int x, int y, int w, int h);
 	void RectFade(int x0, int y0, int x1, int y1, int alpha0, int alpha1, bool bHorizontal);
 	bool IsCursorVisible();
+	void Text(int x, int y, const string &in text);
 }
 
 class Plane

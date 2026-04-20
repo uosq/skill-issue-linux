@@ -81,7 +81,6 @@ void CApp::Setup()
 	GUI::Init();
 	TickManager::Init();
 	MaterialManager::Init();
-	FontManager::Init();
 
 	Backtrack::Init();
 	ViewmodelInterp::Init();

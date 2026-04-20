@@ -12,6 +12,4 @@ namespace ESP
 	void OnLevelShutdown();
 	void OnlevelInitPostEntity();
 	void OnImGui();
-
-	int GetFont();
 };

@@ -4,7 +4,6 @@
 
 #include "../../imgui/imgui.h"
 
-#include "../../sdk/FontManager/fontmanager.h"
 #include "../../sdk/definitions/isurface.h"
 #include "../../sdk/classes/player.h"
 #include "../../sdk/classes/cbaseobject.h"
@@ -354,18 +353,6 @@ static void DrawHealthbar(ImDrawList* pDraw, CBaseEntity* pTarget, ESPData& data
 void ESP::Reset()
 {
 	s_vData.clear();
-}
-
-int ESP::GetFont()
-{
-	switch (static_cast<ESPFont>(Settings::ESP.font))
-	{
-		case ESPFont::TF2BUILD:	return FontManager::GetFont("esp font tf2");
-		case ESPFont::ARIAL:	return FontManager::GetFont("esp font arial");
-		default: break;
-	}
-
-	return FontManager::GetFont("esp font tf2");
 }
 
 void ESP::OnLevelShutdown()

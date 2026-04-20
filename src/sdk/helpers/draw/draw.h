@@ -1,6 +1,5 @@
 #pragma once
 
-#include "../../FontManager/fontmanager.h"
 #include "../../classes/player.h"
 #include "../../classes/weaponbase.h"
 #include "../../definitions/color.h"
@@ -19,12 +18,9 @@ namespace helper
 		inline HFont CreateFont(const std::string &id, const std::string &name, int height, int weight,
 					int flags = 0)
 		{
-			return FontManager::CreateFont(id, name, height, weight, flags);
-		}
-
-		inline void SetFont(const std::string &id)
-		{
-			FontManager::SetFont(id);
+			HFont font = interfaces::Surface->CreateFont();
+			interfaces::Surface->SetFontGlyphSet(font, name.c_str(), height, weight, 0, 0, flags);
+			return font;
 		}
 
 		inline void FilledRect(int x0, int y0, int x1, int y1)
@@ -76,16 +72,6 @@ namespace helper
 		inline void GetMousePosition(int &x, int &y)
 		{
 			interfaces::Surface->SurfaceGetCursorPos(x, y);
-		}
-
-		inline void GetTextSize(std::string text, int &width, int &height)
-		{
-			std::wstring wtext(text.begin(), text.end());
-
-			std::string currentFontID = FontManager::GetCurrentFontID();
-			int font		  = FontManager::GetFont(currentFontID);
-
-			interfaces::Surface->GetTextSize(font, wtext.c_str(), width, height);
 		}
 
 		inline std::wstring ConvertStringToWChar(std::string text)
