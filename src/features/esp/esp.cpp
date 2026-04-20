@@ -37,6 +37,8 @@ struct ESPData
 	float bottom_y = 0.0f;
 	float left_y = 0.0f;
 	float right_y = 0.0f;
+
+	float text_scale = 1.0f; // used to scale with distance
 };
 
 static std::vector<ESPData> s_vData;
@@ -106,13 +108,27 @@ static void CalcHealthBarLayout(ESPData& data)
 	}
 }
 
+static float GetTextScale(float distance)
+{
+	constexpr float MAX_DIST_BEFORE_SCALING = 800.0f;
+	constexpr float MIN_SCALE = 0.6f; // smallest text scaling (or else we cant see shit)
+	constexpr float MAX_SCALE = 2.0f;
+
+	float t = std::clamp(distance / MAX_DIST_BEFORE_SCALING, 0.0f, 1.0f);
+	t = 1.0f - (1.0f - t) * (1.0f - t);
+
+	return MIN_SCALE + (MAX_SCALE - MIN_SCALE) * (1.0f - t);
+}
+
 static void FillTargets(CTFPlayer* pLocal)
 {
 	constexpr int iVALID_FLAGS = EntityFlags::IsAlive | EntityFlags::IsBuilding | EntityFlags::IsPlayer;
+	
 
 	s_vData.clear();
 
 	int localIndex = pLocal->GetIndex();
+	Vec3 localOrigin = pLocal->GetAbsOrigin();
 
 	for (const auto& entry : EntityList::GetEntities())
 	{
@@ -132,6 +148,8 @@ static void FillTargets(CTFPlayer* pLocal)
 		ESPData data;
 		if (!GetEntityBounds(entry.ptr, data))
 			continue;
+
+		data.text_scale = GetTextScale(localOrigin.DistTo(entry.ptr->GetAbsOrigin()));
 
 		CalcHealthBarLayout(data);
 
@@ -384,6 +402,8 @@ static void DrawText(ImDrawList* pDraw, const std::string& text, ESPData& data, 
 	if (text.length() == 0 || text.empty()) return;
 
 	ImVec2 textsize = ImGui::CalcTextSize(text.c_str());
+	textsize.x *= data.text_scale;
+	textsize.y *= data.text_scale;
 
 	float draw_x = 0.0f;
 	float draw_y = 0.0f;
@@ -416,10 +436,10 @@ static void DrawText(ImDrawList* pDraw, const std::string& text, ESPData& data, 
 	}
 
 	// shadow
-	pDraw->AddText(ImVec2(draw_x + 1, draw_y + 1), IM_COL32(0, 0,0, 255), text.c_str());
+	pDraw->AddText(ImGui::GetFont(), textsize.y, ImVec2(draw_x + 1, draw_y + 1), IM_COL32(0, 0,0, 255), text.c_str());
 
 	ImU32 color = IM_COL32(textColor.r(), textColor.g(), textColor.b(), 255);
-	pDraw->AddText(ImVec2(draw_x, draw_y), color, text.c_str());
+	pDraw->AddText(ImGui::GetFont(), textsize.y, ImVec2(draw_x, draw_y), color, text.c_str());
 }
 
 static void DrawClass(ImDrawList* pDraw, CBaseEntity* pTarget, ESPData& data)

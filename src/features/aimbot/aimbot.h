@@ -18,6 +18,5 @@ namespace Aimbot
 	bool IsRunning();
 	bool ShouldSilent();
 	void Run(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCmd);
-	void DrawFOVIndicator();
-	void RunPaint();
+	void OnImGui(ImDrawList* pDraw);
 }; // namespace Aimbot

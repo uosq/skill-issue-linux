@@ -127,7 +127,7 @@ void GUI::RunMainWindow()
 		pDraw->AddText(ImVec2(10, 10 + Settings::ESP.font_size), IM_COL32(255, 255, 255, 255), "Build date: " __DATE__ " " __TIME__);
 	}
 
-	Aimbot::DrawFOVIndicator();
+	Aimbot::OnImGui(pDraw);
 	ESP::OnImGui();
 
 	if (!Settings::menu_open)

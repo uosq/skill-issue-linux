@@ -31,22 +31,6 @@ DECLARE_VTABLE_HOOK(VGuiPaint, void, (IEngineVGui * thisptr, PaintMode_t paint))
 
 		Hooks_CallHooks("Draw");
 
-		//FontManager::SetFont(ESP::GetFont());
-
-		CTFPlayer *pLocal = EntityList::GetLocal();
-		if (pLocal)
-		{
-			Aimbot::RunPaint();
-		}
-
-		// compile time
-		/*if (Settings::menu_open)
-		{
-			Color color = {255, 255, 255, 255};
-			helper::draw::TextShadow(10, 10, color, "Skill Issue");
-			helper::draw::TextShadow(10, 30, color, "Build date: " __DATE__ " " __TIME__);
-		}*/
-
 		interfaces::Surface->FinishDrawing();
 	}
 }

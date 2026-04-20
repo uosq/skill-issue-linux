@@ -84,13 +84,13 @@ namespace AimbotMelee
 			Vector angle	 = targetAngle;
 			state.angle	 = angle;
 			pCmd->viewangles = angle;
+			state.running	 = true;
 
 			if (Settings::Aimbot.mode == static_cast<int>(AimbotMode::SILENT))
 				state.shouldSilent = true;
 		}
 
 		EntityList::m_pAimbotTarget = target;
-		state.running		    = true;
 	}
 
 	std::string GetMeleeModeName()

@@ -13,8 +13,8 @@ class CAimbotProjectile
 
 	void RunMain(CTFPlayer *pLocal, CTFWeaponBase *pWeapon);
 	void RunAim(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCmd, AimbotState &pState);
-	void RunIndicator();
-	void RunPath();
+	void RunIndicator(ImDrawList* pDraw);
+	void RunPath(ImDrawList* pDraw);
 
 	void Reset();
 	void ResetIndicator();
@@ -31,7 +31,7 @@ class CAimbotProjectile
 			     const Vector vecAngle, const ProjectileInfo_t &prjInfo, float flGravity);
 	std::vector<PotentialTarget> GetBestTargets(CTFPlayer *pLocal, CTFWeaponBase *pWeapon);
 	float GetAimDrop(float flGravity, float flTimeSeconds);
-	void DrawPath(const std::vector<Vector>& vPath);
+	void DrawPath(ImDrawList* pDraw, const std::vector<Vector>& vPath);
 	bool IsRightAttack(CTFWeaponBase *pWeapon);
 	bool FindVisiblePosToShoot(const ProjectileInfo_t& prjInfo,
 				CBaseEntity* pTarget, const Vec3& predictedPos, const Vec3& shootPos, float flGravity, Vec3& out);

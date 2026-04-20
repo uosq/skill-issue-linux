@@ -1,5 +1,7 @@
 #include "projectile.h"
 
+#include "../../../sdk/imgui_utils/imgui_utils.h"
+
 #include "../../logs/logs.h"
 #include "../../prediction/prediction.h"
 #include "../../../sdk/definitions/vphysics_interface.h"
@@ -599,7 +601,7 @@ void CAimbotProjectile::ResetIndicator()
 	m_pOldIndicatorTarget = nullptr;
 }
 
-void CAimbotProjectile::RunIndicator()
+void CAimbotProjectile::RunIndicator(ImDrawList* pDraw)
 {
 	if (!Settings::Aimbot.key->IsEnabled())
 		return;
@@ -632,9 +634,7 @@ void CAimbotProjectile::RunIndicator()
 	Vec2 screenPos;
 	if (helper::engine::WorldToScreen(m_vecOldIndicatorPos, screenPos))
 	{
-		const int iSize = 5;
-
-		interfaces::Surface->DrawSetColor(255, 255, 255, 255);
+		constexpr int iSIZE = 5;
 
 		switch (static_cast<AimbotIndicatorStyle>(Settings::Aimbot.indicator))
 		{
@@ -643,30 +643,22 @@ void CAimbotProjectile::RunIndicator()
 
 		case AimbotIndicatorStyle::CIRCLE:
 		{
-			interfaces::Surface->DrawOutlinedCircle((int)screenPos.x, (int)screenPos.y, iSize, 68);
+			pDraw->AddCircleFilled(ImVec2(screenPos.x, screenPos.y), (float)iSIZE, IM_COL32(255, 255, 255, 255));
 			break;
 		}
 		case AimbotIndicatorStyle::SQUARE:
 		{
-			interfaces::Surface->DrawFilledRect(screenPos.x - iSize, screenPos.y - iSize,
-							    screenPos.x + iSize, screenPos.y + iSize);
+			ImGui::DrawBoxFilled(pDraw, ImVec2(screenPos.x, screenPos.y), ImVec2(iSIZE*2.0f, iSIZE*2.0f), IM_COL32(255, 255, 255, 255), 2.0f);
 			break;
 		}
 		case AimbotIndicatorStyle::TRIANGLE:
 		{
-			Vec2 p1, p2, p3;
-			p1 = {screenPos.x - iSize, screenPos.y + iSize};
-			p2 = {screenPos.x, screenPos.y - iSize};
-			p3 = {screenPos.x + iSize, screenPos.y + iSize};
+			ImVec2 p1, p2, p3;
+			p1 = {screenPos.x - iSIZE, screenPos.y + iSIZE};
+			p2 = {screenPos.x, screenPos.y - iSIZE};
+			p3 = {screenPos.x + iSIZE, screenPos.y + iSIZE};
 
-			// left point
-			interfaces::Surface->DrawLine(p1.x, p1.y, p2.x, p2.y);
-
-			// top center point
-			interfaces::Surface->DrawLine(p2.x, p2.y, p3.x, p3.y);
-
-			// right point
-			interfaces::Surface->DrawLine(p1.x, p1.y, p3.x, p3.y);
+			pDraw->AddTriangleFilled(p1, p2, p3, IM_COL32(255, 255, 255, 255));
 			break;
 		}
 
@@ -681,18 +673,17 @@ float CAimbotProjectile::GetAimDrop(float flGravity, float flTimeSeconds)
 	return flGravity * flTimeSeconds * flTimeSeconds;
 }
 
-void CAimbotProjectile::RunPath()
+void CAimbotProjectile::RunPath(ImDrawList* pDraw)
 {
 	if (!Settings::Aimbot.path || m_pTarget == nullptr || m_vecPath.empty())
 		return;
 
-	interfaces::Surface->DrawSetColor(255, 255, 255, 255);
-	DrawPath(m_vecPath);
+	DrawPath(pDraw, m_vecPath);
 }
 
-void CAimbotProjectile::DrawPath(const std::vector<Vector> &vPath)
+void CAimbotProjectile::DrawPath(ImDrawList* pDraw, const std::vector<Vector> &vPath)
 {
-	for (int i = 1; i < vPath.size(); i++)
+	for (size_t i = 1; i < vPath.size(); i++)
 	{
 		Vec2 vecPrevScreen, vecCurrScreen;
 
@@ -700,8 +691,7 @@ void CAimbotProjectile::DrawPath(const std::vector<Vector> &vPath)
 		bool bIsCurrentVisible	= helper::engine::WorldToScreen(vPath[i], vecCurrScreen);
 
 		if (bIsPreviousVisible && bIsCurrentVisible)
-			interfaces::Surface->DrawLine(vecPrevScreen.x, vecPrevScreen.y, vecCurrScreen.x,
-						      vecCurrScreen.y);
+			pDraw->AddLine(ImVec2(vecPrevScreen.x, vecPrevScreen.y), ImVec2(vecCurrScreen.x, vecCurrScreen.y), IM_COL32(255, 255, 255, 255));
 	}
 }
 
