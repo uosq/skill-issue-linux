@@ -73,8 +73,8 @@ bool CAimbotProjectile::CheckTrajectory(CBaseEntity *pTarget, const Vector vecSt
 	if (pTarget == nullptr)
 		return false;
 
-	float flDistance  = (vecTargetPos - vecStartPos).Length();
-	float flTotalTime = flDistance / prjInfo.speed;
+	//float flDistance  = (vecTargetPos - vecStartPos).Length();
+	//float flTotalTime = flDistance / prjInfo.speed;
 
 	Vector vecVelocity;
 	Math::AngleVectors(vecAngle, &vecVelocity);
@@ -126,8 +126,8 @@ bool CAimbotProjectile::GetProjectileInfo(ProjectileInfo_t &pOut, CTFPlayer *pLo
 
 	int id		 = pWeapon->GetWeaponID();
 
-	int iTickBase	 = pLocal->GetTickBase();
-	float flTickBase = TICKS_TO_TIME(iTickBase);
+	//int iTickBase	 = pLocal->GetTickBase();
+	//float flTickBase = TICKS_TO_TIME(iTickBase);
 
 	switch (id)
 	{
@@ -161,14 +161,14 @@ bool CAimbotProjectile::GetProjectileInfo(ProjectileInfo_t &pOut, CTFPlayer *pLo
 	case TF_WEAPON_GRENADELAUNCHER:
 	case TF_WEAPON_CANNON:
 	{
-		bool bIsCannon = id == TF_WEAPON_CANNON;
+		/*bool bIsCannon = id == TF_WEAPON_CANNON;
 		float mortar =
 		    bIsCannon ? AttributeHookValue(0.f, "grenade_launcher_mortar_mode", pWeapon, nullptr, true) : 0;
 		pOut.speed =
 		    AttributeHookValue(pLocal->InCond(TF_COND_RUNE_PRECISION)
 					   ? 3000
 					   : AttributeHookValue(1200, "mult_projectile_range", pWeapon, nullptr, true),
-				       "mult_projectile_range", pWeapon, nullptr, true);
+				       "mult_projectile_range", pWeapon, nullptr, true);*/
 		pOut.gravity = flGravity;
 		return true;
 	}
@@ -178,12 +178,12 @@ bool CAimbotProjectile::GetProjectileInfo(ProjectileInfo_t &pOut, CTFPlayer *pLo
 		pOut.offset.Set(16, 8, -6);
 		pOut.gravity		  = flGravity;
 
-		float charge		  = 0.0f;
+		/*float charge		  = 0.0f;
 		float m_flChargeBeginTime = ((CTFPipebombLauncher *)pWeapon)->m_flChargeBeginTime();
 		if (m_flChargeBeginTime > flTickBase)
 			charge = 0.0f;
 		else
-			charge = flTickBase - m_flChargeBeginTime;
+			charge = flTickBase - m_flChargeBeginTime;*/
 
 		pOut.speed = AttributeHookValue(
 		    Math::RemapVal(0, 0, AttributeHookValue(4.0f, "stickybomb_charge_rate", pWeapon, nullptr, true),
