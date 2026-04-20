@@ -11,7 +11,7 @@
 #include "chamsmaterial.h"
 
 static std::unordered_set<int> hidden_entities;
-static std::vector<ChamsMaterial> materials;
+static std::vector<std::shared_ptr<ChamsMaterial>> materials;
 
 static bool is_drawing = false;
 
@@ -19,22 +19,28 @@ void Chams::Init()
 {
 	materials.emplace_back
 	(
-		"basic flat",
+		std::make_shared<ChamsMaterial>
+		(
+			"basic flat",
 
-		"UnlitGeneric\n"
-		"{\n"
-		"\t$basetexture \"white\"\n"
-		"}"
+			"UnlitGeneric\n"
+			"{\n"
+			"\t$basetexture \"white\"\n"
+			"}"
+		)
 	);
 
 	materials.emplace_back
 	(
-		"basic shaded",
+		std::make_shared<ChamsMaterial>
+		(
+			"basic shaded",
 
-		"VertexLitGeneric\n"
-		"{\n"
-		"\t$basetexture \"white\"\n"
-		"}"
+			"VertexLitGeneric\n"
+			"{\n"
+			"\t$basetexture \"white\"\n"
+			"}"
+		)
 	);
 }
 
@@ -48,7 +54,7 @@ void Chams::OnLevelShutdown()
 	Reset();
 }
 
-std::vector<ChamsMaterial>& Chams::GetMaterials()
+std::vector<std::shared_ptr<ChamsMaterial>>& Chams::GetMaterials()
 {
 	return materials;
 }
@@ -195,14 +201,14 @@ void Chams::ApplyMaterials(CBaseEntity* entity, int drawflags)
 {
 	for (auto& mat : materials)
 	{
-		if (!mat.IsValidMat())
+		if (!mat->IsValidMat())
 			continue;
 
-		if (!mat.IsUsed())
+		if (!mat->IsUsed())
 			continue;
 
-		interfaces::RenderView->SetBlend(mat.GetAlpha());
-		interfaces::ModelRender->ForcedMaterialOverride(mat.GetMaterial());
+		interfaces::RenderView->SetBlend(mat->GetAlpha());
+		interfaces::ModelRender->ForcedMaterialOverride(mat->GetMaterial());
 
 		is_drawing = true;
 
@@ -241,18 +247,19 @@ void Chams::Reset()
 static bool DoesMaterialExist(const std::string& name)
 {
 	for (auto it = materials.begin(); it != materials.end(); it++)
-		if (it->GetInternalName() == name)
+		if ((*it)->GetInternalName() == name)
 			return true;
 
 	return false;
 }
 
-bool Chams::AddMaterial(const std::string& name, const std::string& vmt, ChamsMaterial& out)
+bool Chams::AddMaterial(const std::string& name, const std::string& vmt, std::shared_ptr<ChamsMaterial>& out)
 {
 	if (DoesMaterialExist(name))
 		return false;
 
-	out = materials.emplace_back(name, vmt);
+	materials.emplace_back(std::make_shared<ChamsMaterial>(name, vmt));
+	out = materials.back();
 
 	return true;
 }
@@ -264,7 +271,7 @@ bool Chams::RemoveMaterial(const std::string& name)
 
 	for (auto it = materials.begin(); it != materials.end(); it++)
 	{
-		if (it->GetInternalName() == name)
+		if ((*it)->GetInternalName() == name)
 		{
 			materials.erase(it);
 			return true;
@@ -272,4 +279,9 @@ bool Chams::RemoveMaterial(const std::string& name)
 	}
 
 	return false;
+}
+
+void Chams::OnGameShutdown()
+{
+	materials.clear();
 }

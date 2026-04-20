@@ -3,12 +3,15 @@
 #include "../libdetour/libdetour.h"
 
 #include "../features/angelscript/api/libraries/hooks/hooks.h"
+#include "../features/chams/chams.h"
 
 DETOUR_DECL_TYPE(void, originalHost_ShutdownFn, void);
 detour_ctx_t shutdownctx;
 
 void HookedHost_ShutdownFn(void)
 {
+	Chams::OnGameShutdown();
+
 	Hooks_CallHooks("GameShutdown");
 	DETOUR_ORIG_CALL(&shutdownctx, originalHost_ShutdownFn);
 }
