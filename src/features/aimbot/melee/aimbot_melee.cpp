@@ -30,7 +30,6 @@ namespace AimbotMelee
 
 		Vector targetAngle;
 		CBaseEntity *target = nullptr;
-		float highestDot    = -1.0f;
 
 		MeleeMode mode	    = static_cast<MeleeMode>(Settings::Aimbot.melee);
 		float maxFov	    = mode == MeleeMode::LEGIT ? 90.0f : 180.0f;

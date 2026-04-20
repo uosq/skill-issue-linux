@@ -15,6 +15,6 @@ echo "Compiling skill issue"
 make # Note: This will echo
 
 # make .debug symbol file
-objcopy --compress-debug-sections=zlib --only-keep-debug build/libvapo.so build/libvapo.debug
+objcopy --compress-debug-sections=zstd --only-keep-debug build/libvapo.so build/libvapo.debug
 strip --strip-unneeded build/libvapo.so
 objcopy --add-gnu-debuglink=build/libvapo.debug build/libvapo.so

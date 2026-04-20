@@ -578,9 +578,10 @@ void CAimbotProjectile::RunAim(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserC
 	if (helper::localplayer::IsAttacking(pLocal, pWeapon, pCmd))
 	{
 		pState.targetPath = m_vecPath;
+		pState.running	  = true;
+		pState.angle	  = m_vecAimAngle;
 
 		pCmd->viewangles  = m_vecAimAngle;
-		pState.angle	  = m_vecAimAngle;
 
 		AimbotMode mode	  = static_cast<AimbotMode>(Settings::Aimbot.mode);
 
