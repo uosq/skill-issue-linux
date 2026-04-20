@@ -31,7 +31,7 @@ DECLARE_VTABLE_HOOK(VGuiPaint, void, (IEngineVGui * thisptr, PaintMode_t paint))
 
 		Hooks_CallHooks("Draw");
 
-		FontManager::SetFont(ESP::GetFont());
+		//FontManager::SetFont(ESP::GetFont());
 
 		CTFPlayer *pLocal = EntityList::GetLocal();
 		if (pLocal)

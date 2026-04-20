@@ -160,7 +160,25 @@ namespace Settings
 		int fconditions	   = 0;
 		int font	   = 0;
 		int font_size 	   = 12;
-		bool class_name     = false;
+		bool class_name    = false;
+
+		union
+		{
+			uint32_t raw = 0;
+
+			struct
+			{
+				uint32_t healthbar  : 3;
+				uint32_t weaponname : 3;
+				uint32_t classname  : 3;
+				uint32_t name       : 3;
+				uint32_t jarate     : 3;
+				uint32_t uber       : 3;
+				uint32_t bonk       : 3;
+				uint32_t zoom       : 3;
+				uint32_t _reserved  : 8; // padding
+			};
+		} sides;
 	};
 
 	extern SettingsESP ESP;
@@ -360,6 +378,7 @@ namespace Settings
 	    CONFIG_INT("esp font", ESP.font),
 	    CONFIG_INT("esp font size", ESP.font_size),
 	    CONFIG_BOOL("esp class", ESP.class_name),
+	    CONFIG_INT("esp fsides", ESP.sides.raw),
 
 	    // misc
 	    CONFIG_KEY("misc thirdperson key", Misc.thirdperson_key),
