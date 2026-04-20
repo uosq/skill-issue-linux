@@ -47,12 +47,12 @@ void DrawChamsTab()
 				for (int i = 0; i < materials.size(); i++)
 				{
 					auto& mat = materials[i];
-					if (!mat.IsValidMat())
+					if (!mat->IsValidMat())
 						continue;
 
 					bool is_selected = (selected == i);
 
-					if (ImGui::Selectable(mat.GetDisplayName().c_str(), is_selected))
+					if (ImGui::Selectable(mat->GetDisplayName().c_str(), is_selected))
 						selected = i;
 				}
 
@@ -72,7 +72,7 @@ void DrawChamsTab()
 							"\t$basetexture \"white\"\n"
 							"}";
 
-							materials.emplace_back(text, vmt);
+							materials.emplace_back(std::make_shared<ChamsMaterial>(text, vmt));
 
 							selected = materials.size() - 1;
 							editor.SetText(vmt);
@@ -95,10 +95,10 @@ void DrawChamsTab()
 				if (ImGui::Button("- Delete") && selected != -1)
 				{
 					auto& mat = materials[selected];
-					if (mat.IsValidMat())
+					if (mat->IsValidMat())
 					{
 						// delete material
-						Chams::RemoveMaterial(mat.GetInternalName());
+						Chams::RemoveMaterial(mat->GetInternalName());
 						selected = -1;
 					}
 				}
@@ -118,11 +118,11 @@ void DrawChamsTab()
 					// load text when selection changes
 					if (selected != last_selected)
 					{
-						editor.SetText(mat.GetVMT());
+						editor.SetText(mat->GetVMT());
 						last_selected = selected;
 					}
 
-					ImGui::Text("Editing: %s", mat.GetDisplayName().c_str());
+					ImGui::Text("Editing: %s", mat->GetDisplayName().c_str());
 					ImGui::Separator();
 
 					ImVec2 avail = ImGui::GetContentRegionAvail();
@@ -132,24 +132,24 @@ void DrawChamsTab()
 					{
 						const std::string& text = editor.GetText();
 
-						mat.SetVMT(text);
-						mat.Refresh();
+						mat->SetVMT(text);
+						mat->Refresh();
 					}
 
 					ImGui::SameLine();
 
 					if (ImGui::Button("Get VMT"))
-						editor.SetText(mat.GetVMT());
+						editor.SetText(mat->GetVMT());
 
 					ImGui::SameLine();
 
-					bool used = mat.IsUsed();
+					bool used = mat->IsUsed();
 					if (ImGui::Checkbox("Used", &used))
-						mat.SetUsed(used);
+						mat->SetUsed(used);
 
-					float alpha = mat.GetAlpha();
+					float alpha = mat->GetAlpha();
 					ImGui::SliderFloat("Alpha##Chams", &alpha, 0.0f, 1.0f);
-					mat.SetAlpha(alpha);
+					mat->SetAlpha(alpha);
 				}
 				else
 					ImGui::TextUnformatted("Select a material to edit");
