@@ -121,8 +121,11 @@ void GUI::RunMainWindow()
 	if (pDraw == nullptr)
 		return;
 
-	pDraw->AddText(ImVec2(10, 10), IM_COL32(255, 255, 255, 255), "Skill Issue");
-	pDraw->AddText(ImVec2(10, 10 + Settings::ESP.font_size), IM_COL32(255, 255, 255, 255), "Build date: " __DATE__ " " __TIME__);
+	if (Settings::menu_open)
+	{
+		pDraw->AddText(ImVec2(10, 10), IM_COL32(255, 255, 255, 255), "Skill Issue");
+		pDraw->AddText(ImVec2(10, 10 + Settings::ESP.font_size), IM_COL32(255, 255, 255, 255), "Build date: " __DATE__ " " __TIME__);
+	}
 
 	Aimbot::DrawFOVIndicator();
 	ESP::OnImGui();
