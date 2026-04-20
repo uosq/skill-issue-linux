@@ -87,7 +87,7 @@ void Draw_RegisterLibrary(asIScriptEngine *engine)
 	engine->SetDefaultNamespace("Draw");
 	{
 		engine->SetDefaultAccessMask(ScriptAccessMask::SCRIPT_MASK_ALLOW_DRAW);
-		engine->RegisterTypedef("uint64", "Font");
+		engine->RegisterTypedef("Font", "uint64");
 		engine->RegisterGlobalFunction("void Line(int x0, int y0, int x1, int y1)", asFUNCTION(Line), asCALL_CDECL);
 		engine->RegisterGlobalFunction("void SetColor(uint8 r, uint8 g, uint8 b, uint8 a)", asFUNCTION(SetColor), asCALL_CDECL);
 		engine->RegisterGlobalFunction("void GetTextSize(Font font, const string &in text, int &out w, int &out h)", asFUNCTION(GetTextSize), asCALL_CDECL);
