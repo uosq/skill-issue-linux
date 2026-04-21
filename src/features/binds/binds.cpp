@@ -108,7 +108,7 @@ bool Binds::RenderHotkey(const char *label, Hotkey *hk)
 	if (ImGui::Button(keyName, ImVec2(120, 0)))
 		hk->m_bCapturing = true;
 
-	if (ImGui::BeginPopupContextItem("HotkeyModeMenu"))
+	if (ImGui::BeginPopup("HotkeyModeMenu"))
 	{
 		constexpr const char *modes[] = {"Off", "Hold", "Toggle", "Hold Off", "Always"};
 
@@ -128,6 +128,10 @@ bool Binds::RenderHotkey(const char *label, Hotkey *hk)
 
 		ImGui::EndPopup();
 	}
+
+	ImGui::SameLine();
+	if (ImGui::Button("+"))
+		ImGui::OpenPopup("HotkeyModeMenu");
 
 	ImGui::SameLine();
 	ImGui::TextUnformatted(label);
