@@ -9,6 +9,7 @@
 #include "../../sdk/classes/cbaseobject.h"
 #include "../../sdk/classes/ctfrobotdestruction_robot.h"
 #include "../../sdk/definitions/icollideable.h"
+#include "../../sdk/imgui_utils/imgui_utils.h"
 
 #include "esp_utils.h"
 
@@ -39,7 +40,17 @@ struct ESPData
 	float right_y = 0.0f;
 
 	float text_scale = 1.0f; // used to scale with distance
+
+	void ResetOffsets();
 };
+
+void ESPData::ResetOffsets()
+{
+	top_y = 0.0f;
+	bottom_y = 0.0f;
+	left_y = 0.0f;
+	right_y = 0.0f;
+}
 
 static std::vector<ESPData> s_vData;
 
@@ -85,6 +96,11 @@ static bool GetEntityBounds(CBaseEntity* pEntity, ESPData& data)
 	return true;
 }
 
+static float GetHealthBarScale(const ESPData& data)
+{
+	return data.text_scale * 0.75f;
+}
+
 static void CalcHealthBarLayout(ESPData& data)
 {
 	HealthMode mode = static_cast<HealthMode>(Settings::ESP.health);
@@ -94,7 +110,9 @@ static void CalcHealthBarLayout(ESPData& data)
 		constexpr float GAP = 3.0f;
 		constexpr float MARGIN = 1.0f;
 
-		float totalPadding = BAR_THICKNESS + GAP + (MARGIN * 2.0f);
+		float scale = GetHealthBarScale(data);
+
+		float totalPadding = (BAR_THICKNESS * scale) + GAP + (MARGIN * 2.0f);
 		TextSide side = static_cast<TextSide>(Settings::ESP.sides.healthbar);
 
 		if (side == TextSide::LEFT)
@@ -110,20 +128,17 @@ static void CalcHealthBarLayout(ESPData& data)
 
 static float GetTextScale(float distance)
 {
-	constexpr float MAX_DIST_BEFORE_SCALING = 800.0f;
-	constexpr float MIN_SCALE = 0.6f; // smallest text scaling (or else we cant see shit)
-	constexpr float MAX_SCALE = 2.0f;
+	constexpr float MAX_DIST = 1000.0f;
+	constexpr float MIN_SCALE = 0.6f; // can't see shit if its too small
+	constexpr float MAX_SCALE = 1.2f;
 
-	float t = std::clamp(distance / MAX_DIST_BEFORE_SCALING, 0.0f, 1.0f);
-	t = 1.0f - (1.0f - t) * (1.0f - t);
-
-	return MIN_SCALE + (MAX_SCALE - MIN_SCALE) * (1.0f - t);
+	float t = std::clamp(distance / MAX_DIST, 0.0f, 1.0f);
+	return MAX_SCALE + (MIN_SCALE - MAX_SCALE) * t;
 }
 
 static void FillTargets(CTFPlayer* pLocal)
 {
 	constexpr int iVALID_FLAGS = EntityFlags::IsAlive | EntityFlags::IsBuilding | EntityFlags::IsPlayer;
-	
 
 	s_vData.clear();
 
@@ -249,12 +264,12 @@ static void GetHealthColor(int health, int maxhealth, int& r, int& g)
 	g = static_cast<int>(ratio * 255.0f);
 }
 
-static void DrawHealthbarHorizontal(ImDrawList* pDraw, CBaseEntity* pTarget, ESPData& data)
+static void DrawHealthbarSide(ImDrawList* pDraw, CBaseEntity* pTarget, ESPData& data)
 {
-	constexpr int iGAP = 3;
-	constexpr int iWIDTH = 5;
-	constexpr int iMARGIN = 1;
+	constexpr float flGAP = 3.0f;
+	constexpr float flMARGIN = 1.0f;
 	constexpr float flROUNDING = 2.0f;
+	constexpr float flBAR_THICKNESS = 5.0f;
 
 	HealthMode mode = static_cast<HealthMode>(Settings::ESP.health);
 	if (mode >= HealthMode::MAX || mode <= HealthMode::INVALID)
@@ -270,21 +285,22 @@ static void DrawHealthbarHorizontal(ImDrawList* pDraw, CBaseEntity* pTarget, ESP
 	if (iMaxHealth < 0) return;
 
 	TextSide side = static_cast<TextSide>(Settings::ESP.sides.healthbar);
+	float flWidth = flBAR_THICKNESS * GetHealthBarScale(data);
 
-	float iBaseX = 0.0f;
+	float flBaseX = 0.0f;
 	if (side == TextSide::LEFT)
-		iBaseX = data.x - iWIDTH - iGAP;
+		flBaseX = data.x - flWidth - flGAP;
 	else if (side == TextSide::RIGHT)
-		iBaseX = data.x + data.w + iGAP;
+		flBaseX = data.x + data.w + flGAP;
 	else 
 		return;
 
 	// background
 	{
 		constexpr ImU32 iBACKGROUND = IM_COL32(20, 20, 20, 255);
-		float x = iBaseX - iMARGIN;
-		float y = data.y - iMARGIN;
-		DrawImGuiBoxFilled(pDraw, x, y, iWIDTH + (iMARGIN * 2.0f), data.h + (iMARGIN * 2.0f), iBACKGROUND, flROUNDING);
+		float x = flBaseX - flMARGIN;
+		float y = data.y - flMARGIN;
+		DrawImGuiBoxFilled(pDraw, x, y, flWidth + (flMARGIN * 2.0f), data.h + (flMARGIN * 2.0f), iBACKGROUND, flROUNDING);
 	}
 
 	// bar
@@ -299,17 +315,17 @@ static void DrawHealthbarHorizontal(ImDrawList* pDraw, CBaseEntity* pTarget, ESP
 		float barHeight = data.h * flHealthRatio;
 		float yOffset = y + (data.h - barHeight); 
 
-		DrawImGuiBoxFilled(pDraw, iBaseX, yOffset, iWIDTH, barHeight, iColor, flROUNDING);
+		DrawImGuiBoxFilled(pDraw, flBaseX, yOffset, flWidth, barHeight, iColor, flROUNDING);
 	}
 }
 
-static void DrawHealthbarVertical(ImDrawList* pDraw, CBaseEntity* pTarget, ESPData& data)
+static void DrawHealthbarTopBottom(ImDrawList* pDraw, CBaseEntity* pTarget, ESPData& data)
 {
-	constexpr int iGAP = 3;
-	constexpr int iHEIGHT = 5;
-	constexpr int iMARGIN = 1;
+	constexpr float flGAP = 3.0f;
+	constexpr float flMARGIN = 1.0f;
 	constexpr float flROUNDING = 2.0f;
-
+	constexpr float flBAR_THICKNESS = 5.0f;
+	
 	HealthMode mode = static_cast<HealthMode>(Settings::ESP.health);
 	if (mode >= HealthMode::MAX || mode <= HealthMode::INVALID)
 		return;
@@ -324,24 +340,26 @@ static void DrawHealthbarVertical(ImDrawList* pDraw, CBaseEntity* pTarget, ESPDa
 	if (iMaxHealth < 0) return;
 
 	TextSide side = static_cast<TextSide>(Settings::ESP.sides.healthbar);
+	float flHeight = flBAR_THICKNESS * GetHealthBarScale(data);
 
-	float iBaseY = 0.0f;
+	float flBaseY = 0.0f;
 	if (side == TextSide::TOP)
-		iBaseY = data.y - iHEIGHT - iGAP;
+		flBaseY = data.y - flHeight - flGAP;
 	else if (side == TextSide::BOTTOM)
-		iBaseY = data.y + data.h + iGAP;
+		flBaseY = data.y + data.h + flGAP;
 	else 
 		return;
 
 	// background
 	{
 		constexpr ImU32 iBACKGROUND = IM_COL32(20, 20, 20, 255);
-		float x = data.x - iMARGIN;
-		float y = iBaseY - iMARGIN;
+		float x = data.x - flMARGIN;
+		float y = flBaseY - flMARGIN;
 
-		DrawImGuiBoxFilled(pDraw, x, y, data.w + (iMARGIN * 2.0f), iHEIGHT + (iMARGIN * 2.0f), iBACKGROUND, flROUNDING);
+		DrawImGuiBoxFilled(pDraw, x, y, data.w + (flMARGIN * 2.0f), flHeight + (flMARGIN * 2.0f), iBACKGROUND, flROUNDING);
 	}
 
+	// bar
 	{
 		float flHealthRatio = GetHealthRatio(iHealth, iMaxHealth);
 		float x = data.x;
@@ -353,7 +371,7 @@ static void DrawHealthbarVertical(ImDrawList* pDraw, CBaseEntity* pTarget, ESPDa
 		// left to right
 		float barWidth = data.w * flHealthRatio;
 
-		DrawImGuiBoxFilled(pDraw, x, iBaseY, barWidth, iHEIGHT, iColor, flROUNDING);
+		DrawImGuiBoxFilled(pDraw, x, flBaseY, barWidth, flHeight, iColor, flROUNDING);
 	}
 }
 
@@ -361,11 +379,11 @@ static void DrawHealthbar(ImDrawList* pDraw, CBaseEntity* pTarget, ESPData& data
 {
 	if (Settings::ESP.sides.healthbar == (int)TextSide::TOP
 	|| Settings::ESP.sides.healthbar == (int)TextSide::BOTTOM)
-		DrawHealthbarVertical(pDraw, pTarget, data);
+		DrawHealthbarTopBottom(pDraw, pTarget, data);
 
 	else if (Settings::ESP.sides.healthbar == (int)TextSide::LEFT
 		|| Settings::ESP.sides.healthbar == (int)TextSide::RIGHT)
-		DrawHealthbarHorizontal(pDraw, pTarget, data);
+		DrawHealthbarSide(pDraw, pTarget, data);
 }
 
 void ESP::Reset()
@@ -436,10 +454,8 @@ static void DrawText(ImDrawList* pDraw, const std::string& text, ESPData& data, 
 	}
 
 	// shadow
-	pDraw->AddText(ImGui::GetFont(), textsize.y, ImVec2(draw_x + 1, draw_y + 1), IM_COL32(0, 0,0, 255), text.c_str());
-
 	ImU32 color = IM_COL32(textColor.r(), textColor.g(), textColor.b(), 255);
-	pDraw->AddText(ImGui::GetFont(), textsize.y, ImVec2(draw_x, draw_y), color, text.c_str());
+	ImGui::DrawTextShadow(pDraw, ImGui::GetFont(), textsize.y, ImVec2(draw_x, draw_y), color, text.c_str());
 }
 
 static void DrawClass(ImDrawList* pDraw, CBaseEntity* pTarget, ESPData& data)
@@ -520,9 +536,12 @@ void ESP::OnImGui()
 	if (s_vData.empty())
 		return;
 
-	for (ESPData data : s_vData)
+	for (ESPData& data : s_vData)
 	{
 		if (!data.valid) continue;
+
+		// fix not working with references
+		data.ResetOffsets();
 
 		CBaseEntity* pTarget = static_cast<CBaseEntity*>(interfaces::EntityList->GetClientEntity(data.entindex));
 		if (pTarget == nullptr) continue;
