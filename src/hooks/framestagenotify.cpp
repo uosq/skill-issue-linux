@@ -32,24 +32,6 @@ DECLARE_VTABLE_HOOK(FrameStageNotify, void, (CHLClient * thisptr, int stage))
 	case FRAME_NET_UPDATE_END:
 	{
 		EntityList::Store();
-		
-		CTFPlayer *pLocal = EntityList::GetLocal();
-		if (pLocal == nullptr)
-			break;
-	
-		#if 0
-		// temporary
-		for (const auto& enemy : EntityList::GetEnemies())
-		{
-			if (enemy.ptr == nullptr)
-				continue;
-
-			Backtrack::Store(pLocal, enemy);
-		}
-		#endif
-
-		Spectators::RunMain(pLocal);
-		//Thirdperson::FrameStageNotify(pLocal);
 		break;
 	}
 
@@ -59,6 +41,12 @@ DECLARE_VTABLE_HOOK(FrameStageNotify, void, (CHLClient * thisptr, int stage))
 
 	Hooks_CallHooks("FrameStageNotify", [&](asIScriptContext *ctx) { ctx->SetArgDWord(0, stage); });
 	originalFrameStageNotify(thisptr, stage);
+
+	if (stage == FRAME_NET_UPDATE_END)
+	{
+		CTFPlayer* pLocal = EntityList::GetLocal();
+		if (pLocal) Spectators::RunMain(pLocal);
+	}
 
 	ESP::OnFrameStageNotify(stage);
 }
