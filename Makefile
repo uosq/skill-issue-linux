@@ -9,7 +9,7 @@ CFLAGS = -march=x86-64-v3 -shared -std=c++17 -O2 -fPIC -Werror -g
 CFLAGS_C = -march=x86-64-v3 -O2 -fPIC -Werror -g
 
 # Linker flags
-LDFLAGS = -lSDL2 -lvulkan -lm -ldl -g
+LDFLAGS = -lSDL2 -lvulkan -lm -ldl
 LDFLAGS += $(shell find build/ -name '*.a')
 
 # Source files
