@@ -36,7 +36,10 @@ void InfoPanel::OnImGui(bool bMenuOpen)
 		DrawColoredText("Chams", Settings::ESP.chams);
 		DrawColoredText("Autostrafe", Settings::Misc.autostrafe);
 		DrawColoredText("Glow", Settings::ESP.blur > 0);
-		DrawColoredText("Spectated", Spectators::IsLocalPlayerSpectated());
+
+		int amount = 0;
+		DrawColoredText("Spectated", Spectators::IsLocalPlayerSpectated(amount));
+		DrawColoredTextEx("Spectator Count: %i", amount);
 
 		DrawColoredText("Warp", Settings::AntiAim.warp_key->IsEnabled());
 		DrawColoredTextEx("Warp Amount: %i", Warp::m_iShiftAmount);

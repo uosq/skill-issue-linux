@@ -4,7 +4,7 @@
 #include "../entitylist/entitylist.h"
 
 static bool s_bSpectated = false;
-static std::vector<CHandle<CTFPlayer>> s_vSpectatorList;
+static std::vector<CTFPlayer*> s_vSpectatorList;
 
 void Spectators::RunMain(CTFPlayer *pLocal)
 {
@@ -24,7 +24,7 @@ void Spectators::Reset()
 	s_vSpectatorList.clear();
 }
 
-bool Spectators::IsSpectated(CTFPlayer *pTarget, std::vector<CHandle<CTFPlayer>> &out)
+bool Spectators::IsSpectated(CTFPlayer *pTarget, std::vector<CTFPlayer*> &out)
 {
 	for (const auto &entry : EntityList::GetEntities())
 	{
@@ -56,8 +56,9 @@ bool Spectators::IsSpectated(CTFPlayer *pTarget, std::vector<CHandle<CTFPlayer>>
 	return !out.empty();
 }
 
-bool Spectators::IsLocalPlayerSpectated()
+bool Spectators::IsLocalPlayerSpectated(int& amount)
 {
+	amount = s_vSpectatorList.size();
 	return s_bSpectated;
 }
 
@@ -77,10 +78,8 @@ void Spectators::DrawList()
 	{
 		if (s_bSpectated && !s_vSpectatorList.empty())
 		{
-			for (auto hPlayer : s_vSpectatorList)
+			for (auto pPlayer : s_vSpectatorList)
 			{
-				auto pPlayer = hPlayer.Get();
-
 				if (pPlayer == nullptr)
 					continue;
 
