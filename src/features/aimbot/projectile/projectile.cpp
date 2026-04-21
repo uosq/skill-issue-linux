@@ -163,14 +163,14 @@ bool CAimbotProjectile::GetProjectileInfo(ProjectileInfo_t &pOut, CTFPlayer *pLo
 	case TF_WEAPON_GRENADELAUNCHER:
 	case TF_WEAPON_CANNON:
 	{
-		/*bool bIsCannon = id == TF_WEAPON_CANNON;
-		float mortar =
-		    bIsCannon ? AttributeHookValue(0.f, "grenade_launcher_mortar_mode", pWeapon, nullptr, true) : 0;
+		//bool bIsCannon = id == TF_WEAPON_CANNON;
+		/*float mortar =
+		    bIsCannon ? AttributeHookValue(0.f, "grenade_launcher_mortar_mode", pWeapon, nullptr, true) : 0;*/
 		pOut.speed =
 		    AttributeHookValue(pLocal->InCond(TF_COND_RUNE_PRECISION)
 					   ? 3000
 					   : AttributeHookValue(1200, "mult_projectile_range", pWeapon, nullptr, true),
-				       "mult_projectile_range", pWeapon, nullptr, true);*/
+				       "mult_projectile_range", pWeapon, nullptr, true);
 		pOut.gravity = flGravity;
 		return true;
 	}
