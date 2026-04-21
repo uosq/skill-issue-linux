@@ -10,6 +10,7 @@
 #include "../triggerbot/triggerbot.h"
 #include "../visuals/norecoil/norecoil.h"
 #include "../warp/warp.h"
+#include "../antiafk/antiafk.h"
 
 #include "../../sdk/definitions/con_nprint.h"
 #include "../../sdk/definitions/host.h"
@@ -78,6 +79,8 @@ void TickManager::Post_CreateMove(int sequence_number)
 	Triggerbot::Run(pLocal, pWeapon, pCmd);
 
 	Hooks_CallHooks("CreateMove", [&](asIScriptContext *ctx) { ctx->SetArgObject(0, pCmd); });
+
+	AntiAFK::OnCreateMove(pCmd);
 
 	if (reinterpret_cast<CClientState *>(interfaces::ClientState)->chokedcommands >= 21)
 		m_bSendPacket = true;

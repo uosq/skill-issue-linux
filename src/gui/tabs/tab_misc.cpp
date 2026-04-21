@@ -25,6 +25,9 @@ void DrawMiscTab()
 	ImGui::Checkbox("No Scope Overlay", &Settings::Misc.no_scope_overlay);
 	ImGui::Checkbox("No Zoom", &Settings::Misc.no_zoom);
 
+	ImGui::Checkbox("Anti AFK", &Settings::Misc.antiafk);
+	ImGui::Checkbox("Info Panel", &Settings::Misc.infopanel);
+
 	// ImGui::Checkbox("No Survey", &Settings::Misc.no_survey);
 
 	ImGui::Separator();

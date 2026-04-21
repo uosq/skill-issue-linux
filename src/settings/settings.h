@@ -238,6 +238,8 @@ namespace Settings
 		bool no_engine_sleep	    = false;
 		bool no_scope_overlay	    = false;
 		bool no_zoom		    = false;
+		bool antiafk		    = false;
+		bool infopanel		    = false;
 		//bool no_survey = false;
 	};
 
@@ -399,9 +401,11 @@ namespace Settings
 	    CONFIG_BOOL("misc no recoil", Misc.norecoil),
 	    CONFIG_INT("misc backtrack", Misc.backtrack),
 	    CONFIG_BOOL("misc no engine sleep", Misc.no_engine_sleep),
-	    CONFIG_BOOL("no scope overlay", Misc.no_scope_overlay),
-	    CONFIG_BOOL("no zoom", Misc.no_zoom),
-	    CONFIG_BOOL("no viewmodel bob", Misc.no_viewmodel_bob),
+	    CONFIG_BOOL("misc no scope overlay", Misc.no_scope_overlay),
+	    CONFIG_BOOL("misc no zoom", Misc.no_zoom),
+	    CONFIG_BOOL("misc no viewmodel bob", Misc.no_viewmodel_bob),
+	    CONFIG_BOOL("misc antiafk", Misc.antiafk),
+	    CONFIG_BOOL("misc info panel", Misc.infopanel),
 	    //CONFIG_BOOL("no survey", Misc.no_survey),
 
 	    //triggerbot

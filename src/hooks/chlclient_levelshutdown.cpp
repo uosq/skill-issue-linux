@@ -10,6 +10,7 @@
 #include "../features/warp/warp.h"
 #include "../features/chams/chams.h"
 #include "../features/esp/esp.h"
+#include "../features/antiafk//antiafk.h"
 
 #include "../features/angelscript/api/libraries/hooks/hooks.h"
 
@@ -24,6 +25,7 @@ DECLARE_VTABLE_HOOK(LevelShutdown, void, (CHLClient * thisptr))
 	Spectators::OnLevelShutdown();
 	Chams::OnLevelShutdown();
 	ESP::OnLevelShutdown();
+	AntiAFK::OnLevelShutdown();
 
 	Hooks_CallHooks("LevelShutdown");
 	originalLevelShutdown(thisptr);

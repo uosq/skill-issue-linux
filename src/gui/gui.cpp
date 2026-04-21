@@ -15,6 +15,8 @@
 #include "../features/spectators/spectators.h"
 #include "../features/esp/esp.h"
 #include "../features/aimbot/aimbot.h"
+#include "../features/infopanel/infopanel.h"
+
 
 int GUI::tab = 0;
 
@@ -129,6 +131,7 @@ void GUI::RunMainWindow()
 
 	Aimbot::OnImGui(pDraw);
 	ESP::OnImGui();
+	InfoPanel::OnImGui(Settings::menu_open);
 
 	if (!Settings::menu_open)
 		return;
