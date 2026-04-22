@@ -29,7 +29,8 @@ namespace interfaces
 	IStudioRender *StudioRender	   = nullptr;
 	//CEconNotificationQueue* g_notificationQueue = nullptr;
 	IPhysics *Physics = nullptr;
-	IPhysicsCollision *PhysicsCollision;
+	IPhysicsCollision *PhysicsCollision = nullptr;
+	ILocalize* VGuiLocalize = nullptr;
 } // namespace interfaces
 
 namespace factories
@@ -44,6 +45,7 @@ namespace factories
 	CreateInterfaceFn materialsystem = nullptr;
 	CreateInterfaceFn studiorender	 = nullptr;
 	CreateInterfaceFn vphysics	 = nullptr;
+	CreateInterfaceFn tier0		 = nullptr;
 }; // namespace factories
 
 template <typename T> bool GetInterface(T *&out, CreateInterfaceFn factory, const char *name)
@@ -142,6 +144,14 @@ bool InitializeInterfaces()
 		factories::vphysics = reinterpret_cast<CreateInterfaceFn>(dlsym(vphysics, "CreateInterface"));
 	}
 
+	{
+		void* tier0 = dlopen("./bin/linux64/libtier0.so", RTLD_NOLOAD | RTLD_NOW);
+		if (!tier0)
+			return false;
+
+		factories::tier0 = reinterpret_cast<CreateInterfaceFn>(dlsym(tier0, "CreateInterface"));
+	}
+
 	// get interfaces
 	// i should probably check if they return false
 
@@ -196,14 +206,17 @@ bool InitializeInterfaces()
 	if (!GetInterface(interfaces::Physics, factories::vphysics, VPHYSICS_INTERFACE_VERSION))
 		return false;
 
-	if (!GetInterface(interfaces::Physics, factories::vphysics, VPHYSICS_COLLISION_INTERFACE_VERSION))
+	if (!GetInterface(interfaces::PhysicsCollision, factories::vphysics, VPHYSICS_COLLISION_INTERFACE_VERSION))
+		return false;
+
+	if (!GetInterface(interfaces::VGuiLocalize, factories::vgui, "VGUI_Localize005"))
 		return false;
 
 	{ // ClientModeShared?
 		uintptr_t leaInstr = (uintptr_t)sigscan_module("client.so", "48 8D 05 ? ? ? ? 40 0F B6 F6 48 8B 38");
 		uintptr_t g_pClientMode_addr = vtable::ResolveRIP(leaInstr, 3, 7); // lea rax, [g_pClientMode]
 		interfaces::ClientMode	     = *reinterpret_cast<IClientMode **>(g_pClientMode_addr);
-		;
+
 		if (!interfaces::ClientMode)
 			return false;
 	}

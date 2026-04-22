@@ -29,6 +29,7 @@
 #include "../definitions/ivrenderview.h"
 #include "../definitions/vphysics_interface.h"
 #include "../definitions/weaponinfo.h"
+#include "../definitions/ilocalize.h"
 
 using AttributeHookValueFn = float (*)(float defaultValue, const char *attribName, CBaseEntity *pEntity, void *, bool);
 extern AttributeHookValueFn AttributeHookValue;
@@ -62,6 +63,7 @@ namespace interfaces
 	//extern CEconNotificationQueue* g_notificationQueue;
 	extern IPhysics *Physics;
 	extern IPhysicsCollision* PhysicsCollision;
+	extern ILocalize* VGuiLocalize;
 } // namespace interfaces
 
 namespace factories
@@ -76,6 +78,7 @@ namespace factories
 	extern CreateInterfaceFn materialsystem;
 	extern CreateInterfaceFn studiorender;
 	extern CreateInterfaceFn vphysics;
+	extern CreateInterfaceFn tier0;
 }; // namespace factories
 
 template <typename T> bool GetInterface(T *&out, CreateInterfaceFn factory, const char *name);

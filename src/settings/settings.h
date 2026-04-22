@@ -179,6 +179,24 @@ namespace Settings
 				uint32_t _reserved  : 8; // padding
 			};
 		} sides;
+
+		union
+		{
+			uint32_t raw = (1u << 12); // thickness = 1
+
+			struct
+			{
+				// max is 15 for each one
+				// 1111 = 15 [0-15] (1-16)
+				uint32_t box_rounding : 4;
+				uint32_t healthbar_rounding : 4;
+				uint32_t healthbar_margin : 4;
+				uint32_t healthbar_thickness : 4;
+				uint32_t gap : 4;
+				uint32_t text_padding : 4;
+				uint32_t _reserved : 8; // padding
+			};
+		} custom;
 	};
 
 	extern SettingsESP ESP;

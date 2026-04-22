@@ -313,7 +313,6 @@ CBaseEntity *GetEntityFromLoadoutSlot(CBaseEntity *ent, int slot)
 	if (ent == nullptr || !ent->IsPlayer())
 		return nullptr;
 
-	CTFPlayer *pPlayer = static_cast<CTFPlayer *>(ent);
 	return reinterpret_cast<CTFPlayer *>(ent)->GetEntityFromLoadoutSlot(
 	    slot /*g_SlotsToLoadoutSlotsPerClass[pPlayer->m_iClass()][slot]*/);
 }

@@ -95,6 +95,13 @@ static uint32_t DrawComboWithSide(const char* label, int* current_item, const ch
 	return out_side;
 }
 
+static uint32_t DrawSliderWithFlag(const char* label, uint32_t flagValue, int min, int max)
+{
+	int current = int(flagValue);
+	ImGui::SliderInt(label, &current, min, max);
+	return uint32_t(current);
+}
+
 void DrawESPTab()
 {
 	if (ImGui::BeginTable("##ESPContents", 2))
@@ -178,4 +185,15 @@ void DrawESPTab()
 
 	if (ImGui::ColorEdit3("Weapon", weapon))
 		Settings::Colors.weapon.SetColor(weapon[0] * 255.0f, weapon[1] * 255.0f, weapon[2] * 255.0f, 255.0f);
+
+	ImGui::Separator();
+
+	ImGui::TextUnformatted("Customization");
+
+	Settings::ESP.custom.box_rounding = DrawSliderWithFlag("Box Roundness", Settings::ESP.custom.box_rounding, 0, 15);
+	Settings::ESP.custom.healthbar_rounding = DrawSliderWithFlag("Health Bar Roundness", Settings::ESP.custom.healthbar_rounding, 0, 15);
+	Settings::ESP.custom.healthbar_margin = DrawSliderWithFlag("Health Bar Margin", Settings::ESP.custom.healthbar_margin, 0, 15);
+	Settings::ESP.custom.healthbar_thickness = DrawSliderWithFlag("Health Bar Thickness", Settings::ESP.custom.healthbar_thickness, 1, 15);
+	Settings::ESP.custom.gap = DrawSliderWithFlag("Health Bar Padding", Settings::ESP.custom.gap, 0, 15);
+	Settings::ESP.custom.text_padding = DrawSliderWithFlag("Text Padding", Settings::ESP.custom.text_padding, 0, 15);
 }
