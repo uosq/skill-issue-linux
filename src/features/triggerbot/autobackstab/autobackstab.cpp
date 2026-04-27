@@ -188,7 +188,7 @@ void RageBackstab(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCmd, boo
 			{
 				Vector dir	 = record.m_vecAbsCenter - localCenter;
 				pCmd->viewangles = dir.ToAngle();
-				pCmd->tick_count = TIME_TO_TICKS(record.m_flSimTime);
+				pCmd->tick_count = TIME_TO_TICKS(record.m_flSimTime + Backtrack::GetInterp());
 				*pSendPacket	 = false;
 				return;
 			}
