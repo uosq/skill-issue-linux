@@ -177,8 +177,6 @@ void CPrediction::Friction()
 void CPrediction::TryTouchGround(const Vector &start, const Vector &end, const Vector &mins, const Vector &maxs,
 				 unsigned int fMask, ITraceFilter &filter, trace_t &pm)
 {
-	Ray_t ray;
-	ray.Init(start, end, mins, maxs);
 	helper::engine::TraceHull(start, end, mins, maxs, fMask, &filter, &pm);
 }
 
@@ -694,7 +692,6 @@ bool CPrediction::CheckWater(void)
 
 void CPrediction::Accelerate(Vector &wishdir, float wishspeed, float accel)
 {
-	int i;
 	float addspeed, accelspeed, currentspeed;
 
 	// See if we are changing direction a bit
@@ -777,7 +774,6 @@ void CPrediction::WalkMove(void)
 
 void CPrediction::AirAccelerate(Vector &wishdir, float wishspeed, float accel)
 {
-	int i;
 	float addspeed, accelspeed, currentspeed;
 	float wishspd;
 

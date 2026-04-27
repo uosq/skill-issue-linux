@@ -168,31 +168,36 @@ void Backtrack::CleanRecords(CUserCmd* pCmd)
 	}
 }
 
-void Backtrack::Store(CTFPlayer *pLocal, const EntityListEntry &entry)
+void Backtrack::Store()
 {
-	//CleanRecords();
-
-	if (!IsValidPlayer(entry))
+	CTFPlayer* pLocal = EntityList::GetLocal();
+	if (pLocal == nullptr)
 		return;
 
-	CTFPlayer *pEntity = static_cast<CTFPlayer *>(entry.ptr);
-	if (pEntity == nullptr)
-		return;
+	int localTeam = pLocal->m_iTeamNum();
+	auto enemies = EntityList::GetEnemies();
 
-	if (pLocal->m_iTeamNum() == pEntity->m_iTeamNum())
-		return;
-
-	auto &records = m_records[pEntity->GetIndex()];
-
-	if (!records.empty() && records.front().m_flSimTime == pEntity->m_flSimulationTime())
-		return;
-
-	matrix3x4 bones[MAXSTUDIOBONES];
-	if (!pEntity->SetupBones(bones, MAXSTUDIOBONES, BONE_USED_BY_ANYTHING, pEntity->m_flSimulationTime()))
-		return;
-
-	records.emplace_front(bones, pEntity->m_flSimulationTime(), pEntity->GetCenter(), pEntity->m_angEyeAngles(),
-			      pEntity->EstimateAbsVelocity());
+	for (const auto& entry : enemies)
+	{
+		if (!IsValidPlayer(entry))
+			continue;
+	
+		CTFPlayer* pEntity = static_cast<CTFPlayer*>(entry.ptr);
+	
+		if (localTeam == pEntity->m_iTeamNum())
+			continue;
+	
+		auto &records = m_records[pEntity->GetIndex()];
+	
+		if (!records.empty() && records.front().m_flSimTime == pEntity->m_flSimulationTime())
+			continue;
+	
+		matrix3x4 bones[MAXSTUDIOBONES];
+		if (!pEntity->SetupBones(bones, MAXSTUDIOBONES, BONE_USED_BY_ANYTHING, pEntity->m_flSimulationTime()))
+			continue;
+	
+		records.emplace_front(bones, pEntity->m_flSimulationTime(), pEntity->GetCenter(), pEntity->m_angEyeAngles(), pEntity->EstimateAbsVelocity());
+	}
 }
 
 void Backtrack::Init()
@@ -310,30 +315,24 @@ void Backtrack::DoPostScreenSpaceEffects()
 
 bool Backtrack::GetRecords(CTFPlayer *pEntity, std::vector<LagCompRecord> &out)
 {
-	auto records = m_records[pEntity->GetIndex()];
+	auto it = m_records.find(pEntity->GetIndex());
+	if (it == m_records.end() || it->second.empty())
+		return false;
 
-	//if (records.empty())
-		//return false;
+	auto& records = it->second;
 
-	// if backtrack is disabled
-	// return only the first real record
-	/*BacktrackMode mode = static_cast<BacktrackMode>(Settings::Misc.backtrack);
+	BacktrackMode mode = static_cast<BacktrackMode>(Settings::Misc.backtrack);
 	if (mode >= BacktrackMode::MAX || mode <= BacktrackMode::INVALID || mode == BacktrackMode::NONE)
-	{*/
-	//LagCompRecord &front = records.front();
-	//out.emplace_back(front.m_Bones, front.m_flSimTime, front.m_vecAbsCenter, front.m_vecViewAngles,
-			 //front.m_vecVelocity);
-
-	matrix3x4 bones[MAXSTUDIOBONES];
-	pEntity->SetupBones(bones, MAXSTUDIOBONES, BONE_USED_BY_ANYTHING, interfaces::GlobalVars->curtime);
-	out.emplace_back(bones, pEntity->m_flSimulationTime(), pEntity->GetCenter(), pEntity->m_angEyeAngles(), pEntity->EstimateAbsVelocity());
-	return true;
-	/*}
+	{
+		LagCompRecord &front = records.front();
+		out.emplace_back(front.m_Bones, front.m_flSimTime, front.m_vecAbsCenter, front.m_vecViewAngles, front.m_vecVelocity);
+		return true;
+	}
 
 	for (const auto &record : records)
 		out.emplace_back(record);
 
-	return true;*/
+	return true;
 }
 
 bool Backtrack::IsValidPlayer(const EntityListEntry &entry)
@@ -364,14 +363,10 @@ bool Backtrack::GetReal(CTFPlayer *pEntity, LagCompRecord &out)
 	if (m_records.empty())
 		return false;
 
-	auto records = m_records[pEntity->GetIndex()];
-	if (records.empty())
+	auto it = m_records.find(pEntity->GetIndex());
+	if (it == m_records.end() || it->second.empty())
 		return false;
 
-	LagCompRecord &front = records.front();
-	//if (!front.IsValid())
-		//return false;
-
-	out = front;
+	out = it->second.front();
 	return true;
 }

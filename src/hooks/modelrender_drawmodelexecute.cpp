@@ -3,7 +3,7 @@
 #include "../sdk/definitions/ivmodelrender.h"
 #include "../sdk/interfaces/interfaces.h"
 
-//#include "../features/backtrack/backtrack.h"
+#include "../features/backtrack/backtrack.h"
 #include "../features/chams/chams.h"
 #include "../features/glow/glow.h"
 
@@ -24,10 +24,8 @@ DECLARE_VTABLE_HOOK(DrawModelExecute, void,
 	if (interfaces::Engine->IsTakingScreenshot())
 		return originalDrawModelExecute(thisptr, state, pInfo, pCustomBoneToWorld);
 
-	#if 0
 	if (Backtrack::m_drawing)
 		return originalDrawModelExecute(thisptr, state, pInfo, Backtrack::m_current_drawing_record->m_Bones);
-	#endif
 
 	if (!Chams::IsDrawing() && !Glow::m_bRunning)
 	{

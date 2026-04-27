@@ -192,7 +192,7 @@ namespace Settings
 				uint32_t healthbar_rounding : 4;
 				uint32_t healthbar_margin : 4;
 				uint32_t healthbar_thickness : 4;
-				uint32_t gap : 4;
+				uint32_t gap : 4; // health bar gap
 				uint32_t text_padding : 4;
 				uint32_t _reserved : 8; // padding
 			};
@@ -258,6 +258,7 @@ namespace Settings
 		bool no_zoom		    = false;
 		bool antiafk		    = false;
 		bool infopanel		    = false;
+		bool spyalert		    = false;
 		//bool no_survey = false;
 	};
 
@@ -399,6 +400,7 @@ namespace Settings
 	    CONFIG_INT("esp font size", ESP.font_size),
 	    CONFIG_BOOL("esp class", ESP.class_name),
 	    CONFIG_INT("esp fsides", ESP.sides.raw),
+	    CONFIG_INT("esp custom", ESP.custom.raw),
 
 	    // misc
 	    CONFIG_KEY("misc thirdperson key", Misc.thirdperson_key),
@@ -424,6 +426,7 @@ namespace Settings
 	    CONFIG_BOOL("misc no viewmodel bob", Misc.no_viewmodel_bob),
 	    CONFIG_BOOL("misc antiafk", Misc.antiafk),
 	    CONFIG_BOOL("misc info panel", Misc.infopanel),
+	    CONFIG_BOOL("misc spy alert", Misc.spyalert),
 	    //CONFIG_BOOL("no survey", Misc.no_survey),
 
 	    //triggerbot

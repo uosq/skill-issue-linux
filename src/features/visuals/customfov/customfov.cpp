@@ -7,36 +7,30 @@ void CustomFov::Run(CTFPlayer *pLocal, CViewSetup *pView)
 {
 	static ConVar *fov_desired = interfaces::Cvar->FindVar("fov_desired");
 
-	if (Settings::Misc.customfov_enabled)
-	{
-		m_flFov = Settings::Misc.customfov;
-	}
-	else
-		m_flFov = fov_desired->GetFloat();
+	float target_fov = Settings::Misc.customfov_enabled ? Settings::Misc.customfov : fov_desired->GetFloat();
 
 	if (pLocal->InCond(TF_COND_ZOOMED))
-		m_flFov = Settings::Misc.zoomedfov;
+		target_fov = Settings::Misc.zoomedfov;
 
-	float delta = m_flFov - m_flOldFov;
-	m_flFov	    = Math::Lerp(m_flOldFov, m_flFov, 0.2f);
+	m_flFov = Math::Lerp(m_flOldFov, target_fov, 0.2f);
 
 	if (interfaces::Engine->IsTakingScreenshot())
-		pView->fov = fov_desired->GetFloat();
-
-	/*
-	note to me
-	research how tf2 does sniper's zoom
-	this doesn't feel right
-	*/
-
-	if (pLocal->IsAlive() && pView->fov >= fov_desired->GetFloat())
 	{
-		pLocal->m_iDefaultFOV() = m_flFov;
-		pLocal->m_iFOV()	= m_flFov;
+		pView->fov = fov_desired->GetFloat();
+		return;
 	}
 
-	// bro this is so convenient holy shit
-	pView->fov = m_flOldFov = m_flFov;
+	pView->fov = m_flFov;
+
+	if (pLocal->IsAlive())
+	{
+		pLocal->m_iDefaultFOV() =
+		Settings::Misc.customfov_enabled
+		? Settings::Misc.customfov
+		: fov_desired->GetFloat();
+	}
+
+	m_flOldFov = m_flFov;
 }
 
 float CustomFov::GetFov()

@@ -16,7 +16,7 @@
 #include "../features/esp/esp.h"
 #include "../features/aimbot/aimbot.h"
 #include "../features/infopanel/infopanel.h"
-
+#include "../features/spyalert/spyalert.h"
 
 int GUI::tab = 0;
 
@@ -132,6 +132,7 @@ void GUI::RunMainWindow()
 	Aimbot::OnImGui(pDraw);
 	ESP::OnImGui();
 	InfoPanel::OnImGui(Settings::menu_open);
+	SpyAlert::OnImGui(pDraw);
 
 	if (!Settings::menu_open)
 		return;

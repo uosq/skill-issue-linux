@@ -6,7 +6,7 @@
 namespace Spectators
 {
 	// call from FrameStageNotify
-	void RunMain(CTFPlayer *pLocal);
+	void OnFrameStageNotify();
 	// call from ImGui
 	void DrawList();
 	bool IsSpectated(CTFPlayer *pTarget, std::vector<CTFPlayer*> &out);

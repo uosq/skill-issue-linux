@@ -4,7 +4,7 @@
 #include "../aimbot/aimbot.h"
 #include "../antiaim/antiaim.h"
 #include "../autostrafe/autostrafe.h"
-//#include "../backtrack/backtrack.h"
+#include "../backtrack/backtrack.h"
 #include "../bhop/bhop.h"
 #include "../fakelag/fakelag.h"
 #include "../triggerbot/triggerbot.h"
@@ -67,10 +67,8 @@ void TickManager::Post_CreateMove(int sequence_number)
 
 	FakeLag::Run();
 
-	#if 0
 	Backtrack::CleanRecords(pCmd);
 	Backtrack::Run(pLocal, pWeapon, pCmd);
-	#endif
 
 	Bhop::Run(pLocal, pCmd);
 	Autostrafe::Run(pLocal, pCmd);

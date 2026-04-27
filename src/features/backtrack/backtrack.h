@@ -50,7 +50,7 @@ namespace Backtrack
 	bool IsValidPlayer(const EntityListEntry &entry);
 	void Run(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCmd);
 	void Reset();
-	void Store(CTFPlayer *pLocal, const EntityListEntry &entry);
+	void Store();
 	void Init();
 	void DoPostScreenSpaceEffects();
 	float GetInterp();

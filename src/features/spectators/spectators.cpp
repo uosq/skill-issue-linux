@@ -6,10 +6,12 @@
 static bool s_bSpectated = false;
 static std::vector<CTFPlayer*> s_vSpectatorList;
 
-void Spectators::RunMain(CTFPlayer *pLocal)
+void Spectators::OnFrameStageNotify()
 {
 	Reset();
-	s_bSpectated = IsSpectated(pLocal, s_vSpectatorList);
+
+	CTFPlayer* pLocal = EntityList::GetLocal();
+	if (pLocal) s_bSpectated = IsSpectated(pLocal, s_vSpectatorList);
 }
 
 void Spectators::OnLevelInitPostEntity()

@@ -614,11 +614,8 @@ void ESP::OnImGui()
 	}
 }
 
-void ESP::OnFrameStageNotify(int stage)
+void ESP::OnFrameStageNotify()
 {
-	if (stage != FRAME_RENDER_START)
-		return;
-
 	CTFPlayer* pLocal = EntityList::GetLocal();
 	if (pLocal == nullptr)
 		return;

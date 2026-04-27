@@ -173,10 +173,10 @@ namespace AimbotUtils
 		{
 			if (entry.ptr == EntityList::m_pLocalPlayer)
 				continue;
-
+		
 			if (!(entry.flags & EntityFlags::IsAlive))
 				continue;
-
+			
 			if (entry.ptr == nullptr)
 				continue;
 
