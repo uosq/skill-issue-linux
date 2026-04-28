@@ -212,3 +212,13 @@ CBaseEntity *CTFPlayer::GetEntityFromLoadoutSlot(int slot)
 	    reinterpret_cast<GetEntityFromLoadoutSlotFn>(Sigs::GetEntityForLoadoutSlot.GetPointer());
 	return orig(this, slot);
 }
+
+int CTFPlayer::GetUserID()
+{
+	player_info_t pi;
+
+	if (!interfaces::Engine->GetPlayerInfo(entindex(), &pi))
+		return -1;
+
+	return pi.userID;
+}

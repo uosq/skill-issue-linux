@@ -70,6 +70,9 @@ void SpyAlert::OnFrameStageNotify()
 
 void SpyAlert::OnImGui(ImDrawList* pDraw)
 {
+	if (!Settings::Misc.spyalert)
+		return;
+
 	if (s_iSpyStatus == 0)
 		return;
 

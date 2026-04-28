@@ -41,7 +41,7 @@
 #include "../hooks/dxvk.h"
 #include "../hooks/framestagenotify.h"
 #include "../hooks/host_shutdown.h"
-#include "../hooks/iclientmode_shoulddrawviewmodel.h"
+#include "../hooks/cviewrender_shoulddrawviewmodel.h"
 #include "../hooks/iinputsystem_sleepuntilinput.h"
 #include "../hooks/ipanel_paint_traverse.h"
 #include "../hooks/istudiorender_forcedmaterialoverride.h"

@@ -34,7 +34,7 @@ class CGamestatsData;
 
 class CGlobalVarsBase;
 class ScreenFade_t;
-class vrect_t;
+struct vrect_t;
 class bf_read;
 class bf_write;
 class CEngineSprite;

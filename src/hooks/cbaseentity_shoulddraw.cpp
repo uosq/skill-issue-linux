@@ -3,6 +3,9 @@
 #include "../libdetour/libdetour.h"
 
 #include "../features/logs/logs.h"
+#include "../features/entitylist/entitylist.h"
+
+#include "../settings/settings.h"
 
 DETOUR_DECL_TYPE(bool, CBaseEntity_ShouldDraw, CBaseEntity *self);
 detour_ctx_t baseentity_shoulddraw;
@@ -11,11 +14,6 @@ bool Hooked_CBaseEntity_ShouldDraw(CBaseEntity *self)
 {
 	if (self == nullptr)
 		return false;
-
-	/*if (self->GetClassID() == ETFClassID::CTFViewModel)
-		if (auto pLocal = EntityList::GetLocal(); pLocal != nullptr && pLocal->IsAlive() && pLocal->InCond(TF_COND_ZOOMED))
-			return Settings::Misc.no_zoom;
-	*/
 
 	bool ret;
 	DETOUR_ORIG_GET(&baseentity_shoulddraw, ret, CBaseEntity_ShouldDraw, self);

@@ -1,13 +1,10 @@
 #include "clientmodeshared_dopostscreenspaceeffects.h"
 
-#include "../sdk/classes/player.h"
 #include "../sdk/interfaces/interfaces.h"
 
 #include "../features/backtrack/backtrack.h"
 #include "../features/chams/chams.h"
 #include "../features/glow/glow.h"
-#include "../features/visuals/thirdperson/thirdperson.h"
-
 #include "../features/angelscript/api/libraries/hooks/hooks.h"
 
 DECLARE_VTABLE_HOOK(DoPostScreenSpaceEffects, bool, (IClientMode* thisptr, CViewSetup* setup))
@@ -17,26 +14,7 @@ DECLARE_VTABLE_HOOK(DoPostScreenSpaceEffects, bool, (IClientMode* thisptr, CView
 	Glow::Run();
 
 	if (auto pLocal = EntityList::GetLocal(); pLocal != nullptr)
-	{
 		Chams::OnDoPostScreenSpaceEffects(pLocal);
-
-		if (pLocal->IsAlive())
-		{
-			if (Settings::Misc.no_zoom)
-			{
-				if (pLocal->InCond(TF_COND_ZOOMED) && Thirdperson::IsThirdPerson(pLocal))
-				{
-					pLocal->DrawModel(STUDIO_RENDER | STUDIO_NOSHADOWS);
-					auto ent = pLocal->FirstShadowChild();
-					while (ent != nullptr)
-					{
-						ent->DrawModel(STUDIO_RENDER | STUDIO_NOSHADOWS);
-						ent->NextShadowPeer();
-					}
-				}
-			}
-		}
-	}
 
 	Hooks_CallHooks("DoPostScreenSpaceEffects");
 	return originalDoPostScreenSpaceEffects(thisptr, setup);

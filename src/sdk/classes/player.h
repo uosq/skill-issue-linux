@@ -114,4 +114,5 @@ class CTFPlayer : public CBaseCombatCharacter
 	uint8_t GetMoveType();
 	void ThirdPersonSwitch(bool state);
 	CBaseEntity *GetEntityFromLoadoutSlot(int slot);
+	int GetUserID();
 };
