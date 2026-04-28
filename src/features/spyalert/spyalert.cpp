@@ -21,6 +21,9 @@ static uint8_t s_iSpyStatus = 0;
 
 void SpyAlert::OnFrameStageNotify()
 {
+	if (!Settings::Misc.spyalert)
+		return;
+
 	s_iSpyStatus = (int)SpyStatus::NONE;
 
 	CTFPlayer* pLocal = EntityList::GetLocal();
@@ -91,7 +94,6 @@ void SpyAlert::OnImGui(ImDrawList* pDraw)
 		: IM_COL32(255, 255, 255, 255)
 	);
 
-	//pDraw->AddText(pos, color, ALERT_TEXT);
 	ImGui::DrawTextShadow(pDraw, pos, color, ALERT_TEXT);
 }
 
