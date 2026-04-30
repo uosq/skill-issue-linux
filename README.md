@@ -4,9 +4,13 @@ A project for me to learn more about TF2 and how it works
 
 This is made for Linux, so trying to build it on Windows or non Unix-like systems might not work!
 
-[Download latest compatiblity build](https://nightly.link/uosq/skill-issue-linux/workflows/main/main/skillissue-compat.zip)
+Use the x86-64 build if you have errours about illegal instructions when attaching
 
-[Download latest v3 build](https://nightly.link/uosq/skill-issue-linux/workflows/main/main/skillissue-v3.zip)
+In most cases you should use the x86-64-v3 builds as the performance should be better
+
+[Download latest x86-64 build](https://nightly.link/uosq/skill-issue-linux/workflows/main/main/skillissue-compat.zip)
+
+[Download latest x86-64-v3 build](https://nightly.link/uosq/skill-issue-linux/workflows/main/main/skillissue-v3.zip)
 
 [Click me to join the discord server](https://discord.com/invite/dA4nYDBZzu)
 
