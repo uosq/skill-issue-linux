@@ -4,8 +4,8 @@ A project for me to learn more about TF2 and how it works
 
 This is made for Linux, so trying to build it on Windows or non Unix-like systems might not work!
 
-[Download latest compatiblity build](https://nightly.link/uosq/skill-issue-linux/workflows/main/main/artifact.zip)
-[Download latest v3 build](https://nightly.link/uosq/skill-issue-linux/workflows/main/main/artifact.zip)
+[Download latest compatiblity build](https://nightly.link/uosq/skill-issue-linux/workflows/main/main/skillissue-compat.zip)
+[Download latest v3 build](https://nightly.link/uosq/skill-issue-linux/workflows/main/main/skillissue-v3.zip)
 
 [Click me to join the discord server](https://discord.com/invite/dA4nYDBZzu)
 
