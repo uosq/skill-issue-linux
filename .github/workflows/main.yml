@@ -27,23 +27,23 @@ jobs:
       - name: Run build script Compatibility
         run: ./build.sh compat
 
-      - name: Run build script V3
-        run: ./build.sh v3
-
       - name: Upload compat artifact
         uses: actions/upload-artifact@v4
         with:
           name: skillissue-compat
           path: |
-            build/x86-64/**
-            angelscript-docs
-            src
+            build/x86-64/
+            angelscript-docs/
+            src/
+
+      - name: Run build script V3
+        run: ./build.sh v3
 
       - name: Upload v3 artifact
         uses: actions/upload-artifact@v4
         with:
           name: skillissue-v3
           path: |
-            build/x86-64-v3/**
-            angelscript-docs
-            src
+            build/x86-64-v3/
+            angelscript-docs/
+            src/

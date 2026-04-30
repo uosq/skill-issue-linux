@@ -12,4 +12,4 @@ chmod +x build/attach.sh
 echo "Compiling skill issue"
 
 # compile the cheat
-make # Note: This will echo
+make "$@" # Note: This will echo
