@@ -4,47 +4,82 @@ CC_C = gcc
 # Make the number of jobs equal the number of threads the CPU is capable of
 MAKEFLAGS := --jobs=$(shell nproc)
 
+DEBUG_EXT = .debug
+
+# Detect AVX2 support
+HAS_AVX2 := $(shell grep -q avx2 /proc/cpuinfo && echo 1 || echo 0)
+
+ifeq ($(HAS_AVX2),1)
+	DEFAULT_MARCH = x86-64-v3
+else
+	DEFAULT_MARCH = x86-64
+endif
+
+MARCH ?= $(DEFAULT_MARCH)
+
+# Object directory per architecture
+OBJ_DIR = obj/$(MARCH)
+BUILD_DIR = build/$(MARCH)
+
+# Output binaries
+BIN_V3 = build/x86-64-v3/libvapo.so
+BIN_COMPAT = build/x86-64/libvapo.so
+BIN ?= $(BUILD_DIR)/libvapo.so
+
 # Compiler flags
-CFLAGS = -march=x86-64-v3 -shared -std=c++17 -O2 -fPIC -Werror -g
-CFLAGS_C = -march=x86-64-v3 -O2 -fPIC -Werror -g
+CFLAGS = -march=$(MARCH) -shared -std=c++17 -O2 -fPIC -Werror -g
+CFLAGS_C = -march=$(MARCH) -O2 -fPIC -Werror -g
 
 # Linker flags
 LDFLAGS = -lSDL2 -lvulkan -lm -ldl
-LDFLAGS += $(shell find build/ -name '*.a')
+LDFLAGS += $(shell find $(BUILD_DIR) -name '*.a' 2>/dev/null)
 
 # Source files
 CPP_FILES = $(shell find src/ -name '*.cpp')
 C_FILES = $(shell find src/ -name '*.c')
 
 # Object files
-OBJ_CPP = $(addprefix obj/, $(CPP_FILES:=.o))
-OBJ_C = $(addprefix obj/, $(C_FILES:=.o))
+OBJ_CPP = $(addprefix $(OBJ_DIR)/, $(CPP_FILES:=.o))
+OBJ_C = $(addprefix $(OBJ_DIR)/, $(C_FILES:=.o))
 OBJS = $(OBJ_CPP) $(OBJ_C)
 
-# Binary
-BIN = build/libvapo.so
-
-.PHONY: all clean debug
+.PHONY: all clean v3 compat
 
 #-------------------------------------------------------------------------------
 
 all: $(BIN)
 
+v3:
+	$(MAKE) MARCH=x86-64-v3 BIN=$(BIN_V3)
+
+compat:
+	$(MAKE) MARCH=x86-64 BIN=$(BIN_COMPAT)
+
 clean:
-	rm -f $(OBJS)
-	rm -f $(BIN)
+	rm -rf obj
+	rm -rf build/x86-64 build/x86-64-v3
 
 #-------------------------------------------------------------------------------
 
 $(BIN): $(OBJS)
+	@mkdir -p $(dir $@)
 	$(CC_CPP) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
+	# Create debug symbols
+	objcopy --compress-debug-sections=zlib --only-keep-debug $@ $@$(DEBUG_EXT)
+
+	# Strip binary
+	strip --strip-unneeded $@
+
+	# Attach debug symbols
+	objcopy --add-gnu-debuglink=$@$(DEBUG_EXT) $@
+
 # C++ compilation
-obj/%.cpp.o: %.cpp
+$(OBJ_DIR)/%.cpp.o: %.cpp
 	@mkdir -p $(dir $@)
 	$(CC_CPP) $(CFLAGS) -c -o $@ $<
 
 # C compilation
-obj/%.c.o: %.c
+$(OBJ_DIR)/%.c.o: %.c
 	@mkdir -p $(dir $@)
 	$(CC_C) $(CFLAGS_C) -c -o $@ $<

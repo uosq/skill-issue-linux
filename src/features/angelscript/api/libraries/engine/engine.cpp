@@ -7,12 +7,12 @@
 
 #include "../../classes/tracefilter/tracefilter.h"
 
-int GetMaxClients()
+static int GetMaxClients()
 {
 	return interfaces::Engine->GetMaxClients();
 }
 
-void ClientCmd(const std::string &cmd, bool unrestricted)
+static void ClientCmd(const std::string &cmd, bool unrestricted)
 {
 	if (unrestricted)
 		interfaces::Engine->ClientCmd(cmd.c_str());
@@ -20,65 +20,60 @@ void ClientCmd(const std::string &cmd, bool unrestricted)
 		interfaces::Engine->ClientCmd_Unrestricted(cmd.c_str());
 }
 
-bool CON_IsVisible()
-{
-	return interfaces::Engine->Con_IsVisible();
-}
-
-void PlaySound(const std::string &sound)
+static void PlaySound(const std::string &sound)
 {
 	interfaces::Surface->PlaySound(sound.c_str());
 }
 
-bool IsInGame()
+static bool IsInGame()
 {
 	return interfaces::Engine->IsInGame();
 }
 
-bool IsConnected()
+static bool IsConnected()
 {
 	return interfaces::Engine->IsConnected();
 }
 
-Vector GetViewAngles()
+static Vector GetViewAngles()
 {
 	Vector viewangles;
 	interfaces::Engine->GetViewAngles(viewangles);
 	return viewangles;
 }
 
-void SetViewAngles(Vector &viewangle)
+static void SetViewAngles(Vector &viewangle)
 {
 	interfaces::Engine->SetViewAngles(viewangle);
 }
 
-bool WorldToScreen(Vector worldAbsPos, Vec2 &outPos)
+static bool WorldToScreen(Vector worldAbsPos, Vec2 &outPos)
 {
 	return helper::engine::WorldToScreen(worldAbsPos, outPos);
 }
 
-bool IsGameUIVisible()
+static bool IsGameUIVisible()
 {
 	return interfaces::EngineVGui->IsGameUIVisible();
 }
 
-bool IsConsoleVisible()
+static bool IsConsoleVisible()
 {
 	return interfaces::EngineVGui->IsConsoleVisible();
 }
 
-bool IsTakingScreenshot()
+static bool IsTakingScreenshot()
 {
 	return interfaces::Engine->IsTakingScreenshot();
 }
 
-void TraceFn(Vector start, Vector end, unsigned int mask, asIScriptFunction* fn, CGameTrace* pTrace)
+static void TraceFn(Vector start, Vector end, unsigned int mask, asIScriptFunction* fn, CGameTrace* pTrace)
 {
 	ScriptTraceFilter filter(fn);
 	helper::engine::Trace(start, end, mask, &filter, pTrace);
 }
 
-void TraceHullFn(Vector start, Vector end, Vector hullmin, Vector hullmax, unsigned int mask, asIScriptFunction* fn, CGameTrace *pTrace)
+static void TraceHullFn(Vector start, Vector end, Vector hullmin, Vector hullmax, unsigned int mask, asIScriptFunction* fn, CGameTrace *pTrace)
 {
 	ScriptTraceFilter filter(fn);
 	helper::engine::TraceHull(start, end, hullmin, hullmax, mask, &filter, pTrace);

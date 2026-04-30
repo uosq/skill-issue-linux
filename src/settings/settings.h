@@ -259,6 +259,7 @@ namespace Settings
 		bool antiafk		    = false;
 		bool infopanel		    = false;
 		bool spyalert		    = false;
+		float aspectratio	    = 0;
 		//bool no_survey = false;
 	};
 

@@ -13,8 +13,3 @@ echo "Compiling skill issue"
 
 # compile the cheat
 make # Note: This will echo
-
-# make .debug symbol file
-objcopy --compress-debug-sections=zlib --only-keep-debug build/libvapo.so build/libvapo.debug
-strip --strip-unneeded build/libvapo.so
-objcopy --add-gnu-debuglink=build/libvapo.debug build/libvapo.so

@@ -53,6 +53,7 @@
 //#include "../hooks/cbaseentity_shoulddraw.h"
 #include "../hooks/cbuf_executecommand.h"
 //#include "../hooks/ctfplayeranimstate_update.h"
+#include "../hooks/cengineclient_getscreenaspectratio.h"
 
 CApp::CApp() : m_bInitialized(false)
 {
@@ -135,6 +136,7 @@ bool CApp::StartHooks()
 	//Hook_CBaseEntity_ShouldDraw();
 	Hook_Cbuf_ExecuteCommand();
 	//Hook_CTFPlayerAnimState_Update();
+	Hook_CEngineClient_GetScreenAspectRatio();
 
 	m_bInitialized = true;
 	return true;

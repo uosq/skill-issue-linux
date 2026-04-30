@@ -24,16 +24,26 @@ jobs:
       - name: Make build.sh executable
         run: chmod +x ./build.sh
 
-      - name: Run build script
-        run: ./build.sh
+      - name: Run build script Compatibility
+        run: ./build.sh compat
 
-      - name: Upload zip artifact
+      - name: Run build script V3
+        run: ./build.sh v3
+
+      - name: Upload compat artifact
         uses: actions/upload-artifact@v4
         with:
-          name: artifact
+          name: skillissue-compat
           path: |
-            build/*.so
-            build/*.sh
-            build/*.debug
+            build/x86-64/**
+            angelscript-docs
+            src
+
+      - name: Upload v3 artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: skillissue-v3
+          path: |
+            build/x86-64-v3/**
             angelscript-docs
             src

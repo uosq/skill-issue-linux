@@ -64,4 +64,10 @@ void DrawMiscTab()
 		ImGui::SliderInt("Warp Speed", &Settings::AntiAim.warp_speed, 1, 24);
 	}
 	ImGui::PopStyleVar();
+
+	ImGui::PushStyleVar(ImGuiStyleVar_Alpha, Settings::Misc.aspectratio > 0 ? 1.0f : 0.5f);
+	{
+		ImGui::SliderFloat("Aspect Ratio", &Settings::Misc.aspectratio, 0.0f, 5.0f);
+	}
+	ImGui::PopStyleVar();
 }
