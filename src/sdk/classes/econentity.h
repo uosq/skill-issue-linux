@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../vtables.h"
+#include "../../mem.h"
 #include "../definitions/cbaseanimating.h"
 
 class CEconEntity : public CBaseAnimating
@@ -9,6 +9,6 @@ class CEconEntity : public CBaseAnimating
 	NETVAR(m_iItemDefinitionIndex, "CEconEntity->m_iItemDefinitionIndex", int);
 	void UpdateAttachmentModels()
 	{
-		return vtable::call<213, void>(this);
+		return vtable_call<213, void>(this);
 	}
 };

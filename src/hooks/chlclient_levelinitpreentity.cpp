@@ -1,15 +1,19 @@
 #include "chlclient_levelinitpreentity.h"
 
-#include "../sdk/interfaces/interfaces.h"
+#include "../sdk/definitions/ivengineclient.h"
 
-#include "../vtables.h"
+#include "../hooks.h"
 
 #include "../features/angelscript/api/libraries/hooks/hooks.h"
 
-DECLARE_VTABLE_HOOK(LevelInitPreEntity, void, (CHLClient* thisptr, const char *mapName))
+using LevelInitPreEntityFn = void(*)(CHLClient* thisptr, const char* mapName);
+
+static void LevelInitPreEntity(CHLClient* thisptr, const char* mapName)
 {
+	auto original = VMTHooks::Client.GetOriginal<LevelInitPreEntityFn>(5);
+
 	AS_LevelInitPreEntity_Callback(mapName);
-	originalLevelInitPreEntity(thisptr, mapName);
+	original(thisptr, mapName);
 }
 
 void AS_LevelInitPreEntity_Callback(const char *mapName)
@@ -19,7 +23,7 @@ void AS_LevelInitPreEntity_Callback(const char *mapName)
 
 void HookLevelInitPreEntity()
 {
-	INSTALL_VTABLE_HOOK(LevelInitPreEntity, interfaces::ClientDLL, 5);
+	VMTHooks::Client.Hook(5, &LevelInitPreEntity);
 
 #ifdef DEBUG
 	constexpr Color_t color{100, 255, 100, 255};

@@ -4,7 +4,6 @@
 #include <dlfcn.h>
 
 #include "../../libsigscan.h"
-#include "../../vtables.h"
 
 #include "../definitions/ceconnotificationqueue.h"
 #include "../definitions/cglobalvars.h"
@@ -20,7 +19,6 @@
 #include "../definitions/iinputsystem.h"
 #include "../definitions/ikeyvaluessystem.h"
 #include "../definitions/imaterialsystem.h"
-#include "../definitions/imovehelper.h"
 #include "../definitions/iprediction.h"
 #include "../definitions/isurface.h"
 #include "../definitions/ivengineclient.h"

@@ -3,6 +3,8 @@
 #include "../sdk/definitions/ivmodelrender.h"
 #include "../sdk/interfaces/interfaces.h"
 
+#include "../hooks.h"
+
 #include "../features/backtrack/backtrack.h"
 #include "../features/chams/chams.h"
 #include "../features/glow/glow.h"
@@ -11,21 +13,23 @@
 
 #include "../features/angelscript/api/libraries/hooks/hooks.h"
 
-DECLARE_VTABLE_HOOK(DrawModelExecute, void,
-		    (IVModelRender * thisptr, const DrawModelState_t &state, const ModelRenderInfo_t &pInfo,
-		     matrix3x4 *pCustomBoneToWorld))
+using DrawModelExecuteFn = void(*)(IVModelRender *thisptr,
+                                   const DrawModelState_t &state,
+                                   const ModelRenderInfo_t &pInfo,
+                                   matrix3x4 *pCustomBoneToWorld);
+
+static void DrawModelExecute(IVModelRender* thisptr, const DrawModelState_t &state, const ModelRenderInfo_t &pInfo, matrix3x4 *pCustomBoneToWorld)
 {
-	//if (settings.esp.chams && !Chams::m_bRunning && Chams::ShouldHide(pInfo.entity_index))
-	//return;
+	auto original = VMTHooks::ModelRender.GetOriginal<DrawModelExecuteFn>(19);
 
 	if (AS_ShouldCallOriginal())
-		return originalDrawModelExecute(thisptr, state, pInfo, pCustomBoneToWorld);
+		return original(thisptr, state, pInfo, pCustomBoneToWorld);
 
 	if (interfaces::Engine->IsTakingScreenshot())
-		return originalDrawModelExecute(thisptr, state, pInfo, pCustomBoneToWorld);
+		return original(thisptr, state, pInfo, pCustomBoneToWorld);
 
 	if (Backtrack::m_drawing)
-		return originalDrawModelExecute(thisptr, state, pInfo, Backtrack::m_current_drawing_record->m_Bones);
+		return original(thisptr, state, pInfo, Backtrack::m_current_drawing_record->m_Bones);
 
 	if (!Chams::IsDrawing() && !Glow::m_bRunning)
 	{
@@ -46,17 +50,17 @@ DECLARE_VTABLE_HOOK(DrawModelExecute, void,
 	}
 
 	if (Chams::IsDrawing() || Glow::m_bRunning)
-		return originalDrawModelExecute(thisptr, state, pInfo, pCustomBoneToWorld);
+		return original(thisptr, state, pInfo, pCustomBoneToWorld);
 
 	if (pInfo.entity_index > 0 && (Chams::ShouldHide(pInfo.entity_index) || Glow::ShouldHide(pInfo.entity_index)))
 		return;
 
-	originalDrawModelExecute(thisptr, state, pInfo, pCustomBoneToWorld);
+	original(thisptr, state, pInfo, pCustomBoneToWorld);
 }
 
 void HookDrawModelExecute(void)
 {
-	INSTALL_VTABLE_HOOK(DrawModelExecute, interfaces::ModelRender, 19);
+	VMTHooks::ModelRender.Hook(19, &DrawModelExecute);
 
 #ifdef DEBUG
 	constexpr Color_t color = {100, 255, 100, 255};

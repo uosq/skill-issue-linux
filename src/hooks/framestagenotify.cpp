@@ -1,8 +1,9 @@
 #include "framestagenotify.h"
 
-#include "../settings/settings.h"
-
 #include "../sdk/interfaces/interfaces.h"
+
+#include "../settings/settings.h"
+#include "../hooks.h"
 
 #include "../features/backtrack/backtrack.h"
 #include "../features/entitylist/entitylist.h"
@@ -11,8 +12,12 @@
 #include "../features/esp/esp.h"
 #include "../features/spyalert/spyalert.h"
 
-DECLARE_VTABLE_HOOK(FrameStageNotify, void, (CHLClient * thisptr, int stage))
+using FrameStageNotifyFn = void (*)(CHLClient* rdi, int stage);
+
+static void FrameStageNotify(CHLClient* rdi, int stage)
 {
+	auto original = VMTHooks::Client.GetOriginal<FrameStageNotifyFn>(35);
+
 	switch (stage)
 	{
 		case FRAME_RENDER_START:
@@ -29,8 +34,9 @@ DECLARE_VTABLE_HOOK(FrameStageNotify, void, (CHLClient * thisptr, int stage))
 		default: break;
 	}
 
+	original(rdi, stage);
+
 	Hooks_CallHooks("FrameStageNotify", [&](asIScriptContext *ctx) { ctx->SetArgDWord(0, stage); });
-	originalFrameStageNotify(thisptr, stage);
 
 	switch (stage)
 	{
@@ -55,7 +61,7 @@ DECLARE_VTABLE_HOOK(FrameStageNotify, void, (CHLClient * thisptr, int stage))
 
 void HookFrameStageNotify()
 {
-	INSTALL_VTABLE_HOOK(FrameStageNotify, interfaces::ClientDLL, 35);
+	VMTHooks::Client.Hook(35, &FrameStageNotify);
 
 #ifdef DEBUG
 	constexpr Color_t color = {100, 255, 100, 255};

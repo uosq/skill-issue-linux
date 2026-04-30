@@ -2,19 +2,23 @@
 
 #include <string>
 
-#include "../features/entitylist/entitylist.h"
 #include "../sdk/classes/player.h"
-#include "../sdk/interfaces/interfaces.h"
 
+#include "../hooks.h"
+
+#include "../features/entitylist/entitylist.h"
 #include "../features/visuals/customfov/customfov.h"
 #include "../features/visuals/norecoil/norecoil.h"
 #include "../features/visuals/thirdperson/thirdperson.h"
 
 #include "../features/angelscript/api/libraries/hooks/hooks.h"
 
-DECLARE_VTABLE_HOOK(OverrideView, void, (IClientMode * thisptr, CViewSetup *pView))
+using OverrideViewFn = void (*)(IClientMode* rdi, CViewSetup *pView);
+
+static void OverrideView(IClientMode * rdi, CViewSetup *pView)
 {
-	originalOverrideView(thisptr, pView);
+	auto original = VMTHooks::ClientMode.GetOriginal<OverrideViewFn>(17);
+	original(rdi, pView);
 
 	if (pView == nullptr)
 		return;
@@ -35,7 +39,7 @@ DECLARE_VTABLE_HOOK(OverrideView, void, (IClientMode * thisptr, CViewSetup *pVie
 
 void HookOverrideView()
 {
-	INSTALL_VTABLE_HOOK(OverrideView, interfaces::ClientMode, 17);
+	VMTHooks::ClientMode.Hook(17, &OverrideView);
 
 #ifdef DEBUG
 	constexpr Color_t color = {100, 255, 100, 255};

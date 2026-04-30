@@ -1,6 +1,6 @@
 #include "chlclient_levelpostentity.h"
 
-#include "../vtables.h"
+#include "../hooks.h"
 
 #include "../features/entitylist/entitylist.h"
 #include "../features/spectators/spectators.h"
@@ -10,7 +10,9 @@
 
 #include "../features/angelscript/api/libraries/hooks/hooks.h"
 
-DECLARE_VTABLE_HOOK(LevelInitPostEntity, void, (CHLClient * thisptr))
+using LevelInitPostEntityFn = void (*)(CHLClient *thisptr);
+
+static void LevelInitPostEntity(CHLClient* rdi)
 {
 	EntityList::Reserve();
 	ViewmodelAim::ResetStopTime();
@@ -19,12 +21,14 @@ DECLARE_VTABLE_HOOK(LevelInitPostEntity, void, (CHLClient * thisptr))
 	ESP::OnlevelInitPostEntity();
 
 	Hooks_CallHooks("LevelInitPostEntity");
-	originalLevelInitPostEntity(thisptr);
+	
+	auto original = VMTHooks::Client.GetOriginal<LevelInitPostEntityFn>(6);
+	original(rdi);
 }
 
 void HookLevelInitPostEntity()
 {
-	INSTALL_VTABLE_HOOK(LevelInitPostEntity, interfaces::ClientDLL, 6);
+	VMTHooks::Client.Hook(6, &LevelInitPostEntity);
 
 #ifdef DEBUG
 	constexpr Color_t color = {100, 255, 100, 255};

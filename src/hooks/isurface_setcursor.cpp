@@ -2,17 +2,21 @@
 
 #include "../sdk/interfaces/interfaces.h"
 #include "../settings/settings.h"
-#include "../vtables.h"
 
-DECLARE_VTABLE_HOOK(ISurface_LockCursor, void, (void *thisptr))
+#include "../hooks.h"
+
+using ISurface_LockCursorFn = void (*)(void* rdi);
+static void ISurface_LockCursor(void* rdi)
 {
 	if (Settings::menu_open)
 		return interfaces::Surface->UnlockCursor();
 
-	originalISurface_LockCursor(thisptr);
+	auto original = VMTHooks::Surface.GetOriginal<ISurface_LockCursorFn>(62);
+	original(rdi);
 }
 
-DECLARE_VTABLE_HOOK(ISurface_SetCursor, void, (void *thisptr, HCursor cursor))
+using ISurface_SetCursorFn = void (*)(void* rdi, HCursor cursor);
+static void ISurface_SetCursor(void* rdi, HCursor cursor)
 {
 	if (Settings::menu_open)
 	{
@@ -48,11 +52,15 @@ DECLARE_VTABLE_HOOK(ISurface_SetCursor, void, (void *thisptr, HCursor cursor))
 		}
 	}
 
-	originalISurface_SetCursor(thisptr, cursor);
+	auto original = VMTHooks::Surface.GetOriginal<ISurface_SetCursorFn>(51);
+	original(rdi, cursor);
 }
 
 void HookLockCursor()
 {
-	INSTALL_VTABLE_HOOK(ISurface_LockCursor, interfaces::Surface, 62);
-	INSTALL_VTABLE_HOOK(ISurface_SetCursor, interfaces::Surface, 51);
+	// lockcursor
+	VMTHooks::Surface.Hook(62, &ISurface_LockCursor);
+
+	// setcursor
+	VMTHooks::Surface.Hook(51, &ISurface_SetCursor);
 }

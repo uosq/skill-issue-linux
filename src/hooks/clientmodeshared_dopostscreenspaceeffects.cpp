@@ -1,13 +1,15 @@
 #include "clientmodeshared_dopostscreenspaceeffects.h"
 
-#include "../sdk/interfaces/interfaces.h"
-
 #include "../features/backtrack/backtrack.h"
 #include "../features/chams/chams.h"
 #include "../features/glow/glow.h"
 #include "../features/angelscript/api/libraries/hooks/hooks.h"
 
-DECLARE_VTABLE_HOOK(DoPostScreenSpaceEffects, bool, (IClientMode* thisptr, CViewSetup* setup))
+#include "../hooks.h"
+
+using DoPostScreenSpaceEffectsFn = bool (*)(IClientMode* rdi, CViewSetup* setup);
+
+static bool DoPostScreenSpaceEffects(IClientMode* rdi, CViewSetup* setup)
 {
 	Backtrack::DoPostScreenSpaceEffects();
 	//Chams::Run();
@@ -17,12 +19,14 @@ DECLARE_VTABLE_HOOK(DoPostScreenSpaceEffects, bool, (IClientMode* thisptr, CView
 		Chams::OnDoPostScreenSpaceEffects(pLocal);
 
 	Hooks_CallHooks("DoPostScreenSpaceEffects");
-	return originalDoPostScreenSpaceEffects(thisptr, setup);
+
+	auto original = VMTHooks::ClientMode.GetOriginal<DoPostScreenSpaceEffectsFn>(40);
+	return original(rdi, setup);
 }
 
 void HookDoPostScreenSpaceEffects(void)
 {
-	INSTALL_VTABLE_HOOK(DoPostScreenSpaceEffects, interfaces::ClientMode, 40);
+	VMTHooks::ClientMode.Hook(40, &DoPostScreenSpaceEffects);
 
 #ifdef DEBUG
 	constexpr Color_t color = {100, 255, 100, 255};

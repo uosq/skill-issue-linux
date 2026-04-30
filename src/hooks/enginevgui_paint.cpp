@@ -1,21 +1,22 @@
 #include "enginevgui_paint.h"
 
-#include "../sdk/classes/weaponbase.h"
-#include "../sdk/definitions/color.h"
-#include "../settings/settings.h"
 #include <string>
 
-#include "../features/aimbot/aimbot.h"
-#include "../features/entitylist/entitylist.h"
-#include "../features/esp/esp.h"
+#include "../sdk/definitions/ienginevgui.h"
+#include "../sdk/interfaces/interfaces.h"
+
+#include "../hooks.h"
 
 #include "../features/angelscript/api/libraries/hooks/hooks.h"
 
 #include "../core/core.h"
 
-DECLARE_VTABLE_HOOK(VGuiPaint, void, (IEngineVGui * thisptr, PaintMode_t paint))
+using VGuiPaintFn = void (*)(IEngineVGui *rdi, PaintMode_t paint);
+
+static void VGuiPaint(IEngineVGui* rdi, PaintMode_t paint)
 {
-	originalVGuiPaint(thisptr, paint);
+	auto original = VMTHooks::EngineVGui.GetOriginal<VGuiPaintFn>(15);
+	original(rdi, paint);
 
 	// I don't trust
 	// C++'s static initialization
@@ -37,7 +38,9 @@ DECLARE_VTABLE_HOOK(VGuiPaint, void, (IEngineVGui * thisptr, PaintMode_t paint))
 
 void HookEngineVGuiPaint()
 {
-	INSTALL_VTABLE_HOOK(VGuiPaint, interfaces::EngineVGui, 15);
+	VMTHooks::Initialize();
+
+	VMTHooks::EngineVGui.Hook(15, &VGuiPaint);
 
 #ifdef DEBUG
 	constexpr Color_t color = {100, 255, 100, 255};

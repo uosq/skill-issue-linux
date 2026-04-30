@@ -110,8 +110,9 @@ void RenderImGui()
 	}
 
 	// Disable sRGB writes temporarily if needed
+	DWORD oldSRGBState = 0;
 	if (needsGammaCorrection)
-		g_pd3dDevice->SetRenderState(D3DRS_SRGBWRITEENABLE, FALSE);
+		g_pd3dDevice->GetRenderState(D3DRS_SRGBWRITEENABLE, &oldSRGBState);
 
 	ImGui_ImplDX9_NewFrame();
 	ImGui_ImplSDL2_NewFrame();
@@ -133,17 +134,23 @@ void RenderImGui()
 
 	gBinds.Update();
 
+	bool pushfont = false;
 	switch (static_cast<ESPFont>(Settings::ESP.font))
 	{
         	case ESPFont::TF2BUILD:
 		ImGui::PushFont(IMFONT_TF2Build, Settings::ESP.font_size);
+		pushfont = true;
 		break;
         	case ESPFont::ARIAL:
 		ImGui::PushFont(IMFONT_Arial, Settings::ESP.font_size);
+		pushfont = true;
 		break;
 		case ESPFont::INVALID:
         	case ESPFont::COUNT:
-        	return Logs::Error("Invalid font!");
+        	{
+			Logs::Error("Invalid font!");
+			break;
+		}
         }
 
         if (Settings::AntiAim.warp_key->IsEnabled())
@@ -162,14 +169,15 @@ void RenderImGui()
 
 	gBinds.DrawWindow(Settings::menu_open);
 
-	ImGui::PopFont();
+	if (pushfont)
+		ImGui::PopFont();
 
 	ImGui::EndFrame();
 	ImGui::Render();
 	ImGui_ImplDX9_RenderDrawData(ImGui::GetDrawData());
 
 	if (needsGammaCorrection)
-		g_pd3dDevice->SetRenderState(D3DRS_SRGBWRITEENABLE, TRUE);
+		g_pd3dDevice->SetRenderState(D3DRS_SRGBWRITEENABLE, oldSRGBState);
 }
 
 HRESULT __stdcall Hooked_Present(IDirect3DDevice9 *pDevice, const RECT *pSourceRect, const RECT *pDestRect,
@@ -290,11 +298,6 @@ bool HookD3D9VTable()
 
 	void *original_Present = vtable[17];
 	void *original_Reset   = vtable[16];
-	//original_EndScene = (EndScene_t)vtable[42];
-
-	//interfaces::Cvar->ConsolePrintf("D3D9 VTable:\n");
-	//interfaces::Cvar->ConsolePrintf("Present:%p\n", original_Present);
-	//interfaces::Cvar->ConsolePrintf("Reset:%p\n", original_Reset);
 
 	detour_init(&present_ctx, original_Present, (void *)&Hooked_Present);
 	if (!detour_enable(&present_ctx))

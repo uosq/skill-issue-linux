@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../../vtables.h"
 #include "../netvars/netvar.h"
 #include "econentity.h"
+#include "../definitions/itemschema.h"
 
 class CBaseCombatWeapon : public CEconEntity
 {
@@ -28,18 +28,31 @@ class CBaseCombatWeapon : public CEconEntity
 
 	int GetMaxClip1()
 	{
-		return vtable::call<390, int>(this);
+		return vtable_call<390, int>(this);
 	}
+
 	bool CanBeSelected()
 	{
-		return vtable::call<233 + 1, bool>(this);
+		return vtable_call<233 + 1, bool>(this);
 	}
+
 	void CheckReload()
 	{
-		return vtable::call<278 + 1, void>(this);
+		return vtable_call<278 + 1, void>(this);
 	}
-	const char *GetName()
+
+	const char* GetName()
 	{
-		return vtable::call<334 + 1, const char *>(this);
+		int iItemDefinitionIndex = m_iItemDefinitionIndex();
+
+		const char* baseName = ItemDefinition_GetBaseName(iItemDefinitionIndex);
+		if (baseName == nullptr || baseName[0] == '\0')
+			return "Weapon Name is null or has no base name";
+
+		const char* localizedName = interfaces::VGuiLocalize->FindAsUTF8(baseName);
+		if (localizedName == nullptr || localizedName[0] == '\0')
+			return "Weapon Name is null or has no localization";
+
+		return localizedName;
 	}
 };

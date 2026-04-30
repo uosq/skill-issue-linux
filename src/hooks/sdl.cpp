@@ -166,17 +166,23 @@ void Hooked_SwapWindow(SDL_Window *window)
 
 	gBinds.Update();
 
+	bool pushfont = false;
 	switch (static_cast<ESPFont>(Settings::ESP.font))
 	{
         	case ESPFont::TF2BUILD:
 		ImGui::PushFont(IMFONT_TF2Build, Settings::ESP.font_size);
+		pushfont = true;
 		break;
         	case ESPFont::ARIAL:
 		ImGui::PushFont(IMFONT_Arial, Settings::ESP.font_size);
+		pushfont = true;
 		break;
 		case ESPFont::INVALID:
         	case ESPFont::COUNT:
-        	return Logs::Error("Invalid font!");
+        	{
+			Logs::Error("Invalid font!");
+			break;
+		}
         }
 
 	if (Settings::AntiAim.warp_key->IsEnabled())
@@ -195,7 +201,8 @@ void Hooked_SwapWindow(SDL_Window *window)
 
 	gBinds.DrawWindow(Settings::menu_open);
 
-	ImGui::PopFont();
+	if (pushfont)
+		ImGui::PopFont();
 
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

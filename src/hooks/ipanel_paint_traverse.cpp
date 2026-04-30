@@ -6,7 +6,11 @@
 
 #include "../settings/settings.h"
 
-DECLARE_VTABLE_HOOK(PaintTraverse, void, (IPanel * thisptr, VPANEL vguiPanel, bool forceRepaint, bool allowForce))
+#include "../hooks.h"
+
+using PaintTraverseFn = void (*)(IPanel* rdi, VPANEL vguiPanel, bool forceRepaint, bool allowForce);
+
+static void PaintTraverse(IPanel* rdi, VPANEL vguiPanel, bool forceRepaint, bool allowForce)
 {
 	const char *panelName = interfaces::VGui->GetName(vguiPanel);
 
@@ -30,12 +34,13 @@ DECLARE_VTABLE_HOOK(PaintTraverse, void, (IPanel * thisptr, VPANEL vguiPanel, bo
 			return;
 	}
 
-	originalPaintTraverse(thisptr, vguiPanel, forceRepaint, allowForce);
+	auto original = VMTHooks::VGui.GetOriginal<PaintTraverseFn>(42);
+	original(rdi, vguiPanel, forceRepaint, allowForce);
 }
 
 void HookPaintTraverse()
 {
-	INSTALL_VTABLE_HOOK(PaintTraverse, interfaces::VGui, 42);
+	VMTHooks::VGui.Hook(42, &PaintTraverse);
 
 #ifdef DEBUG
 	constexpr Color_t color = {100, 255, 100, 255};

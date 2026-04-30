@@ -1,16 +1,20 @@
 #include "cengineclient_getscreenaspectratio.h"
 
-#include "../vtables.h"
-#include "../settings/settings.h"
-
 #include "../sdk/interfaces/interfaces.h"
 
-DECLARE_VTABLE_HOOK(GetScreenAspectRatio, float, (void* self))
+#include "../settings/settings.h"
+
+#include "../hooks.h"
+
+using GetScreenAspectRatioFn = float(*)(void* self);
+
+static float GetScreenAspectRatio(void* self)
 {
-	if (Settings::Misc.aspectratio > 0)
+	if (Settings::Misc.aspectratio > 0 && !interfaces::Engine->IsTakingScreenshot())
 		return Settings::Misc.aspectratio;
 
-	return originalGetScreenAspectRatio(self);
+	auto original = VMTHooks::Engine.GetOriginal<GetScreenAspectRatioFn>(95);
+	return original(self);
 }
 
 void Hook_CEngineClient_GetScreenAspectRatio()
@@ -43,5 +47,5 @@ inside CTFMatchSummary::InitPlayerList( TFSectionedListPanel *pPlayerList, int n
 first variable
 */
 
-	INSTALL_VTABLE_HOOK(GetScreenAspectRatio, interfaces::Engine, 95);
+	VMTHooks::Engine.Hook(95, &GetScreenAspectRatio);
 }

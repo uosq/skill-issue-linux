@@ -147,13 +147,13 @@ void TickManager::CL_Move(float accumulated_extra_samples, bool bFinalTick)
 
 	// returns the right thing
 	double net_time =
-	    *reinterpret_cast<double *>(vtable::ResolveRIP(uintptr_t(Sigs::net_time_addr.GetPointer()), 3, 7));
+	    *reinterpret_cast<double *>(RelToAbs(uintptr_t(Sigs::net_time_addr.GetPointer()), 3, 7));
 	float host_frametime_unbounded = *reinterpret_cast<float *>(
-	    vtable::ResolveRIP(uintptr_t(Sigs::host_frametime_unbounded_addr.GetPointer()), 3, 7));
+	    RelToAbs(uintptr_t(Sigs::host_frametime_unbounded_addr.GetPointer()), 3, 7));
 	float host_frametime_stddeviation = *reinterpret_cast<float *>(
-	    vtable::ResolveRIP(uintptr_t(Sigs::host_frametime_stddeviation_addr.GetPointer()), 3, 7));
+	    RelToAbs(uintptr_t(Sigs::host_frametime_stddeviation_addr.GetPointer()), 3, 7));
 	CCommonHostState *host_state = reinterpret_cast<CCommonHostState *>(
-	    vtable::ResolveRIP(uintptr_t(Sigs::host_state_addr.GetPointer()), 3, 7));
+	    RelToAbs(uintptr_t(Sigs::host_state_addr.GetPointer()), 3, 7));
 
 	// interfaces::Cvar->ConsolePrintf("net_time: %f\n", net_time);
 
@@ -199,7 +199,7 @@ void TickManager::CL_Move(float accumulated_extra_samples, bool bFinalTick)
 		reinterpret_cast<uintptr_t>(sigscan_module("engine.so", "4C 8D
 		3D 76 AF 6B 00 49 8B 3F 48 8B 07 FF 50 20 84 C0 74 0F 49 8B
 		3F")); uintptr_t demorecorder =
-		vtable::ResolveRIP(demorecorder_addr, 3, 7); bool
+		RelToAbs(demorecorder_addr, 3, 7); bool
 		demorecorder_isrecording = demorecorder + 0x20;
 
 		if (demorecorder_isrecording)

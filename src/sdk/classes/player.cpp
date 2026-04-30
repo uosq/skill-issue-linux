@@ -190,7 +190,7 @@ void CTFPlayer::ThirdPersonSwitch(bool state)
 	}
 	*/
 
-	auto vt = vtable::get(this);
+	auto vt = vtable_get(this);
 
 	if (vt == nullptr)
 		return;

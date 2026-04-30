@@ -1,6 +1,6 @@
 #include "chlclient_levelshutdown.h"
 
-#include "../vtables.h"
+#include "../hooks.h"
 
 #include "../features/aimbot/projectile/projectile.h"
 #include "../features/backtrack/backtrack.h"
@@ -14,7 +14,9 @@
 
 #include "../features/angelscript/api/libraries/hooks/hooks.h"
 
-DECLARE_VTABLE_HOOK(LevelShutdown, void, (CHLClient * thisptr))
+using LevelShutdownFn = void (*)(CHLClient* rdi);
+
+static void LevelShutdown(CHLClient* rdi)
 {
 	EntityList::Clear();
 	Warp::Reset();
@@ -28,12 +30,14 @@ DECLARE_VTABLE_HOOK(LevelShutdown, void, (CHLClient * thisptr))
 	AntiAFK::OnLevelShutdown();
 
 	Hooks_CallHooks("LevelShutdown");
-	originalLevelShutdown(thisptr);
+
+	auto original = VMTHooks::Client.GetOriginal<LevelShutdownFn>(7);
+	original(rdi);
 }
 
 void HookLevelShutdown()
 {
-	INSTALL_VTABLE_HOOK(LevelShutdown, interfaces::ClientDLL, 7);
+	VMTHooks::Client.Hook(7, &LevelShutdown);
 
 #ifdef DEBUG
 	constexpr Color_t color = {100, 255, 100, 255};

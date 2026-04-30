@@ -1,6 +1,8 @@
 #include "interfaces.h"
 #include "createinterface.h"
 
+#include "../../mem.h"
+
 HCursor cursor				= 0;
 AttributeHookValueFn AttributeHookValue = nullptr;
 
@@ -214,7 +216,7 @@ bool InitializeInterfaces()
 
 	{ // ClientModeShared?
 		uintptr_t leaInstr = (uintptr_t)sigscan_module("client.so", "48 8D 05 ? ? ? ? 40 0F B6 F6 48 8B 38");
-		uintptr_t g_pClientMode_addr = vtable::ResolveRIP(leaInstr, 3, 7); // lea rax, [g_pClientMode]
+		uintptr_t g_pClientMode_addr = RelToAbs(leaInstr); // lea rax, [g_pClientMode]
 		interfaces::ClientMode	     = *reinterpret_cast<IClientMode **>(g_pClientMode_addr);
 
 		if (!interfaces::ClientMode)
@@ -233,7 +235,7 @@ bool InitializeInterfaces()
 		*/
 		uintptr_t unkFunc =
 		    reinterpret_cast<uintptr_t>(sigscan_module("client.so", "4C 8D 15 ? ? ? ? 49 8B 02"));
-		interfaces::GlobalVars = *reinterpret_cast<CGlobalVars **>(vtable::ResolveRIP(unkFunc, 3, 7));
+		interfaces::GlobalVars = *reinterpret_cast<CGlobalVars **>(RelToAbs(unkFunc));
 
 		if (!interfaces::GlobalVars)
 			return false;
@@ -253,7 +255,7 @@ bool InitializeInterfaces()
 		uintptr_t leaInstr =
 		    (uintptr_t)(sigscan_module("client.so", "48 8D 05 ? ? ? ? 48 8B 38 48 8B 07 FF 90 ? "
 							    "? ? ? 48 8D 15 ? ? ? ? 84 C0"));
-		uintptr_t g_Input_addr = vtable::ResolveRIP(leaInstr, 3, 7);
+		uintptr_t g_Input_addr = RelToAbs(leaInstr);
 		interfaces::CInput     = *reinterpret_cast<CInput **>(g_Input_addr);
 		if (!interfaces::CInput)
 			return false;
@@ -266,7 +268,7 @@ bool InitializeInterfaces()
 		// 4C 8B 40 20     MOV        R8,qword ptr [RAX + 0x20]=>clientstate_cl
 		uintptr_t movInstr =
 		    reinterpret_cast<uintptr_t>(sigscan_module("engine.so", "48 8D 05 ? ? ? ? 4C 8B 40"));
-		uintptr_t g_ClientState = vtable::ResolveRIP(movInstr, 3, 7);
+		uintptr_t g_ClientState = RelToAbs(movInstr);
 		interfaces::ClientState = reinterpret_cast<void *>(g_ClientState); // fuck c++
 	}
 
@@ -275,12 +277,12 @@ bool InitializeInterfaces()
 		// its the first parameter of gHUD->FindElement(&gHUD, "CBaseHudChat");
 		uintptr_t leaInstr = reinterpret_cast<uintptr_t>(
 		    sigscan_module("client.so", "4C 8D 25 ? ? ? ? 53 48 89 FB 4C 89 E7 E8 ? ? ? ?"));
-		interfaces::gHUD = reinterpret_cast<CBaseHudChat *>(vtable::ResolveRIP(leaInstr, 3, 7));
+		interfaces::gHUD = reinterpret_cast<CBaseHudChat *>(RelToAbs(leaInstr));
 	}
 
 	{	// g_notificationQueue
 		//uintptr_t movInstr = reinterpret_cast<uintptr_t>(sigscan_module("client.so", "83 EA 01 48 8D 54 D0 08 EB ? 48 83 C0 08")) + 11;
-		//interfaces::g_notificationQueue = reinterpret_cast<CEconNotificationQueue*>(vtable::ResolveRIP(movInstr, 3, 7));
+		//interfaces::g_notificationQueue = reinterpret_cast<CEconNotificationQueue*>(RelToAbs(movInstr));
 	}
 
 	return true;
