@@ -428,6 +428,7 @@ namespace Settings
 	    CONFIG_BOOL("misc antiafk", Misc.antiafk),
 	    CONFIG_BOOL("misc info panel", Misc.infopanel),
 	    CONFIG_BOOL("misc spy alert", Misc.spyalert),
+	    CONFIG_FLOAT("misc aspect ratio", Misc.aspectratio),
 	    //CONFIG_BOOL("no survey", Misc.no_survey),
 
 	    //triggerbot

@@ -181,6 +181,9 @@ void Backtrack::Store()
 	{
 		if (!IsValidPlayer(entry))
 			continue;
+
+		if (entry.ptr->IsBuilding())
+			continue;
 	
 		CTFPlayer* pEntity = static_cast<CTFPlayer*>(entry.ptr);
 	
@@ -337,7 +340,7 @@ bool Backtrack::GetRecords(CTFPlayer *pEntity, std::vector<LagCompRecord> &out)
 
 bool Backtrack::IsValidPlayer(const EntityListEntry &entry)
 {
-	return (entry.flags & (EntityFlags::IsPlayer | EntityFlags::IsEnemy | EntityFlags::IsAlive)) != 0;
+	return entry.ptr != nullptr && (entry.flags & (EntityFlags::IsPlayer | EntityFlags::IsEnemy | EntityFlags::IsAlive));
 }
 
 std::string Backtrack::GetModeName()
