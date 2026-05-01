@@ -15,7 +15,7 @@
 
 using OverrideViewFn = void (*)(IClientMode* rdi, CViewSetup *pView);
 
-static void OverrideView(IClientMode * rdi, CViewSetup *pView)
+static void OverrideView(IClientMode* rdi, CViewSetup *pView)
 {
 	auto original = VMTHooks::ClientMode.GetOriginal<OverrideViewFn>(17);
 	original(rdi, pView);
@@ -28,10 +28,6 @@ static void OverrideView(IClientMode * rdi, CViewSetup *pView)
 	if (CTFPlayer *pLocal = EntityList::GetLocal(); pLocal != nullptr)
 	{
 		Thirdperson::OverrideView(pLocal, pView);
-
-		if (!pLocal->IsAlive())
-			return;
-
 		NoRecoil::RunOverrideView(pLocal, pView);
 		CustomFov::Run(pLocal, pView);
 	}

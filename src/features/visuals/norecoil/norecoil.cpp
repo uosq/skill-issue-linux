@@ -5,6 +5,9 @@
 
 void NoRecoil::RunOverrideView(CTFPlayer *pLocal, CViewSetup *pView)
 {
+	if (!pLocal->IsAlive())
+		return;
+
 	if (!Settings::Misc.norecoil)
 		return;
 

@@ -14,7 +14,7 @@ void CustomFov::Run(CTFPlayer *pLocal, CViewSetup *pView)
 
 	m_flFov = Math::Lerp(m_flOldFov, target_fov, 0.2f);
 
-	if (interfaces::Engine->IsTakingScreenshot())
+	if (!pLocal->IsAlive() || interfaces::Engine->IsTakingScreenshot())
 	{
 		pView->fov = fov_desired->GetFloat();
 		return;

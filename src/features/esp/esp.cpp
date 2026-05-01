@@ -1,5 +1,6 @@
 #include "esp.h"
 
+#include <mutex>
 #include <string>
 #include <vector>
 
@@ -11,7 +12,6 @@
 #include "../../sdk/classes/ctfrobotdestruction_robot.h"
 #include "../../sdk/definitions/icollideable.h"
 #include "../../sdk/imgui_utils/imgui_utils.h"
-#include "../../sdk/definitions/itemschema.h"
 
 #include "esp_utils.h"
 
@@ -22,6 +22,12 @@ enum class TextSide
 {
 	LEFT = 0, RIGHT,
 	TOP, BOTTOM
+};
+
+struct HealthbarBounds
+{
+	float x, y, w, h;
+	float bar_x, bar_y, bar_w, bar_h;
 };
 
 struct ESPData
@@ -43,6 +49,21 @@ struct ESPData
 
 	float text_scale = 1.0f; // used to scale with distance
 
+	std::string name = "";
+	std::string className = "";
+	std::string weaponName = "";
+
+	int health = -1;
+	int maxHealth = -1;
+
+	bool isJarated = false;
+	bool isBonked = false;
+	bool isUbered = false;
+	bool isZoomed = false;
+
+	HealthbarBounds hb;
+	bool hasHealthbar = false;
+
 	void ResetOffsets();
 };
 
@@ -54,12 +75,7 @@ void ESPData::ResetOffsets()
 	right_y = 0.0f;
 }
 
-struct HealthbarBounds
-{
-	float x, y, w, h;
-	float bar_x, bar_y, bar_w, bar_h;
-};
-
+static std::mutex s_EspMutex;
 static std::vector<ESPData> s_vData;
 
 void ESP::Init()
@@ -70,6 +86,8 @@ void ESP::Init()
 void ESP::OnlevelInitPostEntity()
 {
 	Reset();
+
+	std::lock_guard<std::mutex> lock(s_EspMutex);
 	s_vData.reserve(interfaces::Engine->GetMaxClients());
 }
 
@@ -260,28 +278,43 @@ static float GetTextScale(float distance)
 	return MAX_SCALE + (MIN_SCALE - MAX_SCALE) * t;
 }
 
+static std::string GetEntityName(CBaseEntity* pEntity)
+{
+	if (pEntity == nullptr) return "Unknown";
+
+	if (pEntity->IsPlayer())
+	{
+		CTFPlayer* pPlayer = static_cast<CTFPlayer*>(pEntity);
+		return pPlayer->GetName();
+	}
+
+	if (pEntity->IsDispenser())	return "Dispenser";
+	if (pEntity->IsTeleporter())	return "Teleporter";
+	if (pEntity->IsSentry())	return "Sentrygun";
+
+	const char* networkName = pEntity->GetClientClass()->networkName;
+	return networkName ? networkName : "Unknown";
+}
+
 static void FillTargets(CTFPlayer* pLocal)
 {
 	constexpr int iVALID_FLAGS = EntityFlags::IsAlive | EntityFlags::IsBuilding | EntityFlags::IsPlayer;
 
-	s_vData.clear();
+	std::vector<ESPData> tempData;
+	tempData.reserve(interfaces::Engine->GetMaxClients());
 
 	int localIndex = pLocal->GetIndex();
 	Vec3 localOrigin = pLocal->GetAbsOrigin();
 
 	for (const auto& entry : EntityList::GetEntities())
 	{
-		if (entry.ptr == nullptr)
-			continue;
-
-		if (!(entry.flags & iVALID_FLAGS))
+		if (entry.ptr == nullptr || !(entry.flags & iVALID_FLAGS))
 			continue;
 
 		if (!ESP_Utils::IsValidEntity(pLocal, entry))
 			continue;
 
-		if (entry.ptr->GetIndex() == localIndex
-		&& !Thirdperson::IsThirdPerson(pLocal))
+		if (entry.ptr->GetIndex() == localIndex && !Thirdperson::IsThirdPerson(pLocal))
 			continue;
 
 		ESPData data;
@@ -290,10 +323,39 @@ static void FillTargets(CTFPlayer* pLocal)
 
 		data.text_scale = GetTextScale(localOrigin.DistTo(entry.ptr->GetAbsOrigin()));
 
+		data.name = GetEntityName(entry.ptr);
+
+		data.health = GetEntityHealth(entry.ptr);
+		data.maxHealth = GetEntityMaxHealth(entry.ptr);
+		data.hasHealthbar = GetHealthbarBounds(entry.ptr, data, data.hb);
 		CalcHealthBarLayout(data, entry.ptr);
 
-		s_vData.emplace_back(data);
+		if (entry.ptr->IsPlayer())
+		{
+			CTFPlayer* pTargetPlayer = static_cast<CTFPlayer*>(entry.ptr);
+
+			// class
+			static const char* classes[] { "Scout", "Sniper", "Soldier", "Demoman", "Medic", "Heavy", "Pyro", "Spy", "Engineer" };
+			int classIdx = pTargetPlayer->m_iClass();
+			if (classIdx > ETFClass::TF_CLASS_UNDEFINED && classIdx < TF_CLASS_CIVILIAN)
+				data.className = classes[classIdx - 1];
+
+			// weapon
+			CTFWeaponBase* pWeapon = HandleAs<CTFWeaponBase*>(pTargetPlayer->GetActiveWeapon());
+			if (pWeapon) data.weaponName = pWeapon->GetName();
+
+			// conditions
+			data.isJarated = pTargetPlayer->InCond(TF_COND_URINE);
+			data.isBonked = pTargetPlayer->InCond(TF_COND_BONKED);
+			data.isUbered = pTargetPlayer->InCond(TF_COND_INVULNERABLE);
+			data.isZoomed = pTargetPlayer->InCond(TF_COND_ZOOMED);
+		}
+
+		tempData.emplace_back(data);
 	}
+
+	std::lock_guard<std::mutex> lock(s_EspMutex);
+	s_vData = std::move(tempData);
 }
 
 static void DrawImGuiBox(ImDrawList* pDraw, float x, float y, float w, float h, ImU32 color, float rounding = 0.0f, ImDrawFlags flags = 0, float thickness = 1.0f)
@@ -341,17 +403,18 @@ static void GetHealthColor(int health, int maxhealth, int& r, int& g)
 	g = static_cast<int>(ratio * 255.0f);
 }
 
-static void DrawHealthbar(ImDrawList* pDraw, CBaseEntity* pTarget, ESPData& data)
+static void DrawHealthbar(ImDrawList* pDraw, ESPData& data)
 {
-	int iHealth = GetEntityHealth(pTarget);
+	int iHealth = data.health;
 	if (iHealth < 0) return;
 
-	int iMaxHealth = GetEntityMaxHealth(pTarget);
+	int iMaxHealth = data.maxHealth;
 	if (iMaxHealth < 0) return;
 
-	HealthbarBounds hb;
-	if (!GetHealthbarBounds(pTarget, data, hb))
+	if (!data.hasHealthbar)
 		return;
+
+	const HealthbarBounds& hb = data.hb;
 
 	// background
 	DrawImGuiBoxFilled(
@@ -391,30 +454,13 @@ static void DrawHealthbar(ImDrawList* pDraw, CBaseEntity* pTarget, ESPData& data
 
 void ESP::Reset()
 {
+	std::lock_guard<std::mutex> lock(s_EspMutex);
 	s_vData.clear();
 }
 
 void ESP::OnLevelShutdown()
 {
 	Reset();
-}
-
-static std::string GetEntityName(CBaseEntity* pEntity)
-{
-	if (pEntity == nullptr) return "Unknown";
-
-	if (pEntity->IsPlayer())
-	{
-		CTFPlayer* pPlayer = static_cast<CTFPlayer*>(pEntity);
-		return pPlayer->GetName();
-	}
-
-	if (pEntity->IsDispenser())	return "Dispenser";
-	if (pEntity->IsTeleporter())	return "Teleporter";
-	if (pEntity->IsSentry())	return "Sentrygun";
-
-	const char* networkName = pEntity->GetClientClass()->networkName;
-	return networkName ? networkName : "Unknown";
 }
 
 static void DrawText(ImDrawList* pDraw, const std::string& text, ESPData& data, TextSide side, Color textColor = Color(255, 255, 255, 255))
@@ -461,62 +507,33 @@ static void DrawText(ImDrawList* pDraw, const std::string& text, ESPData& data, 
 	ImGui::DrawTextShadow(pDraw, ImGui::GetFont(), text_size.y, ImVec2(draw_x, draw_y), color, text.c_str());
 }
 
-static void DrawClass(ImDrawList* pDraw, CBaseEntity* pTarget, ESPData& data)
+static void DrawClass(ImDrawList* pDraw, ESPData& data)
 {
-	if (pTarget == nullptr) return;
 	if (!Settings::ESP.class_name) return;
 
-	const char* className = pTarget->GetClientClass()->networkName;
-	if (className == nullptr) return; // no class? wtf
-
-	if (pTarget->IsPlayer())
-	{
-		static const char* classes[]
-		{
-			"Scout", "Sniper",
-			"Soldier", "Demoman",
-			"Medic", "Heavy",
-			"Pyro", "Spy",
-			"Engineer",
-		};
-
-		CTFPlayer* pPlayer = static_cast<CTFPlayer*>(pTarget);
-		int classIdx = pPlayer->m_iClass();
-
-		if (classIdx <= ETFClass::TF_CLASS_UNDEFINED || classIdx >= TF_CLASS_CIVILIAN)
-			return; // wtf??
-
-		// m_iClass starts at 1 (0 is undefined)
-		className = classes[pPlayer->m_iClass() - 1];
-	}
-
 	TextSide side = static_cast<TextSide>(Settings::ESP.sides.classname);
-	DrawText(pDraw, className, data, side);
+	DrawText(pDraw, data.className, data, side);
 }
 
-static void DrawPlayerConditions(ImDrawList* pDraw, CBaseEntity* pTarget, ESPData& data)
+static void DrawPlayerConditions(ImDrawList* pDraw, ESPData& data)
 {
-	if (pTarget == nullptr || !pTarget->IsPlayer()) return;
-
-	CTFPlayer* pPlayer = static_cast<CTFPlayer*>(pTarget);
-
 	int conds = Settings::ESP.fconditions;
-	if (conds == 0) return; 
+	if (conds == 0) return;
 
-	if ((conds & (int)ESPConditionFlags::Jarated) && pPlayer->InCond(TF_COND_URINE))
+	if ((conds & (int)ESPConditionFlags::Jarated) && data.isJarated)
 		DrawText(pDraw, "Jarate", data, static_cast<TextSide>(Settings::ESP.sides.jarate), Color(255, 200, 0, 255));
 
-	if ((conds & (int)ESPConditionFlags::Bonked) && pPlayer->InCond(TF_COND_BONKED))
+	if ((conds & (int)ESPConditionFlags::Bonked) && data.isBonked)
 		DrawText(pDraw, "Bonk", data, static_cast<TextSide>(Settings::ESP.sides.bonk));
 
-	if ((conds & (int)ESPConditionFlags::Ubered) && pPlayer->InCond(TF_COND_INVULNERABLE))
+	if ((conds & (int)ESPConditionFlags::Ubered) && data.isUbered)
 		DrawText(pDraw, "Uber", data, static_cast<TextSide>(Settings::ESP.sides.uber), Color(255, 100, 100, 255));
 
-	if ((conds & (int)ESPConditionFlags::Zoomed) && pPlayer->InCond(TF_COND_ZOOMED))
+	if ((conds & (int)ESPConditionFlags::Zoomed) && data.isZoomed)
 		DrawText(pDraw, "Zoom", data, static_cast<TextSide>(Settings::ESP.sides.zoom));
 }
 
-static void DrawHealthText(ImDrawList* pDraw, CBaseEntity* pTarget, ESPData& data)
+static void DrawHealthText(ImDrawList* pDraw, ESPData& data)
 {
 	HealthMode mode = static_cast<HealthMode>(Settings::ESP.health);
 	if (mode >= HealthMode::MAX || mode <= HealthMode::INVALID)
@@ -525,10 +542,10 @@ static void DrawHealthText(ImDrawList* pDraw, CBaseEntity* pTarget, ESPData& dat
 	if (mode != HealthMode::TEXT && mode != HealthMode::BOTH)
 		return;
 
-	int iHealth = GetEntityHealth(pTarget);
+	int iHealth = data.health;
 	if (iHealth < 0) return;
 
-	int iMaxHealth = GetEntityMaxHealth(pTarget);
+	int iMaxHealth = data.maxHealth;
 	if (iMaxHealth < 0) return;
 
 	std::string text = std::to_string(iHealth) + "/" + std::to_string(iMaxHealth);
@@ -541,29 +558,10 @@ static void DrawHealthText(ImDrawList* pDraw, CBaseEntity* pTarget, ESPData& dat
 	DrawText(pDraw, text, data, side, color);
 }
 
-static void DrawWeapon(ImDrawList* pDraw, CBaseEntity* pTarget, ESPData& data)
+static void DrawWeapon(ImDrawList* pDraw, ESPData& data)
 {
-	if (pTarget == nullptr || !pTarget->IsPlayer())
-		return;
-
-	CTFPlayer* pPlayer = static_cast<CTFPlayer*>(pTarget);
-	CTFWeaponBase* pWeapon = HandleAs<CTFWeaponBase*>(pPlayer->GetActiveWeapon());
-
-	if (pWeapon == nullptr)
-		return;
-
-	int iItemDefinitionIndex = pWeapon->m_iItemDefinitionIndex();
-
-	const char* baseName = ItemDefinition_GetBaseName(iItemDefinitionIndex);
-	if (baseName == nullptr || baseName[0] == '\0')
-		return;
-
-	const char* localizedName = interfaces::VGuiLocalize->FindAsUTF8(baseName);
-	if (localizedName == nullptr || localizedName[0] == '\0')
-		return;
-
 	TextSide side = static_cast<TextSide>(Settings::ESP.sides.weaponname);
-	DrawText(pDraw, localizedName, data, side);
+	DrawText(pDraw, data.weaponName, data, side);
 }
 
 void ESP::OnImGui()
@@ -585,40 +583,43 @@ void ESP::OnImGui()
 	if (s_vData.empty())
 		return;
 
+	std::lock_guard<std::mutex> lock(s_EspMutex);
+
 	for (ESPData& data : s_vData)
 	{
 		if (!data.valid) continue;
 
-		// fix not working with references
 		data.ResetOffsets();
 
-		CBaseEntity* pTarget = static_cast<CBaseEntity*>(interfaces::EntityList->GetClientEntity(data.entindex));
-		if (pTarget == nullptr) continue;
+		if (Settings::ESP.box)
+			DrawBox(pDraw, data);
 
-		if (Settings::ESP.box) DrawBox(pDraw, data);
 		if (static_cast<HealthMode>(Settings::ESP.health) != HealthMode::NONE)
 		{
-			DrawHealthbar(pDraw, pTarget, data);
-			DrawHealthText(pDraw, pTarget, data);
+			DrawHealthbar(pDraw, data);
+			DrawHealthText(pDraw, data);
 		}
 
 		if (Settings::ESP.name)
 		{
 			TextSide side = static_cast<TextSide>(Settings::ESP.sides.name);
-			DrawText(pDraw, GetEntityName(pTarget), data, side, data.color);
+			DrawText(pDraw, data.name, data, side, data.color);
 		}
 
-		DrawPlayerConditions(pDraw, pTarget, data);
-		DrawClass(pDraw, pTarget, data);
-		DrawWeapon(pDraw, pTarget, data);
+		DrawPlayerConditions(pDraw, data);
+		DrawClass(pDraw, data);
+		DrawWeapon(pDraw, data);
 	}
 }
 
 void ESP::OnFrameStageNotify()
 {
+	if (!interfaces::Engine->IsInGame() || !interfaces::Engine->IsConnected())
+                return Reset();
+
 	CTFPlayer* pLocal = EntityList::GetLocal();
 	if (pLocal == nullptr)
-		return;
+		return Reset();
 
 	FillTargets(pLocal);
 }

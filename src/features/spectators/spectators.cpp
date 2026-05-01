@@ -2,28 +2,62 @@
 #include "../../imgui/imgui.h"
 #include "../../settings/settings.h"
 #include "../entitylist/entitylist.h"
+#include <mutex>
+
+struct SpectatorData
+{
+	std::string name;
+	bool isFirstPerson;
+};
 
 static bool s_bSpectated = false;
-static std::vector<CTFPlayer*> s_vSpectatorList;
+static std::mutex s_Mutex;
+static std::vector<SpectatorData> s_vCachedSpectatorList;
 
 void Spectators::OnFrameStageNotify()
 {
 	Reset();
 
 	CTFPlayer* pLocal = EntityList::GetLocal();
-	if (pLocal) s_bSpectated = IsSpectated(pLocal, s_vSpectatorList);
+
+	bool bTempSpectated = false;
+	std::vector<CTFPlayer*> tempPlayerPointers;
+
+	if (pLocal) 
+		bTempSpectated = IsSpectated(pLocal, tempPlayerPointers);
+
+	std::vector<SpectatorData> tempCachedData;
+	if (bTempSpectated)
+	{
+		for (auto pPlayer : tempPlayerPointers)
+		{
+			if (pPlayer == nullptr || pPlayer->GetIndex() == -1)
+				continue;
+
+			SpectatorData data;
+			data.name = pPlayer->GetName();
+			data.isFirstPerson = (pPlayer->m_iObserverMode() == OBS_MODE_IN_EYE);
+			tempCachedData.push_back(data);
+		}
+	}
+
+	std::lock_guard<std::mutex> lock(s_Mutex);
+	s_bSpectated = bTempSpectated;
+	s_vCachedSpectatorList = std::move(tempCachedData);
 }
 
 void Spectators::OnLevelInitPostEntity()
 {
 	Reset();
-	s_vSpectatorList.reserve(interfaces::Engine->GetMaxClients());
+	std::lock_guard<std::mutex> lock(s_Mutex);
+	s_vCachedSpectatorList.reserve(interfaces::Engine->GetMaxClients());
 }
 
 void Spectators::Reset()
 {
+	std::lock_guard<std::mutex> lock(s_Mutex);
 	s_bSpectated = false;
-	s_vSpectatorList.clear();
+	s_vCachedSpectatorList.clear();
 }
 
 bool Spectators::IsSpectated(CTFPlayer *pTarget, std::vector<CTFPlayer*> &out)
@@ -60,7 +94,8 @@ bool Spectators::IsSpectated(CTFPlayer *pTarget, std::vector<CTFPlayer*> &out)
 
 bool Spectators::IsLocalPlayerSpectated(int& amount)
 {
-	amount = s_vSpectatorList.size();
+	std::lock_guard<std::mutex> lock(s_Mutex);
+	amount = s_vCachedSpectatorList.size();
 	return s_bSpectated;
 }
 
@@ -78,22 +113,14 @@ void Spectators::DrawList()
 
 	if (ImGui::Begin("Spectator List", nullptr, flags))
 	{
-		if (s_bSpectated && !s_vSpectatorList.empty())
+		std::lock_guard<std::mutex> lock(s_Mutex);
+
+		if (s_bSpectated && !s_vCachedSpectatorList.empty())
 		{
-			for (auto pPlayer : s_vSpectatorList)
+			for (auto spec : s_vCachedSpectatorList)
 			{
-				if (pPlayer == nullptr)
-					continue;
-
-				// invalid player
-				if (pPlayer->GetIndex() == -1)
-					continue;
-
-				int iObserverMode  = pPlayer->m_iObserverMode();
-				bool isfirstperson = iObserverMode == OBS_MODE_IN_EYE;
-
-				ImVec4 color = isfirstperson ? ImVec4(1.0, 0.5, 0.5, 1.0) : ImVec4(1.0, 1.0, 1.0, 1.0);
-				ImGui::TextColored(color, "%s", pPlayer->GetName().c_str());
+				ImVec4 color = spec.isFirstPerson ? ImVec4(1.0, 0.5, 0.5, 1.0) : ImVec4(1.0, 1.0, 1.0, 1.0);
+				ImGui::TextColored(color, "%s", spec.name.c_str());
 			}
 		}
 	}

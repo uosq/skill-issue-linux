@@ -9,8 +9,12 @@
 // Call in FrameStageNotify -> FRAME_NET_UPDATE_END
 void Thirdperson::FrameStageNotify(CTFPlayer *pLocal)
 {
-	if (!pLocal->IsAlive())
-		return interfaces::CInput->CAM_ToFirstPerson();
+	if (!pLocal->IsAlive() || interfaces::Engine->IsTakingScreenshot())
+	{
+		interfaces::CInput->CAM_ToFirstPerson();
+		pLocal->ThirdPersonSwitch(false);
+		return;
+	}
 
 	bool bState = IsThirdPerson(pLocal);
 	if (bState)
