@@ -112,7 +112,10 @@ void RenderImGui()
 	// Disable sRGB writes temporarily if needed
 	DWORD oldSRGBState = 0;
 	if (needsGammaCorrection)
+	{
 		g_pd3dDevice->GetRenderState(D3DRS_SRGBWRITEENABLE, &oldSRGBState);
+		g_pd3dDevice->SetRenderState(D3DRS_SRGBWRITEENABLE, FALSE);
+	}
 
 	ImGui_ImplDX9_NewFrame();
 	ImGui_ImplSDL2_NewFrame();
