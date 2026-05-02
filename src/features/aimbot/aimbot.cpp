@@ -10,10 +10,9 @@ AimbotState Aimbot::m_state{};
 
 static void DrawFOVIndicator(ImDrawList* pDraw)
 {
-	if (Settings::Aimbot.fov >= 90 || !Settings::Aimbot.draw_fov_indicator)
+	if (Config.aimbot.fov >= 90 || !Config.aimbot.packed.draw_fov_indicator)
 		return;
 
-	// float aimFov = DEG2RAD(Settings::Aimbot.fov);
 	float aimFov = DEG2RAD(AimbotUtils::GetAimbotFovScaled());
 	float camFov = DEG2RAD(CustomFov::GetFov() * 0.5f);
 
@@ -84,7 +83,7 @@ void Aimbot::Run(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCmd)
 
 void Aimbot::OnImGui(ImDrawList* pDraw)
 {
-	if (!Settings::Aimbot.key->IsEnabled())
+	if (!Config.aimbot.key->IsEnabled())
 		return;
 
 	DrawFOVIndicator(pDraw);

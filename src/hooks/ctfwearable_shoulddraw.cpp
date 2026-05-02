@@ -1,7 +1,6 @@
 #include "ctfwearable_shoulddraw.h"
 
 #include "../libdetour/libdetour.h"
-#include "../settings/settings.h"
 
 #include "../features/logs/logs.h"
 
@@ -10,9 +9,6 @@ detour_ctx_t ctfwearable_shoulddraw_ctx;
 
 bool Hooked_CTFWearable_ShouldDraw(void *self)
 {
-	if (Settings::Misc.no_zoom)
-		return true;
-
 	bool ret;
 	DETOUR_ORIG_GET(&ctfwearable_shoulddraw_ctx, ret, CTFWearable_ShouldDraw, self);
 	return ret;

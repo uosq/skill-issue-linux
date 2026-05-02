@@ -244,6 +244,8 @@ class Entity
 	string GetClassName();
 	string GetName();
 	Entity@ GetEntityFromLoadoutSlot(int index);
+	void SetAbsOrigin(const Vector3 &in absOrigin);
+	void SetAbsAngles(const Vector3 &in absAngles);
 }
 
 class DrawModelContext

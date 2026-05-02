@@ -8,7 +8,7 @@ using SleepUntilInputFn = void (*)(void* rdi, int nMaxSleepTimeMS);
 
 static void SleepUntilInput(void* rdi, int nMaxSleepTimeMS)
 {
-	if (Settings::Misc.no_engine_sleep)
+	if (Config.misc.packed.no_engine_sleep)
 		return;
 
 	auto original = VMTHooks::InputSystem.GetOriginal<SleepUntilInputFn>(31);

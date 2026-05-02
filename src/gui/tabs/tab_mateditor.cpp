@@ -1,27 +1,36 @@
-#include "tab_chams.h"
+#include "tab_mateditor.h"
 
+#include <algorithm>
+#include <filesystem>
+#include <string>
+#include <vector>
+
+#include "../../imgui/imgui.h"
 #include "../../imgui/texteditor/TextEditor.h"
-
 #include "../../settings/settings.h"
 
-#include "../../features/chams/chams.h"
+#include "../../features/materialregistry/reg.h"
 
-#define MATERIALS_DIR "./skill-issue/materials/"
-
-#if 0
-static std::string GenerateMaterialName()
+void ToggleMaterialUsage(std::vector<std::string>& mats, const std::string& matName, const char* label)
 {
-	return "material_" + std::to_string(interfaces::GlobalVars->realtime);
-}
-#endif
+	bool isUsed = std::find(mats.begin(), mats.end(), matName) != mats.end();
 
-void DrawChamsTab()
+	if (ImGui::Checkbox(label, &isUsed))
+	{
+		if (isUsed)
+			mats.push_back(matName);
+		else
+			mats.erase(std::remove(mats.begin(), mats.end(), matName), mats.end());
+	}
+}
+
+void DrawMaterialEditor()
 {
 	static TextEditor editor{};
 	static int selected = -1;
 	static int last_selected = -1;
 	
-	auto& materials = Chams::GetMaterials();
+	auto& materials = MaterialRegistry::GetMaterials();
 
 	constexpr int TABLE_FLAGS =ImGuiTableFlags_Resizable | 
 				ImGuiTableFlags_BordersInnerV |
@@ -39,7 +48,7 @@ void DrawChamsTab()
 		{
 			if (ImGui::BeginChild("##MatList"))
 			{
-				ImGui::Checkbox("Enabled##Chams", &Settings::ESP.chams);
+				//ImGui::Checkbox("Enabled##MatList", &Settings::ESP.chams);
 				//ImGui::SliderFloat("Alpha##Chams", &Settings::ESP.chams_alpha, 0.0f, 1.0f);
 
 				ImGui::Separator();
@@ -72,7 +81,7 @@ void DrawChamsTab()
 							"\t$basetexture \"white\"\n"
 							"}";
 
-							materials.emplace_back(std::make_shared<ChamsMaterial>(text, vmt));
+							materials.emplace_back(std::make_shared<CustomMaterial>(text, vmt));
 
 							selected = materials.size() - 1;
 							editor.SetText(vmt);
@@ -97,8 +106,24 @@ void DrawChamsTab()
 					auto& mat = materials[selected];
 					if (mat->IsValidMat())
 					{
-						// delete material
-						Chams::RemoveMaterial(mat->GetInternalName());
+						const std::string& matName = mat->GetInternalName();
+						std::filesystem::path filePath = std::filesystem::path(MATERIAL_DIR) / (matName + ".vmt");
+
+						if (std::filesystem::exists(filePath))
+						{
+							std::filesystem::remove(filePath);
+						}
+
+						auto remove_from_vec =
+						[&matName](std::vector<std::string>& vec)
+						{
+							vec.erase(std::remove(vec.begin(), vec.end(), matName), vec.end());
+						};
+						remove_from_vec(Config.chams.active_materials);
+						remove_from_vec(Config.backtrack.active_materials);
+
+						MaterialRegistry::RemoveMaterial(matName);
+
 						selected = -1;
 					}
 				}
@@ -141,15 +166,15 @@ void DrawChamsTab()
 					if (ImGui::Button("Get VMT"))
 						editor.SetText(mat->GetVMT());
 
+					const std::string& matName = mat->GetInternalName();
+					
+					ToggleMaterialUsage(Config.chams.active_materials, matName, "Used for Chams");
 					ImGui::SameLine();
-
-					bool used = mat->IsUsed();
-					if (ImGui::Checkbox("Used", &used))
-						mat->SetUsed(used);
+					ToggleMaterialUsage(Config.backtrack.active_materials, matName, "Used for Backtrack");
 
 					float alpha = mat->GetAlpha();
-					ImGui::SliderFloat("Alpha##Chams", &alpha, 0.0f, 1.0f);
-					mat->SetAlpha(alpha);
+					if (ImGui::SliderFloat("Alpha##Chams", &alpha, 0.0f, 1.0f))
+						mat->SetAlpha(alpha);
 				}
 				else
 					ImGui::TextUnformatted("Select a material to edit");

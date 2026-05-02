@@ -2,11 +2,9 @@
 #include "../entitylist/entitylist.h"
 
 #include "../aimbot/aimbot.h"
-#include "../antiaim/antiaim.h"
 #include "../autostrafe/autostrafe.h"
 #include "../backtrack/backtrack.h"
 #include "../bhop/bhop.h"
-#include "../fakelag/fakelag.h"
 #include "../triggerbot/triggerbot.h"
 #include "../visuals/norecoil/norecoil.h"
 #include "../warp/warp.h"
@@ -15,6 +13,7 @@
 #include "../../sdk/definitions/con_nprint.h"
 #include "../../sdk/definitions/host.h"
 #include "../../sdk/definitions/protocol.h"
+#include "../../sdk/definitions/cclientstate.h"
 
 #include "../angelscript/api/libraries/hooks/hooks.h"
 
@@ -65,14 +64,11 @@ void TickManager::Post_CreateMove(int sequence_number)
 
 	NoRecoil::RunCreateMove(pLocal, pWeapon, pCmd);
 
-	FakeLag::Run();
-
 	Backtrack::CleanRecords(pCmd);
 	Backtrack::Run(pLocal, pWeapon, pCmd);
 
 	Bhop::Run(pLocal, pCmd);
 	Autostrafe::Run(pLocal, pCmd);
-	Antiaim::Run(pLocal, pWeapon, pCmd);
 	Aimbot::Run(pLocal, pWeapon, pCmd);
 	Triggerbot::Run(pLocal, pWeapon, pCmd);
 
@@ -304,12 +300,12 @@ void TickManager::Run(float accumulated_extra_samples, bool bFinalTick)
 		Warp::m_iShiftAmount = 0;
 		Warp::m_bShifting = true;
 
-		for (int n = 0; n < Settings::AntiAim.warp_speed; n++)
+		for (int n = 0; n < Config.warp.packed.speed; n++)
 		{
 			if (Warp::m_iStoredTicks <= 0)
 				break;
 
-			bool isFinalTick = (n == Settings::AntiAim.warp_speed - 1) || (Warp::m_iStoredTicks == 1);
+			bool isFinalTick = (n == Config.warp.packed.speed - 1) || (Warp::m_iStoredTicks == 1);
 			CL_Move(accumulated_extra_samples, isFinalTick);
 			Warp::m_iStoredTicks--;
 			Warp::m_iShiftAmount++;

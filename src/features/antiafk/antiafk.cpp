@@ -17,7 +17,7 @@ void AntiAFK::OnCreateMove(CUserCmd *pCmd)
 	if (mp_idlemaxtime == nullptr)
 		return Logs::Error("[AntiAFK::OnCreateMove] mp_idlemaxtime is null");
 
-	if (!Settings::Misc.antiafk)
+	if (!Config.misc.packed.antiafk)
 		return;
 
 	s_iTicksAfk++;

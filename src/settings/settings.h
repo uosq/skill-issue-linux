@@ -118,197 +118,289 @@ enum class ESPFont
 	COUNT,
 };
 
-namespace Settings
+struct WarpConfig
 {
-	struct SettingsAntiAim
+	Hotkey *key		= nullptr;
+	Hotkey *recharge_key	= nullptr;
+
+	union
 	{
-		Hotkey *warp_key	  = nullptr;
-		Hotkey *warp_recharge_key = nullptr;
+		uint8_t raw = 0;
 
-		int spin_speed		  = 0;
-		bool enabled		  = false;
-		int pitch_mode		  = 0;
-		int real_yaw_mode	  = 0;
-		int fake_yaw_mode	  = 0;
-
-		bool warp_enabled	  = false;
-		int warp_speed		  = 1;
-
-		bool fakelag_enabled	  = false;
-		int fakelag_ticks	  = 1;
-	};
-
-	extern SettingsAntiAim AntiAim;
-} // namespace Settings
-
-namespace Settings
-{
-	struct SettingsESP
-	{
-		int stencil	   = 0;
-		int blur	   = 0;
-		bool enabled	   = false;
-		bool ignorecloaked = false;
-		bool buildings	   = false;
-		bool name	   = false;
-		bool box	   = false;
-		int health	   = 0;
-		bool chams	   = false;
-		float chams_alpha  = 0.5f;
-		bool weapon	   = false;
-		int team_selection = 0;
-		int fconditions	   = 0;
-		int font	   = 0;
-		int font_size 	   = 12;
-		bool class_name    = false;
-
-		union
+		struct
 		{
-			uint32_t raw = 0;
+			uint8_t enabled : 1;
+			uint8_t speed : 5;
 
-			struct
-			{
-				uint32_t healthbar  : 3;
-				uint32_t weaponname : 3;
-				uint32_t classname  : 3;
-				uint32_t name       : 3;
-				uint32_t jarate     : 3;
-				uint32_t uber       : 3;
-				uint32_t bonk       : 3;
-				uint32_t zoom       : 3;
-				uint32_t _reserved  : 8; // padding
-			};
-		} sides;
+			uint8_t _reserved : 2; // pading
+		};
+	} packed;
+};
 
-		union
+struct ESPConfig
+{
+	union
+	{
+		uint8_t raw = 0;
+
+		struct
 		{
-			uint32_t raw = (1u << 12); // thickness = 1
+			uint8_t enabled : 1;
+			uint8_t ignorecloaked : 1;
+			uint8_t buildings : 1;
+			uint8_t name : 1;
+			uint8_t box : 1;
+			uint8_t weapon : 1;
+			uint8_t class_name : 1;
 
-			struct
-			{
-				// max is 15 for each one
-				// 1111 = 15 [0-15] (1-16)
-				uint32_t box_rounding : 4;
-				uint32_t healthbar_rounding : 4;
-				uint32_t healthbar_margin : 4;
-				uint32_t healthbar_thickness : 4;
-				uint32_t gap : 4; // health bar gap
-				uint32_t text_padding : 4;
-				uint32_t _reserved : 8; // padding
-			};
-		} custom;
-	};
+			uint8_t _reserved : 1; // padding
+		};
+	} packed;
 
-	extern SettingsESP ESP;
-} // namespace Settings
-
-namespace Settings
-{
-	struct SettingsAimbot
+	union
 	{
-		bool enabled		= false;
-		float fov		= 0.0f;
-		Hotkey *key		= nullptr;
-		bool autoshoot		= false;
-		float max_sim_time	= 0.0f;
-		bool viewmodelaim	= false;
-		bool draw_fov_indicator = false;
-		bool ignorecloaked	= false;
-		bool ignoreubered	= false;
-		bool ignorehoovy	= false;
-		bool ignorebonked	= false;
-		bool waitforcharge	= false;
-		bool hold_minigun_spin	= false;
-		int mode		= 0;
-		int melee		= 0;
-		int teamMode		= 0;
-		float smoothness	= 0.0f;
-		int indicator		= 0;
-		bool path		= false;
-	};
+		uint8_t raw = 0;
 
-	extern SettingsAimbot Aimbot;
-} // namespace Settings
+		struct
+		{
+			uint8_t selected : 1; // arial or tf2 build
+			uint8_t size : 6;
 
-namespace Settings
-{
-	struct SettingsMisc
+			uint8_t _reserved : 1; // padding
+		};
+	} font;
+
+	union
 	{
-		bool thirdperson	    = false;
-		Hotkey *thirdperson_key	    = nullptr;
-		bool customfov_enabled	    = false;
-		float customfov		    = 90.0f;
-		float zoomedfov             = 20.0f;
-		bool spectatorlist	    = false;
-		bool backpack_expander	    = false;
-		bool sv_pure_bypass	    = false;
-		bool streamer_mode	    = false;
-		bool bhop		    = false;
-		bool autostrafe		    = false;
-		bool accept_item_drop	    = false;
-		bool playerlist		    = false;
-		bool norecoil		    = false;
-		float viewmodel_offset[3]   = {0, 0, 0};
-		float viewmodel_interp	    = 0.0f;
-		bool no_viewmodel_bob	    = false;
-		int backtrack		    = 0;
-		float thirdperson_offset[4] = {23.5, 11.5, 8.0f, 1.0f};
-		bool no_engine_sleep	    = false;
-		bool no_scope_overlay	    = false;
-		bool no_zoom		    = false;
-		bool antiafk		    = false;
-		bool infopanel		    = false;
-		bool spyalert		    = false;
-		float aspectratio	    = 0;
-		//bool no_survey = false;
-	};
+		uint8_t raw = 0;
 
-	extern SettingsMisc Misc;
-} // namespace Settings
+		struct
+		{
+			uint8_t zoomed : 1;
+			uint8_t bonked : 1;
+			uint8_t ubered : 1;
+			uint8_t jarated : 1;
 
-namespace Settings
-{
-	struct SettingsTriggerbot
+			uint8_t _reserved : 4; // padding
+		};
+	} conditions;
+
+	union
 	{
-		Hotkey *key	 = nullptr;
-		bool hitscan	 = false;
-		int autobackstab = 0;
-		int autoairblast = 0;
-		int autosticky	 = 0;
-	};
+		uint32_t raw = 0;
+		struct
+		{
+			uint32_t healthbar  : 3;
+			uint32_t weaponname : 3;
+			uint32_t classname  : 3;
+			uint32_t name       : 3;
+			uint32_t jarate     : 3;
+			uint32_t uber       : 3;
+			uint32_t bonk       : 3;
+			uint32_t zoom       : 3;
+			uint32_t _reserved  : 8; // padding
+		};
+	} sides;
 
-	extern SettingsTriggerbot Trigger;
-} // namespace Settings
-
-namespace Settings
-{
-	struct SettingsColors
+	union
 	{
-		Color red_team	    = {255, 0, 0, 255};
-		Color blu_team	    = {0, 255, 255, 255};
-		Color aimbot_target = {255, 255, 255, 255};
-		Color weapon	    = {255, 255, 255, 255};
-	};
+		uint32_t raw = (1u << 12); // thickness = 1
+		struct
+		{
+			// max is 15 for each one
+			// 1111 = 15 [0-15] (1-16)
+			uint32_t box_rounding : 4;
+			uint32_t healthbar_rounding : 4;
+			uint32_t healthbar_margin : 4;
+			uint32_t healthbar_thickness : 4;
+			uint32_t gap : 4; // health bar gap
+			uint32_t text_padding : 4;
 
-	extern SettingsColors Colors;
-} // namespace Settings
+			uint32_t _reserved : 8; // padding
+		};
+	} custom;
 
-namespace Settings
+	int health	   = 0;
+	int team_selection = 0;
+};
+
+struct ChamsConfig
 {
-	struct SettingsRadar
-	{
-		int size	 = 120;
-		int range	 = 3000;
-		int icon_size	 = 10;
-		bool enabled	 = false;
-		bool players	 = false;
-		bool buildings	 = false;
-		bool objective	 = false;
-		bool projectiles = false;
-	};
+	bool enabled = false;
+	std::vector<std::string> active_materials;
+};
 
-	extern SettingsRadar Radar;
-} // namespace Settings
+struct GlowConfig
+{
+	union
+	{
+		uint32_t raw = 0;
+
+		struct
+		{
+			uint32_t enabled : 1;
+			uint32_t stencil : 4;
+			uint32_t blur : 4;
+
+			uint32_t _reserved : 23; // padding
+		};
+	} packed;
+};
+
+struct AimbotConfig
+{
+	union
+	{
+		uint32_t raw = 0;
+
+		struct
+		{
+			uint32_t enabled : 1;
+			uint32_t autoshoot : 1;
+			uint32_t viewmodelaim : 1;
+			uint32_t draw_fov_indicator : 1;
+			uint32_t ignorecloaked : 1;
+			uint32_t ignoreubered : 1;
+			uint32_t ignorehoovy : 1;
+			uint32_t ignorebonked : 1;
+			uint32_t waitforcharge : 1;
+			uint32_t hold_minigun_spin : 1;
+
+			uint32_t proj_path : 1;
+
+			uint32_t aimmode : 3;
+			uint32_t meleemode : 2;
+			uint32_t teamselection : 2;
+			uint32_t proj_indicator : 2;
+
+			uint32_t _reserved : 12;
+		};
+	} packed;
+
+	float fov		= 0.0f;
+	float max_sim_time	= 0.0f;
+	float smoothness	= 0.0f;
+	Hotkey *key		= nullptr;
+};
+
+struct MiscConfig
+{
+	union
+	{
+		uint32_t raw = 0;
+
+		struct
+		{
+			uint32_t thirdperson : 1;
+			uint32_t customfov_enabled : 1;
+			uint32_t spectatorlist : 1;
+			uint32_t backpack_expander : 1;
+			uint32_t sv_pure_bypass : 1;
+			uint32_t streamer_mode : 1;
+			uint32_t bhop : 1;
+			uint32_t autostrafe : 1;
+			uint32_t accept_item_drop : 1;
+			uint32_t playerlist : 1;
+			uint32_t norecoil : 1;
+			uint32_t no_viewmodel_bob : 1;
+
+			uint32_t no_engine_sleep : 1;
+			uint32_t no_scope_overlay : 1;
+			uint32_t no_zoom : 1;
+			uint32_t antiafk : 1;
+			uint32_t infopanel : 1;
+			uint32_t spyalert : 1;
+
+			uint32_t _reserved : 14; // padding
+		};
+	} packed;
+
+	Hotkey *thirdperson_key	    = nullptr;
+	float customfov		    = 90.0f;
+	float zoomedfov             = 20.0f;
+	float viewmodel_offset[3]   = {0, 0, 0};
+	float viewmodel_interp	    = 0.0f;
+	float thirdperson_offset[3] = {23.5, 11.5, 8.0f};
+	float aspectratio	    = 0;
+};
+
+struct TriggerConfig
+{
+	Hotkey *key	 = nullptr;
+
+	union
+	{
+		uint32_t raw = 0;
+
+		struct
+		{
+			uint32_t hitscan : 1;
+			uint32_t autobackstab : 2;
+			uint32_t autoairblast : 2;
+		};
+	} packed;
+};
+
+struct ColorsConfig
+{
+	Color red_team	    = {255, 0, 0, 255};
+	Color blu_team	    = {0, 255, 255, 255};
+	Color aimbot_target = {255, 255, 255, 255};
+	Color weapon	    = {255, 255, 255, 255};
+};
+
+struct RadarConfig
+{
+	union
+	{
+		uint32_t raw = 0;
+
+		struct
+		{
+			uint32_t enabled : 1;
+			uint32_t players : 1;
+			uint32_t buildings : 1;
+			uint32_t objective : 1;
+			uint32_t projectiles : 1;
+
+			uint32_t size : 9;
+			uint32_t range : 12;
+			uint32_t icon_size : 4;
+
+			uint32_t _reserved : 2; // padding
+		};
+	} packed;
+};
+
+struct BacktrackConfig
+{
+	union
+	{
+		uint8_t raw = 0;
+
+		struct
+		{
+			uint8_t enabled : 1;
+			uint8_t draw_mode : 2;
+		};
+	} packed;
+
+	std::vector<std::string> active_materials;
+};
+
+struct Configuration
+{
+	ESPConfig esp;
+	ChamsConfig chams;
+	GlowConfig glow;
+	AimbotConfig aimbot;
+	MiscConfig misc;
+	TriggerConfig trigger;
+	ColorsConfig colors;
+	RadarConfig radar;
+	WarpConfig warp;
+	BacktrackConfig backtrack;
+};
 
 #define CONFIG_INT(name, var)                                                                                          \
 	{name,                                                                                                         \
@@ -359,156 +451,154 @@ namespace Settings
 
 #define CONFIG_FLOAT4(name, var) CONFIG_FLOAT3(name, var), CONFIG_FLOAT(name, var[3])
 
+#define CONFIG_STRING_VECTOR(name, var)                                                                                \
+        {name,                                                                                                         \
+         SettingType::STRING,                                                                                          \
+         [](std::ofstream &f) {                                                                                        \
+                 for (size_t i = 0; i < (var).size(); ++i) {                                                           \
+                         f << (var)[i] << (i + 1 == (var).size() ? "" : ",");                                          \
+                 }                                                                                                     \
+         },                                                                                                            \
+         [](const std::string &v) {                                                                                    \
+                 (var).clear();                                                                                        \
+                 std::stringstream ss(v);                                                                              \
+                 std::string item;                                                                                     \
+                 while (std::getline(ss, item, ',')) {                                                                 \
+                         if (!item.empty()) (var).push_back(item);                                                     \
+                 }                                                                                                     \
+         },                                                                                                            \
+         []() {                                                                                                        \
+                 std::string res;                                                                                      \
+                 for (size_t i = 0; i < (var).size(); ++i) {                                                           \
+                         res += (var)[i] + (i + 1 == (var).size() ? "" : ",");                                         \
+                 }                                                                                                     \
+                 return res;                                                                                           \
+         },                                                                                                            \
+         [](const std::string &v) {                                                                                    \
+                 (var).clear();                                                                                        \
+                 std::stringstream ss(v);                                                                              \
+                 std::string item;                                                                                     \
+                 while (std::getline(ss, item, ',')) {                                                                 \
+                         if (!item.empty()) (var).push_back(item);                                                     \
+                 }                                                                                                     \
+         }}
+
+inline Configuration Config;
+
 namespace Settings
 {
 	extern bool menu_open;
-	inline SettingEntry m_entries[]{
-	    // aimbot
-	    CONFIG_FLOAT("aimbot fov", Aimbot.fov),
-	    CONFIG_BOOL("aimbot autoshot", Aimbot.autoshoot),
-	    CONFIG_FLOAT("aimbot max sim time", Aimbot.max_sim_time),
-	    CONFIG_BOOL("aimbot viewmodel aim", Aimbot.viewmodelaim),
-	    CONFIG_BOOL("aimbot draw fov indicator", Aimbot.draw_fov_indicator),
-	    CONFIG_BOOL("aimbot ignore cloaked", Aimbot.ignorecloaked),
-	    CONFIG_BOOL("aimbot ignore ubered", Aimbot.ignoreubered),
-	    CONFIG_BOOL("aimbot ignore hoovy", Aimbot.ignorehoovy),
-	    CONFIG_BOOL("aimbot ignore bonked", Aimbot.ignorebonked),
-	    CONFIG_INT("aimbot melee", Aimbot.melee),
-	    CONFIG_BOOL("aimbot wait for charge", Aimbot.waitforcharge),
-	    CONFIG_INT("aimbot mode", Aimbot.mode),
-	    CONFIG_FLOAT("aimbot smoothness", Aimbot.smoothness),
-	    CONFIG_INT("aimbot team mode", Aimbot.teamMode),
-	    CONFIG_BOOL("aimbot hold minigun spin", Aimbot.hold_minigun_spin),
-	    CONFIG_BOOL("aimbot indicator", Aimbot.indicator),
-	    CONFIG_KEY("aimbot key", Aimbot.key),
-	    CONFIG_INT("aimbot path", Aimbot.path),
-	    CONFIG_INT("aimbot indicator", Aimbot.indicator),
+	inline SettingEntry m_entries[]
+	{
+		// aimbot
+		CONFIG_BOOL("aimbot enabled", Config.aimbot.packed.enabled),
+		CONFIG_FLOAT("aimbot fov", Config.aimbot.fov),
+		CONFIG_BOOL("aimbot autoshot", Config.aimbot.packed.autoshoot),
+		CONFIG_FLOAT("aimbot max sim time", Config.aimbot.max_sim_time),
+		CONFIG_BOOL("aimbot viewmodel aim", Config.aimbot.packed.viewmodelaim),
+		CONFIG_BOOL("aimbot draw fov indicator", Config.aimbot.packed.draw_fov_indicator),
+		CONFIG_BOOL("aimbot ignore cloaked", Config.aimbot.packed.ignorecloaked),
+		CONFIG_BOOL("aimbot ignore ubered", Config.aimbot.packed.ignoreubered),
+		CONFIG_BOOL("aimbot ignore hoovy", Config.aimbot.packed.ignorehoovy),
+		CONFIG_BOOL("aimbot ignore bonked", Config.aimbot.packed.ignorebonked),
+		CONFIG_INT("aimbot melee", Config.aimbot.packed.meleemode),
+		CONFIG_BOOL("aimbot wait for charge", Config.aimbot.packed.waitforcharge),
+		CONFIG_INT("aimbot mode", Config.aimbot.packed.aimmode),
+		CONFIG_FLOAT("aimbot smoothness", Config.aimbot.smoothness),
+		CONFIG_INT("aimbot team mode", Config.aimbot.packed.teamselection),
+		CONFIG_BOOL("aimbot hold minigun spin", Config.aimbot.packed.hold_minigun_spin),
+		CONFIG_BOOL("aimbot indicator", Config.aimbot.packed.proj_indicator),
+		CONFIG_KEY("aimbot key", Config.aimbot.key),
+		CONFIG_INT("aimbot path", Config.aimbot.packed.proj_path),
 
-	    // esp
-	    CONFIG_BOOL("esp enabled", ESP.enabled),
-	    CONFIG_BOOL("esp ignore cloaked", ESP.ignorecloaked),
-	    CONFIG_BOOL("esp buildings", ESP.buildings),
-	    CONFIG_BOOL("esp name", ESP.name),
-	    CONFIG_BOOL("esp box", ESP.box),
-	    CONFIG_INT("esp health", ESP.health),
-	    CONFIG_BOOL("esp chams", ESP.chams),
-	    CONFIG_INT("esp stencil", ESP.stencil),
-	    CONFIG_INT("esp blur", ESP.blur),
-	    CONFIG_BOOL("esp weapon", ESP.weapon),
-	    CONFIG_INT("esp conditions", ESP.fconditions),
-	    CONFIG_INT("esp team", ESP.team_selection),
-	    CONFIG_INT("esp font", ESP.font),
-	    CONFIG_INT("esp font size", ESP.font_size),
-	    CONFIG_BOOL("esp class", ESP.class_name),
-	    CONFIG_INT("esp fsides", ESP.sides.raw),
-	    CONFIG_INT("esp custom", ESP.custom.raw),
+		// esp
+		CONFIG_BOOL("esp enabled", Config.esp.packed.enabled),
+		CONFIG_BOOL("esp ignore cloaked", Config.esp.packed.ignorecloaked),
+		CONFIG_BOOL("esp buildings", Config.esp.packed.buildings),
+		CONFIG_BOOL("esp name", Config.esp.packed.name),
+		CONFIG_BOOL("esp box", Config.esp.packed.box),
+		CONFIG_INT("esp health", Config.esp.health),
+		CONFIG_BOOL("esp weapon", Config.esp.packed.weapon),
+		CONFIG_INT("esp conditions", Config.esp.conditions.raw),
+		CONFIG_INT("esp team", Config.esp.team_selection),
+		CONFIG_INT("esp font", Config.esp.font.selected),
+		CONFIG_INT("esp font size", Config.esp.font.size),
+		CONFIG_BOOL("esp class", Config.esp.packed.class_name),
+		CONFIG_INT("esp fsides", Config.esp.sides.raw),
+		CONFIG_INT("esp custom", Config.esp.custom.raw),
 
-	    // misc
-	    CONFIG_KEY("misc thirdperson key", Misc.thirdperson_key),
-	    CONFIG_FLOAT3("misc thirdperson offset", Misc.thirdperson_offset),
-	    CONFIG_BOOL("misc customfov enabled", Misc.customfov_enabled),
-	    CONFIG_FLOAT("misc customfov", Misc.customfov),
-	    CONFIG_FLOAT("misc customfov zoom", Misc.zoomedfov),
-	    CONFIG_BOOL("misc spectatorlist", Misc.spectatorlist),
-	    CONFIG_BOOL("misc backpack_expander", Misc.backpack_expander),
-	    CONFIG_BOOL("misc sv pure bypass", Misc.sv_pure_bypass),
-	    CONFIG_BOOL("misc streamer mode", Misc.streamer_mode),
-	    CONFIG_BOOL("misc bhop", Misc.bhop),
-	    CONFIG_BOOL("misc autostrafe", Misc.autostrafe),
-	    CONFIG_BOOL("misc accept item drop", Misc.accept_item_drop),
-	    CONFIG_BOOL("misc playerlist", Misc.playerlist),
-	    CONFIG_FLOAT3("misc viewmodel offset", Misc.viewmodel_offset),
-	    CONFIG_FLOAT("misc viewmodel interp", Misc.viewmodel_interp),
-	    CONFIG_BOOL("misc no recoil", Misc.norecoil),
-	    CONFIG_INT("misc backtrack", Misc.backtrack),
-	    CONFIG_BOOL("misc no engine sleep", Misc.no_engine_sleep),
-	    CONFIG_BOOL("misc no scope overlay", Misc.no_scope_overlay),
-	    CONFIG_BOOL("misc no zoom", Misc.no_zoom),
-	    CONFIG_BOOL("misc no viewmodel bob", Misc.no_viewmodel_bob),
-	    CONFIG_BOOL("misc antiafk", Misc.antiafk),
-	    CONFIG_BOOL("misc info panel", Misc.infopanel),
-	    CONFIG_BOOL("misc spy alert", Misc.spyalert),
-	    CONFIG_FLOAT("misc aspect ratio", Misc.aspectratio),
-	    //CONFIG_BOOL("no survey", Misc.no_survey),
+		// glow
+		CONFIG_BOOL("glow enabled", Config.glow.packed.enabled),
+		CONFIG_INT("glow stencil", Config.glow.packed.stencil),
+		CONFIG_INT("glow blur", Config.glow.packed.blur),
 
-	    //triggerbot
-	    CONFIG_KEY("trigger key", Trigger.key),
-	    CONFIG_BOOL("trigger hitscan", Trigger.hitscan),
-	    CONFIG_INT("trigger autobackstab", Trigger.autobackstab),
-	    CONFIG_INT("trigger autoairblast", Trigger.autoairblast),
+		// misc
+		CONFIG_BOOL("misc thirdperson", Config.misc.packed.thirdperson),
+		CONFIG_KEY("misc thirdperson key", Config.misc.thirdperson_key),
+		CONFIG_FLOAT3("misc thirdperson offset", Config.misc.thirdperson_offset),
+		CONFIG_BOOL("misc customfov enabled", Config.misc.packed.customfov_enabled),
+		CONFIG_FLOAT("misc customfov", Config.misc.customfov),
+		CONFIG_FLOAT("misc customfov zoom", Config.misc.zoomedfov),
+		CONFIG_BOOL("misc spectatorlist", Config.misc.packed.spectatorlist),
+		CONFIG_BOOL("misc backpack_expander", Config.misc.packed.backpack_expander),
+		CONFIG_BOOL("misc sv pure bypass", Config.misc.packed.sv_pure_bypass),
+		CONFIG_BOOL("misc streamer mode", Config.misc.packed.streamer_mode),
+		CONFIG_BOOL("misc bhop", Config.misc.packed.bhop),
+		CONFIG_BOOL("misc autostrafe", Config.misc.packed.autostrafe),
+		CONFIG_BOOL("misc accept item drop", Config.misc.packed.accept_item_drop),
+		CONFIG_BOOL("misc playerlist", Config.misc.packed.playerlist),
+		CONFIG_FLOAT3("misc viewmodel offset", Config.misc.viewmodel_offset),
+		CONFIG_FLOAT("misc viewmodel interp", Config.misc.viewmodel_interp),
+		CONFIG_BOOL("misc no recoil", Config.misc.packed.norecoil),
+		CONFIG_BOOL("misc no engine sleep", Config.misc.packed.no_engine_sleep),
+		CONFIG_BOOL("misc no scope overlay", Config.misc.packed.no_scope_overlay),
+		CONFIG_BOOL("misc no zoom", Config.misc.packed.no_zoom),
+		CONFIG_BOOL("misc no viewmodel bob", Config.misc.packed.no_viewmodel_bob),
+		CONFIG_BOOL("misc antiafk", Config.misc.packed.antiafk),
+		CONFIG_BOOL("misc info panel", Config.misc.packed.infopanel),
+		CONFIG_BOOL("misc spy alert", Config.misc.packed.spyalert),
+		CONFIG_FLOAT("misc aspect ratio", Config.misc.aspectratio),
 
-	    // colors
-	    CONFIG_FLOAT4("colors red team", Colors.red_team),
-	    CONFIG_FLOAT4("colors blu team", Colors.blu_team),
-	    CONFIG_FLOAT4("colors aimbot target", Colors.aimbot_target),
-	    CONFIG_FLOAT4("colors weapon", Colors.weapon),
+		//triggerbot
+		CONFIG_KEY("trigger key", Config.trigger.key),
+		CONFIG_BOOL("trigger hitscan", Config.trigger.packed.hitscan),
+		CONFIG_INT("trigger autobackstab", Config.trigger.packed.autobackstab),
+		CONFIG_INT("trigger autoairblast", Config.trigger.packed.autoairblast),
 
-	    // antiaim
-	    CONFIG_BOOL("antiaim enabled", AntiAim.enabled),
-	    CONFIG_INT("antiaim pitch mode", AntiAim.pitch_mode),
-	    CONFIG_INT("antiaim real yaw mode", AntiAim.real_yaw_mode),
-	    CONFIG_INT("antiaim fake yaw mode", AntiAim.fake_yaw_mode),
-	    CONFIG_FLOAT("antiaim spin speed", AntiAim.spin_speed),
+		// colors
+		CONFIG_FLOAT4("colors red team", Config.colors.red_team),
+		CONFIG_FLOAT4("colors blu team", Config.colors.blu_team),
+		CONFIG_FLOAT4("colors aimbot target", Config.colors.aimbot_target),
+		CONFIG_FLOAT4("colors weapon", Config.colors.weapon),
 
-	    // warp
-	    CONFIG_BOOL("warp enabled", AntiAim.warp_enabled),
-	    CONFIG_INT("warp speed", AntiAim.warp_speed),
-	    CONFIG_KEY("warp key", AntiAim.warp_key),
-	    CONFIG_KEY("warp recharge key", AntiAim.warp_recharge_key),
+		// warp
+		CONFIG_BOOL("warp enabled", Config.warp.packed.enabled),
+		CONFIG_INT("warp speed", Config.warp.packed.speed),
+		CONFIG_KEY("warp key", Config.warp.key),
+		CONFIG_KEY("warp recharge key", Config.warp.recharge_key),
 
-	    // fakelag
-	    CONFIG_BOOL("fakelag enabled", AntiAim.fakelag_enabled),
-	    CONFIG_INT("fakelag ticks", AntiAim.fakelag_ticks),
+		// radar
+		CONFIG_BOOL("radar enabled", Config.radar.packed.enabled),
+		CONFIG_INT("radar size", Config.radar.packed.size),
+		CONFIG_INT("radar range", Config.radar.packed.range),
+		CONFIG_BOOL("radar players", Config.radar.packed.players),
+		CONFIG_BOOL("radar buildings", Config.radar.packed.buildings),
+		CONFIG_BOOL("radar objective", Config.radar.packed.objective),
+		CONFIG_BOOL("radar projectiles", Config.radar.packed.projectiles),
+		CONFIG_INT("radar icon size", Config.radar.packed.icon_size),
 
-	    // radar
-	    CONFIG_BOOL("radar enabled", Radar.enabled),
-	    CONFIG_INT("radar size", Radar.size),
-	    CONFIG_INT("radar range", Radar.range),
-	    CONFIG_BOOL("radar players", Radar.players),
-	    CONFIG_BOOL("radar buildings", Radar.buildings),
-	    CONFIG_BOOL("radar objective", Radar.objective),
-	    CONFIG_BOOL("radar projectiles", Radar.projectiles),
-	    CONFIG_INT("radar icon size", Radar.icon_size),
+		// chams
+		CONFIG_BOOL("chams enabled", Config.chams.enabled),
+		CONFIG_STRING_VECTOR("chams materials", Config.chams.active_materials),
+
+		// backtrack
+		CONFIG_BOOL("backtrack enabled", Config.backtrack.packed.enabled),
+		CONFIG_INT("backtrack draw mode", Config.backtrack.packed.draw_mode),
+		CONFIG_STRING_VECTOR("backtrack materials", Config.backtrack.active_materials),
 	};
 
 	int Save(const std::string &fullPath);
 	int Load(const std::string &fullPath);
-
-	template <typename T> bool GetSetting(const std::string &key, T &out)
-	{
-		for (const auto &entry : m_entries)
-		{
-			if (entry.name != key)
-				continue;
-
-			std::stringstream ss(entry.get());
-			ss >> out;
-			return true;
-		}
-
-		return false;
-	}
-
-	template <typename T> bool SetSetting(const std::string &key, const T &value)
-	{
-		for (auto &entry : m_entries)
-		{
-			if (entry.name != key)
-				continue;
-
-			// this is next level stupid
-			// why do i have to do this?
-			// why the fuck std::to_string can't handle a fucking string?
-			// fuck you C++
-			if constexpr (std::is_same_v<T, std::string>)
-				entry.set(value);
-			else
-				entry.set(std::to_string(value));
-			return true;
-		}
-
-		return false;
-	}
 }; // namespace Settings
 
 #undef CONFIG_INT

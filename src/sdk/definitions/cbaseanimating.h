@@ -4,6 +4,10 @@
 #include "../netvars/netvar.h"
 #include "cbasehandle.h"
 #include "studio.h"
+#include "../signatures/signatures.h"
+#include "../../mem.h"
+
+ADD_SIG(C_BaseAnimating_InvalidadeBoneCaches, "client.so", "48 83 05 ? ? ? ? 01 C3");
 
 class CBaseAnimating : public CBaseEntity
 {
@@ -29,6 +33,7 @@ class CBaseAnimating : public CBaseEntity
 	NETVAR(m_fadeMinDist, "CBaseAnimating->m_fadeMinDist", float)
 	NETVAR(m_fadeMaxDist, "CBaseAnimating->m_fadeMaxDist", float)
 	NETVAR(m_flFadeScale, "CBaseAnimating->m_flFadeScale", float)
+
 	inline std::array<float, 24> &m_flPoseParameter()
 	{
 		static int nOffset = Netvars::m_netvarMap[fnv::HashConst("CBaseAnimating->m_flPoseParameter")];
@@ -55,6 +60,57 @@ class CBaseAnimating : public CBaseEntity
 
 		Math::VectorTransform((box->bbmax + box->bbmin) * 0.5f, bones[box->bone], outPos);
 		return true;
+	}
+
+	/*
+	This comments is for the next 3 functions below
+	All of them are from C_BaseAnimating::SetupBones
+	*/
+
+	inline int* m_iMostRecentModelBoneCounter()
+	{
+		/*
+		if ((DAT_02ecab91 != '\0') &&
+		(*(int *)(this + 0x10b) = (int)this[0x10b] + -1, (int)this[0x10b] == 0)) {
+			LOCK();
+			*plVar2 = 0;
+			UNLOCK();
+		}
+======>			if (this[0x104] != g_iModelBoneCounter) {
+
+		0x104 * 8 = 0x820 or 2080
+		*/
+
+		uintptr_t self = uintptr_t(this);
+		int* val = reinterpret_cast<int*>(self + 0x820);
+		return val;
+	}
+
+	inline float* m_flLastBoneSetupTime()
+	{
+		/*
+		if (this[0x104] != g_iModelBoneCounter) {
+    			fVar19 = (float)(**(code **)(*this + 0x878))(this);
+==>    			if (*(float *)(this + 0x174) <= fVar19) {
+
+		0x174 * 8 = 0xBA0 or 2976
+		*/
+		uintptr_t self = uintptr_t(this);
+		float* val = reinterpret_cast<float*>(self + 0xBA0);
+		return val;
+	}
+
+	inline uint64_t& GetGlobalModelBoneCounter()
+	{
+		static void* addInstr = Sigs::C_BaseAnimating_InvalidadeBoneCaches.GetPointer();
+		uintptr_t g_iModelBoneCounter = RelToAbs(uintptr_t(addInstr), 3, 8);
+		return *reinterpret_cast<uint64_t*>(g_iModelBoneCounter);
+	}
+
+	inline void InvalidateBoneCache()
+	{
+		*m_iMostRecentModelBoneCounter() = GetGlobalModelBoneCounter() - 1;
+		*m_flLastBoneSetupTime() = -FLT_MAX;
 	}
 };
 

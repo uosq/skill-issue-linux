@@ -30,3 +30,11 @@ class IClientEntityList
 	virtual void SetMaxEntities(int maxents) = 0;
 	virtual int GetMaxEntities()		 = 0;
 };
+
+class IClientEntityListener
+{
+public:
+	virtual void OnEntityCreated( CBaseEntity *pEntity ) {};
+	//virtual void OnEntitySpawned( C_BaseEntity *pEntity ) {};
+	virtual void OnEntityDeleted( CBaseEntity *pEntity ) {};
+};

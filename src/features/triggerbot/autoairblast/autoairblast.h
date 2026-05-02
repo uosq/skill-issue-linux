@@ -18,5 +18,4 @@ namespace AutoAirblast
 
 	void Run(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCmd, bool *pSendPacket);
 	bool CanAirblastHit(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CBaseEntity *pTarget, Vector &vecForward);
-	std::string GetModeName();
 }; // namespace AutoAirblast

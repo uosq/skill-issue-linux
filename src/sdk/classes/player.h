@@ -100,6 +100,8 @@ class CTFPlayer : public CBaseCombatCharacter
 	NETVAR(m_vecBaseVelocity, "CBasePlayer->m_vecBaseVelocity", Vector)
 	NETVAR(m_bAllowAutoMovement, "CBasePlayer->m_bAllowAutoMovement", bool)
 
+	NETVAR_OFFSET(m_iEFlags, "CTFPlayer->m_nWaterLevel", int, -8)
+
 	bool IsAlive();
 	bool InCond(ETFCond cond);
 	Vector GetCenter();
@@ -115,4 +117,8 @@ class CTFPlayer : public CBaseCombatCharacter
 	void ThirdPersonSwitch(bool state);
 	CBaseEntity *GetEntityFromLoadoutSlot(int slot);
 	int GetUserID();
+	std::string GetSteamID();
+	uint32_t GetSteamID3();
+
+	//void SetAbsOrigin();
 };

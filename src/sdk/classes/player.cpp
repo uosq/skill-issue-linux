@@ -3,6 +3,7 @@
 #include "weaponbase.h"
 
 #include "../signatures/signatures.h"
+#include "../../features/logs/logs.h"
 
 /*
 xref: item_eater_recharger
@@ -19,6 +20,8 @@ Above the dynamic cast to grappling hook
       plVar6 = (long *)FUN_01de8230(plVar6,9,0);
 */
 ADD_SIG(GetEntityForLoadoutSlot, "client.so", "55 8D 46 F9 48 89 E5")
+ADD_SIG(CBaseAnimating_UpdateClientSideAnimation, "client.so", "80 BF D0 0A 00 00 00 75")
+ADD_SIG(CTFPlayer_GetEffectiveInvisibility, "client.so", "55 48 89 E5 41 56 41 55 4C 8D AF 78 1E 00 00 41 54 49 89 FC 4C 89 EF 53 E8")
 
 bool CTFPlayer::IsAlive()
 {
@@ -87,11 +90,10 @@ std::string CTFPlayer::GetName()
 
 void CTFPlayer::UpdateClientSideAnimation()
 {
-	using C_BaseAnimating_UpdateClientSideAnimationFn = void (*)(void *);
-	static auto orig =
-	    (C_BaseAnimating_UpdateClientSideAnimationFn)sigscan_module("client.so", "80 BF D0 0A 00 00 00 75");
-	if (!orig)
-		return;
+	using UpdateClientSideAnimationFn = void (*)(void *);
+
+	static auto orig = (UpdateClientSideAnimationFn)Sigs::CBaseAnimating_UpdateClientSideAnimation.GetPointer();
+	if (!orig) return Logs::Error("UpdateClientSideAnimation is null");
 
 	orig(this);
 }
@@ -135,7 +137,10 @@ float CTFPlayer::GetEffectiveInvisibilityLevel()
 {
 	// xref: taunt_attr_player_invis_percent
 	using GetEffectiveInvisibilityLevelFn = float (*)(void *thisptr);
-	static auto orig = reinterpret_cast<GetEffectiveInvisibilityLevelFn>(sigscan_module("client.so", "55 48 89 E5 41 56 41 55 4C 8D AF 78 1E 00 00 41 54 49 89 FC 4C 89 EF 53 E8"));
+
+	static auto orig =
+	reinterpret_cast<GetEffectiveInvisibilityLevelFn>
+	(Sigs::CTFPlayer_GetEffectiveInvisibility.GetPointer());
 
 	if (orig == nullptr)
 		return -1;
@@ -221,4 +226,24 @@ int CTFPlayer::GetUserID()
 		return -1;
 
 	return pi.userID;
+}
+
+std::string CTFPlayer::GetSteamID()
+{
+	player_info_t pi;
+
+	if (!interfaces::Engine->GetPlayerInfo(entindex(), &pi))
+		return "";
+
+	return pi.guid;
+}
+
+uint32_t CTFPlayer::GetSteamID3()
+{
+	player_info_t pi;
+
+	if (!interfaces::Engine->GetPlayerInfo(entindex(), &pi))
+		return 0;
+
+	return pi.friendsID;
 }

@@ -93,7 +93,7 @@ bool CAimbotProjectile::CheckTrajectory(CBaseEntity *pTarget, const Vector vecSt
 
 	float flClock	= 0.0f;
 	float flDt	= interfaces::GlobalVars->interval_per_tick;
-	float flMaxTime = Settings::Aimbot.max_sim_time;
+	float flMaxTime = Config.aimbot.max_sim_time;
 
 	while (flClock < flMaxTime)
 	{
@@ -352,7 +352,7 @@ std::vector<PotentialTarget> CAimbotProjectile::GetBestTargets(CTFPlayer *pLocal
 	Vector vecViewAngles;
 	interfaces::Engine->GetViewAngles(vecViewAngles);
 
-	bool bNoFovLimit = Settings::Aimbot.fov >= 180.0f;
+	bool bNoFovLimit = Config.aimbot.fov >= 180.0f;
 
 	for (const auto &targetEntry : vTargets)
 	{
@@ -397,12 +397,12 @@ void CAimbotProjectile::RunMain(CTFPlayer *pLocal, CTFWeaponBase *pWeapon)
 	}
 	#endif
 
-	if (!Settings::Aimbot.key->IsEnabled())
+	if (!Config.aimbot.key->IsEnabled())
 		return;
 
-	bool bVisualsEnabled = Settings::Aimbot.path || Settings::Aimbot.indicator;
+	bool bVisualsEnabled = Config.aimbot.packed.proj_path || Config.aimbot.packed.proj_indicator;
 
-	if (!bVisualsEnabled && !Settings::Aimbot.key->IsActive())
+	if (!bVisualsEnabled && !Config.aimbot.key->IsActive())
 		return;
 
 	static ConVar *sv_gravity = interfaces::Cvar->FindVar("sv_gravity");
@@ -438,7 +438,7 @@ void CAimbotProjectile::RunMain(CTFPlayer *pLocal, CTFWeaponBase *pWeapon)
 			continue;
 
 		float flTime = target.distance / prjInfo.speed;
-		if (flTime > Settings::Aimbot.max_sim_time)
+		if (flTime > Config.aimbot.max_sim_time)
 			continue;
 
 		flTime += flPrimeTime;
@@ -534,13 +534,13 @@ void CAimbotProjectile::RunMain(CTFPlayer *pLocal, CTFWeaponBase *pWeapon)
 
 void CAimbotProjectile::RunAim(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCmd, AimbotState &pState)
 {
-	if (!Settings::Aimbot.key->IsActive())
+	if (!Config.aimbot.key->IsActive())
 		return;
 
 	if (m_pTarget == nullptr || m_vecPath.empty())
 		return;
 
-	if (Settings::Aimbot.autoshoot)
+	if (Config.aimbot.packed.autoshoot)
 	{
 		if (IsRightAttack(pWeapon))
 			pCmd->buttons |= IN_ATTACK2;
@@ -585,7 +585,7 @@ void CAimbotProjectile::RunAim(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserC
 
 		pCmd->viewangles  = m_vecAimAngle;
 
-		AimbotMode mode	  = static_cast<AimbotMode>(Settings::Aimbot.mode);
+		AimbotMode mode	  = static_cast<AimbotMode>(Config.aimbot.packed.aimmode);
 
 		if (mode == AimbotMode::SILENT && !IsRightAttack(pWeapon))
 			pState.shouldSilent = true;
@@ -603,13 +603,13 @@ void CAimbotProjectile::ResetIndicator()
 
 void CAimbotProjectile::RunIndicator(ImDrawList* pDraw)
 {
-	if (!Settings::Aimbot.key->IsEnabled())
+	if (!Config.aimbot.key->IsEnabled())
 		return;
 
 	if (interfaces::Engine->IsTakingScreenshot())
 		return ResetIndicator();
 
-	if (Settings::Aimbot.indicator == static_cast<int>(AimbotIndicatorStyle::NONE))
+	if (Config.aimbot.packed.proj_indicator == static_cast<int>(AimbotIndicatorStyle::NONE))
 		return ResetIndicator();
 
 	CTFPlayer *pLocal = EntityList::GetLocal();
@@ -636,7 +636,7 @@ void CAimbotProjectile::RunIndicator(ImDrawList* pDraw)
 	{
 		constexpr int iSIZE = 5;
 
-		switch (static_cast<AimbotIndicatorStyle>(Settings::Aimbot.indicator))
+		switch (static_cast<AimbotIndicatorStyle>(Config.aimbot.packed.proj_indicator))
 		{
 		case AimbotIndicatorStyle::NONE:
 			break;
@@ -675,7 +675,7 @@ float CAimbotProjectile::GetAimDrop(float flGravity, float flTimeSeconds)
 
 void CAimbotProjectile::RunPath(ImDrawList* pDraw)
 {
-	if (!Settings::Aimbot.path || m_pTarget == nullptr || m_vecPath.empty())
+	if (!Config.aimbot.packed.proj_path || m_pTarget == nullptr || m_vecPath.empty())
 		return;
 
 	DrawPath(pDraw, m_vecPath);

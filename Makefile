@@ -5,6 +5,7 @@ CC_C = gcc
 MAKEFLAGS := --jobs=$(shell nproc)
 
 DEBUG_EXT = .debug
+DEBUG ?= 0
 
 # Detect AVX2 support
 HAS_AVX2 := $(shell grep -q avx2 /proc/cpuinfo && echo 1 || echo 0)
@@ -26,9 +27,15 @@ BIN_V3 = build/x86-64-v3/libvapo.so
 BIN_COMPAT = build/x86-64/libvapo.so
 BIN ?= $(BUILD_DIR)/libvapo.so
 
+ifeq ($(DEBUG), 1)
+	OPT = -O0 -fno-omit-frame-pointer -fasynchronous-unwind-tables
+else
+	OPT = -O2
+endif
+
 # Compiler flags
-CFLAGS = -march=$(MARCH) -shared -std=c++17 -O2 -fPIC -Werror -g
-CFLAGS_C = -march=$(MARCH) -O2 -fPIC -Werror -g
+CFLAGS = -march=$(MARCH) -shared -std=c++17 $(OPT) -fPIC -Werror -g -rdynamic
+CFLAGS_C = -march=$(MARCH) $(OPT) -fPIC -Werror -g -rdynamic
 
 # Linker flags
 LDFLAGS = -lSDL2 -lvulkan -lm -ldl
@@ -50,10 +57,10 @@ OBJS = $(OBJ_CPP) $(OBJ_C)
 all: $(BIN)
 
 v3:
-	$(MAKE) MARCH=x86-64-v3 BIN=$(BIN_V3)
+	$(MAKE) MARCH=x86-64-v3 BIN=$(BIN_V3) DEBUG=$(DEBUG)
 
 compat:
-	$(MAKE) MARCH=x86-64 BIN=$(BIN_COMPAT)
+	$(MAKE) MARCH=x86-64 BIN=$(BIN_COMPAT) DEBUG=$(DEBUG)
 
 clean:
 	rm -rf obj
@@ -65,6 +72,7 @@ $(BIN): $(OBJS)
 	@mkdir -p $(dir $@)
 	$(CC_CPP) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
+ifneq ($(DEBUG), 1)
 	# Create debug symbols
 	objcopy --compress-debug-sections=zlib --only-keep-debug $@ $@$(DEBUG_EXT)
 
@@ -73,6 +81,7 @@ $(BIN): $(OBJS)
 
 	# Attach debug symbols
 	objcopy --add-gnu-debuglink=$@$(DEBUG_EXT) $@
+endif
 
 # C++ compilation
 $(OBJ_DIR)/%.cpp.o: %.cpp

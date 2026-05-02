@@ -68,9 +68,9 @@ namespace Glow
 			int passes     = 0;
 			while (moveChild != nullptr && passes <= 32)
 			{
-				if (Settings::ESP.weapon && static_cast<CBaseEntity *>(moveChild)->IsWeapon())
+				if (Config.esp.packed.weapon && static_cast<CBaseEntity *>(moveChild)->IsWeapon())
 				{
-					color = Settings::Colors.weapon;
+					color = Config.colors.weapon;
 					// this is fucking stupid
 					// why is a array not assignable?
 					mod[0] = color.r() / 255.0f;
@@ -121,12 +121,16 @@ namespace Glow
 	void Run()
 	{
 		m_bRunning = false;
+
 		if (!m_Entities.empty())
 			m_Entities.clear();
 		if (!glowEnts.empty())
 			glowEnts.clear();
 
-		if (Settings::ESP.blur == 0 && Settings::ESP.stencil == 0)
+		if (!Config.glow.packed.enabled)
+			return;
+
+		if (Config.glow.packed.blur == 0 && Config.glow.packed.stencil == 0)
 			return;
 
 		if (interfaces::Engine->IsTakingScreenshot())
@@ -187,12 +191,12 @@ namespace Glow
 		}
 
 		// blur pass
-		if (Settings::ESP.blur > 0)
+		if (Config.glow.packed.blur > 0)
 		{
 			pRenderContext->PushRenderTargetAndViewport();
 			pRenderContext->Viewport(0, 0, w, h);
 
-			for (int i = 0; i < Settings::ESP.blur; ++i)
+			for (int i = 0; i < Config.glow.packed.blur; ++i)
 			{
 				pRenderContext->SetRenderTarget(m_Materials.glowBuffer2);
 				pRenderContext->DrawScreenSpaceRectangle(m_Materials.blurX, 0, 0, w, h, 0, 0, w - 1,
@@ -218,9 +222,9 @@ namespace Glow
 			pRenderContext->SetStencilZFailOperation(STENCILOPERATION_KEEP);
 
 			// this is from amalgam
-			if (Settings::ESP.stencil)
+			if (Config.glow.packed.stencil)
 			{
-				int side = (Settings::ESP.stencil + 1) / 2;
+				int side = (Config.glow.packed.stencil + 1) / 2;
 				pRenderContext->DrawScreenSpaceRectangle(m_Materials.haloAddToScreen, -side, 0, w, h, 0,
 									 0, w - 1, h - 1, w, h);
 				pRenderContext->DrawScreenSpaceRectangle(m_Materials.haloAddToScreen, 0, -side, w, h, 0,
@@ -230,7 +234,7 @@ namespace Glow
 				pRenderContext->DrawScreenSpaceRectangle(m_Materials.haloAddToScreen, 0, side, w, h, 0,
 									 0, w - 1, h - 1, w, h);
 
-				int corner = Settings::ESP.stencil / 2;
+				int corner = Config.glow.packed.stencil / 2;
 				if (corner)
 				{
 					pRenderContext->DrawScreenSpaceRectangle(m_Materials.haloAddToScreen, -corner,
@@ -248,7 +252,7 @@ namespace Glow
 				}
 			}
 
-			if (Settings::ESP.blur)
+			if (Config.glow.packed.blur)
 				pRenderContext->DrawScreenSpaceRectangle(m_Materials.haloAddToScreen, 0, 0, w, h, 0, 0,
 									 w - 1, h - 1, w, h);
 

@@ -26,6 +26,17 @@ enum class HitscanOffset
 	//  legs are unreliable
 };
 
+struct AimbotTarget 
+{
+	Vector dir;
+	Vector pos;
+	float distance;
+	float fov;
+	CBaseEntity* entity;
+	float simTime;
+	bool useBacktrack;
+};
+
 namespace AimbotHitscan
 {
 	HitscanOffset GetInitialOffset(CTFPlayer *pLocal, CTFWeaponBase *pWeapon);

@@ -1,6 +1,5 @@
 #include "backtrack.h"
 
-#include "../../sdk/MaterialManager/materialmanager.h"
 #include "../../sdk/helpers/engine/engine.h"
 #include "../../sdk/helpers/localplayer/localplayer.h"
 #include "../../sdk/interfaces/interfaces.h"
@@ -8,10 +7,11 @@
 #include "../../settings/settings.h"
 #include "../aimbot/utils/utils.h"
 
+#include "../materialregistry/reg.h"
+
 // #include "../ticks/ticks.h"
 
 std::unordered_map<int, std::deque<LagCompRecord>> Backtrack::m_records = {};
-IMaterial *Backtrack::m_mat						= nullptr;
 bool Backtrack::m_drawing						= false;
 LagCompRecord *Backtrack::m_current_drawing_record			= nullptr;
 
@@ -63,8 +63,7 @@ void Backtrack::Run(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCmd)
 	if (pWeapon->GetWeaponType() == EWeaponType::PROJECTILE || pWeapon->GetWeaponType() == EWeaponType::UNKNOWN)
 		return;
 
-	BacktrackMode mode = static_cast<BacktrackMode>(Settings::Misc.backtrack);
-	if (mode == BacktrackMode::NONE || mode >= BacktrackMode::MAX || mode <= BacktrackMode::INVALID)
+	if (!Config.backtrack.packed.enabled)
 		return;
 
 	if (!helper::localplayer::IsAttacking(pLocal, pWeapon, pCmd))
@@ -170,6 +169,9 @@ void Backtrack::CleanRecords(CUserCmd* pCmd)
 
 void Backtrack::Store()
 {
+	if (!Config.backtrack.packed.enabled)
+		return;
+
 	CTFPlayer* pLocal = EntityList::GetLocal();
 	if (pLocal == nullptr)
 		return;
@@ -205,115 +207,117 @@ void Backtrack::Store()
 
 void Backtrack::Init()
 {
-	m_mat = MaterialManager::CreateMaterial("Hello", "UnlitGeneric\n"
-							 "{\n"
-							 "	$basetexture \"white\"\n"
-							 "}");
+	Config.backtrack.active_materials.emplace_back("basic flat");
+	Config.backtrack.active_materials.emplace_back("basic shaded");
 }
 
 void Backtrack::DoPostScreenSpaceEffects()
 {
-	if (m_records.empty())
+	if (!Config.backtrack.packed.enabled)
 		return;
 
-	CTFPlayer *pLocal = helper::engine::GetLocalPlayer();
-	if (pLocal == nullptr || !pLocal->IsAlive())
-		return;
+        if (m_records.empty())
+                return;
 
-	CTFWeaponBase *pWeapon = HandleAs<CTFWeaponBase *>(pLocal->GetActiveWeapon());
-	if (pWeapon == nullptr)
-		return;
+        CTFPlayer *pLocal = helper::engine::GetLocalPlayer();
+        if (pLocal == nullptr || !pLocal->IsAlive())
+                return;
 
-	// only hitscan and melee!
-	if (!(pWeapon->IsMelee() || pWeapon->IsHitscan()))
-		return;
+        CTFWeaponBase *pWeapon = HandleAs<CTFWeaponBase *>(pLocal->GetActiveWeapon());
+        if (pWeapon == nullptr)
+                return;
 
-	BacktrackMode mode = static_cast<BacktrackMode>(Settings::Misc.backtrack);
-	if (mode >= BacktrackMode::MAX || mode <= BacktrackMode::INVALID)
-		return;
+        // only hitscan and melee!
+        if (!(pWeapon->IsMelee() || pWeapon->IsHitscan()))
+                return;
 
-	float color[] = {1, 1, 1};
-	float savedColor[3], savedBlend;
+        BacktrackMode mode = static_cast<BacktrackMode>(Config.backtrack.packed.draw_mode);
+        if (mode >= BacktrackMode::MAX || mode <= BacktrackMode::INVALID || mode == BacktrackMode::NONE)
+                return;
 
-	IMaterial *savedMat;
-	OverrideType_t type;
+        // no materials no drawing
+        if (Config.backtrack.active_materials.empty())
+                return;
 
-	interfaces::ModelRender->GetMaterialOverride(&savedMat, &type);
-	interfaces::RenderView->GetColorModulation(savedColor);
-	savedBlend = interfaces::RenderView->GetBlend();
+        float savedColor[3], savedBlend;
+        IMaterial *savedMat;
+        OverrideType_t type;
 
-	interfaces::ModelRender->ForcedMaterialOverride(m_mat);
-	interfaces::RenderView->SetBlend(0.5f);
-	interfaces::RenderView->SetColorModulation(color);
+	// save our cool stuff
+        interfaces::ModelRender->GetMaterialOverride(&savedMat, &type);
+        interfaces::RenderView->GetColorModulation(savedColor);
+        savedBlend = interfaces::RenderView->GetBlend();
 
-	m_drawing = true;
+        float color[] = {1.0f, 1.0f, 1.0f};
+        interfaces::RenderView->SetColorModulation(color);
 
-	switch (mode)
-	{
-	case BacktrackMode::LAST_ONLY:
-	{
-		for (auto &[index, records] : m_records)
-		{
-			if (records.empty())
-				continue;
+        auto DrawRecords = [&]() 
+        {
+                switch (mode)
+                {
+                case BacktrackMode::LAST_ONLY:
+                {
+                        for (auto &[index, records] : m_records)
+                        {
+                                if (records.empty())
+                                        continue;
 
-			CTFPlayer *entity = static_cast<CTFPlayer *>(interfaces::EntityList->GetClientEntity(index));
-			if (entity == nullptr)
-				continue;
+                                CTFPlayer *entity = static_cast<CTFPlayer *>(interfaces::EntityList->GetClientEntity(index));
+                                if (entity == nullptr || !entity->ShouldDraw())
+                                        continue;
 
-			if (!entity->ShouldDraw())
-				continue;
+                                if (pLocal->m_iTeamNum() == entity->m_iTeamNum())
+                                        continue;
 
-			if (pLocal->m_iTeamNum() == entity->m_iTeamNum())
-				continue;
+                                m_current_drawing_record = &records.back();
+                                entity->DrawModel(STUDIO_RENDER | STUDIO_NOSHADOWS);
+                        }
+                        break;
+                }
+                case BacktrackMode::ALL_RECORDS:
+                {
+                        for (auto &[index, records] : m_records)
+                        {
+                                CTFPlayer *entity = static_cast<CTFPlayer *>(interfaces::EntityList->GetClientEntity(index));
+                                if (entity == nullptr || !entity->ShouldDraw() || !entity->IsAlive())
+                                        continue;
 
-			m_current_drawing_record = &records.back();
-			entity->DrawModel(STUDIO_RENDER | STUDIO_NOSHADOWS);
-		}
+                                if (records.empty() || pLocal->m_iTeamNum() == entity->m_iTeamNum())
+                                        continue;
 
-		break;
-	}
-	case BacktrackMode::ALL_RECORDS:
-	{
-		for (auto &[index, records] : m_records)
-		{
-			CTFPlayer *entity = static_cast<CTFPlayer *>(interfaces::EntityList->GetClientEntity(index));
-			if (entity == nullptr)
-				continue;
+                                for (auto &record : records)
+                                {
+                                        m_current_drawing_record = &record;
+                                        entity->DrawModel(STUDIO_RENDER | STUDIO_NOSHADOWS);
+                                }
+                        }
+                        break;
+                }
+                default:
+                        break;
+                }
+        };
 
-			if (!entity->ShouldDraw())
-				continue;
+        for (const auto& mat_name : Config.backtrack.active_materials)
+        {
+                auto mat = MaterialRegistry::GetMaterialByName(mat_name);
+                
+                if (!mat || !mat->IsValidMat())
+                        continue;
 
-			if (!entity->IsAlive())
-				continue;
+                interfaces::RenderView->SetBlend(mat->GetAlpha());
+                interfaces::ModelRender->ForcedMaterialOverride(mat->GetMaterial());
 
-			if (records.empty())
-				continue;
+                m_drawing = true;
+                DrawRecords();
+                m_drawing = false;
+        }
 
-			if (pLocal->m_iTeamNum() == entity->m_iTeamNum())
-				continue;
-
-			for (auto &record : records)
-			{
-				m_current_drawing_record = &record;
-				entity->DrawModel(STUDIO_RENDER | STUDIO_NOSHADOWS);
-			}
-		}
-
-		break;
-	}
-	case BacktrackMode::NONE:
-	case BacktrackMode::INVALID:
-	case BacktrackMode::MAX:
-		break;
-	}
-
-	m_drawing = false;
-
-	m_current_drawing_record = {};
-	interfaces::RenderView->SetBlend(savedBlend);
-	interfaces::RenderView->SetColorModulation(savedColor);
-	interfaces::ModelRender->ForcedMaterialOverride(savedMat);
+        m_current_drawing_record = nullptr;
+        
+        interfaces::RenderView->SetBlend(savedBlend);
+        interfaces::RenderView->SetColorModulation(savedColor);
+        interfaces::ModelRender->ForcedMaterialOverride(savedMat);
 }
 
 bool Backtrack::GetRecords(CTFPlayer *pEntity, std::vector<LagCompRecord> &out)
@@ -324,8 +328,7 @@ bool Backtrack::GetRecords(CTFPlayer *pEntity, std::vector<LagCompRecord> &out)
 
 	auto& records = it->second;
 
-	BacktrackMode mode = static_cast<BacktrackMode>(Settings::Misc.backtrack);
-	if (mode >= BacktrackMode::MAX || mode <= BacktrackMode::INVALID || mode == BacktrackMode::NONE)
+	if (!Config.backtrack.packed.enabled)
 	{
 		LagCompRecord &front = records.front();
 		out.emplace_back(front.m_Bones, front.m_flSimTime, front.m_vecAbsCenter, front.m_vecViewAngles, front.m_vecVelocity);
@@ -341,24 +344,6 @@ bool Backtrack::GetRecords(CTFPlayer *pEntity, std::vector<LagCompRecord> &out)
 bool Backtrack::IsValidPlayer(const EntityListEntry &entry)
 {
 	return entry.ptr != nullptr && (entry.flags & (EntityFlags::IsPlayer | EntityFlags::IsEnemy | EntityFlags::IsAlive));
-}
-
-std::string Backtrack::GetModeName()
-{
-	switch (static_cast<BacktrackMode>(Settings::Misc.backtrack))
-	{
-	case BacktrackMode::NONE:
-		return "None";
-	case BacktrackMode::LAST_ONLY:
-		return "Last Record Only";
-	case BacktrackMode::ALL_RECORDS:
-		return "All Records";
-	case BacktrackMode::INVALID:
-	case BacktrackMode::MAX:
-		break;
-	}
-
-	return "Invalid";
 }
 
 bool Backtrack::GetReal(CTFPlayer *pEntity, LagCompRecord &out)

@@ -2,8 +2,13 @@
 
 void ViewmodelOffset::Run(Vector &position, Vector &angle)
 {
-	Vector offset = {Settings::Misc.viewmodel_offset[0], Settings::Misc.viewmodel_offset[1],
-			 Settings::Misc.viewmodel_offset[2]};
+	Vector offset
+	{
+		Config.misc.viewmodel_offset[0],
+		Config.misc.viewmodel_offset[1],
+		Config.misc.viewmodel_offset[2]
+	};
+
 	if (offset.IsZero())
 		return;
 

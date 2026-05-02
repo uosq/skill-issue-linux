@@ -11,6 +11,7 @@
 #include "../features/angelscript/api/libraries/hooks/hooks.h"
 #include "../features/esp/esp.h"
 #include "../features/spyalert/spyalert.h"
+#include "../features/playerlist/playerlist.h"
 
 using FrameStageNotifyFn = void (*)(CHLClient* rdi, int stage);
 
@@ -22,7 +23,7 @@ static void FrameStageNotify(CHLClient* rdi, int stage)
 	{
 		case FRAME_RENDER_START:
 		{
-			if (Settings::Misc.thirdperson_key->IsActive())
+			if (Config.misc.thirdperson_key->IsActive())
 			{
 				CTFPlayer *pLocal = EntityList::GetLocal();
 				if (pLocal && pLocal->IsAlive())
@@ -51,6 +52,7 @@ static void FrameStageNotify(CHLClient* rdi, int stage)
 		Backtrack::Store();
 		Spectators::OnFrameStageNotify();
 		SpyAlert::OnFrameStageNotify();
+		Playerlist::Store();
 		break;
 	}
 

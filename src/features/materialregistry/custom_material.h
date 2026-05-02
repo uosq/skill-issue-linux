@@ -4,11 +4,11 @@
 
 #include "../../sdk/definitions/imaterial.h"
 
-class ChamsMaterial
+class CustomMaterial
 {
 public:
-	ChamsMaterial(const std::string& name, const std::string& vmt);
-	~ChamsMaterial();
+	CustomMaterial(const std::string& name, const std::string& vmt);
+	~CustomMaterial();
 
 	const std::string& GetVMT();
 	void SetVMT(const std::string& vmt);
@@ -16,9 +16,6 @@ public:
 	bool IsValidMat();
 	IMaterial* GetMaterial();
 	void Refresh();
-
-	void SetUsed(bool used);
-	bool IsUsed();
 
 	const std::string& GetInternalName();
 	void SetInternalName(const std::string& name);
@@ -34,6 +31,5 @@ private:
 	std::string m_InternalName = "";
 	std::string m_Vmt = "";
 	IMaterial* m_Mat = nullptr;
-	bool m_Used = false;
 	float m_Alpha = 1.0f;
 };

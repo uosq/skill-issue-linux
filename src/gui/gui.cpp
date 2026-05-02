@@ -9,7 +9,7 @@
 #include "tabs/tab_radar.h"
 #include "tabs/tab_config.h"
 #include "tabs/tab_logs.h"
-#include "tabs/tab_chams.h"
+#include "tabs/tab_mateditor.h"
 
 #include "../features/angelscript/api/libraries/hooks/hooks.h"
 #include "../features/spectators/spectators.h"
@@ -17,13 +17,12 @@
 #include "../features/aimbot/aimbot.h"
 #include "../features/infopanel/infopanel.h"
 #include "../features/spyalert/spyalert.h"
+#include "../features/playerlist/playerlist.h"
 
-int GUI::tab = 0;
+static int tab = 0;
 
 void DrawTabButtons(int &tab)
 {
-	ImGui::BeginGroup();
-
 	if (ImGui::Button("AIMBOT", ImVec2(-1, 0)))
 		tab = TAB_AIMBOT;
 
@@ -36,11 +35,8 @@ void DrawTabButtons(int &tab)
 	if (ImGui::Button("MISC", ImVec2(-1, 0)))
 		tab = TAB_MISC;
 
-	if (ImGui::Button("CHAMS", ImVec2(-1, 0)))
+	if (ImGui::Button("MAT EDITOR", ImVec2(-1, 0)))
 		tab = TAB_CHAMS;
-
-	// if (ImGui::Button("ANTIAIM", ImVec2(-1, 0)))
-	// tab = TAB_ANTIAIM;
 
 	if (ImGui::Button("RADAR", ImVec2(-1, 0)))
 		tab = TAB_RADAR;
@@ -56,8 +52,6 @@ void DrawTabButtons(int &tab)
 
 	if (ImGui::Button("CONFIGS", ImVec2(-1, 0)))
 		tab = TAB_CONFIG;
-
-	ImGui::EndGroup();
 }
 
 void GUI::RunSpectatorList()
@@ -93,7 +87,7 @@ void GUI::RunPlayerList()
 			{
 			case TEAM_BLU:
 			{
-				Color color = Settings::Colors.blu_team;
+				Color color = Config.colors.blu_team;
 				ImVec4 textColor(color.r() / 255.0f, color.g() / 255.0f, color.b() / 255.0f, 255);
 				ImGui::TextColored(textColor, "%s", name.c_str());
 				break;
@@ -101,7 +95,7 @@ void GUI::RunPlayerList()
 
 			case TEAM_RED:
 			{
-				Color color = Settings::Colors.red_team;
+				Color color = Config.colors.red_team;
 				ImVec4 textColor(color.r() / 255.0f, color.g() / 255.0f, color.b() / 255.0f, 255);
 				ImGui::TextColored(textColor, "%s", name.c_str());
 				break;
@@ -126,13 +120,14 @@ void GUI::RunMainWindow()
 	if (Settings::menu_open)
 	{
 		pDraw->AddText(ImVec2(10, 10), IM_COL32(255, 255, 255, 255), "Skill Issue");
-		pDraw->AddText(ImVec2(10, 10 + Settings::ESP.font_size), IM_COL32(255, 255, 255, 255), "Build date: " __DATE__ " " __TIME__);
+		pDraw->AddText(ImVec2(10, 10 + Config.esp.font.size), IM_COL32(255, 255, 255, 255), "Build date: " __DATE__ " " __TIME__);
 	}
 
 	Aimbot::OnImGui(pDraw);
 	ESP::OnImGui();
 	InfoPanel::OnImGui(Settings::menu_open);
 	SpyAlert::OnImGui(pDraw);
+	Playerlist::DrawWindow();
 
 	if (!Settings::menu_open)
 		return;
@@ -144,7 +139,7 @@ void GUI::RunMainWindow()
 	{
 		if (ImGui::BeginTable("MainTable", 2, 0))
 		{
-			ImGui::TableSetupColumn("Buttons", ImGuiTableColumnFlags_WidthFixed, 70);
+			ImGui::TableSetupColumn("Buttons", ImGuiTableColumnFlags_WidthFixed, 100);
 			ImGui::TableSetupColumn("Content", ImGuiTableColumnFlags_WidthStretch);
 
 			ImGui::TableNextRow();
@@ -186,7 +181,7 @@ void GUI::RunMainWindow()
 					DrawLogsTab();
 					break;
 				case TAB_CHAMS:
-					DrawChamsTab();
+					DrawMaterialEditor();
 					break;
 				default:
 					break;

@@ -1,14 +1,21 @@
 #pragma once
 
-#include "../definitions/icliententity.h"
-#include "../definitions/iclientleafsystem.h"
-#include "../definitions/types.h"
-#include "../handle_utils.h"
-#include "../interfaces/interfaces.h"
-#include "../netvars/netvar.h"
 #include <cstdint>
 #include <string.h>
 #include <string>
+
+#include "../definitions/icliententity.h"
+#include "../definitions/iclientleafsystem.h"
+#include "../definitions/types.h"
+
+#include "../handle_utils.h"
+#include "../interfaces/interfaces.h"
+#include "../netvars/netvar.h"
+
+#include "../signatures/signatures.h"
+
+ADD_SIG(CBaseEntity_SetAbsOrigin, "client.so", "55 48 89 E5 41 55 41 54 49 89 F4 53 48 89 FB 48 83 EC 08 E8 ? ? ? ? F3 0F 10 83 28 03 00 00")
+ADD_SIG(CBaseEntity_SetAbsAngles, "client.so", "55 48 89 E5 41 57 41 56 41 55 41 54 49 89 F4 53 48 89 FB 48 83 EC 68 E8")
 
 #define MULTIPLAYER_BACKUP 90
 
@@ -330,5 +337,43 @@ class CBaseEntity : public IClientEntity
 		    sigscan_module("client.so", "55 48 89 E5 41 54 49 89 FC 53 48 83 EC 10 48 8D 1D ? "
 						"? ? ? 48 8B 3B 48 8B 07 FF 90 60 02 00 00"));
 		original(this);
+	}
+
+	void SetAbsOrigin(const Vec3& absOrigin)
+	{
+		/*
+		xref: C_BaseAnimating::BecomeRagdollOnClient failed. pRagdoll:%p bInitBoneArrays:%d bInitAsClient:%d\n
+
+		FUN_01629990(param_1,1);
+  		(**(code **)(*param_1 + 0x58))(param_1);
+====>  		plVar3 = (long *)CreateRagdollCopy(param_1);
+
+		go inside C_BaseAnimating::CreateRagdollCopy
+
+			uVar5 = (**(code **)(*DAT_02ee4820 + 0x20))(DAT_02ee4820,lVar7);
+			cVar1 = (**(code **)(*plVar4 + 1000))(plVar4,uVar5,7);
+			if (cVar1 == '\0') {
+			(**(code **)(*plVar4 + 0x50))(plVar4);
+			return (long *)0x0;
+			}
+			FUN_0162a770(this,plVar4);
+			uVar6 = (**(code **)(*this + 0x58))(this);
+======>			SetAbsOrigin(plVar4,uVar6);
+			uVar6 = (**(code **)(*this + 0x60))(this);
+======>			SetAbsAngles(plVar4,uVar6);
+			FUN_01796c50(plVar4,this);
+
+		*/
+
+		using SetAbsOriginFn = void(*)(void* self, const Vec3& absOrigin);
+		static SetAbsOriginFn original = (SetAbsOriginFn)Sigs::CBaseEntity_SetAbsOrigin.GetPointer();
+		original((void*)this, absOrigin);
+	}
+
+	void SetAbsAngles(const Vec3& absAngle)
+	{
+		using SetAbsAnglesFn = void(*)(void* self, const Vec3& absAngle);
+		static SetAbsAnglesFn original = (SetAbsAnglesFn)Sigs::CBaseEntity_SetAbsAngles.GetPointer();
+		original((void*)this, absAngle);
 	}
 };

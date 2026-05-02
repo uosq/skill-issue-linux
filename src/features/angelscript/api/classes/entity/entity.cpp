@@ -291,7 +291,7 @@ std::string GetClassName(CBaseEntity *ent)
 std::string GetName(CBaseEntity *ent)
 {
 	if (ent == nullptr)
-		return "";
+		return "nullptr";
 
 	if (ent->IsPlayer())
 	{
@@ -305,6 +305,12 @@ std::string GetName(CBaseEntity *ent)
 		return pObj->GetName();
 	}
 
+	if (ent->IsWeapon())
+	{
+		CTFWeaponBase* pWeapon = static_cast<CTFWeaponBase*>(ent);
+		return pWeapon->GetName();
+	}
+
 	return ent->GetClientClass()->networkName;
 }
 
@@ -315,6 +321,22 @@ CBaseEntity *GetEntityFromLoadoutSlot(CBaseEntity *ent, int slot)
 
 	return reinterpret_cast<CTFPlayer *>(ent)->GetEntityFromLoadoutSlot(
 	    slot /*g_SlotsToLoadoutSlotsPerClass[pPlayer->m_iClass()][slot]*/);
+}
+
+static void SetAbsOrigin(CBaseEntity* ent, const Vec3& absOrigin)
+{
+	if (ent == nullptr)
+		return;
+
+	ent->SetAbsOrigin(absOrigin);
+}
+
+static void SetAbsAngles(CBaseEntity* ent, const Vec3& absAngles)
+{
+	if (ent == nullptr)
+		return;
+
+	ent->SetAbsAngles(absAngles);
 }
 
 void Entity_RegisterClass(asIScriptEngine *engine)
@@ -360,5 +382,6 @@ void Entity_RegisterClass(asIScriptEngine *engine)
 	engine->RegisterObjectMethod(ENTITY_CLASSNAME, "string GetClassName()", asFUNCTION(GetClassName), asCALL_CDECL_OBJFIRST);
 	engine->RegisterObjectMethod(ENTITY_CLASSNAME, "string GetName()", asFUNCTION(GetName), asCALL_CDECL_OBJFIRST);
 	engine->RegisterObjectMethod(ENTITY_CLASSNAME, "Entity@ GetEntityFromLoadoutSlot(int index)", asFUNCTION(GetEntityFromLoadoutSlot), asCALL_CDECL_OBJFIRST);
-	//engine->RegisterObjectMethod(ENTITY_CLASSNAME, "");
+	engine->RegisterObjectMethod(ENTITY_CLASSNAME, "void SetAbsOrigin(const Vector3 &in absOrigin)", asFUNCTION(SetAbsOrigin), asCALL_CDECL_OBJFIRST);
+	engine->RegisterObjectMethod(ENTITY_CLASSNAME, "void SetAbsAngles(const Vector3 &in absAngles)", asFUNCTION(SetAbsAngles), asCALL_CDECL_OBJFIRST);
 }

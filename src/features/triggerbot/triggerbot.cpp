@@ -10,7 +10,7 @@ namespace Triggerbot
 		if (pLocal == nullptr || pWeapon == nullptr)
 			return;
 
-		if (!Settings::Trigger.hitscan)
+		if (!Config.trigger.packed.hitscan)
 			return;
 
 		CGameTrace trace;
@@ -46,16 +46,16 @@ namespace Triggerbot
 		if (pLocal == nullptr || pWeapon == nullptr || pCmd == nullptr)
 			return;
 
-		if (!Settings::Trigger.key->IsActive())
+		if (!Config.trigger.key->IsActive())
 			return;
 
-		if (Settings::Trigger.hitscan && pWeapon->IsHitscan())
+		if (Config.trigger.packed.hitscan && pWeapon->IsHitscan())
 			Hitscan(pLocal, pWeapon, pCmd);
 
-		if (Settings::Trigger.autobackstab != static_cast<int>(GenericMode::NONE) && pWeapon->IsMelee())
+		if (Config.trigger.packed.autobackstab != static_cast<int>(GenericMode::NONE) && pWeapon->IsMelee())
 			AutoBackstab::Run(pLocal, pWeapon, pCmd, &TickManager::m_bSendPacket);
 
-		if (Settings::Trigger.autoairblast != static_cast<int>(GenericMode::NONE) &&
+		if (Config.trigger.packed.autoairblast != static_cast<int>(GenericMode::NONE) &&
 		    pWeapon->GetWeaponID() == TF_WEAPON_FLAMETHROWER)
 			AutoAirblast::Run(pLocal, pWeapon, pCmd, &TickManager::m_bSendPacket);
 	}

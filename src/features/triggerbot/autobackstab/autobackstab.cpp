@@ -107,7 +107,6 @@ bool AutoBackstab::CanBackstabEntity(CTFPlayer *pLocal, CTFPlayer *pTarget)
 
 void LegitBackstab(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCmd)
 {
-	Vector shootPos	       = pLocal->GetEyePos();
 	Vector localCenter     = pLocal->GetCenter();
 	Vector localViewAngles = pCmd->viewangles;
 
@@ -152,7 +151,6 @@ void LegitBackstab(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCmd)
 
 void RageBackstab(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCmd, bool *pSendPacket)
 {
-	Vector shootPos	   = pLocal->GetEyePos();
 	Vector localCenter = pLocal->GetCenter();
 
 	for (const auto &entry : EntityList::GetEnemies())
@@ -204,7 +202,7 @@ void AutoBackstab::Run(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCmd
 	if (pWeapon->GetWeaponID() != TF_WEAPON_KNIFE)
 		return;
 
-	switch (static_cast<GenericMode>(Settings::Trigger.autobackstab))
+	switch (static_cast<GenericMode>(Config.trigger.packed.autobackstab))
 	{
 	case GenericMode::NONE:
 		break;
@@ -223,20 +221,5 @@ void AutoBackstab::Run(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCmd
 
 	default:
 		break;
-	}
-}
-
-std::string AutoBackstab::GetModeName()
-{
-	switch (static_cast<GenericMode>(Settings::Trigger.autobackstab))
-	{
-	case GenericMode::NONE:
-		return "None";
-	case GenericMode::LEGIT:
-		return "Legit";
-	case GenericMode::RAGE:
-		return "Rage";
-	default:
-		return "Unknown";
 	}
 }

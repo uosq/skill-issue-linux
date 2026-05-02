@@ -12,6 +12,8 @@
 #include "../features/visuals/viewmodel_aim/viewmodel_aim.h"
 #include "../features/visuals/viewmodel_interp/viewmodel_interp.h"
 #include "../features/backtrack/backtrack.h"
+#include "../features/materialregistry/reg.h"
+#include "../features/playerlist/playerlist.h"
 
 #include "../gui/gui.h"
 
@@ -82,6 +84,8 @@ void CApp::Setup()
 	GUI::Init();
 	TickManager::Init();
 	MaterialManager::Init();
+	MaterialRegistry::Initialize();
+	Playerlist::Initialize();
 
 	Backtrack::Init();
 	ViewmodelInterp::Init();

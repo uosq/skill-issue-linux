@@ -28,10 +28,10 @@ namespace Warp
 
 	void RunCreateMove(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCmd)
 	{
-		if (!Settings::AntiAim.warp_key->IsActive() && !Settings::AntiAim.warp_recharge_key->IsActive())
+		if (!Config.warp.key->IsActive() && !Config.warp.recharge_key->IsActive())
 			Warp::m_iDesiredState = WarpState::WAITING;
 
-		if (!Settings::AntiAim.warp_key->IsEnabled())
+		if (!Config.warp.key->IsEnabled())
 			return;
 
 		if (!interfaces::Engine->IsInGame() || !interfaces::Engine->IsConnected())
@@ -40,13 +40,13 @@ namespace Warp
 		if (interfaces::EngineVGui->IsGameUIVisible() || interfaces::EngineVGui->IsConsoleVisible())
 			return;
 
-		if (Settings::AntiAim.warp_key->IsActive() && Warp::m_iStoredTicks > 0)
+		if (Config.warp.key->IsActive() && Warp::m_iStoredTicks > 0)
 		{
 			Warp::m_iDesiredState = WarpState::RUNNING;
 			return;
 		}
 
-		if (Settings::AntiAim.warp_recharge_key->IsActive() && Warp::m_iStoredTicks < GetMaxTicks())
+		if (Config.warp.recharge_key->IsActive() && Warp::m_iStoredTicks < GetMaxTicks())
 		{
 			Warp::m_iDesiredState = WarpState::RECHARGING;
 			return;

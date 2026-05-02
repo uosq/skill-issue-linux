@@ -13,7 +13,7 @@ namespace Bhop
 
 	void Run(CTFPlayer *pLocal, CUserCmd *pCmd)
 	{
-		if (!Settings::Misc.bhop || pLocal->GetWaterLevel() > WL_Feet)
+		if (!Config.misc.packed.bhop || pLocal->GetWaterLevel() > WL_Feet)
 			return;
 
 		bool wantsJump	= pCmd->buttons & IN_JUMP;

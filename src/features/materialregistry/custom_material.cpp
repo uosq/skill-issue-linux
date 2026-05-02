@@ -1,14 +1,14 @@
-#include "chamsmaterial.h"
+#include "custom_material.h"
 
 #include "../../sdk/MaterialManager/materialmanager.h"
 
-ChamsMaterial::ChamsMaterial(const std::string& name, const std::string& vmt)
+CustomMaterial::CustomMaterial(const std::string& name, const std::string& vmt)
 : m_DisplayName(name), m_InternalName(name), m_Vmt(vmt), m_Alpha(1.0f)
 {
 	m_Mat = MaterialManager::CreateMaterial(name, vmt);
 }
 
-ChamsMaterial::~ChamsMaterial()
+CustomMaterial::~CustomMaterial()
 {
 	if (m_Mat == nullptr)
 		return;
@@ -20,17 +20,17 @@ ChamsMaterial::~ChamsMaterial()
 	m_Mat = nullptr;
 }
 
-const std::string& ChamsMaterial::GetVMT()
+const std::string& CustomMaterial::GetVMT()
 {
 	return m_Vmt;
 }
 
-void ChamsMaterial::SetVMT(const std::string& vmt)
+void CustomMaterial::SetVMT(const std::string& vmt)
 {
 	this->m_Vmt = vmt;
 }
 
-void ChamsMaterial::Refresh()
+void CustomMaterial::Refresh()
 {
 	// delete our material
 	// hot reloading is delulu
@@ -49,52 +49,42 @@ void ChamsMaterial::Refresh()
 	m_Mat = MaterialManager::CreateMaterial(unique, m_Vmt);
 }
 
-bool ChamsMaterial::IsValidMat()
+bool CustomMaterial::IsValidMat()
 {
 	return m_Mat && !m_Mat->IsErrorMaterial();
 }
 
-void ChamsMaterial::SetUsed(bool used)
-{
-	m_Used = used;
-}
-
-bool ChamsMaterial::IsUsed()
-{
-	return m_Used;
-}
-
-IMaterial* ChamsMaterial::GetMaterial()
+IMaterial* CustomMaterial::GetMaterial()
 {
 	return m_Mat;
 }
 
-const std::string& ChamsMaterial::GetInternalName()
+const std::string& CustomMaterial::GetInternalName()
 {
 	return m_InternalName;
 }
 
-void ChamsMaterial::SetInternalName(const std::string& name)
+void CustomMaterial::SetInternalName(const std::string& name)
 {
 	m_InternalName = name;
 }
 
-const std::string& ChamsMaterial::GetDisplayName()
+const std::string& CustomMaterial::GetDisplayName()
 {
 	return m_DisplayName;
 }
 
-void ChamsMaterial::SetDisplayName(const std::string& name)
+void CustomMaterial::SetDisplayName(const std::string& name)
 {
 	m_DisplayName = name;
 }
 
-float ChamsMaterial::GetAlpha()
+float CustomMaterial::GetAlpha()
 {
 	return m_Alpha;
 }
 
-void ChamsMaterial::SetAlpha(float alpha)
+void CustomMaterial::SetAlpha(float alpha)
 {
 	m_Alpha = alpha;
 }

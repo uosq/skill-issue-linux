@@ -164,17 +164,15 @@ void Hooked_SwapWindow(SDL_Window *window)
 
 	cursor = ImGui::GetMouseCursor();
 
-	gBinds.Update();
-
 	bool pushfont = false;
-	switch (static_cast<ESPFont>(Settings::ESP.font))
+	switch (static_cast<ESPFont>(Config.esp.font.selected))
 	{
         	case ESPFont::TF2BUILD:
-		ImGui::PushFont(IMFONT_TF2Build, Settings::ESP.font_size);
+		ImGui::PushFont(IMFONT_TF2Build, Config.esp.font.size);
 		pushfont = true;
 		break;
         	case ESPFont::ARIAL:
-		ImGui::PushFont(IMFONT_Arial, Settings::ESP.font_size);
+		ImGui::PushFont(IMFONT_Arial, Config.esp.font.size);
 		pushfont = true;
 		break;
 		case ESPFont::INVALID:
@@ -185,17 +183,14 @@ void Hooked_SwapWindow(SDL_Window *window)
 		}
         }
 
-	if (Settings::AntiAim.warp_key->IsEnabled())
+        if (Config.warp.key->IsEnabled())
 		Warp::RunWindow();
 
-	if (Settings::Radar.enabled)
+	if (Config.radar.packed.enabled)
 		Radar::Run();
 
-	if (Settings::Misc.spectatorlist)
+	if (Config.misc.packed.spectatorlist)
 		GUI::RunSpectatorList();
-
-	if (Settings::Misc.playerlist)
-		GUI::RunPlayerList();
 
 	GUI::RunMainWindow();
 

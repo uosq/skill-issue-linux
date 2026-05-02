@@ -18,5 +18,4 @@ namespace AutoBackstab
 	bool CanBackstabEntity(CTFPlayer *pLocal, CTFPlayer *pTarget);
 
 	void Run(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCmd, bool *pSendPacket);
-	std::string GetModeName();
 }; // namespace AutoBackstab

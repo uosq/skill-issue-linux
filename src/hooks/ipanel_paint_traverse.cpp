@@ -15,7 +15,7 @@ static void PaintTraverse(IPanel* rdi, VPANEL vguiPanel, bool forceRepaint, bool
 	const char *panelName = interfaces::VGui->GetName(vguiPanel);
 
 	// https://github.com/rei-2/Amalgam/blob/master/Amalgam/src/Hooks/IPanel_PaintTraverse.cpp
-	if (Settings::Misc.streamer_mode)
+	if (Config.misc.packed.streamer_mode)
 	{
 		switch (fnv::Hash(panelName))
 		{
@@ -28,7 +28,7 @@ static void PaintTraverse(IPanel* rdi, VPANEL vguiPanel, bool forceRepaint, bool
 		}
 	}
 
-	if (Settings::Misc.no_scope_overlay)
+	if (Config.misc.packed.no_scope_overlay)
 	{
 		if (fnv::Hash(panelName) == fnv::HashConst("HudScope"))
 			return;

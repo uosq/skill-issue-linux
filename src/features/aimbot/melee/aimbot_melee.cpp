@@ -4,10 +4,10 @@ namespace AimbotMelee
 {
 	void Run(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCmd, AimbotState &state)
 	{
-		if (!Settings::Aimbot.key->IsActive())
+		if (!Config.aimbot.key->IsActive())
 			return;
 
-		if (Settings::Aimbot.melee == static_cast<int>(MeleeMode::NONE) ||
+		if (Config.aimbot.packed.meleemode == static_cast<int>(MeleeMode::NONE) ||
 		    pWeapon->GetWeaponID() == TF_WEAPON_KNIFE)
 			return;
 
@@ -31,7 +31,7 @@ namespace AimbotMelee
 		Vector targetAngle;
 		CBaseEntity *target = nullptr;
 
-		MeleeMode mode	    = static_cast<MeleeMode>(Settings::Aimbot.melee);
+		MeleeMode mode	    = static_cast<MeleeMode>(Config.aimbot.packed.meleemode);
 		float maxFov	    = mode == MeleeMode::LEGIT ? 90.0f : 180.0f;
 		float smallestFov   = maxFov;
 
@@ -76,7 +76,7 @@ namespace AimbotMelee
 		if (target == nullptr)
 			return;
 
-		if (Settings::Aimbot.autoshoot)
+		if (Config.aimbot.packed.autoshoot)
 			pCmd->buttons |= IN_ATTACK;
 
 		if (helper::localplayer::IsAttacking(pLocal, pWeapon, pCmd))
@@ -86,7 +86,7 @@ namespace AimbotMelee
 			pCmd->viewangles = angle;
 			state.running	 = true;
 
-			if (Settings::Aimbot.mode == static_cast<int>(AimbotMode::SILENT))
+			if (Config.aimbot.packed.aimmode == static_cast<int>(AimbotMode::SILENT))
 				state.shouldSilent = true;
 		}
 
@@ -95,7 +95,7 @@ namespace AimbotMelee
 
 	std::string GetMeleeModeName()
 	{
-		switch (static_cast<MeleeMode>(Settings::Aimbot.melee))
+		switch (static_cast<MeleeMode>(Config.aimbot.packed.meleemode))
 		{
 		case MeleeMode::NONE:
 			return "None";

@@ -8,7 +8,7 @@ detour_ctx_t CL_CheckForPureServerWhitelist_ctx;
 
 void Hooked_CL_CheckForPureServerWhitelist(void *&pFilesToReload)
 {
-	if (Settings::Misc.sv_pure_bypass)
+	if (Config.misc.packed.sv_pure_bypass)
 		return;
 
 	DETOUR_ORIG_CALL(&CL_CheckForPureServerWhitelist_ctx, originalCheckForPureServerWhitelistFn, pFilesToReload);

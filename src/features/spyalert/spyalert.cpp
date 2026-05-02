@@ -21,7 +21,7 @@ static uint8_t s_iSpyStatus = 0;
 
 void SpyAlert::OnFrameStageNotify()
 {
-	if (!Settings::Misc.spyalert)
+	if (!Config.misc.packed.spyalert)
 		return;
 
 	s_iSpyStatus = (int)SpyStatus::NONE;
@@ -73,7 +73,7 @@ void SpyAlert::OnFrameStageNotify()
 
 void SpyAlert::OnImGui(ImDrawList* pDraw)
 {
-	if (!Settings::Misc.spyalert)
+	if (!Config.misc.packed.spyalert)
 		return;
 
 	if (s_iSpyStatus == 0)

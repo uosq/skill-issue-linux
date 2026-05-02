@@ -8,11 +8,11 @@
 
 #include "../features/aimbot/melee/aimbot_melee.h"
 #include "../features/aimbot/utils/utils.h"
-#include "../features/antiaim/antiaim.h"
 #include "../features/entitylist/entitylist.h"
 #include "../features/triggerbot/triggerbot.h"
 
-enum TabMenu {
+enum TabMenu
+{
 	TAB_AIMBOT = 0,
 	TAB_ESP,
 	TAB_MISC,
@@ -26,9 +26,8 @@ enum TabMenu {
 	TAB_CHAMS,
 };
 
-namespace GUI {
-	extern int tab;
-
+namespace GUI
+{
 	void RunMainWindow();
 	void RunPlayerList();
 	void RunSpectatorList();

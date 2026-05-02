@@ -4,6 +4,8 @@
 #include "../entitylist/entitylist.h"
 #include <mutex>
 
+#include "../../settings/settings.h"
+
 struct SpectatorData
 {
 	std::string name;
@@ -101,7 +103,7 @@ bool Spectators::IsLocalPlayerSpectated(int& amount)
 
 void Spectators::DrawList()
 {
-	if (helper::engine::IsTakingScreenshot())
+	if (!Config.misc.packed.spectatorlist || helper::engine::IsTakingScreenshot())
 		return;
 
 	ImGui::SetNextWindowSizeConstraints(ImVec2(150.0f, 0.0f), ImVec2(FLT_MAX, FLT_MAX));

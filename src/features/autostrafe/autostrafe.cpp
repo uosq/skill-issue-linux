@@ -28,7 +28,7 @@ namespace Autostrafe
 {
 	void Run(CTFPlayer *pLocal, CUserCmd *pCmd)
 	{
-		if (!Settings::Misc.autostrafe || pLocal->GetWaterLevel() > WL_Feet)
+		if (!Config.misc.packed.autostrafe || pLocal->GetWaterLevel() > WL_Feet)
 			return;
 
 		bool bIsOnGround = pLocal->GetFlags() & FL_ONGROUND;

@@ -2,17 +2,6 @@
 
 #include "../../backtrack/backtrack.h"
 
-struct AimbotTarget 
-{
-	Vector dir;
-	Vector pos;
-	float distance;
-	float fov;
-	CBaseEntity* entity;
-	float simTime;
-	bool useBacktrack;
-};
-
 HitscanOffset AimbotHitscan::GetInitialOffset(CTFPlayer *pLocal, CTFWeaponBase *pWeapon)
 {
 	if (pWeapon == nullptr)
@@ -48,7 +37,7 @@ HitscanOffset AimbotHitscan::GetInitialOffset(CTFPlayer *pLocal, CTFWeaponBase *
 bool AimbotHitscan::GetShotPosition(CTFPlayer *pLocal, CBaseEntity *pTarget, CTFWeaponBase *pWeapon, Vector eyePos, Vector &shotPosition, matrix3x4* pBones)
 {
 	matrix3x4 localBones[MAXSTUDIOBONES];
-	
+
 	// Fallback to current bones if no backtrack record is passed
 	if (!pBones)
 	{
@@ -112,155 +101,159 @@ bool AimbotHitscan::GetShotPosition(CTFPlayer *pLocal, CBaseEntity *pTarget, CTF
 	return true;
 }
 
-void AimbotHitscan::Run(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCmd, AimbotState &state)
+static bool EvaluatePlayerTarget(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CTFPlayer *pTargetEntity, CUserCmd *pCmd, const Vector &shootPos, const Vector &viewAngles, float maxFov, bool bNoFovLimit, AimbotTarget &outTarget)
 {
-	if (!Settings::Aimbot.key->IsActive())
-		return;
+	bool bIsSniperRifle = pWeapon->IsSniperRifle();
+	bool bIsZoomed = pLocal->InCond(TF_COND_ZOOMED);
+	bool bFoundRecord = false;
 
-	if (Settings::Aimbot.waitforcharge && pWeapon->IsAmbassador())
-		if (!pWeapon->CanAmbassadorHeadshot())
-			return;
+	outTarget.fov = FLT_MAX;
 
-	if (Settings::Aimbot.hold_minigun_spin && pWeapon->GetWeaponID() == TF_WEAPON_MINIGUN)
-		pCmd->buttons |= IN_ATTACK2;
+	float flLatency = Backtrack::GetInterp() + Backtrack::GetLatency();
 
-	int localTeam   = pLocal->m_iTeamNum();
-	Vector shootPos = pLocal->GetEyePos();
+	Vector targetOrigin = pTargetEntity->GetAbsOrigin();
+	Vector targetVelocity = pTargetEntity->GetVelocity();
 
-	Vector viewAngles;
-	interfaces::Engine->GetViewAngles(viewAngles);
+	float predictedTime = interfaces::GlobalVars->curtime + flLatency;
+	matrix3x4 predictedBones[MAXSTUDIOBONES];
 
-	Vector viewForward;
-	Math::AngleVectors(viewAngles, &viewForward);
-	viewForward.Normalize();
+	if (AimbotUtils::RebuildAnimationMatrix(pTargetEntity, targetOrigin, targetVelocity, predictedTime, predictedBones))
+	{
+		Vector pos;
+		bool bShotFound = AimbotHitscan::GetShotPosition(pLocal, pTargetEntity, pWeapon, shootPos, pos, predictedBones);
+
+		if (bShotFound)
+		{
+			float distance = (pos - shootPos).Normalize();
+			if (distance < 8192.f)
+			{
+				Vector angle = Math::CalcAngle(shootPos, pos);
+				float fov = Math::CalcFov(viewAngles, angle);
+
+				if ((bNoFovLimit || fov <= maxFov) &&
+				    (!Config.aimbot.packed.waitforcharge || !bIsZoomed || !bIsSniperRifle || AimbotUtils::CanDamageWithSniperRifle(pLocal, pTargetEntity, pWeapon)))
+				{
+					outTarget = {angle, pos, distance, fov, pTargetEntity, predictedTime, false};
+					bFoundRecord = true;
+				}
+			}
+		}
+	}
+
+	if (!bFoundRecord && Config.backtrack.packed.enabled)
+	{
+		std::vector<LagCompRecord> records;
+		if (Backtrack::GetRecords(pTargetEntity, records) && !records.empty())
+		{
+			for (auto& record : records)
+			{
+				if (!record.IsValid(pCmd))
+					continue;
+
+				Vector pos;
+				if (!AimbotHitscan::GetShotPosition(pLocal, pTargetEntity, pWeapon, shootPos, pos, record.m_Bones))
+					continue;
+
+				float distance = (pos - shootPos).Normalize();
+				if (distance >= 8192.f)
+					continue;
+
+				Vector angle = Math::CalcAngle(shootPos, pos);
+				float fov = Math::CalcFov(viewAngles, angle);
+
+				if (!bNoFovLimit && fov > maxFov)
+					continue;
+
+				if (Config.aimbot.packed.waitforcharge && bIsZoomed && bIsSniperRifle &&
+				    !AimbotUtils::CanDamageWithSniperRifle(pLocal, pTargetEntity, pWeapon))
+					continue;
+
+				if (fov < outTarget.fov)
+				{
+					outTarget = {angle, pos, distance, fov, pTargetEntity, record.m_flSimTime, true};
+					bFoundRecord = true;
+				}
+			}
+		}
+	}
+
+	return bFoundRecord;
+}
+
+static bool EvaluateNonPlayerTarget(CTFPlayer *pLocal, CBaseEntity *pEntity, const Vector &shootPos, const Vector &viewAngles, float maxFov, bool bNoFovLimit, AimbotTarget &outTarget)
+{
+	Vector pos = pEntity->GetCenter();
+	float distance = (pos - shootPos).Normalize();
+
+	if (distance >= 8192.f)
+		return false;
+
+	Vector angle = Math::CalcAngle(shootPos, pos);
+	float fov = Math::CalcFov(viewAngles, angle);
+
+	if (!bNoFovLimit && fov > maxFov)
+		return false;
 
 	CGameTrace trace;
 	CTraceFilterHitscan filter;
-	filter.pSkip          = pLocal;
+	filter.pSkip = pLocal;
 
-	bool bIsSniperRifle   = pWeapon->IsSniperRifle();
-	bool bIsZoomed        = pLocal->InCond(TF_COND_ZOOMED);
+	helper::engine::Trace(shootPos, pos, MASK_SHOT | CONTENTS_HITBOX, &filter, &trace);
+	if (!trace.DidHit() || trace.m_pEnt != pEntity)
+		return false;
 
-	float maxFov          = AimbotUtils::GetAimbotFovScaled();
-	bool bNoFovLimit      = Settings::Aimbot.fov >= 180.0f;
+	outTarget = {angle, pos, distance, fov, pEntity, 0.f, false};
+	return true;
+}
 
-	bool bCanHitTeammates = pWeapon->CanHitTeammates();
-
+static bool FindBestTarget(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCmd, const Vector &shootPos, const Vector &viewAngles, AimbotTarget &outBestTarget)
+{
 	std::vector<AimbotTarget> targets;
+
+	int localTeam = pLocal->m_iTeamNum();
+	float maxFov = AimbotUtils::GetAimbotFovScaled();
+	bool bNoFovLimit = Config.aimbot.fov >= 180.0f;
+	bool bCanHitTeammates = pWeapon->CanHitTeammates();
 
 	for (EntityListEntry entry : AimbotUtils::GetTargets(bCanHitTeammates, localTeam))
 	{
 		CBaseEntity *entity = entry.ptr;
+		AimbotTarget potentialTarget;
 
 		if (entity->IsPlayer())
 		{
-			CTFPlayer* pPlayer = static_cast<CTFPlayer*>(entity);
-			std::vector<LagCompRecord> records;
-			
-			bool bFoundRecord = false;
-			AimbotTarget bestRecordTarget;
-			bestRecordTarget.fov = FLT_MAX;
-
-			if (Backtrack::GetRecords(pPlayer, records) && !records.empty())
-			{
-				for (auto& record : records)
-				{
-					if (!record.IsValid(pCmd))
-						continue;
-
-					Vector pos;
-					if (!GetShotPosition(pLocal, entity, pWeapon, shootPos, pos, record.m_Bones))
-						continue;
-
-					float distance = (pos - shootPos).Normalize();
-					if (distance >= 8192.f)
-						continue;
-
-					Vector angle	= Math::CalcAngle(shootPos, pos);
-					float fov	= Math::CalcFov(viewAngles, angle);
-
-					if (!bNoFovLimit && fov > maxFov)
-						continue;
-
-					if (Settings::Aimbot.waitforcharge && bIsZoomed && bIsSniperRifle &&
-					    !AimbotUtils::CanDamageWithSniperRifle(pLocal, entity, pWeapon))
-						continue;
-
-					if (fov < bestRecordTarget.fov)
-					{
-						bestRecordTarget = {angle, pos, distance, fov, entity, record.m_flSimTime, true};
-						bFoundRecord = true;
-					}
-				}
-			}
-
-			if (bFoundRecord)
-			{
-				targets.push_back(bestRecordTarget);
-				continue; // move to next entity, we already have their best record
-			}
-
-			// if no backtrack records were valid/found, check current position
-			Vector pos;
-			if (!GetShotPosition(pLocal, entity, pWeapon, shootPos, pos, nullptr))
-				continue;
-
-			float distance = (pos - shootPos).Normalize();
-			if (distance >= 8192.f)
-				continue;
-
-			Vector angle = Math::CalcAngle(shootPos, pos);
-			float fov    = Math::CalcFov(viewAngles, angle);
-
-			if (!bNoFovLimit && fov > maxFov)
-				continue;
-
-			if (Settings::Aimbot.waitforcharge && bIsZoomed && bIsSniperRifle &&
-			    !AimbotUtils::CanDamageWithSniperRifle(pLocal, entity, pWeapon))
-				continue;
-
-			targets.push_back({angle, pos, distance, fov, entity, 0.f, false});
+			if (EvaluatePlayerTarget(pLocal, pWeapon, static_cast<CTFPlayer*>(entity), pCmd, shootPos, viewAngles, maxFov, bNoFovLimit, potentialTarget))
+				targets.push_back(potentialTarget);
 		}
 		else
 		{
-			// dont try to backtrack NPCs!
-			Vector pos = entity->GetCenter();
-			float distance = (pos - shootPos).Normalize();
-			if (distance >= 8192.f)
-				continue;
-
-			Vector angle = Math::CalcAngle(shootPos, pos);
-			float fov    = Math::CalcFov(viewAngles, angle);
-
-			if (!bNoFovLimit && fov > maxFov)
-				continue;
-
-			helper::engine::Trace(shootPos, pos, MASK_SHOT | CONTENTS_HITBOX, &filter, &trace);
-			if (!trace.DidHit() || trace.m_pEnt != entity)
-				continue;
-
-			targets.push_back({angle, pos, distance, fov, entity, 0.f, false});
+			if (EvaluateNonPlayerTarget(pLocal, entity, shootPos, viewAngles, maxFov, bNoFovLimit, potentialTarget))
+				targets.push_back(potentialTarget);
 		}
 	}
 
 	if (targets.empty())
-		return;
+		return false;
 
 	std::sort(targets.begin(), targets.end(),
-		  [&](const AimbotTarget& a, const AimbotTarget& b) { return a.fov < b.fov; });
+		[&](const AimbotTarget& a, const AimbotTarget& b) { return a.fov < b.fov; });
 
-	AimbotTarget ptTarget = targets.front();
-	AimbotMode mode = static_cast<AimbotMode>(Settings::Aimbot.mode);
+	outBestTarget = targets.front();
+	return true;
+}
+
+static void ApplyAim(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCmd, AimbotState &state, const AimbotTarget &target, const Vector &shootPos, const Vector &viewAngles, const Vector &viewForward)
+{
+	AimbotMode mode = static_cast<AimbotMode>(Config.aimbot.packed.aimmode);
 
 	switch (mode)
 	{
 	case AimbotMode::PLAIN:
 	{
-		if (Settings::Aimbot.autoshoot)
+		if (Config.aimbot.packed.autoshoot)
 			pCmd->buttons |= IN_ATTACK;
 
-		Vector angle     = ptTarget.dir;
-
+		Vec3 angle = target.dir;
 		pCmd->viewangles = angle;
 		interfaces::Engine->SetViewAngles(angle);
 		break;
@@ -268,24 +261,16 @@ void AimbotHitscan::Run(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCm
 	case AimbotMode::ASSISTANCE:
 	case AimbotMode::SMOOTH:
 	{
-		if (mode == AimbotMode::ASSISTANCE)
-			if (pCmd->mousedx == 0 && pCmd->mousedy == 0)
-				break;
+		if (mode == AimbotMode::ASSISTANCE && pCmd->mousedx == 0 && pCmd->mousedy == 0)
+			break;
 
-		Vector targetAngle = ptTarget.dir;
-		Vector delta = targetAngle - viewAngles;
+		Vector delta = target.dir - viewAngles;
 
-		// fix the 180 flick
 		delta.x = Math::NormalizeAngle(delta.x);
 		delta.y = Math::NormalizeAngle(delta.y);
-		
-		float flDistance = delta.Length();
 
-		// max allowed to move per tick
-		float flMaxStep = Settings::Aimbot.smoothness;
-		float flStepSize = std::min(flDistance, flMaxStep);
-
-		Vector stepAngle = delta * (flStepSize / flDistance);
+		float smoothFactor = std::max(1.0f, Config.aimbot.smoothness);
+		Vector stepAngle = delta / smoothFactor;
 		Vector smoothedAngle = viewAngles + stepAngle;
 
 		state.angle = smoothedAngle;
@@ -299,40 +284,64 @@ void AimbotHitscan::Run(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCm
 		filter.pSkip = pLocal;
 		helper::engine::Trace(shootPos, shootPos + (viewForward * 2048), MASK_SHOT | CONTENTS_HITBOX, &filter, &trace);
 
-		if (!trace.DidHit() || trace.m_pEnt != ptTarget.entity)
-			break;
-
-		if (Settings::Aimbot.autoshoot)
-			pCmd->buttons |= IN_ATTACK;
-
+		if (trace.DidHit() && trace.m_pEnt == target.entity)
+		{
+			if (Config.aimbot.packed.autoshoot)
+				pCmd->buttons |= IN_ATTACK;
+		}
 		break;
 	}
 	case AimbotMode::SILENT:
 	{
-		if (Settings::Aimbot.autoshoot)
+		if (Config.aimbot.packed.autoshoot)
 			pCmd->buttons |= IN_ATTACK;
 
 		if (helper::localplayer::IsAttacking(pLocal, pWeapon, pCmd))
 		{
-			Vector angle = ptTarget.dir;
-			pCmd->viewangles = angle;
-			state.angle = angle;
+			pCmd->viewangles = target.dir;
+			state.angle = target.dir;
 			state.running = true;
 		}
-
 		break;
 	}
-
 	case AimbotMode::INVALID:
 	case AimbotMode::MAX:
 		break;
 	}
 
-	if (targets.front().entity != nullptr)
+	if (target.entity != nullptr)
 	{
-		EntityList::m_pAimbotTarget = targets.front().entity;
+		EntityList::m_pAimbotTarget = target.entity;
 
-		if (ptTarget.useBacktrack && helper::localplayer::IsAttacking(pLocal, pWeapon, pCmd))
-			pCmd->tick_count = TIME_TO_TICKS(ptTarget.simTime + Backtrack::GetInterp());
+		if (target.useBacktrack && helper::localplayer::IsAttacking(pLocal, pWeapon, pCmd))
+			pCmd->tick_count = TIME_TO_TICKS(target.simTime + Backtrack::GetInterp());
 	}
+}
+
+void AimbotHitscan::Run(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCmd, AimbotState &state)
+{
+	if (!Config.aimbot.key->IsActive())
+		return;
+
+	if (Config.aimbot.packed.waitforcharge && pWeapon->IsAmbassador())
+		if (!pWeapon->CanAmbassadorHeadshot())
+			return;
+
+	if (Config.aimbot.packed.hold_minigun_spin && pWeapon->GetWeaponID() == TF_WEAPON_MINIGUN)
+		pCmd->buttons |= IN_ATTACK2;
+
+	Vector shootPos = pLocal->GetEyePos();
+	Vector viewAngles;
+	interfaces::Engine->GetViewAngles(viewAngles);
+
+	Vector viewForward;
+	Math::AngleVectors(viewAngles, &viewForward);
+	viewForward.Normalize();
+
+	AimbotTarget bestTarget;
+
+	if (!FindBestTarget(pLocal, pWeapon, pCmd, shootPos, viewAngles, bestTarget))
+		return;
+
+	ApplyAim(pLocal, pWeapon, pCmd, state, bestTarget, shootPos, viewAngles, viewForward);
 }

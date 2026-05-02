@@ -7,10 +7,11 @@ void CustomFov::Run(CTFPlayer *pLocal, CViewSetup *pView)
 {
 	static ConVar *fov_desired = interfaces::Cvar->FindVar("fov_desired");
 
-	float target_fov = Settings::Misc.customfov_enabled ? Settings::Misc.customfov : fov_desired->GetFloat();
+	bool enabled = Config.misc.packed.customfov_enabled && !interfaces::Engine->IsTakingScreenshot();
+	float target_fov = enabled ? Config.misc.customfov : fov_desired->GetFloat();
 
 	if (pLocal->InCond(TF_COND_ZOOMED))
-		target_fov = Settings::Misc.zoomedfov;
+		target_fov = enabled ? Config.misc.zoomedfov : 20.0f;
 
 	m_flFov = Math::Lerp(m_flOldFov, target_fov, 0.2f);
 
@@ -25,8 +26,8 @@ void CustomFov::Run(CTFPlayer *pLocal, CViewSetup *pView)
 	if (pLocal->IsAlive())
 	{
 		pLocal->m_iDefaultFOV() =
-		Settings::Misc.customfov_enabled
-		? Settings::Misc.customfov
+		enabled
+		? Config.misc.customfov
 		: fov_desired->GetFloat();
 	}
 

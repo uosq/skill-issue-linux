@@ -31,7 +31,7 @@ static detour_ctx_t ctx;
 
 bool CViewRender_ShouldDrawViewModel(void* self, bool bDrawviewmodel)
 {
-	if (Settings::Misc.no_zoom)
+	if (Config.misc.packed.no_zoom)
 	{
 		CTFPlayer* pLocal = EntityList::GetLocal();
 		if (pLocal && pLocal->InCond(TF_COND_ZOOMED))

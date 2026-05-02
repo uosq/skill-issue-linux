@@ -24,16 +24,16 @@ namespace AimbotUtils
 			if (player->IsGhost())
 				return false;
 
-			if (Settings::Aimbot.ignorecloaked && player->InCond(ETFCond::TF_COND_CLOAKED))
+			if (Config.aimbot.packed.ignorecloaked && player->InCond(ETFCond::TF_COND_CLOAKED))
 				return false;
 
-			if (Settings::Aimbot.ignorebonked && player->InCond(ETFCond::TF_COND_BONKED))
+			if (Config.aimbot.packed.ignorebonked && player->InCond(ETFCond::TF_COND_BONKED))
 				return false;
 
-			if (Settings::Aimbot.ignoreubered && player->InCond(ETFCond::TF_COND_INVULNERABLE))
+			if (Config.aimbot.packed.ignoreubered && player->InCond(ETFCond::TF_COND_INVULNERABLE))
 				return false;
 
-			if (Settings::Aimbot.ignorehoovy && player->m_iClass() == ETFClass::TF_CLASS_HEAVYWEAPONS &&
+			if (Config.aimbot.packed.ignorehoovy && player->m_iClass() == ETFClass::TF_CLASS_HEAVYWEAPONS &&
 			    (player->GetFlags() & FL_DUCKING))
 				return false;
 
@@ -86,7 +86,7 @@ namespace AimbotUtils
 
 	std::string GetAimbotModeName()
 	{
-		switch (static_cast<AimbotMode>(Settings::Aimbot.mode))
+		switch (static_cast<AimbotMode>(Config.aimbot.packed.aimmode))
 		{
 		case AimbotMode::PLAIN:
 			return "Plain";
@@ -103,7 +103,7 @@ namespace AimbotUtils
 
 	std::string GetTeamModeName()
 	{
-		switch (static_cast<TeamMode>(Settings::Aimbot.teamMode))
+		switch (static_cast<TeamMode>(Config.aimbot.packed.teamselection))
 		{
 		case TeamMode::ONLYENEMY:
 			return "Only Enemy";
@@ -162,7 +162,7 @@ namespace AimbotUtils
 
 	float GetAimbotFovScaled()
 	{
-		return GetFovScaled(Settings::Aimbot.fov);
+		return GetFovScaled(Config.aimbot.fov);
 	}
 
 	std::vector<EntityListEntry> GetTargets(const bool &bCanHitTeammates, int localTeam)
@@ -183,7 +183,7 @@ namespace AimbotUtils
 			if (!IsValidEntity(entry.ptr))
 				continue;
 
-			TeamMode teamMode = static_cast<TeamMode>(Settings::Aimbot.teamMode);
+			TeamMode teamMode = static_cast<TeamMode>(Config.aimbot.packed.teamselection);
 			int teamNum	  = entry.ptr->m_iTeamNum();
 
 			if (!bCanHitTeammates || teamMode == TeamMode::ONLYENEMY)
@@ -204,3 +204,66 @@ namespace AimbotUtils
 		return vecEntities;
 	}
 }; // namespace AimbotUtils
+
+// Am I doing this right?
+bool AimbotUtils::RebuildAnimationMatrix(CTFPlayer* pPlayer, const Vector& predictedOrigin, const Vector& predictedVelocity, float predictedTime, matrix3x4* outBones)
+{
+        if (!pPlayer || !outBones)
+                return false;
+
+        Vector backupOrigin = pPlayer->GetAbsOrigin();
+        Vector backupVelocity = pPlayer->GetVelocity();
+        float backupSimTime = pPlayer->m_flSimulationTime();
+        float backupAnimTime = pPlayer->m_flAnimTime();
+        
+        int backupFlags = pPlayer->GetFlags();
+        int backupEFlags = pPlayer->m_iEFlags();
+        int backupEffects = pPlayer->m_fEffects();
+
+        float backupCurTime = interfaces::GlobalVars->curtime;
+        float backupFrameTime = interfaces::GlobalVars->frametime;
+        int backupTickCount = interfaces::GlobalVars->tickcount;
+
+	bool backupClientSideAnim = pPlayer->m_bClientSideAnimation();
+
+	auto backupPoses = pPlayer->m_flPoseParameter();
+
+        interfaces::GlobalVars->curtime = predictedTime;
+        interfaces::GlobalVars->frametime = interfaces::GlobalVars->interval_per_tick;
+        interfaces::GlobalVars->tickcount = TIME_TO_TICKS(predictedTime);
+
+        pPlayer->SetAbsOrigin(predictedOrigin);
+        pPlayer->GetVelocity() = predictedVelocity;
+        pPlayer->m_flSimulationTime() = predictedTime;
+        pPlayer->m_flAnimTime() = predictedTime;
+
+        pPlayer->m_bClientSideAnimation() = true;
+        pPlayer->m_iEFlags() &= ~EFL_DIRTY_ABSVELOCITY;
+	pPlayer->m_fEffects() |= EF_NOINTERP;
+
+        pPlayer->InvalidateBoneCache();
+        pPlayer->UpdateClientSideAnimation();
+
+        bool bSuccess = pPlayer->SetupBones(outBones, MAXSTUDIOBONES, BONE_USED_BY_ANYTHING, predictedTime);
+
+        pPlayer->SetAbsOrigin(backupOrigin);
+        pPlayer->GetVelocity() = backupVelocity;
+        pPlayer->m_flSimulationTime() = backupSimTime;
+        pPlayer->m_flAnimTime() = backupAnimTime;
+        
+        pPlayer->GetFlags() = backupFlags;
+        pPlayer->m_iEFlags() = backupEFlags;
+        pPlayer->m_fEffects() = backupEffects;
+
+	pPlayer->m_flPoseParameter() = backupPoses;
+
+	pPlayer->m_bClientSideAnimation() = backupClientSideAnim;
+
+        interfaces::GlobalVars->curtime = backupCurTime;
+        interfaces::GlobalVars->frametime = backupFrameTime;
+        interfaces::GlobalVars->tickcount = backupTickCount;
+
+        pPlayer->InvalidateBoneCache();
+
+        return bSuccess;
+}

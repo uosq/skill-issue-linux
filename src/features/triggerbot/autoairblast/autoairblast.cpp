@@ -82,23 +82,8 @@ void AutoAirblast::Run(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCmd
 	if (!pWeapon->CanAirblast())
 		return;
 
-	if (Settings::Trigger.autoairblast == static_cast<int>(GenericMode::LEGIT))
+	if (Config.trigger.packed.autoairblast == static_cast<int>(GenericMode::LEGIT))
 		LegitAirblast(pLocal, pWeapon, pCmd);
 	else
 		RageAirblast(pLocal, pWeapon, pCmd, pSendPacket);
-}
-
-std::string AutoAirblast::GetModeName()
-{
-	switch (static_cast<GenericMode>(Settings::Trigger.autoairblast))
-	{
-	case GenericMode::NONE:
-		return "None";
-	case GenericMode::LEGIT:
-		return "Legit";
-	case GenericMode::RAGE:
-		return "Rage";
-	default:
-		return "Invalid";
-	}
 }

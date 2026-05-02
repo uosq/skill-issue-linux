@@ -38,7 +38,7 @@ struct AimbotState
 	Vector angle = {0, 0, 0};
 };
 
-static void ClearAimbotState(AimbotState &state)
+inline void ClearAimbotState(AimbotState &state)
 {
 	// state.angle.Set(0, 0, 0);
 	state.shouldSilent = false;
@@ -63,4 +63,6 @@ namespace AimbotUtils
 	float GetAimbotFovScaled();
 
 	std::vector<EntityListEntry> GetTargets(const bool &bCanHitTeammates, int localTeam);
+
+	bool RebuildAnimationMatrix(CTFPlayer* pPlayer, const Vector& predictedOrigin, const Vector& predictedVelocity, float predictedTime, matrix3x4* outBones);
 }; // namespace AimbotUtils

@@ -10,7 +10,7 @@
 #include "../features/warp/warp.h"
 #include "../features/chams/chams.h"
 #include "../features/esp/esp.h"
-#include "../features/antiafk//antiafk.h"
+#include "../features/antiafk/antiafk.h"
 
 #include "../features/angelscript/api/libraries/hooks/hooks.h"
 

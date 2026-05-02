@@ -10,7 +10,7 @@ detour_ctx_t showitemsctx;
 
 bool HookedShowItemsPickedUpFn(void *thisptr, bool bForce, bool bReturnToGame, bool bNoPanel)
 {
-	if (Settings::Misc.accept_item_drop)
+	if (Config.misc.packed.accept_item_drop)
 	{
 		interfaces::Cvar->ConsolePrintf("Collected item drop\n");
 		DETOUR_ORIG_CALL(&showitemsctx, original_ShowItemsPickedUpFn, thisptr, true, true, true);

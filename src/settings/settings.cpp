@@ -5,17 +5,6 @@
 
 bool Settings::menu_open = false;
 
-namespace Settings
-{
-	SettingsAimbot Aimbot{};
-	SettingsAntiAim AntiAim{};
-	SettingsColors Colors{};
-	SettingsESP ESP{};
-	SettingsMisc Misc{};
-	SettingsRadar Radar{};
-	SettingsTriggerbot Trigger{};
-} // namespace Settings
-
 int Settings::Load(const std::string &fullPath)
 {
 	CSimpleIniA ini;
@@ -58,9 +47,9 @@ int Settings::Save(const std::string &fullPath)
 
 void Settings::InitBinds()
 {
-	Aimbot.key		  = gBinds.RegisterHotkey("aimbot key");
-	AntiAim.warp_key	  = gBinds.RegisterHotkey("warp key");
-	AntiAim.warp_recharge_key = gBinds.RegisterHotkey("warp recharge key");
-	Misc.thirdperson_key	  = gBinds.RegisterHotkey("thirdperson key");
-	Trigger.key		  = gBinds.RegisterHotkey("trigger key");
+	Config.aimbot.key		= gBinds.RegisterHotkey("aimbot key");
+	Config.warp.key	 		= gBinds.RegisterHotkey("warp key");
+	Config.warp.recharge_key	= gBinds.RegisterHotkey("warp recharge key");
+	Config.misc.thirdperson_key	= gBinds.RegisterHotkey("thirdperson key");
+	Config.trigger.key		= gBinds.RegisterHotkey("trigger key");
 }

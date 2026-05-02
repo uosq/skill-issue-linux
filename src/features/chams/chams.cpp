@@ -8,40 +8,16 @@
 #include "../entitylist/entitylist.h"
 #include "../esp/esp_utils.h"
 
-#include "chamsmaterial.h"
+#include "../materialregistry/reg.h"
 
 static std::unordered_set<int> hidden_entities;
-static std::vector<std::shared_ptr<ChamsMaterial>> materials;
 
 static bool is_drawing = false;
 
 void Chams::Init()
 {
-	materials.emplace_back
-	(
-		std::make_shared<ChamsMaterial>
-		(
-			"basic flat",
-
-			"UnlitGeneric\n"
-			"{\n"
-			"\t$basetexture \"white\"\n"
-			"}"
-		)
-	);
-
-	materials.emplace_back
-	(
-		std::make_shared<ChamsMaterial>
-		(
-			"basic shaded",
-
-			"VertexLitGeneric\n"
-			"{\n"
-			"\t$basetexture \"white\"\n"
-			"}"
-		)
-	);
+	Config.chams.active_materials.emplace_back("basic flat");
+	Config.chams.active_materials.emplace_back("basic shaded");
 }
 
 void Chams::OnLevelPostEntity()
@@ -52,11 +28,6 @@ void Chams::OnLevelPostEntity()
 void Chams::OnLevelShutdown()
 {
 	Reset();
-}
-
-std::vector<std::shared_ptr<ChamsMaterial>>& Chams::GetMaterials()
-{
-	return materials;
 }
 
 bool Chams::ShouldHide(int entindex)
@@ -70,13 +41,13 @@ void Chams::OnDoPostScreenSpaceEffects(CTFPlayer* pLocal)
 
 	Reset();
 
-	if (!Settings::ESP.chams)
+	if (!Config.chams.enabled)
 		return;
 
 	if (pLocal == nullptr)
 		return;
 
-	if (materials.empty())
+	if (Config.chams.active_materials.empty())
 		return;
 
 	if (interfaces::Engine->IsTakingScreenshot())
@@ -103,15 +74,15 @@ void Chams::OnDoPostScreenSpaceEffects(CTFPlayer* pLocal)
 
 static void DoAttachmentColorModulation(CBaseEntity* attachment, const Color& orig_color)
 {
-	bool highlight_weapons = Settings::ESP.weapon;
+	bool highlight_weapons = Config.esp.packed.weapon;
 
 	if (attachment->IsWeapon() && highlight_weapons)
 	{
 		float color[3]
 		{
-			Settings::Colors.weapon.r()/255.0f,
-			Settings::Colors.weapon.g()/255.0f,
-			Settings::Colors.weapon.b()/255.0f,
+			Config.colors.weapon.r()/255.0f,
+			Config.colors.weapon.g()/255.0f,
+			Config.colors.weapon.b()/255.0f,
 		};
 
 		interfaces::RenderView->SetColorModulation(color);
@@ -199,21 +170,18 @@ static void DrawEntityAndAttachments(CBaseEntity* entity, int drawflags)
 
 void Chams::ApplyMaterials(CBaseEntity* entity, int drawflags)
 {
-	for (auto& mat : materials)
+	for (const auto& mat_name : Config.chams.active_materials)
 	{
-		if (!mat->IsValidMat())
-			continue;
+		const auto& mat = MaterialRegistry::GetMaterialByName(mat_name);
 
-		if (!mat->IsUsed())
+		if (!mat || !mat->IsValidMat())
 			continue;
 
 		interfaces::RenderView->SetBlend(mat->GetAlpha());
 		interfaces::ModelRender->ForcedMaterialOverride(mat->GetMaterial());
 
 		is_drawing = true;
-
 		DrawEntityAndAttachments(entity, drawflags);
-
 		is_drawing = false;
 	}
 }
@@ -243,45 +211,7 @@ void Chams::Reset()
 	is_drawing = false;
 }
 
-// checks if the material already exist in the 'materials' vector
-static bool DoesMaterialExist(const std::string& name)
-{
-	for (auto it = materials.begin(); it != materials.end(); it++)
-		if ((*it)->GetInternalName() == name)
-			return true;
-
-	return false;
-}
-
-bool Chams::AddMaterial(const std::string& name, const std::string& vmt, std::shared_ptr<ChamsMaterial>& out)
-{
-	if (DoesMaterialExist(name))
-		return false;
-
-	materials.emplace_back(std::make_shared<ChamsMaterial>(name, vmt));
-	out = materials.back();
-
-	return true;
-}
-
-bool Chams::RemoveMaterial(const std::string& name)
-{
-	if (!DoesMaterialExist(name))
-		return true;
-
-	for (auto it = materials.begin(); it != materials.end(); it++)
-	{
-		if ((*it)->GetInternalName() == name)
-		{
-			materials.erase(it);
-			return true;
-		}
-	}
-
-	return false;
-}
-
 void Chams::OnGameShutdown()
 {
-	materials.clear();
+	Config.chams.active_materials.clear();
 }

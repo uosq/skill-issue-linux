@@ -22,7 +22,7 @@ static void DrawColoredTextEx(const char* fmt, text... txt)
 
 void InfoPanel::OnImGui(bool bMenuOpen)
 {
-	if (!Settings::Misc.infopanel)
+	if (!Config.misc.packed.infopanel)
 		return;
 
 	int flags = ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse;
@@ -32,20 +32,20 @@ void InfoPanel::OnImGui(bool bMenuOpen)
 	if (ImGui::Begin("Information Panel", nullptr, flags))
 	{
 		DrawColoredText("Aimbot", Aimbot::IsRunning());
-		DrawColoredText("ESP", Settings::ESP.enabled);
-		DrawColoredText("Chams", Settings::ESP.chams);
-		DrawColoredText("Autostrafe", Settings::Misc.autostrafe);
-		DrawColoredText("Glow", Settings::ESP.blur > 0);
+		DrawColoredText("ESP", Config.esp.packed.enabled);
+		DrawColoredText("Chams", Config.chams.enabled);
+		DrawColoredText("Autostrafe", Config.misc.packed.autostrafe);
+		DrawColoredText("Glow", Config.glow.packed.blur > 0);
 
 		int amount = 0;
 		DrawColoredText("Spectated", Spectators::IsLocalPlayerSpectated(amount));
 		DrawColoredTextEx("Spectator Count: %i", amount);
 
-		DrawColoredText("Warp", Settings::AntiAim.warp_key->IsEnabled());
+		DrawColoredText("Warp", Config.warp.key->IsEnabled());
 		DrawColoredTextEx("Warp Amount: %i", Warp::m_iShiftAmount);
 		DrawColoredTextEx("Warp Ticks: %i", Warp::m_iStoredTicks);
 
-		DrawColoredText("Radar", Settings::Radar.enabled);
+		DrawColoredText("Radar", Config.radar.packed.enabled);
 		DrawColoredTextEx("Radar Range: %i", Radar::m_iRange);
 		DrawColoredTextEx("Radar Radius: %.3f", Radar::m_flRadius);
 	}

@@ -8,7 +8,7 @@ void NoRecoil::RunOverrideView(CTFPlayer *pLocal, CViewSetup *pView)
 	if (!pLocal->IsAlive())
 		return;
 
-	if (!Settings::Misc.norecoil)
+	if (!Config.misc.packed.norecoil)
 		return;
 
 	if (interfaces::CInput->CAM_IsThirdPerson())
@@ -23,7 +23,7 @@ void NoRecoil::RunOverrideView(CTFPlayer *pLocal, CViewSetup *pView)
 
 void NoRecoil::RunCreateMove(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCmd)
 {
-	if (!Settings::Misc.norecoil)
+	if (!Config.misc.packed.norecoil)
 		return;
 
 	if (!helper::localplayer::IsAttacking(pLocal, pWeapon, pCmd))
@@ -38,7 +38,7 @@ void NoRecoil::RunCreateMove(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd
 
 void NoRecoil::RunCalcViewModelView(Vector &angle)
 {
-	if (!Settings::Misc.norecoil)
+	if (!Config.misc.packed.norecoil)
 		return;
 
 	CTFPlayer* pLocal = EntityList::GetLocal();

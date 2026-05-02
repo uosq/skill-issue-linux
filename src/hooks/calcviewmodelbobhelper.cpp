@@ -12,7 +12,7 @@ detour_ctx_t calcbobhelper;
 
 float Hooked_CalcViewModelBobHelper(CTFPlayer *pPlayer, BobState_t *pBobState)
 {
-	if (!Settings::Misc.no_viewmodel_bob)
+	if (!Config.misc.packed.no_viewmodel_bob)
 	{
 		DETOUR_ORIG_CALL(&calcbobhelper, CalcViewModelBobHelper, pPlayer, pBobState);
 		return 0.0f;
