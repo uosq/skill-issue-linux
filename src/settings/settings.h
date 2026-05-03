@@ -241,6 +241,7 @@ struct GlowConfig
 			uint32_t enabled : 1;
 			uint32_t stencil : 4;
 			uint32_t blur : 4;
+			uint32_t weapon : 1;
 
 			uint32_t _reserved : 23; // padding
 		};
@@ -320,7 +321,7 @@ struct MiscConfig
 	float zoomedfov             = 20.0f;
 	float viewmodel_offset[3]   = {0, 0, 0};
 	float viewmodel_interp	    = 0.0f;
-	float thirdperson_offset[4] = {23.5, 11.5, 8.0f};
+	float thirdperson_offset[4] = {23.5, 11.5, 8.0f, 1.0f};
 	float aspectratio	    = 0;
 };
 

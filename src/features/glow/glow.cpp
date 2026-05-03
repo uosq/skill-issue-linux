@@ -68,7 +68,7 @@ namespace Glow
 			int passes     = 0;
 			while (moveChild != nullptr && passes <= 32)
 			{
-				if (Config.esp.packed.weapon && static_cast<CBaseEntity *>(moveChild)->IsWeapon())
+				if (Config.glow.packed.weapon && static_cast<CBaseEntity *>(moveChild)->IsWeapon())
 				{
 					color = Config.colors.weapon;
 					// this is fucking stupid

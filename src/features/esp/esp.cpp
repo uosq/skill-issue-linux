@@ -560,6 +560,9 @@ static void DrawHealthText(ImDrawList* pDraw, ESPData& data)
 
 static void DrawWeapon(ImDrawList* pDraw, ESPData& data)
 {
+	if (!Config.esp.packed.weapon)
+		return;
+
 	TextSide side = static_cast<TextSide>(Config.esp.sides.weaponname);
 	DrawText(pDraw, data.weaponName, data, side);
 }

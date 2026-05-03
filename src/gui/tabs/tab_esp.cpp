@@ -141,6 +141,7 @@ void DrawESPTab()
 		ImGui_CheckboxBit("Enabled##Glow", Config.glow.packed.enabled);
 		ImGui_SliderIntBit("Stencil##Glow", Config.glow.packed.stencil, 0, 10);
 		ImGui_SliderIntBit("Blur##Glow", Config.glow.packed.blur, 0, 10);
+		ImGui_CheckboxBit("Highlight Weapon##Glow", Config.glow.packed.weapon);
 
 		ImGui::Separator();
 
