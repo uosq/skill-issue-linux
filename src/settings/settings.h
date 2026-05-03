@@ -320,7 +320,7 @@ struct MiscConfig
 	float zoomedfov             = 20.0f;
 	float viewmodel_offset[3]   = {0, 0, 0};
 	float viewmodel_interp	    = 0.0f;
-	float thirdperson_offset[3] = {23.5, 11.5, 8.0f};
+	float thirdperson_offset[4] = {23.5, 11.5, 8.0f};
 	float aspectratio	    = 0;
 };
 
@@ -535,7 +535,7 @@ namespace Settings
 		// misc
 		CONFIG_BOOL("misc thirdperson", Config.misc.packed.thirdperson),
 		CONFIG_KEY("misc thirdperson key", Config.misc.thirdperson_key),
-		CONFIG_FLOAT3("misc thirdperson offset", Config.misc.thirdperson_offset),
+		CONFIG_FLOAT4("misc thirdperson offset", Config.misc.thirdperson_offset),
 		CONFIG_BOOL("misc customfov enabled", Config.misc.packed.customfov_enabled),
 		CONFIG_FLOAT("misc customfov", Config.misc.customfov),
 		CONFIG_FLOAT("misc customfov zoom", Config.misc.zoomedfov),

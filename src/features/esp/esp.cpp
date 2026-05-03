@@ -576,6 +576,12 @@ void ESP::OnImGui()
 	if (!interfaces::Engine->IsConnected())
 		return;
 
+	if (interfaces::Engine->IsTakingScreenshot())
+		return;
+
+	if (!Config.esp.packed.enabled)
+		return;
+
 	ImDrawList* pDraw = ImGui::GetBackgroundDrawList();
 	if (pDraw == nullptr)
 		return;
@@ -616,6 +622,9 @@ void ESP::OnFrameStageNotify()
 {
 	if (!interfaces::Engine->IsInGame() || !interfaces::Engine->IsConnected())
                 return Reset();
+
+	if (!Config.esp.packed.enabled)
+		return Reset();
 
 	CTFPlayer* pLocal = EntityList::GetLocal();
 	if (pLocal == nullptr)
