@@ -348,6 +348,7 @@ struct ColorsConfig
 	Color blu_team	    = {0, 255, 255, 255};
 	Color aimbot_target = {255, 255, 255, 255};
 	Color weapon	    = {255, 255, 255, 255};
+	Color menu_accent   = {0, 150, 255, 255};
 };
 
 struct RadarConfig
@@ -532,6 +533,7 @@ namespace Settings
 		CONFIG_BOOL("glow enabled", Config.glow.packed.enabled),
 		CONFIG_INT("glow stencil", Config.glow.packed.stencil),
 		CONFIG_INT("glow blur", Config.glow.packed.blur),
+		CONFIG_BOOL("glow weapon", Config.glow.packed.weapon),
 
 		// misc
 		CONFIG_BOOL("misc thirdperson", Config.misc.packed.thirdperson),
@@ -571,6 +573,7 @@ namespace Settings
 		CONFIG_FLOAT4("colors blu team", Config.colors.blu_team),
 		CONFIG_FLOAT4("colors aimbot target", Config.colors.aimbot_target),
 		CONFIG_FLOAT4("colors weapon", Config.colors.weapon),
+		CONFIG_FLOAT4("colors accent", Config.colors.menu_accent),
 
 		// warp
 		CONFIG_BOOL("warp enabled", Config.warp.packed.enabled),

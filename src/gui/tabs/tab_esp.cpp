@@ -4,6 +4,7 @@
 #include "../../settings/settings.h"
 
 #include "../utils/gui_utils.h"
+#include <algorithm>
 
 #define ImGui_CheckboxWithSideBit(label, bitfield, side_bitfield) \
 [&]() \
@@ -79,6 +80,53 @@ static uint32_t DrawSliderWithFlag(const char* label, uint32_t flagValue, int mi
 	int current = int(flagValue);
 	ImGui::SliderInt(label, &current, min, max);
 	return uint32_t(current);
+}
+
+static void ChangeMenuAccentColor()
+{
+        const Color& accent = Config.colors.menu_accent;
+        ImGuiStyle& style = ImGui::GetStyle();
+
+        // Divide by 255.0f to convert 0-255 into 0.0f-1.0f for ImGui math
+        float r = accent.r() / 255.0f;
+        float g = accent.g() / 255.0f;
+        float b = accent.b() / 255.0f;
+        float a = accent.a() / 255.0f;
+
+        float h, s, v;
+        ImGui::ColorConvertRGBtoHSV(r, g, b, h, s, v);
+
+        float hovered_s = std::clamp(s * 0.88f, 0.0f, 1.0f);
+        float hovered_v = std::clamp(v * 1.18f, 0.0f, 1.0f);
+
+        float active_s  = s;
+        float active_v  = std::clamp(v * 1.17f, 0.0f, 1.0f);
+
+        float r_base, g_base, b_base;
+        ImGui::ColorConvertHSVtoRGB(h, s, v, r_base, g_base, b_base);
+
+        float r_hov, g_hov, b_hov;
+        ImGui::ColorConvertHSVtoRGB(h, hovered_s, hovered_v, r_hov, g_hov, b_hov);
+
+        float r_act, g_act, b_act;
+        ImGui::ColorConvertHSVtoRGB(h, active_s, active_v, r_act, g_act, b_act);
+
+        // base accent
+        style.Colors[ImGuiCol_CheckMark]             = ImVec4(r_base, g_base, b_base, a);
+        style.Colors[ImGuiCol_SliderGrab]            = ImVec4(r_base, g_base, b_base, a);
+        style.Colors[ImGuiCol_HeaderActive]          = ImVec4(r_base, g_base, b_base, a);
+        style.Colors[ImGuiCol_TabActive]             = ImVec4(r_base, g_base, b_base, a);
+        style.Colors[ImGuiCol_TabUnfocusedActive]    = ImVec4(r_base, g_base, b_base, a);
+        style.Colors[ImGuiCol_TextSelectedBg]        = ImVec4(r_base, g_base, b_base, a);
+
+        // hovered accent 
+        style.Colors[ImGuiCol_ButtonHovered]         = ImVec4(r_hov, g_hov, b_hov, a);
+        style.Colors[ImGuiCol_ButtonActive]          = ImVec4(r_hov, g_hov, b_hov, a);
+        style.Colors[ImGuiCol_HeaderHovered]         = ImVec4(r_hov, g_hov, b_hov, a);
+        style.Colors[ImGuiCol_TabHovered]            = ImVec4(r_hov, g_hov, b_hov, a);
+
+        // active accent
+        style.Colors[ImGuiCol_SliderGrabActive]      = ImVec4(r_act, g_act, b_act, a);
 }
 
 void DrawESPTab()
@@ -160,6 +208,7 @@ void DrawESPTab()
 		float blu[3] = {Config.colors.blu_team.r() / 255.0f, Config.colors.blu_team.g() / 255.0f, Config.colors.blu_team.b() / 255.0f};
 		float target[3] = {Config.colors.aimbot_target.r() / 255.0f, Config.colors.aimbot_target.g() / 255.0f, Config.colors.aimbot_target.b() / 255.0f};
 		float weapon[3] = {Config.colors.weapon.r() / 255.0f, Config.colors.weapon.g() / 255.0f, Config.colors.weapon.b() / 255.0f};
+		float accent[3] = {Config.colors.menu_accent.r() / 255.0f, Config.colors.menu_accent.g() / 255.0f, Config.colors.menu_accent.b() / 255.0f};
 
 		if (ImGui::ColorEdit3("RED Team", red))
 			Config.colors.red_team.SetColor(red[0] * 255.0f, red[1] * 255.0f, red[2] * 255.0f, 255.0f);
@@ -172,6 +221,12 @@ void DrawESPTab()
 
 		if (ImGui::ColorEdit3("Weapon", weapon))
 			Config.colors.weapon.SetColor(weapon[0] * 255.0f, weapon[1] * 255.0f, weapon[2] * 255.0f, 255.0f);
+
+		if (ImGui::ColorEdit3("Menu Accent", accent))
+		{
+			Config.colors.menu_accent.SetColor(accent[0] * 255.0f, accent[1] * 255.0f, accent[2] * 255.0f, 255.0f);
+			ChangeMenuAccentColor();
+		}
 
 		ImGui::TableNextColumn();
 		ImGui::Separator();
