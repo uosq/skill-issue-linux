@@ -41,7 +41,10 @@ namespace AimbotUtils
 		}
 
 		if (entity->IsBuilding())
-			return true;
+		{
+			CBaseObject* obj = static_cast<CBaseObject*>(entity);
+			return obj->m_iHealth() > 0;
+		}
 
 		return false;
 	}

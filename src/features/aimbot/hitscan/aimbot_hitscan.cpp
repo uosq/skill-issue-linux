@@ -242,6 +242,61 @@ static bool FindBestTarget(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *
 	return true;
 }
 
+static void PlainAimbot(CUserCmd* pCmd, const AimbotTarget& target)
+{
+	if (Config.aimbot.packed.autoshoot)
+		pCmd->buttons |= IN_ATTACK;
+
+	Vec3 angle = target.dir;
+	pCmd->viewangles = angle;
+	interfaces::Engine->SetViewAngles(angle);
+}
+
+static void SmoothAssistanceAimbot(CTFPlayer* pLocal, CUserCmd* pCmd, const AimbotTarget& target, const AimbotMode& mode, const Vec3& viewAngles, const Vec3& viewForward, const Vec3& shootPos, AimbotState& state)
+{
+	if (mode == AimbotMode::ASSISTANCE && pCmd->mousedx == 0 && pCmd->mousedy == 0)
+		return;
+
+	Vector delta = target.dir - viewAngles;
+	
+	delta.x = Math::NormalizeAngle(delta.x);
+	delta.y = Math::NormalizeAngle(delta.y);
+	
+	float smoothFactor = std::max(1.0f, Config.aimbot.smoothness);
+	Vector stepAngle = delta / smoothFactor;
+	Vector smoothedAngle = viewAngles + stepAngle;
+	
+	state.angle = smoothedAngle;
+	interfaces::Engine->SetViewAngles(smoothedAngle);
+	pCmd->viewangles = smoothedAngle;
+	
+	state.running = true;
+	
+	CGameTrace trace;
+	CTraceFilterHitscan filter;
+	filter.pSkip = pLocal;
+	helper::engine::Trace(shootPos, shootPos + (viewForward * 2048), MASK_SHOT | CONTENTS_HITBOX, &filter, &trace);
+	
+	if (trace.DidHit() && trace.m_pEnt == target.entity)
+	{
+		if (Config.aimbot.packed.autoshoot)
+			pCmd->buttons |= IN_ATTACK;
+	}
+}
+
+static void SilentAimbot(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd, const AimbotTarget& target, AimbotState& state)
+{
+	if (Config.aimbot.packed.autoshoot)
+		pCmd->buttons |= IN_ATTACK;
+
+	if (helper::localplayer::IsAttacking(pLocal, pWeapon, pCmd))
+	{
+		pCmd->viewangles = target.dir;
+		state.angle = target.dir;
+		state.running = true;
+	}
+}
+
 static void ApplyAim(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCmd, AimbotState &state, const AimbotTarget &target, const Vector &shootPos, const Vector &viewAngles, const Vector &viewForward)
 {
 	AimbotMode mode = static_cast<AimbotMode>(Config.aimbot.packed.aimmode);
@@ -250,58 +305,18 @@ static void ApplyAim(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCmd, 
 	{
 	case AimbotMode::PLAIN:
 	{
-		if (Config.aimbot.packed.autoshoot)
-			pCmd->buttons |= IN_ATTACK;
-
-		Vec3 angle = target.dir;
-		pCmd->viewangles = angle;
-		interfaces::Engine->SetViewAngles(angle);
+		PlainAimbot(pCmd, target);
 		break;
 	}
 	case AimbotMode::ASSISTANCE:
 	case AimbotMode::SMOOTH:
 	{
-		if (mode == AimbotMode::ASSISTANCE && pCmd->mousedx == 0 && pCmd->mousedy == 0)
-			break;
-
-		Vector delta = target.dir - viewAngles;
-
-		delta.x = Math::NormalizeAngle(delta.x);
-		delta.y = Math::NormalizeAngle(delta.y);
-
-		float smoothFactor = std::max(1.0f, Config.aimbot.smoothness);
-		Vector stepAngle = delta / smoothFactor;
-		Vector smoothedAngle = viewAngles + stepAngle;
-
-		state.angle = smoothedAngle;
-		interfaces::Engine->SetViewAngles(smoothedAngle);
-		pCmd->viewangles = smoothedAngle;
-
-		state.running = true;
-
-		CGameTrace trace;
-		CTraceFilterHitscan filter;
-		filter.pSkip = pLocal;
-		helper::engine::Trace(shootPos, shootPos + (viewForward * 2048), MASK_SHOT | CONTENTS_HITBOX, &filter, &trace);
-
-		if (trace.DidHit() && trace.m_pEnt == target.entity)
-		{
-			if (Config.aimbot.packed.autoshoot)
-				pCmd->buttons |= IN_ATTACK;
-		}
+		SmoothAssistanceAimbot(pLocal, pCmd, target, mode, viewAngles, viewForward, shootPos, state);
 		break;
 	}
 	case AimbotMode::SILENT:
 	{
-		if (Config.aimbot.packed.autoshoot)
-			pCmd->buttons |= IN_ATTACK;
-
-		if (helper::localplayer::IsAttacking(pLocal, pWeapon, pCmd))
-		{
-			pCmd->viewangles = target.dir;
-			state.angle = target.dir;
-			state.running = true;
-		}
+		SilentAimbot(pLocal, pWeapon, pCmd, target, state);
 		break;
 	}
 	case AimbotMode::INVALID:
@@ -318,8 +333,21 @@ static void ApplyAim(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCmd, 
 	}
 }
 
+static bool IsLocalPlayerInvalid(CTFPlayer* pLocal)
+{
+	return pLocal == nullptr || !pLocal->IsAlive() || pLocal->IsTaunting() || pLocal->IsGhost();
+}
+
+static bool IsWeaponInvalid(CTFWeaponBase* pWeapon)
+{
+	return pWeapon == nullptr || !pWeapon->IsHitscan();
+}
+
 void AimbotHitscan::Run(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCmd, AimbotState &state)
 {
+	if (IsLocalPlayerInvalid(pLocal) || IsWeaponInvalid(pWeapon))
+		return;
+
 	if (!Config.aimbot.key->IsActive())
 		return;
 

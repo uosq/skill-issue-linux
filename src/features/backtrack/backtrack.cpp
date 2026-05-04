@@ -322,18 +322,21 @@ void Backtrack::DoPostScreenSpaceEffects()
 
 bool Backtrack::GetRecords(CTFPlayer *pEntity, std::vector<LagCompRecord> &out)
 {
+	if (!Config.backtrack.packed.enabled)
+	{
+		matrix3x4 bones[MAXSTUDIOBONES];
+		if (!pEntity->SetupBones(bones, MAXSTUDIOBONES, BONE_USED_BY_ANYTHING, interfaces::GlobalVars->curtime))
+			return false;
+
+		out.emplace_back(bones, pEntity->m_flSimulationTime(), pEntity->GetCenter(), pEntity->GetAbsAngles(), pEntity->EstimateAbsVelocity());
+		return true;
+	}
+
 	auto it = m_records.find(pEntity->GetIndex());
 	if (it == m_records.end() || it->second.empty())
 		return false;
 
 	auto& records = it->second;
-
-	if (!Config.backtrack.packed.enabled)
-	{
-		LagCompRecord &front = records.front();
-		out.emplace_back(front.m_Bones, front.m_flSimTime, front.m_vecAbsCenter, front.m_vecViewAngles, front.m_vecVelocity);
-		return true;
-	}
 
 	for (const auto &record : records)
 		out.emplace_back(record);
