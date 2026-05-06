@@ -64,18 +64,18 @@ namespace helper
 
 				if (id == TF_WEAPON_CANNON)
 				{
-					float mortar = AttributeHookValue(0.0f, "grenade_launcher_mortar_mode", pWeapon,
+					/*float mortar = AttributeHookValue(0.0f, "grenade_launcher_mortar_mode", pWeapon,
 									  nullptr, true);
 					if (mortar == 0.0f)
-						return CanShoot(pLocal, pWeapon, pCmd);
+						return CanShoot(pLocal, pWeapon, pCmd);*/
 
-					float detonatetime =
-					    static_cast<CTFGrenadeLauncher *>(pWeapon)->m_flDetonateTime();
-					float charge = detonatetime > 0.0f ? mortar - detonatetime -
-										 TICKS_TO_TIME(pLocal->GetTickBase())
-									   : 0.0f;
-					charge	     = Math::RemapVal(charge, 0.0f, mortar, 0.0f, 1.0f);
-					return charge == 1.0f || (!(pCmd->buttons & IN_ATTACK) && charge > 0.0f);
+					float detonatetime = static_cast<CTFGrenadeLauncher *>(pWeapon)->m_flDetonateTime();
+					//float charge = detonatetime > 0.0f ? mortar - detonatetime -
+										 //TICKS_TO_TIME(pLocal->GetTickBase())
+									   //: 0.0f;
+					//charge	     = Math::RemapVal(charge, 0.0f, mortar, 0.0f, 1.0f);
+					//return charge == 1.0f || (!(pCmd->buttons & IN_ATTACK) && charge > 0.0f);
+					return detonatetime > 0 && !(pCmd->buttons & IN_ATTACK);
 				}
 
 				if (id == TF_WEAPON_LUNCHBOX)

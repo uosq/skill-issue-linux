@@ -271,12 +271,12 @@ static void SmoothAssistanceAimbot(CTFPlayer* pLocal, CUserCmd* pCmd, const Aimb
 	pCmd->viewangles = smoothedAngle;
 	
 	state.running = true;
-	
+
 	CGameTrace trace;
 	CTraceFilterHitscan filter;
 	filter.pSkip = pLocal;
 	helper::engine::Trace(shootPos, shootPos + (viewForward * 2048), MASK_SHOT | CONTENTS_HITBOX, &filter, &trace);
-	
+
 	if (trace.DidHit() && trace.m_pEnt == target.entity)
 	{
 		if (Config.aimbot.packed.autoshoot)
@@ -299,6 +299,15 @@ static void SilentAimbot(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pC
 
 static void ApplyAim(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCmd, AimbotState &state, const AimbotTarget &target, const Vector &shootPos, const Vector &viewAngles, const Vector &viewForward)
 {
+	if (pLocal == nullptr || pWeapon == nullptr)
+		return;
+
+	if (pCmd == nullptr)
+		return;
+
+	if (target.entity == nullptr)
+		return;
+
 	AimbotMode mode = static_cast<AimbotMode>(Config.aimbot.packed.aimmode);
 
 	switch (mode)
@@ -324,13 +333,9 @@ static void ApplyAim(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCmd, 
 		break;
 	}
 
-	if (target.entity != nullptr)
-	{
-		EntityList::m_pAimbotTarget = target.entity;
-
-		if (target.useBacktrack && helper::localplayer::IsAttacking(pLocal, pWeapon, pCmd))
-			pCmd->tick_count = TIME_TO_TICKS(target.simTime + Backtrack::GetInterp());
-	}
+	EntityList::m_pAimbotTarget = target.entity;
+	if (target.useBacktrack && helper::localplayer::IsAttacking(pLocal, pWeapon, pCmd))
+		pCmd->tick_count = TIME_TO_TICKS(target.simTime + Backtrack::GetInterp());
 }
 
 static bool IsLocalPlayerInvalid(CTFPlayer* pLocal)

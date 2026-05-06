@@ -471,64 +471,152 @@ void CAimbotProjectile::RunMain(CTFPlayer *pLocal, CTFWeaponBase *pWeapon)
 		}
 
 		if (prjInfo.simple_trace)
-                {
-                        Vector vecDir = vecAimPos - vecEyePos;
-                        vecDir.Normalize();
-                        Vector vecAngle = vecDir.ToAngle();
+		{
+			Vector vecDir = vecAimPos - vecEyePos;
+			vecDir.Normalize();
+			Vector vecAngle = vecDir.ToAngle();
 
-                        Vector vecForward, vecRight, vecUp;
-                        Math::AngleVectors(vecAngle, &vecForward, &vecRight, &vecUp);
+			Vector vecForward, vecRight, vecUp;
+			Math::AngleVectors(vecAngle, &vecForward, &vecRight, &vecUp);
 
-                        Vector vecSpawnPos = vecEyePos + vecForward * prjInfo.offset.x + vecRight * prjInfo.offset.y +
-                                             vecUp * prjInfo.offset.z;
+			Vector vecSpawnPos = vecEyePos + vecForward * prjInfo.offset.x + vecRight * prjInfo.offset.y +
+					     vecUp * prjInfo.offset.z;
 
-                        if (!CheckTrajectory(target.entity, vecSpawnPos, vecAimPos, vecAngle, prjInfo, 0.0f))
-                        {
-                                if (!FindVisiblePosToShoot(prjInfo, target.entity, vPath.back(), vecEyePos, 0.0f, vecAimPos))
-                                        continue; // we are a failure
+			if (!CheckTrajectory(target.entity, vecSpawnPos, vecAimPos, vecAngle, prjInfo, 0.0f))
+			{
+				if (!FindVisiblePosToShoot(prjInfo, target.entity, vPath.back(), vecEyePos, 0.0f, vecAimPos))
+					continue; // we are a failure
 
-                                vecDir = vecAimPos - vecEyePos;
-                                vecDir.Normalize();
-                                vecAngle = vecDir.ToAngle();
-                        }
+				vecDir = vecAimPos - vecEyePos;
+				vecDir.Normalize();
+				vecAngle = vecDir.ToAngle();
+			}
 
-                        m_pTarget                   = target.entity;
-                        m_vecAimAngle               = vecAngle;
-                        m_vecAimPos                 = vecAimPos;
-                        m_vecPath                   = vPath;
-                        EntityList::m_pAimbotTarget = target.entity;
-                        return;
-                }
+			m_pTarget                   = target.entity;
+			m_vecAimAngle               = vecAngle;
+			m_vecAimPos                 = vecAimPos;
+			m_vecPath                   = vPath;
+			m_flTimeToTarget	    = flTime;
+			EntityList::m_pAimbotTarget = target.entity;
+			return;
+		}
 		else
 		{
 			float flGravity = sv_gravity->GetFloat() * 0.5f * prjInfo.gravity;
 
-                        Vector vecAngle;
-                        if (!SolveBallisticArc(vecAngle, vecEyePos, vecAimPos, prjInfo.speed, flGravity))
-                                continue;
+			Vector vecAngle;
+			if (!SolveBallisticArc(vecAngle, vecEyePos, vecAimPos, prjInfo.speed, flGravity))
+				continue;
 
-                        Vector vecForward, vecRight, vecUp;
-                        Math::AngleVectors(vecAngle, &vecForward, &vecRight, &vecUp);
+			Vector vecForward, vecRight, vecUp;
+			Math::AngleVectors(vecAngle, &vecForward, &vecRight, &vecUp);
 
-                        Vector vecSpawnPos = vecEyePos + vecForward * prjInfo.offset.x + vecRight * prjInfo.offset.y +
-                                             vecUp * prjInfo.offset.z;
+			Vector vecSpawnPos = vecEyePos + vecForward * prjInfo.offset.x + vecRight * prjInfo.offset.y +
+					     vecUp * prjInfo.offset.z;
 
-                        if (!CheckTrajectory(target.entity, vecSpawnPos, vecAimPos, vecAngle, prjInfo, flGravity))
-                        {
-                                if (!FindVisiblePosToShoot(prjInfo, target.entity, vPath.back(), vecEyePos, flGravity, vecAimPos))
-                                        continue; // we are fucking failures
-                                
-                                if (!SolveBallisticArc(vecAngle, vecEyePos, vecAimPos, prjInfo.speed, flGravity))
-                                        continue; // math isn't mathing for the new aim position
-                        }
+			if (!CheckTrajectory(target.entity, vecSpawnPos, vecAimPos, vecAngle, prjInfo, flGravity))
+			{
+				if (!FindVisiblePosToShoot(prjInfo, target.entity, vPath.back(), vecEyePos, flGravity, vecAimPos))
+					continue; // we are fucking failures
 
-                        m_pTarget                   = target.entity;
-                        m_vecAimAngle               = vecAngle;
-                        m_vecAimPos                 = vecAimPos; 
-                        m_vecPath                   = vPath;
-                        EntityList::m_pAimbotTarget = target.entity;
-                        return;
+				if (!SolveBallisticArc(vecAngle, vecEyePos, vecAimPos, prjInfo.speed, flGravity))
+					continue; // math isn't mathing for the new aim position
+			}
+
+			m_pTarget                   = target.entity;
+			m_vecAimAngle               = vecAngle;
+			m_vecAimPos                 = vecAimPos;
+			m_vecPath                   = vPath;
+			EntityList::m_pAimbotTarget = target.entity;
+			return;
 		}
+	}
+}
+
+void CAimbotProjectile::ApplyAim(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd, AimbotState& pState)
+{
+	pState.targetPath = m_vecPath;
+	pState.running	  = true;
+	pState.angle	  = m_vecAimAngle;
+
+	pCmd->viewangles  = m_vecAimAngle;
+
+	AimbotMode mode	  = static_cast<AimbotMode>(Config.aimbot.packed.aimmode);
+
+	if (mode == AimbotMode::SILENT && !IsRightAttack(pWeapon))
+		pState.shouldSilent = true;
+
+	if (mode == AimbotMode::PLAIN)
+		interfaces::Engine->SetViewAngles(m_vecAimAngle);
+}
+
+// i know i should just merge them in a single function
+// but it makes the code's flow hard to follow
+// simple isnt always better but in this case
+// it fucking is
+
+// normal weapon
+// that is only click and shoot
+void CAimbotProjectile::OnGenericWeapons(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd, AimbotState& pState)
+{
+	if (Config.aimbot.packed.autoshoot)
+		pCmd->buttons |= IN_ATTACK;
+
+	if (helper::localplayer::IsAttacking(pLocal, pWeapon, pCmd))
+		ApplyAim(pLocal, pWeapon, pCmd, pState);
+}
+
+// weapons that can charge
+// like sticky bomb launcher and huntsman
+void CAimbotProjectile::OnChargeWeapons(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd, AimbotState& pState)
+{
+	float flchargebegintime = static_cast<CTFPipebombLauncher *>(pWeapon)->m_flChargeBeginTime();
+
+	float charge =	flchargebegintime > 0.f
+			? TICKS_TO_TIME(pLocal->GetTickBase()) - flchargebegintime
+			: 0.f;
+
+	// loose cannon starts at 1
+	bool is_cannon = pWeapon->GetWeaponID() == TF_WEAPON_CANNON;
+	if (is_cannon)
+		charge = static_cast<CTFGrenadeLauncher*>(pWeapon)->m_flDetonateTime();
+	// should probably normalize to [0.0, 1.0] but fuck it
+
+	bool autoshoot = Config.aimbot.packed.autoshoot;
+
+	if (autoshoot)
+	{
+		// just to be sure yk
+		if (charge <= 0.0f)
+		{
+			pCmd->buttons |= IN_ATTACK;
+			return; // cant do shit anyway
+		}
+		else
+		{
+			pCmd->buttons &= ~IN_ATTACK;
+
+			// we already know we are shooting
+			// no need for IsAttacking
+			ApplyAim(pLocal, pWeapon, pCmd, pState);
+			return;
+		}
+	}
+
+	if (helper::localplayer::IsAttacking(pLocal, pWeapon, pCmd))
+		ApplyAim(pLocal, pWeapon, pCmd, pState);
+}
+
+// very basic and doesn't work right 100% of the time
+void CAimbotProjectile::OnRightClickWeapons(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd, AimbotState& pState)
+{
+	if (Config.aimbot.packed.autoshoot)
+		pCmd->buttons |= IN_ATTACK2;
+
+	if (pCmd->buttons & IN_ATTACK2)
+	{
+		ApplyAim(pLocal, pWeapon, pCmd, pState);
+		pState.shouldSilent = false; // can't silent with them
 	}
 }
 
@@ -540,58 +628,25 @@ void CAimbotProjectile::RunAim(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserC
 	if (m_pTarget == nullptr || m_vecPath.empty())
 		return;
 
-	if (Config.aimbot.packed.autoshoot)
+	int weaponID = pWeapon->GetWeaponID();
+
+	switch(weaponID)
 	{
-		if (IsRightAttack(pWeapon))
-			pCmd->buttons |= IN_ATTACK2;
-		else
-			pCmd->buttons |= IN_ATTACK;
-	}
+		case TF_WEAPON_LUNCHBOX:
+		case TF_WEAPON_BAT_WOOD:
+		case TF_WEAPON_BAT_GIFTWRAP:
+		OnRightClickWeapons(pLocal, pWeapon, pCmd, pState);
+		break;
 
-	if (helper::localplayer::CanShoot(pLocal, pWeapon, pCmd))
-	{
-		if ((pCmd->buttons & IN_ATTACK))
-		{
-			int weaponID = pWeapon->GetWeaponID();
-			switch (weaponID)
-			{
-			case TF_WEAPON_COMPOUND_BOW:
-			case TF_WEAPON_PIPEBOMBLAUNCHER:
-			{
-				float flchargebegintime =
-				    static_cast<CTFPipebombLauncher *>(pWeapon)->m_flChargeBeginTime();
-				// interfaces::Cvar->ConsolePrintf("Charge:
-				// %f\n", flchargebegintime);
+		case TF_WEAPON_COMPOUND_BOW:
+		case TF_WEAPON_PIPEBOMBLAUNCHER:
+		case TF_WEAPON_CANNON:
+		OnChargeWeapons(pLocal, pWeapon, pCmd, pState);
+		break;
 
-				float charge = flchargebegintime > 0.f
-						   ? TICKS_TO_TIME(pLocal->GetTickBase()) - flchargebegintime
-						   : 0.f;
-				if (charge > 0.0f)
-					pCmd->buttons &= ~IN_ATTACK;
-				break;
-			}
-
-			default:
-				break;
-			}
-		}
-	}
-
-	if (helper::localplayer::IsAttacking(pLocal, pWeapon, pCmd))
-	{
-		pState.targetPath = m_vecPath;
-		pState.running	  = true;
-		pState.angle	  = m_vecAimAngle;
-
-		pCmd->viewangles  = m_vecAimAngle;
-
-		AimbotMode mode	  = static_cast<AimbotMode>(Config.aimbot.packed.aimmode);
-
-		if (mode == AimbotMode::SILENT && !IsRightAttack(pWeapon))
-			pState.shouldSilent = true;
-
-		if (mode == AimbotMode::PLAIN)
-			interfaces::Engine->SetViewAngles(m_vecAimAngle);
+		default:
+		OnGenericWeapons(pLocal, pWeapon, pCmd, pState);
+		break;
 	}
 }
 
@@ -727,12 +782,12 @@ bool CAimbotProjectile::FindVisiblePosToShoot(const ProjectileInfo_t& prjInfo,
 	Vec3 maxs = pTarget->m_vecMaxs();
 
 	constexpr int GRID_POINTS = 4;
-	
+
 	float stepX = (maxs.x - mins.x) / (GRID_POINTS - 1);
 	float stepY = (maxs.y - mins.y) / (GRID_POINTS - 1);
 	float stepZ = (maxs.z - mins.z) / (GRID_POINTS - 1);
 
-	constexpr float HITBOX_SCALE = 0.85f; 
+	constexpr float HITBOX_SCALE = 0.85f;
 
 	for (int x = 0; x < GRID_POINTS; x++)
 	{
@@ -752,28 +807,28 @@ bool CAimbotProjectile::FindVisiblePosToShoot(const ProjectileInfo_t& prjInfo,
 				Vec3 testAimPos = predictedPos + offset;
 
 				Vec3 vecAngle;
-				
+
 				if (!SolveBallisticArc(vecAngle, shootPos, testAimPos, prjInfo.speed, flGravity))
 					continue;
 
 				Vec3 vecForward, vecRight, vecUp;
 				Math::AngleVectors(vecAngle, &vecForward, &vecRight, &vecUp);
 
-				Vec3 vecSpawnPos = shootPos + vecForward * prjInfo.offset.x + 
-						   vecRight * prjInfo.offset.y + 
+				Vec3 vecSpawnPos = shootPos + vecForward * prjInfo.offset.x +
+						   vecRight * prjInfo.offset.y +
 						   vecUp * prjInfo.offset.z;
 
 				if (CheckTrajectory(pTarget, vecSpawnPos, testAimPos, vecAngle, prjInfo, flGravity))
 				{
 					out = testAimPos;
-					return true; 
+					return true;
 				}
 			}
 		}
 	}
 
 	// shit
-	return false; 
+	return false;
 }
 
 CAimbotProjectile gAimProjectile{};

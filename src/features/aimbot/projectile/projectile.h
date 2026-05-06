@@ -35,6 +35,10 @@ class CAimbotProjectile
 	bool IsRightAttack(CTFWeaponBase *pWeapon);
 	bool FindVisiblePosToShoot(const ProjectileInfo_t& prjInfo,
 				CBaseEntity* pTarget, const Vec3& predictedPos, const Vec3& shootPos, float flGravity, Vec3& out);
+	void OnGenericWeapons(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd, AimbotState& pState);
+	void OnChargeWeapons(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd, AimbotState& pState);
+	void OnRightClickWeapons(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd, AimbotState& pState);
+	void ApplyAim(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd, AimbotState& pState);
 
       private:
 	std::vector<Vector> m_vecPath;
@@ -44,6 +48,8 @@ class CAimbotProjectile
 
 	Vector m_vecOldIndicatorPos;
 	CBaseEntity *m_pOldIndicatorTarget;
+
+	float m_flTimeToTarget;
 
 	#if 0
 	IPhysicsEnvironment* m_pPhysEnv = nullptr;
