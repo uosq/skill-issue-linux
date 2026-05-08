@@ -153,6 +153,9 @@ void DrawESPTab()
 			ImGui_CheckboxWithSideBit("Weapon", Config.esp.packed.weapon, Config.esp.sides.weaponname);
 			ImGui_CheckboxWithSideBit("Class", Config.esp.packed.class_name, Config.esp.sides.classname);
 
+			ImGui_CheckboxBit("Ammo Pack", Config.esp.packed.ammopack);
+			ImGui_CheckboxBit("Medkit", Config.esp.packed.medkit);
+
 			{
 				constexpr const char *items[]{"None", "Text", "Bar", "Both"};
 				Config.esp.sides.healthbar = DrawComboWithSide("Health##ESP", &Config.esp.health, items, 4, Config.esp.sides.healthbar);
@@ -209,6 +212,8 @@ void DrawESPTab()
 		float target[3] = {Config.colors.aimbot_target.r() / 255.0f, Config.colors.aimbot_target.g() / 255.0f, Config.colors.aimbot_target.b() / 255.0f};
 		float weapon[3] = {Config.colors.weapon.r() / 255.0f, Config.colors.weapon.g() / 255.0f, Config.colors.weapon.b() / 255.0f};
 		float accent[3] = {Config.colors.menu_accent.r() / 255.0f, Config.colors.menu_accent.g() / 255.0f, Config.colors.menu_accent.b() / 255.0f};
+		float ammo[3] = {Config.colors.ammopack.r() / 255.0f, Config.colors.ammopack.g() / 255.0f, Config.colors.ammopack.b() / 255.0f};
+		float medkit[3] = {Config.colors.healthkit.r() / 255.0f, Config.colors.healthkit.g() / 255.0f, Config.colors.healthkit.b() / 255.0f};
 
 		if (ImGui::ColorEdit3("RED Team", red))
 			Config.colors.red_team.SetColor(red[0] * 255.0f, red[1] * 255.0f, red[2] * 255.0f, 255.0f);
@@ -227,6 +232,12 @@ void DrawESPTab()
 			Config.colors.menu_accent.SetColor(accent[0] * 255.0f, accent[1] * 255.0f, accent[2] * 255.0f, 255.0f);
 			ChangeMenuAccentColor();
 		}
+
+		if (ImGui::ColorEdit3("Ammo Pack", weapon))
+			Config.colors.ammopack.SetColor(ammo[0] * 255.0f, ammo[1] * 255.0f, ammo[2] * 255.0f, 255.0f);
+
+		if (ImGui::ColorEdit3("Medkit", weapon))
+			Config.colors.healthkit.SetColor(medkit[0] * 255.0f, medkit[1] * 255.0f, medkit[2] * 255.0f, 255.0f);
 
 		ImGui::TableNextColumn();
 		ImGui::Separator();

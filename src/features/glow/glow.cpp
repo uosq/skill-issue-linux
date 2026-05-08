@@ -56,32 +56,39 @@ namespace Glow
 
 	void DrawEntities()
 	{
-		for (auto ent : glowEnts)
+		for (const auto& ent : glowEnts)
 		{
-			Color color  = ESP_Utils::GetEntityColor(ent);
+			Color color = ESP_Utils::GetEntityColor(ent);
+
 			float mod[3] = {color.r() / 255.0f, color.g() / 255.0f, color.b() / 255.0f};
 			interfaces::RenderView->SetColorModulation(mod);
 			m_bRunning = true;
 			ent->DrawModel(STUDIO_RENDER | STUDIO_NOSHADOWS);
 
-			auto moveChild = ent->FirstShadowChild();
-			int passes     = 0;
-			while (moveChild != nullptr && passes <= 32)
+			if (ent->GetClassID() != ETFClassID::CBaseAnimating)
 			{
-				if (Config.glow.packed.weapon && static_cast<CBaseEntity *>(moveChild)->IsWeapon())
+				auto moveChild = ent->FirstShadowChild();
+				int passes     = 0;
+				while (moveChild != nullptr && passes <= 32)
 				{
-					color = Config.colors.weapon;
-					// this is fucking stupid
-					// why is a array not assignable?
-					mod[0] = color.r() / 255.0f;
-					mod[1] = color.g() / 255.0f;
-					mod[2] = color.b() / 255.0f;
-					interfaces::RenderView->SetColorModulation(mod);
+					if (Config.glow.packed.weapon && static_cast<CBaseEntity *>(moveChild)->IsWeapon())
+					{
+						color.SetRawColor(Config.colors.weapon.GetRawColor());
+	
+						// this is fucking stupid
+						// why is a array not assignable?
+	
+						mod[0] = color.r() / 255.0f;
+						mod[1] = color.g() / 255.0f;
+						mod[2] = color.b() / 255.0f;
+	
+						interfaces::RenderView->SetColorModulation(mod);
+					}
+	
+					moveChild->DrawModel(STUDIO_RENDER | STUDIO_NOSHADOWS);
+					moveChild = moveChild->NextShadowPeer();
+					passes++;
 				}
-
-				moveChild->DrawModel(STUDIO_RENDER | STUDIO_NOSHADOWS);
-				moveChild = moveChild->NextShadowPeer();
-				passes++;
 			}
 			m_bRunning = false;
 		}
@@ -93,7 +100,7 @@ namespace Glow
 		if (pLocal == nullptr)
 			return;
 
-		for (auto entry : EntityList::GetEntities())
+		for (const auto& entry : EntityList::GetEntities())
 		{
 			if (!ESP_Utils::IsValidEntity(pLocal, entry))
 				continue;
@@ -114,6 +121,17 @@ namespace Glow
 			}
 
 			glowEnts.emplace_back(entity);
+		}
+
+		for (const auto& ent : EntityList::GetStaticEntities())
+		{
+			if (ent.entity == nullptr)
+				continue;
+
+			if (!ent.entity->ShouldDraw())
+				continue;
+
+			glowEnts.emplace_back(ent.entity);
 		}
 	}
 

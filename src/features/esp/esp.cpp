@@ -354,6 +354,34 @@ static void FillTargets(CTFPlayer* pLocal)
 		tempData.emplace_back(data);
 	}
 
+	for (const auto& entry : EntityList::GetStaticEntities())
+	{
+		if (entry.entity == nullptr)
+			continue;
+
+		bool is_ammo_pack = static_cast<CBaseAnimating*>(entry.entity)->IsAmmoPack();
+
+		if (is_ammo_pack && !Config.esp.packed.ammopack)
+			continue;
+
+		if (!is_ammo_pack && !Config.esp.packed.medkit)
+			continue;
+
+		ESPData data;
+		if (!GetEntityBounds(entry.entity, data))
+			continue;
+
+		data.text_scale = GetTextScale(localOrigin.DistTo(entry.entity->GetAbsOrigin()));
+		data.className = entry.entity->GetClientClass()->networkName;
+		data.hasHealthbar = false;
+
+		data.color = static_cast<CBaseAnimating*>(entry.entity)->IsAmmoPack()
+		? Config.colors.ammopack
+		: Config.colors.healthkit;
+
+		tempData.emplace_back(data);
+	}
+
 	std::lock_guard<std::mutex> lock(s_EspMutex);
 	s_vData = std::move(tempData);
 }

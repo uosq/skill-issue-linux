@@ -497,7 +497,7 @@ void CAimbotProjectile::RunMain(CTFPlayer *pLocal, CTFWeaponBase *pWeapon)
 			m_vecAimPos                 = vecAimPos;
 			m_vecPath                   = vPath;
 			m_flTimeToTarget	    = flTime;
-			EntityList::m_pAimbotTarget = target.entity;
+			EntityList::SetAimbotTarget(target.entity);
 			return;
 		}
 		else
@@ -527,7 +527,7 @@ void CAimbotProjectile::RunMain(CTFPlayer *pLocal, CTFWeaponBase *pWeapon)
 			m_vecAimAngle               = vecAngle;
 			m_vecAimPos                 = vecAimPos;
 			m_vecPath                   = vPath;
-			EntityList::m_pAimbotTarget = target.entity;
+			EntityList::SetAimbotTarget(target.entity);
 			return;
 		}
 	}

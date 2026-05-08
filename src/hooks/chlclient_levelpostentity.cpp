@@ -14,6 +14,9 @@ using LevelInitPostEntityFn = void (*)(CHLClient *thisptr);
 
 static void LevelInitPostEntity(CHLClient* rdi)
 {
+	auto original = VMTHooks::Client.GetOriginal<LevelInitPostEntityFn>(6);
+	original(rdi);
+
 	EntityList::Reserve();
 	ViewmodelAim::ResetStopTime();
 	Spectators::OnLevelInitPostEntity();
@@ -21,9 +24,6 @@ static void LevelInitPostEntity(CHLClient* rdi)
 	ESP::OnlevelInitPostEntity();
 
 	Hooks_CallHooks("LevelInitPostEntity");
-	
-	auto original = VMTHooks::Client.GetOriginal<LevelInitPostEntityFn>(6);
-	original(rdi);
 }
 
 void HookLevelInitPostEntity()

@@ -23,3 +23,16 @@ struct EntityListEntry
 		ptr   = nullptr;
 	}
 };
+
+enum class StaticEntityType
+{
+	NONE = 0,
+	MEDKIT,
+	AMMOPACK
+};
+
+struct StaticEntity
+{
+	StaticEntityType type = StaticEntityType::NONE;
+	CBaseEntity* entity = nullptr;
+};

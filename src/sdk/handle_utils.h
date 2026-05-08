@@ -12,7 +12,7 @@ fuck you whoever thought it was a good idea
 
 inline IHandleEntity *CBaseHandle::Get() const
 {
-	return reinterpret_cast<IHandleEntity *>(interfaces::EntityList->GetClientEntity(m_Index));
+	return reinterpret_cast<IHandleEntity *>(interfaces::EntityList->GetClientEntity(GetEntryIndex()));
 }
 
 //Casts to T

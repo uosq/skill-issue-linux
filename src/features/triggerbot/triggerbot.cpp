@@ -37,7 +37,7 @@ namespace Triggerbot
 		if (trace.m_pEnt->m_iTeamNum() == localTeam)
 			return;
 
-		EntityList::m_pAimbotTarget = trace.m_pEnt;
+		EntityList::SetAimbotTarget(trace.m_pEnt);
 		pCmd->buttons |= IN_ATTACK;
 	}
 

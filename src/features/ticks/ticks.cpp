@@ -50,31 +50,33 @@ void TickManager::Post_CreateMove(int sequence_number)
 	    interfaces::Engine->IsPlayingDemo())
 		return;
 
-	EntityList::m_pAimbotTarget = nullptr;
+	EntityList::SetAimbotTarget(nullptr);
+	Backtrack::CleanRecords(pCmd);
 
-	CTFPlayer *pLocal	    = EntityList::GetLocal();
+	if (m_bSendPacket)
+		helper::localplayer::LastAngle = pCmd->viewangles;
+
+	CTFPlayer* pLocal = EntityList::GetLocal();
 	if (!pLocal || !pLocal->IsAlive() || pLocal->IsTaunting())
 		return;
 
-	CTFWeaponBase *pWeapon = HandleAs<CTFWeaponBase *>(pLocal->GetActiveWeapon());
+	Bhop::Run(pLocal, pCmd);
+	Autostrafe::Run(pLocal, pCmd);
+	AntiAFK::OnCreateMove(pCmd);
+
+	CTFWeaponBase* pWeapon = HandleAs<CTFWeaponBase*>(pLocal->GetActiveWeapon());
 	if (pWeapon == nullptr)
 		return;
 
 	Vector originalAngles = pCmd->viewangles;
 
 	NoRecoil::RunCreateMove(pLocal, pWeapon, pCmd);
-
-	Backtrack::CleanRecords(pCmd);
 	Backtrack::Run(pLocal, pWeapon, pCmd);
 
-	Bhop::Run(pLocal, pCmd);
-	Autostrafe::Run(pLocal, pCmd);
 	Aimbot::Run(pLocal, pWeapon, pCmd);
 	Triggerbot::Run(pLocal, pWeapon, pCmd);
 
 	Hooks_CallHooks("CreateMove", [&](asIScriptContext *ctx) { ctx->SetArgObject(0, pCmd); });
-
-	AntiAFK::OnCreateMove(pCmd);
 
 	if (reinterpret_cast<CClientState *>(interfaces::ClientState)->chokedcommands >= 21)
 		m_bSendPacket = true;

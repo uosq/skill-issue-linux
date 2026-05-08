@@ -2,8 +2,26 @@
 
 Color ESP_Utils::GetEntityColor(CBaseEntity *entity)
 {
-	if (entity == EntityList::m_pAimbotTarget)
+	if (entity == EntityList::GetAimbotTarget())
 		return Config.colors.aimbot_target;
+
+	switch(entity->GetClassID())
+	{
+		case ETFClassID::CBaseAnimating:
+		{
+			CBaseAnimating* animating = static_cast<CBaseAnimating*>(entity);
+
+			if (animating->IsMedkit())
+				return Config.colors.healthkit;
+			else if (animating->IsAmmoPack())
+				return Config.colors.ammopack;
+
+			break;
+		}
+
+		default:
+		break;
+	}
 
 	switch (entity->m_iTeamNum())
 	{

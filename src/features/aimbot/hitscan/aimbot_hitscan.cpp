@@ -333,7 +333,8 @@ static void ApplyAim(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCmd, 
 		break;
 	}
 
-	EntityList::m_pAimbotTarget = target.entity;
+	EntityList::SetAimbotTarget(target.entity);
+
 	if (target.useBacktrack && helper::localplayer::IsAttacking(pLocal, pWeapon, pCmd))
 		pCmd->tick_count = TIME_TO_TICKS(target.simTime + Backtrack::GetInterp());
 }

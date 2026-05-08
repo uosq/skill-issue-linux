@@ -7,6 +7,8 @@
 #include "../signatures/signatures.h"
 #include "../../mem.h"
 
+#include "../../gui/utils/string_utils.h"
+
 ADD_SIG(C_BaseAnimating_InvalidadeBoneCaches, "client.so", "48 83 05 ? ? ? ? 01 C3");
 
 class CBaseAnimating : public CBaseEntity
@@ -111,6 +113,36 @@ class CBaseAnimating : public CBaseEntity
 	{
 		*m_iMostRecentModelBoneCounter() = GetGlobalModelBoneCounter() - 1;
 		*m_flLastBoneSetupTime() = -FLT_MAX;
+	}
+
+	inline bool IsMedkit()
+	{
+		const model_t* model = GetModel();
+
+		if (model == nullptr)
+			return false;
+
+		const char* name = interfaces::ModelInfoClient->GetModelName(model);
+
+		if (name == nullptr || name[0] == '\0')
+			return false;
+
+		return ContainsInsensitive(name, "medkit");
+	}
+
+	inline bool IsAmmoPack()
+	{
+		const model_t* model = GetModel();
+
+		if (model == nullptr)
+			return false;
+
+		const char* name = interfaces::ModelInfoClient->GetModelName(model);
+
+		if (name == nullptr || name[0] == '\0')
+			return false;
+
+		return ContainsInsensitive(name, "ammopack");
 	}
 };
 
