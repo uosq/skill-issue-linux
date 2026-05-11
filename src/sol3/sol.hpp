@@ -2955,9 +2955,9 @@ struct pre_main {
 	#include <lua.hpp>
 #else
 	extern "C" {
-		#include <lua5.4/lua.h>
-		#include <lua5.4/lauxlib.h>
-		#include <lua5.4/lualib.h>
+		#include "lua/lua.h"
+		#include "lua/lauxlib.h"
+		#include "lua/lualib.h"
 	}
 #endif // C++ Mangling for Lua vs. Not
 
@@ -3152,9 +3152,9 @@ struct pre_main {
 #if defined(__cplusplus) && !defined(COMPAT53_LUA_CPP)
 extern "C" {
 #endif
-#include <lua5.4/lua.h>
-#include <lua5.4/lauxlib.h>
-#include <lua5.4/lualib.h>
+#include "lua/lua.h"
+#include "lua/lauxlib.h"
+#include "lua/lualib.h"
 #if defined(__cplusplus) && !defined(COMPAT53_LUA_CPP)
 }
 #endif
@@ -4411,9 +4411,9 @@ COMPAT53_API void luaL_requiref(lua_State* L, const char* modname, lua_CFunction
 #if defined(__cplusplus) && !defined(COMPAT53_LUA_CPP)
 extern "C" {
 #endif
-#include <lua5.4/lua.h>
-#include <lua5.4/lauxlib.h>
-#include <lua5.4/lualib.h>
+#include "lua/lua.h"
+#include "lua/lauxlib.h"
+#include "lua/lualib.h"
 #if defined(__cplusplus) && !defined(COMPAT53_LUA_CPP)
 }
 #endif
