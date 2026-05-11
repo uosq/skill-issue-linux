@@ -407,7 +407,7 @@ void CAimbotProjectile::RunMain(CTFPlayer *pLocal, CTFWeaponBase *pWeapon)
 
 	static ConVar *sv_gravity = interfaces::Cvar->FindVar("sv_gravity");
 	if (sv_gravity == nullptr)
-		return Logs::Error("[CAimbotProjectile::RunMain] sv_gravity is null!");
+		return features::logs.Error("[CAimbotProjectile::RunMain] sv_gravity is null!");
 
 	if (pLocal == nullptr || pWeapon == nullptr)
 		return;
@@ -497,7 +497,7 @@ void CAimbotProjectile::RunMain(CTFPlayer *pLocal, CTFWeaponBase *pWeapon)
 			m_vecAimPos                 = vecAimPos;
 			m_vecPath                   = vPath;
 			m_flTimeToTarget	    = flTime;
-			EntityList::SetAimbotTarget(target.entity);
+			features::entities.SetAimbotTarget(target.entity);
 			return;
 		}
 		else
@@ -527,7 +527,7 @@ void CAimbotProjectile::RunMain(CTFPlayer *pLocal, CTFWeaponBase *pWeapon)
 			m_vecAimAngle               = vecAngle;
 			m_vecAimPos                 = vecAimPos;
 			m_vecPath                   = vPath;
-			EntityList::SetAimbotTarget(target.entity);
+			features::entities.SetAimbotTarget(target.entity);
 			return;
 		}
 	}
@@ -667,7 +667,7 @@ void CAimbotProjectile::RunIndicator(ImDrawList* pDraw)
 	if (Config.aimbot.packed.proj_indicator == static_cast<int>(AimbotIndicatorStyle::NONE))
 		return ResetIndicator();
 
-	CTFPlayer *pLocal = EntityList::GetLocal();
+	CTFPlayer *pLocal = features::entities.GetLocal();
 	if (pLocal == nullptr)
 		return ResetIndicator();
 

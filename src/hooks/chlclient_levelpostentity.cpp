@@ -8,7 +8,7 @@
 #include "../features/chams/chams.h"
 #include "../features/esp/esp.h"
 
-#include "../features/angelscript/api/libraries/hooks/hooks.h"
+#include "../features/scriptmanager/scriptmanager.h"
 
 using LevelInitPostEntityFn = void (*)(CHLClient *thisptr);
 
@@ -17,13 +17,13 @@ static void LevelInitPostEntity(CHLClient* rdi)
 	auto original = VMTHooks::Client.GetOriginal<LevelInitPostEntityFn>(6);
 	original(rdi);
 
-	EntityList::Reserve();
-	ViewmodelAim::ResetStopTime();
-	Spectators::OnLevelInitPostEntity();
-	Chams::OnLevelPostEntity();
-	ESP::OnlevelInitPostEntity();
+	features::entities.Reserve();
+	features::viewmodel_aim.ResetStopTime();
+	features::spectators.OnLevelInitPostEntity();
+	features::chams.OnLevelPostEntity();
+	features::esp.OnlevelInitPostEntity();
 
-	Hooks_CallHooks("LevelInitPostEntity");
+	features::scriptmanager.CallHooks("LevelInitPostEntity");
 }
 
 void HookLevelInitPostEntity()

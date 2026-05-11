@@ -14,7 +14,7 @@ int Settings::Load(const std::string &fullPath)
 
 	if (rc < 0)
 	{
-		Logs::Error("Failed to load settings file");
+		features::logs.Error("Failed to load settings file");
 		return rc;
 	}
 
@@ -25,7 +25,7 @@ int Settings::Load(const std::string &fullPath)
 
 		if (val == NULL)
 		{
-			Logs::Warn("Couldn't load setting \"" + strName + "\" with value \"" + setting.get() + "\"");
+			features::logs.Warn("Couldn't load setting \"" + strName + "\" with value \"" + setting.get() + "\"");
 			continue;
 		}
 
@@ -47,9 +47,9 @@ int Settings::Save(const std::string &fullPath)
 
 void Settings::InitBinds()
 {
-	Config.aimbot.key		= gBinds.RegisterHotkey("aimbot key");
-	Config.warp.key	 		= gBinds.RegisterHotkey("warp key");
-	Config.warp.recharge_key	= gBinds.RegisterHotkey("warp recharge key");
-	Config.misc.thirdperson_key	= gBinds.RegisterHotkey("thirdperson key");
-	Config.trigger.key		= gBinds.RegisterHotkey("trigger key");
+	Config.aimbot.key		= features::binds.RegisterHotkey("aimbot key");
+	Config.warp.key	 		= features::binds.RegisterHotkey("warp key");
+	Config.warp.recharge_key	= features::binds.RegisterHotkey("warp recharge key");
+	Config.misc.thirdperson_key	= features::binds.RegisterHotkey("thirdperson key");
+	Config.trigger.key		= features::binds.RegisterHotkey("trigger key");
 }

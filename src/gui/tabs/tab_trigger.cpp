@@ -7,7 +7,7 @@
 
 void DrawTriggerTab()
 {
-	gBinds.RenderHotkey("TriggerBot", Config.trigger.key);
+	features::binds.RenderHotkey("TriggerBot", Config.trigger.key);
 	ImGui::PushStyleVar(ImGuiStyleVar_Alpha, Config.trigger.key->IsEnabled() ? 1.0f : 0.5f);
 	{
 		ImGui_CheckboxBit("Hitscan", Config.trigger.packed.hitscan);

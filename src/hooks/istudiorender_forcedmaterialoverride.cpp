@@ -9,7 +9,7 @@ using ForcedMaterialOverrideFn = void (*)(IStudioRender* rdi, IMaterial* mat, Ov
 
 static void ForcedMaterialOverride(IStudioRender* rdi, IMaterial *mat, OverrideType_t nOverrideType)
 {
-	if (Chams::IsDrawing() || Glow::m_bRunning)
+	if (features::chams.IsDrawing() || features::glow.IsRunning())
 		return;
 
 	auto original = VMTHooks::StudioRender.GetOriginal<ForcedMaterialOverrideFn>(33);

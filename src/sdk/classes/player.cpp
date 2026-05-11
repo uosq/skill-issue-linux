@@ -93,7 +93,7 @@ void CTFPlayer::UpdateClientSideAnimation()
 	using UpdateClientSideAnimationFn = void (*)(void *);
 
 	static auto orig = (UpdateClientSideAnimationFn)Sigs::CBaseAnimating_UpdateClientSideAnimation.GetPointer();
-	if (!orig) return Logs::Error("UpdateClientSideAnimation is null");
+	if (!orig) return features::logs.Error("UpdateClientSideAnimation is null");
 
 	orig(this);
 }

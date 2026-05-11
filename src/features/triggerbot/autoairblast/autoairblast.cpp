@@ -25,7 +25,7 @@ void LegitAirblast(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCmd)
 	Math::AngleVectors(viewAngles, &viewForward);
 	viewForward.Normalize();
 
-	for (auto &entry : EntityList::GetEntities())
+	for (auto &entry : features::entities.GetEntities())
 	{
 		if (!(entry.flags & EntityFlags::IsProjectile))
 			continue;
@@ -36,7 +36,7 @@ void LegitAirblast(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCmd)
 		if (entry.ptr == nullptr)
 			continue;
 
-		if (!AutoAirblast::CanAirblastHit(pLocal, pWeapon, entry.ptr, viewForward))
+		if (!features::autoairblast.CanAirblastHit(pLocal, pWeapon, entry.ptr, viewForward))
 			continue;
 
 		pCmd->buttons |= IN_ATTACK2;
@@ -54,7 +54,7 @@ void RageAirblast(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCmd, boo
 
 	Vector shootPos = pLocal->GetCenter();
 
-	for (auto &entry : EntityList::GetEntities())
+	for (auto &entry : features::entities.GetEntities())
 	{
 		if (!(entry.flags & EntityFlags::IsProjectile))
 			continue;

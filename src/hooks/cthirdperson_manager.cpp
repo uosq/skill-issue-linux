@@ -19,5 +19,5 @@ void Hook_CThirdPersonManager_Update()
 		    (void *)&Hooked_CThirdPersonManager_Update);
 
 	if (!detour_enable(&thirdperson_ctx))
-		Logs::Error("Couldn't hook CThirdPersonManager::Update!");
+		features::logs.Error("Couldn't hook CThirdPersonManager::Update!");
 }

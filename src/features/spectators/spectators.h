@@ -1,10 +1,21 @@
 #pragma once
 
-#include "../../sdk/classes/player.h"
+#include <mutex>
 #include <vector>
 
-namespace Spectators
+#include "../../sdk/classes/player.h"
+
+#include "../feature.h"
+
+struct SpectatorData
 {
+	std::string name;
+	bool isFirstPerson;
+};
+
+class Spectators
+{
+public:
 	// call from FrameStageNotify
 	void OnFrameStageNotify();
 	// call from ImGui
@@ -14,4 +25,11 @@ namespace Spectators
 	void OnLevelInitPostEntity();
 	void OnLevelShutdown();
 	bool IsLocalPlayerSpectated(int& amount);
-} // namespace Spectators
+
+private:
+	bool s_bSpectated{false};
+	std::mutex s_Mutex;
+	std::vector<SpectatorData> s_vCachedSpectatorList;
+};
+
+DECLARE_FEATURE(Spectators, spectators)

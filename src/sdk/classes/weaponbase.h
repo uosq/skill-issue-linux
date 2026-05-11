@@ -72,6 +72,7 @@ class CTFWeaponBase : public CBaseCombatWeapon
 	NETVAR(m_iConsecutiveShots, "CTFWeaponBase->m_iConsecutiveShots", int)
 
 	// gotta check, but these are probably all useless or return garbage dataa
+	NETVAR_OFFSET(m_pWeaponInfo, "CTFWeaponBase->m_flLastCritCheckTime", CTFWeaponInfo*, 4);
 	NETVAR_OFFSET(m_flSmackTime, "CTFWeaponBase->m_nInspectStage", float, 28);
 	NETVAR_OFFSET(m_flCritTokenBucket, "CTFWeaponBase->m_iReloadMode", float, -244);
 	NETVAR_OFFSET(m_nCritChecks, "CTFWeaponBase->m_iReloadMode", int, -240);
@@ -90,13 +91,19 @@ class CTFWeaponBase : public CBaseCombatWeapon
 		return static_cast<CTFWeaponInfo*>(original_GetFileWeaponInfoFromHandle(handleValue));
 	}
 
+	const WeaponData_t& GetWeaponData()
+	{
+		auto info = GetWeaponInfo();
+		return info->GetWeaponData(m_iWeaponMode());
+	}
+
 	int GetWeaponID()
 	{
 		// xref: -use_action_slot_item_server
 		// func: EndUseActionSlotItem
 		/*
 			we want the 0xe18 offset
-  			iVar3 = (**(code **)(*plVar7 + 0xe18))(plVar7);
+====>  			iVar3 = (**(code **)(*plVar7 + 0xe18))(plVar7);
   			if (iVar3 != 0x65) goto LAB_01dc047d;
   			uVar5 = FUN_01fdca00(0x40);
   			FUN_01fda880(uVar5,"-use_action_slot_item_server");

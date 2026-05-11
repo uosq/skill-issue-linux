@@ -8,7 +8,7 @@
 #include "../features/visuals/viewmodel_interp/viewmodel_interp.h"
 #include "../features/visuals/viewmodel_offset/viewmodel_offset.h"
 #include "../features/visuals/norecoil/norecoil.h"
-#include "../features/angelscript/api/libraries/hooks/hooks.h"
+#include "../features/scriptmanager/scriptmanager.h"
 
 DETOUR_DECL_TYPE(void, original_CalcViewModelView, void *thisptr, CBaseEntity *, const Vector &, const QAngle &);
 detour_ctx_t calcViewModel_ctx;
@@ -21,15 +21,12 @@ void HookedCalcViewModelView(void *thisptr, CBaseEntity *owner, const Vector &ey
 
 	if (owner)
 	{
-		Hooks_CallHooks("CalcViewModelView", [&](asIScriptContext *ctx) {
-			ctx->SetArgObject(0, &position);
-			ctx->SetArgObject(1, &angle);
-		});
+		features::scriptmanager.CallHooks("CalcViewModelView", &position, &angle);
 
-		NoRecoil::RunCalcViewModelView(angle);
-		ViewmodelInterp::Run(angle);
-		ViewmodelAim::Run(angle);
-		ViewmodelOffset::Run(position, angle);
+		features::norecoil.RunCalcViewModelView(angle);
+		features::viewmodel_interp.Run(angle);
+		features::viewmodel_aim.Run(angle);
+		features::viewmodel_offset.Run(position, angle);
 	}
 
 	DETOUR_ORIG_CALL(&calcViewModel_ctx, original_CalcViewModelView, thisptr, owner, position, angle);

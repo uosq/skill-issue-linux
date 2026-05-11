@@ -5,11 +5,15 @@
 #include "../../../sdk/definitions/cgametrace.h"
 #include "../../../sdk/definitions/ctracefilters.h"
 #include "../../../sdk/helpers/helper.h"
+
 #include "../../../settings/settings.h"
 #include "../../aimbot/utils/utils.h"
 
-namespace AutoBackstab
+#include "../../feature.h"
+
+class AutoBackstab
 {
+public:
 	bool IsBehindEntity(CTFPlayer *pLocal, CTFPlayer *pTarget);
 	bool IsBehindEntity(Vector localCenter, Vector targetCenter, Vector targetViewAngles);
 	bool IsBehindAndFacingEntity(Vector localCenter, Vector targetCenter, Vector localViewAngles,
@@ -18,4 +22,6 @@ namespace AutoBackstab
 	bool CanBackstabEntity(CTFPlayer *pLocal, CTFPlayer *pTarget);
 
 	void Run(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCmd, bool *pSendPacket);
-}; // namespace AutoBackstab
+};
+
+DECLARE_FEATURE(AutoBackstab, autobackstab)

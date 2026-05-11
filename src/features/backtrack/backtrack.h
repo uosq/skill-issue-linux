@@ -1,15 +1,17 @@
 #pragma once
 
+#include <optional>
+#include <string>
+#include <unordered_map>
+#include <vector>
+
 #include "../../sdk/classes/entity.h"
 #include "../../sdk/classes/weaponbase.h"
 #include "../../sdk/definitions/cusercmd.h"
 #include "../../sdk/definitions/studio.h"
 
 #include "../entitylist/structs.h"
-
-#include <string>
-#include <unordered_map>
-#include <vector>
+#include "../feature.h"
 
 struct LagCompRecord
 {
@@ -19,7 +21,7 @@ struct LagCompRecord
 		m_vecAbsCenter	= {};
 		m_vecViewAngles = {};
 		m_vecVelocity	= {};
-		memset(m_Bones, 0, sizeof(LagCompRecord));
+		memset(m_Bones, 0, sizeof(m_Bones));
 	}
 
 	LagCompRecord(matrix3x4 *pBones, float flSimTime, Vector vecCenter, Vector vecViewAngles, Vector vecVelocity)
@@ -40,12 +42,9 @@ struct LagCompRecord
 	Vector m_vecVelocity;
 };
 
-namespace Backtrack
+class Backtrack
 {
-	extern std::unordered_map<int, std::deque<LagCompRecord>> m_records;
-	extern bool m_drawing;
-	extern LagCompRecord *m_current_drawing_record;
-
+public:
 	bool IsValidPlayer(const EntityListEntry &entry);
 	void Run(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCmd);
 	void Reset();
@@ -58,4 +57,14 @@ namespace Backtrack
 	void CleanRecords(CUserCmd* pCmd);
 	bool GetRecords(CTFPlayer *pEntity, std::vector<LagCompRecord> &out);
 	bool GetReal(CTFPlayer *pEntity, LagCompRecord &out);
-} // namespace Backtrack
+
+	std::optional<LagCompRecord> GetDrawingRecord();
+	bool IsDrawing();
+
+private:
+	std::unordered_map<int, std::deque<LagCompRecord>> m_records{};
+	bool m_drawing{false};
+	LagCompRecord *m_current_drawing_record{nullptr};
+};
+
+DECLARE_FEATURE(Backtrack, backtrack)

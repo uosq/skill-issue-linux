@@ -33,7 +33,7 @@ bool CViewRender_ShouldDrawViewModel(void* self, bool bDrawviewmodel)
 {
 	if (Config.misc.packed.no_zoom)
 	{
-		CTFPlayer* pLocal = EntityList::GetLocal();
+		CTFPlayer* pLocal = features::entities.GetLocal();
 		if (pLocal && pLocal->InCond(TF_COND_ZOOMED))
 			return true;
 	}
@@ -47,5 +47,5 @@ void Hook_ShouldDrawViewModel()
 {
 	detour_init(&ctx, Sigs::CViewRender_ShouldDrawViewModel.GetPointer(), (void*)&CViewRender_ShouldDrawViewModel);
 	if (!detour_enable(&ctx))
-		return Logs::Error("Couldnt hook CViewRender::ShouldDrawViewModel");
+		return features::logs.Error("Couldnt hook CViewRender::ShouldDrawViewModel");
 }

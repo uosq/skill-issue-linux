@@ -1,31 +1,22 @@
 #include "tab_logs.h"
 
 #include "../../imgui/imgui.h"
+#include "../../imgui/texteditor/TextEditor.h"
 #include "../../features/logs/logs.h"
 
 void DrawLogsTab()
 {
-	ImGui::BeginChild("##LogsContent");
+	static TextEditor textbox;
+	static bool initialized = false;
 
-	for (const auto &entry : Logs::GetLogs())
+	if (!initialized)
 	{
-		ImVec4 color;
-		switch (entry.level)
-		{
-		case LogLevel::INFO:
-			color = ImVec4(1, 1, 1, 1);
-			ImGui::TextColored(color, "%s - %s", "Info", entry.text.c_str());
-			break;
-		case LogLevel::WARN:
-			color = ImVec4(1, 1, 0, 1);
-			ImGui::TextColored(color, "%s - %s", "Warn", entry.text.c_str());
-			break;
-		case LogLevel::ERROR:
-			color = ImVec4(1, 0, 0, 1);
-			ImGui::TextColored(color, "%s - %s", "Error", entry.text.c_str());
-			break;
-		}
+		textbox.SetReadOnly(true);
+		textbox.SetShowWhitespaces(false);
+		textbox.SetColorizerEnable(false);
+		initialized = true;
 	}
 
-	ImGui::EndChild();
+	textbox.SetText(features::logs.GetFullText());
+	textbox.Render("Logs Go Here");
 }

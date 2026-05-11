@@ -2,16 +2,16 @@
 
 #include "../../imgui/imgui.h"
 #include "../../settings/settings.h"
+
 #include "../entitylist/entitylist.h"
 #include "../esp/esp.h"
+#include "../feature.h"
 
-namespace Radar
+class Radar
 {
+public:
 	void DrawContents();
 	void DrawHealthbar(ImDrawList *draw, ImVec2 pos, int health, int maxhealth, int iconSize);
-
-	extern int m_iRange;
-	extern float m_flRadius;
 
 	void Init();
 
@@ -21,4 +21,9 @@ namespace Radar
 	float GetRadius();
 	int GetRange();
 	Vec2 WorldToRadar(const Vector &localPos, const Vector &enemyPos, float viewAnglesYaw);
-}; // namespace Radar
+private:
+	int m_iRange{0};
+	float m_flRadius{0};
+};
+
+DECLARE_FEATURE(Radar, radar)

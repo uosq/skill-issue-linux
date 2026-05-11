@@ -24,5 +24,5 @@ void Hook_CBaseEntity_ShouldDraw()
 		    (void *)&Hooked_CBaseEntity_ShouldDraw);
 
 	if (!detour_enable(&baseentity_shoulddraw))
-		Logs::Error("Couldn't hook C_BaseEntity::ShouldDraw");
+		features::logs.Error("Couldn't hook C_BaseEntity::ShouldDraw");
 }

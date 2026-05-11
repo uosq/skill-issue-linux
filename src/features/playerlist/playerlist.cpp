@@ -7,31 +7,14 @@
 #include <vector>
 
 #include "../../sdk/classes/player.h"
-#include "../../sdk/definitions/eteam.h"
 
 #include "../../simpleini/SimpleIni.h"
 #include "../../imgui/imgui.h"
 #include "../../settings/settings.h"
 
 #define CACHE_FILE "./skill-issue/players.ini"
-#define NORMAL_PRIORITY 1
-#define FRIEND_PRIORITY 0
 
-struct PlayerData
-{
-	std::string name = "";
-	uint8_t priority = NORMAL_PRIORITY;
-	uint8_t team = ETeam::TEAM_UNASSIGNED;
-	uint32_t steamID3 = 0;
-};
-
-// [player index, priority]
-static std::unordered_map<uint32_t, uint8_t> player_cache;
-static std::vector<PlayerData> window_list;
-static std::shared_mutex cache_mutex;
-static std::mutex window_mutex;
-
-void Playerlist::Initialize()
+void Playerlist::Init()
 {
 	if (!std::filesystem::exists(CACHE_FILE))
 		return;
@@ -95,7 +78,7 @@ void Playerlist::Shutdown()
 	ini.SaveFile(CACHE_FILE);
 }
 
-static void StorePlayer(CTFPlayer* pPlayer)
+void Playerlist::StorePlayer(CTFPlayer* pPlayer)
 {
 	if (pPlayer == nullptr)
 		return;
@@ -118,7 +101,7 @@ static void StorePlayer(CTFPlayer* pPlayer)
 		player_cache.insert(std::pair<uint32_t, uint8_t>(steamID3, 1));
 }
 
-static void AddPlayerToWindow(CTFPlayer* pPlayer)
+void Playerlist::AddPlayerToWindow(CTFPlayer* pPlayer)
 {
 	if (pPlayer == nullptr)
 		return;
@@ -132,7 +115,7 @@ static void AddPlayerToWindow(CTFPlayer* pPlayer)
         window_list.emplace_back(PlayerData{name, priority, team, steamID3});
 }
 
-static void ResetWindowList()
+void Playerlist::ResetWindowList()
 {
 	std::lock_guard<std::mutex> lock(window_mutex);
 	window_list.clear();
@@ -162,24 +145,24 @@ void Playerlist::Store()
 uint8_t Playerlist::GetPlayerPriority(CTFPlayer *pPlayer)
 {
 	if (pPlayer == nullptr)
-		return NORMAL_PRIORITY;
+		return PLAYERLIST_NORMAL_PRIORITY;
 
 	uint32_t steamID3 = pPlayer->GetSteamID3();
 
 	if (steamID3 == 0)
-		return NORMAL_PRIORITY;
+		return PLAYERLIST_NORMAL_PRIORITY;
 
 	std::shared_lock<std::shared_mutex> read_lock(cache_mutex);
 
 	auto it = player_cache.find(steamID3);
 
 	if (it == player_cache.end())
-		return NORMAL_PRIORITY;
+		return PLAYERLIST_NORMAL_PRIORITY;
 
 	return it->second;
 }
 
-static void DrawPriority(uint8_t priority)
+void Playerlist::DrawPriority(uint8_t priority)
 {
 	std::string priority_text = std::to_string(priority);
 	ImGui::SameLine();
@@ -191,7 +174,7 @@ static void DrawPriority(uint8_t priority)
 	ImGui::TextUnformatted(priority_text.c_str());
 }
 
-static void SetPlayerPriority(uint32_t steamID3, uint8_t new_priority)
+void Playerlist::SetPlayerPriority(uint32_t steamID3, uint8_t new_priority)
 {
         std::unique_lock<std::shared_mutex> write_lock(cache_mutex);
         player_cache[steamID3] = new_priority;

@@ -1,7 +1,5 @@
 #include "viewmodel_interp.h"
 
-Vector ViewmodelInterp::m_vecOldAngle = {};
-
 void ViewmodelInterp::Run(Vector &angle)
 {
 	if (Config.misc.viewmodel_interp == 0.0f)

@@ -10,10 +10,6 @@
 
 #include "../materialregistry/reg.h"
 
-static std::unordered_set<int> hidden_entities;
-
-static bool is_drawing = false;
-
 void Chams::Init()
 {
 	Config.chams.active_materials.emplace_back("basic flat");
@@ -59,7 +55,7 @@ void Chams::OnDoPostScreenSpaceEffects(CTFPlayer* pLocal)
 	savedBlend = interfaces::RenderView->GetBlend();
 	interfaces::RenderView->GetColorModulation(savedColor);
 
-	for (auto& ent : EntityList::GetEntities())
+	for (auto& ent : features::entities.GetEntities())
 	{
 		if (!IsValidEntity(pLocal, ent))
 			continue;
@@ -72,7 +68,7 @@ void Chams::OnDoPostScreenSpaceEffects(CTFPlayer* pLocal)
 	interfaces::ModelRender->ForcedMaterialOverride(nullptr);
 }
 
-static void DoAttachmentColorModulation(CBaseEntity* attachment, const Color& orig_color)
+void Chams::DoAttachmentColorModulation(CBaseEntity* attachment, const Color& orig_color)
 {
 	bool highlight_weapons = Config.esp.packed.weapon;
 
@@ -100,7 +96,7 @@ static void DoAttachmentColorModulation(CBaseEntity* attachment, const Color& or
 	}
 }
 
-static void DrawAttachments(CBaseEntity* entity, int drawflags, const Color& orig_color)
+void Chams::DrawAttachments(CBaseEntity* entity, int drawflags, const Color& orig_color)
 {
 	if (entity == nullptr)
 		return;
@@ -147,7 +143,7 @@ static void DrawAttachments(CBaseEntity* entity, int drawflags, const Color& ori
 	}
 }
 
-static void DrawEntityAndAttachments(CBaseEntity* entity, int drawflags)
+void Chams::DrawEntityAndAttachments(CBaseEntity* entity, int drawflags)
 {
 	if (entity == nullptr)
 		return;
@@ -172,7 +168,7 @@ void Chams::ApplyMaterials(CBaseEntity* entity, int drawflags)
 {
 	for (const auto& mat_name : Config.chams.active_materials)
 	{
-		const auto& mat = MaterialRegistry::GetMaterialByName(mat_name);
+		const auto& mat = features::material_registry.GetMaterialByName(mat_name);
 
 		if (!mat || !mat->IsValidMat())
 			continue;

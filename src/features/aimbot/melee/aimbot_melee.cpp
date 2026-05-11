@@ -90,7 +90,7 @@ namespace AimbotMelee
 				state.shouldSilent = true;
 		}
 
-		EntityList::SetAimbotTarget(target);
+		features::entities.SetAimbotTarget(target);
 	}
 
 	std::string GetMeleeModeName()

@@ -26,5 +26,5 @@ void Hook_CalcViewModelBobHelper()
 {
 	detour_init(&calcbobhelper, Sigs::CalcViewModelBobHelper.GetPointer(), (void *)&Hooked_CalcViewModelBobHelper);
 	if (!detour_enable(&calcbobhelper))
-		Logs::Error("Couldn't hook CalcViewModelBobHelper");
+		features::logs.Error("Couldn't hook CalcViewModelBobHelper");
 }

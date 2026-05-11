@@ -6,21 +6,11 @@
 
 #include "../../settings/settings.h"
 
-struct SpectatorData
-{
-	std::string name;
-	bool isFirstPerson;
-};
-
-static bool s_bSpectated = false;
-static std::mutex s_Mutex;
-static std::vector<SpectatorData> s_vCachedSpectatorList;
-
 void Spectators::OnFrameStageNotify()
 {
 	Reset();
 
-	CTFPlayer* pLocal = EntityList::GetLocal();
+	CTFPlayer* pLocal = features::entities.GetLocal();
 
 	bool bTempSpectated = false;
 	std::vector<CTFPlayer*> tempPlayerPointers;
@@ -64,7 +54,7 @@ void Spectators::Reset()
 
 bool Spectators::IsSpectated(CTFPlayer *pTarget, std::vector<CTFPlayer*> &out)
 {
-	for (const auto &entry : EntityList::GetEntities())
+	for (const auto &entry : features::entities.GetEntities())
 	{
 		if (entry.ptr == nullptr)
 			continue;

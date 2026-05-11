@@ -24,49 +24,6 @@ enum class TextSide
 	TOP, BOTTOM
 };
 
-struct HealthbarBounds
-{
-	float x, y, w, h;
-	float bar_x, bar_y, bar_w, bar_h;
-};
-
-struct ESPData
-{
-	float x, y, w, h;
-	Color color;
-	int entindex = -1;
-	bool valid = false;
-
-	float pad_left = 0.0f;
-	float pad_right = 0.0f;
-	float pad_bottom = 0.0f;
-	float pad_top = 0.0f;
-
-	float top_y = 0.0f;
-	float bottom_y = 0.0f;
-	float left_y = 0.0f;
-	float right_y = 0.0f;
-
-	float text_scale = 1.0f; // used to scale with distance
-
-	std::string name = "";
-	std::string className = "";
-	std::string weaponName = "";
-
-	int health = -1;
-	int maxHealth = -1;
-
-	bool isJarated = false;
-	bool isBonked = false;
-	bool isUbered = false;
-	bool isZoomed = false;
-
-	HealthbarBounds hb;
-	bool hasHealthbar = false;
-
-	void ResetOffsets();
-};
-
 void ESPData::ResetOffsets()
 {
 	top_y = 0.0f;
@@ -74,9 +31,6 @@ void ESPData::ResetOffsets()
 	left_y = 0.0f;
 	right_y = 0.0f;
 }
-
-static std::mutex s_EspMutex;
-static std::vector<ESPData> s_vData;
 
 void ESP::Init()
 {
@@ -87,8 +41,8 @@ void ESP::OnlevelInitPostEntity()
 {
 	Reset();
 
-	std::lock_guard<std::mutex> lock(s_EspMutex);
-	s_vData.reserve(interfaces::Engine->GetMaxClients());
+	std::lock_guard<std::mutex> lock(m_esp_mutex);
+	m_vec_data.reserve(interfaces::Engine->GetMaxClients());
 }
 
 static bool GetEntityBounds(CBaseEntity* pEntity, ESPData& data)
@@ -154,7 +108,7 @@ static int GetEntityMaxHealth(CBaseEntity* pEntity)
 {
 	if (pEntity->IsPlayer())
 	{
-		CTFPlayerResource* pResources = EntityList::GetPlayerResources();
+		CTFPlayerResource* pResources = features::entities.GetPlayerResources();
 		if (!pResources) return -1;
 
 		return pResources->m_iMaxHealth(pEntity->GetIndex());
@@ -296,7 +250,7 @@ static std::string GetEntityName(CBaseEntity* pEntity)
 	return networkName ? networkName : "Unknown";
 }
 
-static void FillTargets(CTFPlayer* pLocal)
+void ESP::FillTargets(CTFPlayer* pLocal)
 {
 	constexpr int iVALID_FLAGS = EntityFlags::IsAlive | EntityFlags::IsBuilding | EntityFlags::IsPlayer;
 
@@ -306,7 +260,7 @@ static void FillTargets(CTFPlayer* pLocal)
 	int localIndex = pLocal->GetIndex();
 	Vec3 localOrigin = pLocal->GetAbsOrigin();
 
-	for (const auto& entry : EntityList::GetEntities())
+	for (const auto& entry : features::entities.GetEntities())
 	{
 		if (entry.ptr == nullptr || !(entry.flags & iVALID_FLAGS))
 			continue;
@@ -314,7 +268,7 @@ static void FillTargets(CTFPlayer* pLocal)
 		if (!ESP_Utils::IsValidEntity(pLocal, entry))
 			continue;
 
-		if (entry.ptr->GetIndex() == localIndex && !Thirdperson::IsThirdPerson(pLocal))
+		if (entry.ptr->GetIndex() == localIndex && !features::thirdperson.IsThirdPerson(pLocal))
 			continue;
 
 		ESPData data;
@@ -354,7 +308,7 @@ static void FillTargets(CTFPlayer* pLocal)
 		tempData.emplace_back(data);
 	}
 
-	for (const auto& entry : EntityList::GetStaticEntities())
+	for (const auto& entry : features::entities.GetStaticEntities())
 	{
 		if (entry.entity == nullptr)
 			continue;
@@ -382,8 +336,8 @@ static void FillTargets(CTFPlayer* pLocal)
 		tempData.emplace_back(data);
 	}
 
-	std::lock_guard<std::mutex> lock(s_EspMutex);
-	s_vData = std::move(tempData);
+	std::lock_guard<std::mutex> lock(m_esp_mutex);
+	m_vec_data = std::move(tempData);
 }
 
 static void DrawImGuiBox(ImDrawList* pDraw, float x, float y, float w, float h, ImU32 color, float rounding = 0.0f, ImDrawFlags flags = 0, float thickness = 1.0f)
@@ -482,8 +436,8 @@ static void DrawHealthbar(ImDrawList* pDraw, ESPData& data)
 
 void ESP::Reset()
 {
-	std::lock_guard<std::mutex> lock(s_EspMutex);
-	s_vData.clear();
+	std::lock_guard<std::mutex> lock(m_esp_mutex);
+	m_vec_data.clear();
 }
 
 void ESP::OnLevelShutdown()
@@ -597,7 +551,7 @@ static void DrawWeapon(ImDrawList* pDraw, ESPData& data)
 
 void ESP::OnImGui()
 {
-	CTFPlayer* pLocal = EntityList::GetLocal();
+	CTFPlayer* pLocal = features::entities.GetLocal();
 	if (pLocal == nullptr)
 		return;
 
@@ -617,12 +571,12 @@ void ESP::OnImGui()
 	if (pDraw == nullptr)
 		return;
 
-	if (s_vData.empty())
+	if (m_vec_data.empty())
 		return;
 
-	std::lock_guard<std::mutex> lock(s_EspMutex);
+	std::lock_guard<std::mutex> lock(m_esp_mutex);
 
-	for (ESPData& data : s_vData)
+	for (ESPData& data : m_vec_data)
 	{
 		if (!data.valid) continue;
 
@@ -657,7 +611,7 @@ void ESP::OnFrameStageNotify()
 	if (!Config.esp.packed.enabled)
 		return Reset();
 
-	CTFPlayer* pLocal = EntityList::GetLocal();
+	CTFPlayer* pLocal = features::entities.GetLocal();
 	if (pLocal == nullptr)
 		return Reset();
 

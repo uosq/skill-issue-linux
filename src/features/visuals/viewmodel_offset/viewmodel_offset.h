@@ -4,7 +4,12 @@
 #include "../../../sdk/interfaces/interfaces.h"
 #include "../../../settings/settings.h"
 
-namespace ViewmodelOffset
+#include "../../feature.h"
+
+class ViewmodelOffset
 {
+public:
 	void Run(Vector &position, Vector &angle);
 };
+
+DECLARE_FEATURE(ViewmodelOffset, viewmodel_offset)

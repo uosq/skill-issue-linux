@@ -1,7 +1,7 @@
 #include "materialmanager.h"
 
-std::unordered_map<std::string, IMaterial *> MaterialManager::m_Materials;
-std::unordered_map<std::string, ITexture *> MaterialManager::m_Textures;
+static std::unordered_map<std::string, IMaterial *> m_Materials;
+static std::unordered_map<std::string, ITexture *> m_Textures;
 
 IMaterial *MaterialManager::CreateMaterial(const std::string &name, const std::string &vmt)
 {

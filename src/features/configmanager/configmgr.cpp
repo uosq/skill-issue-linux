@@ -8,11 +8,9 @@
 
 #define CONFIG_FOLDER "./skill-issue/configs"
 
-static std::vector<std::string> s_vConfigs;
-
 void ConfigManager::RefreshConfigs()
 {
-	s_vConfigs.clear();
+	configs.clear();
 
 	if (!std::filesystem::exists(CONFIG_FOLDER))
 		std::filesystem::create_directories(CONFIG_FOLDER);
@@ -20,7 +18,7 @@ void ConfigManager::RefreshConfigs()
 	for (const auto &entry : std::filesystem::directory_iterator(CONFIG_FOLDER))
 	{
 		if (entry.is_regular_file() && entry.path().extension() == ".ini")
-			s_vConfigs.push_back(entry.path().stem().string());
+			configs.push_back(entry.path().stem().string());
 	}
 }
 
@@ -41,5 +39,5 @@ bool ConfigManager::Delete(const std::string &filePath)
 
 std::vector<std::string>& ConfigManager::GetConfigs()
 {
-	return s_vConfigs;
+	return configs;
 }

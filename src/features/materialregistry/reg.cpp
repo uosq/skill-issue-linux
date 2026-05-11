@@ -4,10 +4,8 @@
 #include <filesystem>
 #include <fstream>
 
-static std::vector<std::shared_ptr<CustomMaterial>> materials;
-
 // checks if the material already exist in the 'materials' vector
-static bool DoesMaterialExist(const std::string& name)
+static bool DoesMaterialExist(const std::vector<std::shared_ptr<CustomMaterial>>& materials, const std::string& name)
 {
 	for (auto it = materials.begin(); it != materials.end(); it++)
 		if ((*it)->GetInternalName() == name)
@@ -18,7 +16,7 @@ static bool DoesMaterialExist(const std::string& name)
 
 bool MaterialRegistry::AddMaterial(const std::string& name, const std::string& vmt, std::shared_ptr<CustomMaterial>& out)
 {
-	if (DoesMaterialExist(name))
+	if (DoesMaterialExist(materials, name))
 		return false;
 
 	materials.emplace_back(std::make_shared<CustomMaterial>(name, vmt));
@@ -29,7 +27,7 @@ bool MaterialRegistry::AddMaterial(const std::string& name, const std::string& v
 
 bool MaterialRegistry::RemoveMaterial(const std::string& name)
 {
-	if (!DoesMaterialExist(name))
+	if (!DoesMaterialExist(materials, name))
 		return true;
 
 	for (auto it = materials.begin(); it != materials.end(); it++)
@@ -46,7 +44,7 @@ bool MaterialRegistry::RemoveMaterial(const std::string& name)
 
 std::shared_ptr<CustomMaterial> MaterialRegistry::GetMaterialByName(const std::string &name)
 {
-	if (!DoesMaterialExist(name))
+	if (!DoesMaterialExist(materials, name))
 		return nullptr;
 
 	for (auto it = materials.begin(); it != materials.end(); it++)
@@ -56,7 +54,7 @@ std::shared_ptr<CustomMaterial> MaterialRegistry::GetMaterialByName(const std::s
 	return nullptr;
 }
 
-void MaterialRegistry::Initialize()
+void MaterialRegistry::Init()
 {
 	std::shared_ptr<CustomMaterial> dummy_ptr;
 

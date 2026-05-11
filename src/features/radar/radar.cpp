@@ -2,24 +2,6 @@
 
 #include "../esp/esp_utils.h"
 
-namespace Radar
-{
-	void DrawContents();
-	void DrawHealthbar(ImDrawList *draw, ImVec2 pos, int health, int maxhealth, int iconSize);
-
-	int m_iRange;
-	float m_flRadius;
-
-	void Init();
-
-	// Call in EngineVGui->Paint
-	void Run();
-
-	float GetRadius();
-	int GetRange();
-	Vec2 WorldToRadar(const Vector &localPos, const Vector &enemyPos, float viewAnglesYaw);
-}; // namespace Radar
-
 void Radar::Run()
 {
 	int size   = Config.radar.packed.size;
@@ -92,7 +74,7 @@ void Radar::DrawContents()
 	draw->AddLine({center.x, pos.y}, {center.x, pos.y + size}, IM_COL32(255, 255, 255, 40));
 	draw->AddLine({pos.x, center.y}, {pos.x + size, center.y}, IM_COL32(255, 255, 255, 40));
 
-	if (EntityList::GetPlayerResources() == nullptr)
+	if (features::entities.GetPlayerResources() == nullptr)
 		return;
 
 	if (!interfaces::Engine->IsInGame() || !interfaces::Engine->IsConnected())
@@ -109,7 +91,7 @@ void Radar::DrawContents()
 
 	int iconSize = Config.radar.packed.icon_size;
 
-	for (const auto &entry : EntityList::GetEntities())
+	for (const auto &entry : features::entities.GetEntities())
 	{
 		if (entry.ptr == nullptr)
 			continue;
@@ -118,7 +100,7 @@ void Radar::DrawContents()
 		if (entry.ptr->GetIndex() == -1)
 			continue;
 
-		if (entry.ptr == EntityList::GetLocal())
+		if (entry.ptr == features::entities.GetLocal())
 			continue;
 
 		if (entry.flags & EntityFlags::IsBuilding && !Config.radar.packed.buildings)

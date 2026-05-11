@@ -6,15 +6,13 @@
 
 #include "projectile/projectile.h"
 
-AimbotState Aimbot::m_state{};
-
 static void DrawFOVIndicator(ImDrawList* pDraw)
 {
 	if (Config.aimbot.fov >= 90 || !Config.aimbot.packed.draw_fov_indicator)
 		return;
 
 	float aimFov = DEG2RAD(AimbotUtils::GetAimbotFovScaled());
-	float camFov = DEG2RAD(CustomFov::GetFov() * 0.5f);
+	float camFov = DEG2RAD(features::customfov.GetFov() * 0.5f);
 
 	int w, h;
 	helper::draw::GetScreenSize(w, h);
@@ -89,4 +87,9 @@ void Aimbot::OnImGui(ImDrawList* pDraw)
 	DrawFOVIndicator(pDraw);
 	gAimProjectile.RunPath(pDraw);
 	gAimProjectile.RunIndicator(pDraw);
+}
+
+AimbotState& Aimbot::GetState()
+{
+	return m_state;
 }

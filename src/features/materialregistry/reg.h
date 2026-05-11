@@ -4,12 +4,14 @@
 #include <vector>
 
 #include "custom_material.h"
+#include "../feature.h"
 
 #define MATERIAL_DIR "./skill-issue/materials"
 
-namespace MaterialRegistry
+class MaterialRegistry
 {
-	void Initialize();
+public:
+	void Init();
 	void Shutdown();
 
 	std::vector<std::shared_ptr<CustomMaterial>>& GetMaterials();
@@ -20,4 +22,9 @@ namespace MaterialRegistry
 
 	bool SaveToDirectory(const std::string& dirPath);
 	bool LoadFromDirectory(const std::string& dirPath);
-} // end of namespace
+
+private:
+	std::vector<std::shared_ptr<CustomMaterial>> materials;
+};
+
+DECLARE_FEATURE(MaterialRegistry, material_registry)

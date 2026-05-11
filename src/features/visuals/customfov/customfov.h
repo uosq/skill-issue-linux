@@ -2,13 +2,19 @@
 
 #include "../../../sdk/helpers/helper.h"
 #include "../../../sdk/interfaces/interfaces.h"
+
 #include "../../../settings/settings.h"
+#include "../../feature.h"
 
-namespace CustomFov
+class CustomFov
 {
-	extern float m_flFov;
-	extern float m_flOldFov;
-
+public:
 	void Run(CTFPlayer *pLocal, CViewSetup *pView);
 	float GetFov();
-}; // namespace CustomFov
+
+private:
+	float m_flFov{90};
+	float m_flOldFov{90};
+};
+
+DECLARE_FEATURE(CustomFov, customfov)

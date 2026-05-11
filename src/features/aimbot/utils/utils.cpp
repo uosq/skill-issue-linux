@@ -152,7 +152,7 @@ namespace AimbotUtils
 
 	float GetFovScaled(float flFov)
 	{
-		float cameraFOV		    = CustomFov::GetFov();
+		float cameraFOV		    = features::customfov.GetFov();
 
 		float radAimbotHalf	    = DEG2RAD(flFov / 2.0f);
 		float radPlayerHalf	    = DEG2RAD(cameraFOV / 2.0f);
@@ -172,9 +172,9 @@ namespace AimbotUtils
 	{
 		std::vector<EntityListEntry> vecEntities;
 
-		for (const auto &entry : EntityList::GetEntities())
+		for (const auto &entry : features::entities.GetEntities())
 		{
-			if (entry.ptr == EntityList::GetLocal())
+			if (entry.ptr == features::entities.GetLocal())
 				continue;
 		
 			if (!(entry.flags & EntityFlags::IsAlive))

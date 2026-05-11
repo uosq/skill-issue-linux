@@ -3,7 +3,7 @@
 #include "../sdk/interfaces/interfaces.h"
 #include "../sdk/signatures/signatures.h"
 
-#include "../features/angelscript/api/api.h"
+#include "../features/scriptmanager/scriptmanager.h"
 #include "../features/chams/chams.h"
 #include "../features/esp/esp.h"
 #include "../features/glow/glow.h"
@@ -79,21 +79,21 @@ void CApp::Setup()
 	Netvars::Setup();
 
 	Settings::InitBinds();
-	API::Initialize();
+	features::scriptmanager.Init();
 
 	GUI::Init();
 	TickManager::Init();
 	MaterialManager::Init();
-	MaterialRegistry::Initialize();
-	Playerlist::Initialize();
+	features::material_registry.Init();
+	features::playerlist.Init();
 
-	Backtrack::Init();
-	ViewmodelInterp::Init();
-	ViewmodelAim::Init();
-	Radar::Init();
-	ESP::Init();
-	Glow::Init();
-	Chams::Init();
+	features::backtrack.Init();
+	features::viewmodel_interp.Init();
+	features::viewmodel_aim.Init();
+	features::radar.Init();
+	features::esp.Init();
+	features::glow.Init();
+	features::chams.Init();
 
 	StartHooks();
 }

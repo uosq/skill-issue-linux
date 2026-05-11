@@ -3,6 +3,8 @@
 #include <string>
 #include <vector>
 
+#include "../feature.h"
+
 enum class LogLevel
 {
 	INFO = 0,
@@ -10,19 +12,20 @@ enum class LogLevel
 	ERROR
 };
 
-struct LogEntry
+class Logs
 {
-	std::string text;
-	LogLevel level;
-};
-
-namespace Logs
-{
-	extern std::vector<LogEntry> m_logs;
-
+public:
 	void Info(const std::string &text);
 	void Warn(const std::string &text);
 	void Error(const std::string &text);
 
-	const std::vector<LogEntry> &GetLogs();
-} // namespace Logs
+	void Clear();
+
+	const std::string& GetFullText() const;
+private:
+	void InsertLog(LogLevel level, const std::string& text);
+
+	std::string m_logs;
+};
+
+DECLARE_FEATURE(Logs, logs)

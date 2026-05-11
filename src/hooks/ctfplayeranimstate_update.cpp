@@ -23,13 +23,13 @@ void Hooked_CTFPlayerAnimState_Update(void* thisptr, float eyeYaw, float eyePitc
 		return;
 	}
 
-	if (EntityList::GetLocal() == nullptr)
+	if (features::entities.GetLocal() == nullptr)
 	{
 		DETOUR_ORIG_CALL(&animstate_update_ctx, CTFPlayerAnimState_Update, thisptr, eyeYaw, eyePitch);
 		return;
 	}
 
-	if (pPlayer != EntityList::GetLocal())
+	if (pPlayer != features::entities.GetLocal())
 	{
 		DETOUR_ORIG_CALL(&animstate_update_ctx, CTFPlayerAnimState_Update, thisptr, eyeYaw, eyePitch);
 		return;
@@ -46,5 +46,5 @@ void Hook_CTFPlayerAnimState_Update()
 {
 	detour_init(&animstate_update_ctx, Sigs::CTFPlayerAnimState_Update.GetPointer(), (void*)&Hooked_CTFPlayerAnimState_Update);
 	if (!detour_enable(&animstate_update_ctx))
-		Logs::Error("Couldn't hook CTFPlayerAnimState::Update");
+		features::logs.Error("Couldn't hook CTFPlayerAnimState::Update");
 }

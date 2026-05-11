@@ -2,8 +2,6 @@
 
 #include "../../sdk/interfaces/interfaces.h"
 
-Binds gBinds{};
-
 bool Binds::IsKeyDown(const Hotkey *hk)
 {
 	if (hk->m_iType == InputType::None)

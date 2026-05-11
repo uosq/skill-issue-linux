@@ -7,7 +7,7 @@
 
 void DrawAimbotTab()
 {
-	gBinds.RenderHotkey("Aimbot", Config.aimbot.key);
+	features::binds.RenderHotkey("Aimbot", Config.aimbot.key);
 
 	ImGui::PushStyleVar(ImGuiStyleVar_Alpha, Config.aimbot.key->IsEnabled() ? 1.0f : 0.5f);
 	{

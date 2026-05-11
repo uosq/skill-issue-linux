@@ -31,23 +31,23 @@ void InfoPanel::OnImGui(bool bMenuOpen)
 
 	if (ImGui::Begin("Information Panel", nullptr, flags))
 	{
-		DrawColoredText("Aimbot", Aimbot::IsRunning());
+		DrawColoredText("Aimbot", features::aimbot.IsRunning());
 		DrawColoredText("ESP", Config.esp.packed.enabled);
 		DrawColoredText("Chams", Config.chams.enabled);
 		DrawColoredText("Autostrafe", Config.misc.packed.autostrafe);
 		DrawColoredText("Glow", Config.glow.packed.blur > 0);
 
 		int amount = 0;
-		DrawColoredText("Spectated", Spectators::IsLocalPlayerSpectated(amount));
+		DrawColoredText("Spectated", features::spectators.IsLocalPlayerSpectated(amount));
 		DrawColoredTextEx("Spectator Count: %i", amount);
 
 		DrawColoredText("Warp", Config.warp.key->IsEnabled());
-		DrawColoredTextEx("Warp Amount: %i", Warp::m_iShiftAmount);
-		DrawColoredTextEx("Warp Ticks: %i", Warp::m_iStoredTicks);
+		DrawColoredTextEx("Warp Amount: %i", features::warp.m_iShiftAmount);
+		DrawColoredTextEx("Warp Ticks: %i", features::warp.m_iStoredTicks);
 
 		DrawColoredText("Radar", Config.radar.packed.enabled);
-		DrawColoredTextEx("Radar Range: %i", Radar::m_iRange);
-		DrawColoredTextEx("Radar Radius: %.3f", Radar::m_flRadius);
+		DrawColoredTextEx("Radar Range: %i", features::radar.GetRange());
+		DrawColoredTextEx("Radar Radius: %.3f", features::radar.GetRadius());
 	}
 	ImGui::End();
 }

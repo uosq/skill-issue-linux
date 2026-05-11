@@ -41,7 +41,7 @@ void NoRecoil::RunCalcViewModelView(Vector &angle)
 	if (!Config.misc.packed.norecoil)
 		return;
 
-	CTFPlayer* pLocal = EntityList::GetLocal();
+	CTFPlayer* pLocal = features::entities.GetLocal();
 	if (pLocal == nullptr)
 		return;
 

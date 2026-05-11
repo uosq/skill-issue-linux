@@ -3,12 +3,6 @@
 
 #include "../../gui/utils/string_utils.h"
 
-static std::vector<EntityListEntry> s_vecEntities;
-static CTFPlayer* s_pLocalPlayer = nullptr;
-static CTFPlayerResource* s_pPlayerResource = nullptr;
-static CBaseEntity* s_pAimbotTarget = nullptr;
-static std::vector<StaticEntity> s_vecStaticEntities;
-
 void EntityList::Clear()
 {
 	s_vecEntities.clear();
@@ -17,7 +11,7 @@ void EntityList::Clear()
 	s_vecStaticEntities.clear();
 }
 
-static void StoreBaseAnimating(CBaseAnimating* pAnimating)
+void EntityList::StoreBaseAnimating(CBaseAnimating* pAnimating)
 {
 	if (pAnimating == nullptr)
 		return;

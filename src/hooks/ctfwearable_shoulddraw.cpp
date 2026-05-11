@@ -20,5 +20,5 @@ void Hook_CTFWearable_ShouldDraw()
 		    (void *)&Hooked_CTFWearable_ShouldDraw);
 
 	if (!detour_enable(&ctfwearable_shoulddraw_ctx))
-		Logs::Error("Couldn't hook CTFWearable::ShouldDraw");
+		features::logs.Error("Couldn't hook CTFWearable::ShouldDraw");
 }

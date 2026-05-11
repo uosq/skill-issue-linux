@@ -1,18 +1,16 @@
 #pragma once
 
+#include <unordered_map>
+#include <vector>
+
 #include "../../sdk/definitions/imaterial.h"
 #include "../../sdk/definitions/imaterialsystem.h"
 #include "../../sdk/definitions/itexture.h"
 #include "../../sdk/definitions/keyvalues.h"
 #include "../../sdk/interfaces/interfaces.h"
-#include <unordered_map>
-#include <vector>
 
 namespace MaterialManager
 {
-	extern std::unordered_map<std::string, IMaterial *> m_Materials;
-	extern std::unordered_map<std::string, ITexture *> m_Textures;
-
 	void Init(void);
 	void Unitialize(void);
 

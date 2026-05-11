@@ -5,12 +5,18 @@
 #include "../../../sdk/interfaces/interfaces.h"
 #include "../../../settings/settings.h"
 
-namespace ViewmodelAim
-{
-	extern float m_flStopTime;
+#include "../../feature.h"
 
+class ViewmodelAim
+{
+public:
 	void Init();
 	void Run(Vector &angle);
 	void ResetStopTime();
 	float GetStopTime();
-}; // namespace ViewmodelAim
+
+private:
+	float m_flStopTime{0};
+};
+
+DECLARE_FEATURE(ViewmodelAim, viewmodel_aim)

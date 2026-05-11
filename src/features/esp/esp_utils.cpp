@@ -2,7 +2,7 @@
 
 Color ESP_Utils::GetEntityColor(CBaseEntity *entity)
 {
-	if (entity == EntityList::GetAimbotTarget())
+	if (entity == features::entities.GetAimbotTarget())
 		return Config.colors.aimbot_target;
 
 	switch(entity->GetClassID())

@@ -13,7 +13,7 @@ bool Hooked_CBasePlayer_ShouldDrawLocalPlayer(void)
 	bool ret;
 	DETOUR_ORIG_GET(&entity_shoulddraw, ret, CBasePlayer_ShouldDrawLocalPlayer);
 
-	auto pLocal = EntityList::GetLocal();
+	auto pLocal = features::entities.GetLocal();
 	if (pLocal != nullptr && pLocal->IsAlive() && pLocal->InCond(TF_COND_ZOOMED))
 		return true;
 
@@ -26,5 +26,5 @@ void Hook_CBasePlayer_ShouldDrawLocalPlayer()
 		    (void *)&Hooked_CBasePlayer_ShouldDrawLocalPlayer);
 
 	if (!detour_enable(&entity_shoulddraw))
-		Logs::Error("Couldn't hook C_BasePlayer::ShouldDrawLocalPlayer");
+		features::logs.Error("Couldn't hook C_BasePlayer::ShouldDrawLocalPlayer");
 }

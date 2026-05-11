@@ -1,7 +1,7 @@
 #include "clientmodeshared_firegameevent.h"
 
 #include "../libdetour/libdetour.h"
-#include "../features/angelscript/api/libraries/hooks/hooks.h"
+#include "../features/scriptmanager/scriptmanager.h"
 
 DETOUR_DECL_TYPE(void, original_FireGameEvent, void *self, IGameEvent *gameEvent);
 detour_ctx_t firegameevent_ctx;
@@ -14,7 +14,7 @@ void Hooked_FireGameEvent(void *self, IGameEvent *event)
 		return;
 	}
 
-	Hooks_CallHooks("FireGameEvent", [&](asIScriptContext *ctx) { ctx->SetArgObject(0, &event); });
+	features::scriptmanager.CallHooks("FireGameEvent", event);
 
 	DETOUR_ORIG_CALL(&firegameevent_ctx, original_FireGameEvent, self, event);
 }

@@ -4,7 +4,7 @@
 
 #include "../hooks.h"
 
-#include "../features/angelscript/api/libraries/hooks/hooks.h"
+#include "../features/scriptmanager/scriptmanager.h"
 
 using LevelInitPreEntityFn = void(*)(CHLClient* thisptr, const char* mapName);
 
@@ -18,7 +18,7 @@ static void LevelInitPreEntity(CHLClient* thisptr, const char* mapName)
 
 void AS_LevelInitPreEntity_Callback(const char *mapName)
 {
-	Hooks_CallHooks("LevelInitPreEntity", [&](asIScriptContext* ctx) { ctx->SetArgObject(0, &mapName); });
+	features::scriptmanager.CallHooks("LevelInitPreEntity", &mapName);
 }
 
 void HookLevelInitPreEntity()

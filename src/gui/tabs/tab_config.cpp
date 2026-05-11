@@ -15,17 +15,17 @@ static bool s_bFirstTimeOpen = true;
 void DrawConfigTab()
 {
 	const std::string configFolder = CONFIG_DIR;
-	auto& configs = ConfigManager::GetConfigs();
+	auto& configs = features::configs.GetConfigs();
 
 	if (s_bFirstTimeOpen)
 	{
-		ConfigManager::RefreshConfigs();
+		features::configs.RefreshConfigs();
 		s_bFirstTimeOpen = false;
 	}
 
 	if (ImGui::Button("Refresh"))
 	{
-		ConfigManager::RefreshConfigs();
+		features::configs.RefreshConfigs();
 		s_iSelectedIndex = -1;
 	}
 
@@ -45,8 +45,8 @@ void DrawConfigTab()
 			std::string filename = s_strNewConfigName + ".ini";
 			std::string fullPath = configFolder + filename;
 
-			ConfigManager::Save(fullPath);
-			ConfigManager::RefreshConfigs();
+			features::configs.Save(fullPath);
+			features::configs.RefreshConfigs();
 		}
 	}
 
@@ -68,16 +68,16 @@ void DrawConfigTab()
 
 				if (ImGui::Button("Load"))
 				{
-					(void)ConfigManager::Load(fullPath);
-					ConfigManager::RefreshConfigs();
+					(void)features::configs.Load(fullPath);
+					features::configs.RefreshConfigs();
 				}
 
 				ImGui::SameLine();
 
 				if (ImGui::Button("Save"))
 				{
-					(void)ConfigManager::Save(fullPath);
-					ConfigManager::RefreshConfigs();
+					(void)features::configs.Save(fullPath);
+					features::configs.RefreshConfigs();
 				}
 
 				ImGui::SameLine();
@@ -97,8 +97,8 @@ void DrawConfigTab()
 
 					if (ImGui::Button("Yes", ImVec2(120, 0)))
 					{
-						ConfigManager::Delete(fullPath);
-						ConfigManager::RefreshConfigs();
+						features::configs.Delete(fullPath);
+						features::configs.RefreshConfigs();
 						s_iSelectedIndex   = -1;
 						s_bOpenDeletePopup = false;
 						ImGui::CloseCurrentPopup();

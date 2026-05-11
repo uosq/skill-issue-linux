@@ -1,8 +1,5 @@
 #include "customfov.h"
 
-float CustomFov::m_flFov    = 90.0f;
-float CustomFov::m_flOldFov = 90.0f;
-
 void CustomFov::Run(CTFPlayer *pLocal, CViewSetup *pView)
 {
 	static ConVar *fov_desired = interfaces::Cvar->FindVar("fov_desired");

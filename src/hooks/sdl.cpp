@@ -13,10 +13,6 @@
 #include "../gui/gui.h"
 #include "../settings/settings.h"
 
-#include "../features/radar/radar.h"
-#include "../features/warp/warp.h"
-#include "../features/logs/logs.h"
-
 DETOUR_DECL_TYPE(void, original_SwapWindow, SDL_Window *window);
 DETOUR_DECL_TYPE(int, original_PollEvent, SDL_Event *event);
 DETOUR_DECL_TYPE(int, original_GetWindowSize, SDL_Window *window, int *w, int *h);
@@ -28,9 +24,9 @@ detour_ctx_t windowsizedetour;
 extern const unsigned int Arial_compressed_size;
 extern const unsigned char Arial_compressed_data[668199];
 
-SDL_Window* tfwindow = nullptr;
-ImFont* IMFONT_TF2Build = nullptr;
-ImFont* IMFONT_Arial = nullptr;
+SDL_Window* tfwindow{nullptr};
+ImFont* IMFONT_TF2Build{nullptr};
+ImFont* IMFONT_Arial{nullptr};
 
 void SetupImGuiStyle()
 {
@@ -146,58 +142,11 @@ void Hooked_SwapWindow(SDL_Window *window)
 
 	SDL_GL_MakeCurrent(window, ourcontext);
 
-	if (ImGui::IsKeyPressed(ImGuiKey_Insert, false) || ImGui::IsKeyPressed(ImGuiKey_F11, false))
-	{
-		Settings::menu_open = !Settings::menu_open;
-		interfaces::Surface->SetCursorAlwaysVisible(Settings::menu_open);
-	}
-
-	if (ImGui::IsKeyPressed(ImGuiKey_Escape, false))
-	{
-		Settings::menu_open = false;
-		interfaces::Surface->SetCursorAlwaysVisible(Settings::menu_open);
-	}
-
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplSDL2_NewFrame();
 	ImGui::NewFrame();
 
-	cursor = ImGui::GetMouseCursor();
-
-	bool pushfont = false;
-	switch (static_cast<ESPFont>(Config.esp.font.selected))
-	{
-        	case ESPFont::TF2BUILD:
-		ImGui::PushFont(IMFONT_TF2Build, Config.esp.font.size);
-		pushfont = true;
-		break;
-        	case ESPFont::ARIAL:
-		ImGui::PushFont(IMFONT_Arial, Config.esp.font.size);
-		pushfont = true;
-		break;
-		case ESPFont::INVALID:
-        	case ESPFont::COUNT:
-        	{
-			Logs::Error("Invalid font!");
-			break;
-		}
-        }
-
-        if (Config.warp.key->IsEnabled())
-		Warp::RunWindow();
-
-	if (Config.radar.packed.enabled)
-		Radar::Run();
-
-	if (Config.misc.packed.spectatorlist)
-		GUI::RunSpectatorList();
-
 	GUI::RunMainWindow();
-
-	gBinds.DrawWindow(Settings::menu_open);
-
-	if (pushfont)
-		ImGui::PopFont();
 
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

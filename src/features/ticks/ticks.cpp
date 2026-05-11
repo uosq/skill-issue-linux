@@ -15,7 +15,7 @@
 #include "../../sdk/definitions/protocol.h"
 #include "../../sdk/definitions/cclientstate.h"
 
-#include "../angelscript/api/libraries/hooks/hooks.h"
+#include "../scriptmanager/scriptmanager.h"
 
 #include "../../sdk/signatures/signatures.h"
 
@@ -50,19 +50,19 @@ void TickManager::Post_CreateMove(int sequence_number)
 	    interfaces::Engine->IsPlayingDemo())
 		return;
 
-	EntityList::SetAimbotTarget(nullptr);
-	Backtrack::CleanRecords(pCmd);
+	features::entities.SetAimbotTarget(nullptr);
+	features::backtrack.CleanRecords(pCmd);
 
 	if (m_bSendPacket)
 		helper::localplayer::LastAngle = pCmd->viewangles;
 
-	CTFPlayer* pLocal = EntityList::GetLocal();
+	CTFPlayer* pLocal = features::entities.GetLocal();
 	if (!pLocal || !pLocal->IsAlive() || pLocal->IsTaunting())
 		return;
 
-	Bhop::Run(pLocal, pCmd);
-	Autostrafe::Run(pLocal, pCmd);
-	AntiAFK::OnCreateMove(pCmd);
+	features::bhop.Run(pLocal, pCmd);
+	features::autostrafe.Run(pLocal, pCmd);
+	features::antiafk.OnCreateMove(pCmd);
 
 	CTFWeaponBase* pWeapon = HandleAs<CTFWeaponBase*>(pLocal->GetActiveWeapon());
 	if (pWeapon == nullptr)
@@ -70,13 +70,13 @@ void TickManager::Post_CreateMove(int sequence_number)
 
 	Vector originalAngles = pCmd->viewangles;
 
-	NoRecoil::RunCreateMove(pLocal, pWeapon, pCmd);
-	Backtrack::Run(pLocal, pWeapon, pCmd);
+	features::norecoil.RunCreateMove(pLocal, pWeapon, pCmd);
+	features::backtrack.Run(pLocal, pWeapon, pCmd);
 
-	Aimbot::Run(pLocal, pWeapon, pCmd);
-	Triggerbot::Run(pLocal, pWeapon, pCmd);
+	features::aimbot.Run(pLocal, pWeapon, pCmd);
+	features::trigger.Run(pLocal, pWeapon, pCmd);
 
-	Hooks_CallHooks("CreateMove", [&](asIScriptContext *ctx) { ctx->SetArgObject(0, pCmd); });
+	features::scriptmanager.CallHooks("CreateMove", pCmd);
 
 	if (reinterpret_cast<CClientState *>(interfaces::ClientState)->chokedcommands >= 21)
 		m_bSendPacket = true;
@@ -84,7 +84,7 @@ void TickManager::Post_CreateMove(int sequence_number)
 	if (m_bSendPacket)
 		helper::localplayer::LastAngle = pCmd->viewangles;
 
-	Warp::RunCreateMove(pLocal, pWeapon, pCmd);
+	features::warp.RunCreateMove(pLocal, pWeapon, pCmd);
 
 	helper::engine::FixMovement(pCmd, originalAngles, pCmd->viewangles);
 }
@@ -286,36 +286,36 @@ void TickManager::Init()
 
 void TickManager::Run(float accumulated_extra_samples, bool bFinalTick)
 {
-	Warp::m_bRecharging = false;
+	features::warp.m_bRecharging = false;
 
-	if (Warp::m_iDesiredState == WarpState::RECHARGING && Warp::m_iStoredTicks < Warp::GetMaxTicks())
+	if (features::warp.m_iDesiredState == WarpState::RECHARGING && features::warp.m_iStoredTicks < features::warp.GetMaxTicks())
 	{
-		Warp::m_iStoredTicks++;
-		Warp::m_bRecharging = true;
+		features::warp.m_iStoredTicks++;
+		features::warp.m_bRecharging = true;
 		return;
 	}
 
 	CL_Move(accumulated_extra_samples, bFinalTick);
 
-	if (Warp::m_iDesiredState == WarpState::RUNNING && Warp::m_iStoredTicks > 0)
+	if (features::warp.m_iDesiredState == WarpState::RUNNING && features::warp.m_iStoredTicks > 0)
 	{
-		Warp::m_iShiftAmount = 0;
-		Warp::m_bShifting = true;
+		features::warp.m_iShiftAmount = 0;
+		features::warp.m_bShifting = true;
 
 		for (int n = 0; n < Config.warp.packed.speed; n++)
 		{
-			if (Warp::m_iStoredTicks <= 0)
+			if (features::warp.m_iStoredTicks <= 0)
 				break;
 
-			bool isFinalTick = (n == Config.warp.packed.speed - 1) || (Warp::m_iStoredTicks == 1);
+			bool isFinalTick = (n == Config.warp.packed.speed - 1) || (features::warp.m_iStoredTicks == 1);
 			CL_Move(accumulated_extra_samples, isFinalTick);
-			Warp::m_iStoredTicks--;
-			Warp::m_iShiftAmount++;
+			features::warp.m_iStoredTicks--;
+			features::warp.m_iShiftAmount++;
 		}
 
-		Warp::m_iShiftAmount = 0;
-		Warp::m_iDesiredState = WarpState::WAITING;
-		Warp::m_bShifting     = false;
+		features::warp.m_iShiftAmount = 0;
+		features::warp.m_iDesiredState = WarpState::WAITING;
+		features::warp.m_bShifting     = false;
 		return;
 	}
 }

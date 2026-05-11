@@ -36,5 +36,5 @@ void Hook_CTFMatchSummary_OnTick()
 	detour_init(&summary_ontick_ctx, Sigs::CTFMatchSummary_OnTick.GetPointer(),
 		    (void *)&Hooked_CTFMatchSummary_OnTick);
 	if (!detour_enable(&summary_ontick_ctx))
-		Logs::Error("Couldn't hook CTFMatchSumary::OnTick");
+		features::logs.Error("Couldn't hook CTFMatchSumary::OnTick");
 }

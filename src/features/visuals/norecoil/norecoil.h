@@ -3,9 +3,14 @@
 #include "../../../sdk/classes/player.h"
 #include "../../../sdk/classes/weaponbase.h"
 
-namespace NoRecoil
+#include "../../feature.h"
+
+class NoRecoil
 {
+public:
 	void RunOverrideView(CTFPlayer *pLocal, CViewSetup *pView);
 	void RunCreateMove(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCmd);
 	void RunCalcViewModelView(Vector& angle);
-} // namespace NoRecoil
+};
+
+DECLARE_FEATURE(NoRecoil, norecoil)

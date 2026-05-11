@@ -4,10 +4,16 @@
 #include "../../../sdk/interfaces/interfaces.h"
 #include "../../../settings/settings.h"
 
-namespace ViewmodelInterp
-{
-	extern Vector m_vecOldAngle;
+#include "../../feature.h"
 
+class ViewmodelInterp
+{
+public:
 	void Init();
 	void Run(Vector &angle);
-}; // namespace ViewmodelInterp
+
+private:
+	Vector m_vecOldAngle{};
+};
+
+DECLARE_FEATURE(ViewmodelInterp, viewmodel_interp)

@@ -11,10 +11,6 @@
 
 // #include "../ticks/ticks.h"
 
-std::unordered_map<int, std::deque<LagCompRecord>> Backtrack::m_records = {};
-bool Backtrack::m_drawing						= false;
-LagCompRecord *Backtrack::m_current_drawing_record			= nullptr;
-
 // https://github.com/ValveSoftware/source-sdk-2013/blob/master/src/game/server/player_lagcompensation.cpp#L381-L412
 bool LagCompRecord::IsValid(CUserCmd* pCmd)
 {
@@ -27,7 +23,7 @@ bool LagCompRecord::IsValid(CUserCmd* pCmd)
 		correct += netchan->GetLatency(FLOW_INCOMING);
 	}
 
-	correct += Backtrack::GetInterp();
+	correct += features::backtrack.GetInterp();
 
 	static ConVar *sv_maxunlag = interfaces::Cvar->FindVar("sv_maxunlag");
 	correct			   = std::clamp(correct, 0.0f, sv_maxunlag->GetFloat());
@@ -172,12 +168,12 @@ void Backtrack::Store()
 	if (!Config.backtrack.packed.enabled)
 		return;
 
-	CTFPlayer* pLocal = EntityList::GetLocal();
+	CTFPlayer* pLocal = features::entities.GetLocal();
 	if (pLocal == nullptr)
 		return;
 
 	int localTeam = pLocal->m_iTeamNum();
-	auto enemies = EntityList::GetEnemies();
+	auto enemies = features::entities.GetEnemies();
 
 	for (const auto& entry : enemies)
 	{
@@ -300,7 +296,7 @@ void Backtrack::DoPostScreenSpaceEffects()
 
         for (const auto& mat_name : Config.backtrack.active_materials)
         {
-                auto mat = MaterialRegistry::GetMaterialByName(mat_name);
+                auto mat = features::material_registry.GetMaterialByName(mat_name);
                 
                 if (!mat || !mat->IsValidMat())
                         continue;
@@ -360,4 +356,14 @@ bool Backtrack::GetReal(CTFPlayer *pEntity, LagCompRecord &out)
 
 	out = it->second.front();
 	return true;
+}
+
+bool Backtrack::IsDrawing()
+{
+	return m_drawing;
+}
+
+std::optional<LagCompRecord> Backtrack::GetDrawingRecord()
+{
+	return m_drawing ? *m_current_drawing_record : LagCompRecord{};
 }

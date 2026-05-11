@@ -17,9 +17,9 @@ bool Hooked_Interpolate(CBaseAnimating *self, float currentTime)
 		return retVal;
 	}
 
-	if (Warp::m_bShifting || Warp::m_bRecharging)
+	if (features::warp.IsShifting() || features::warp.IsRecharging())
 	{
-		auto pLocal = EntityList::GetLocal();
+		auto pLocal = features::entities.GetLocal();
 		if (pLocal && pLocal == self)
 			return true;
 	}

@@ -111,7 +111,7 @@ void LegitBackstab(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCmd)
 	Vector localCenter     = pLocal->GetCenter();
 	Vector localViewAngles = pCmd->viewangles;
 
-	for (const auto &entry : EntityList::GetEnemies())
+	for (const auto &entry : features::entities.GetEnemies())
 	{
 		if ((entry.flags & (EntityFlags::IsAlive | EntityFlags::IsPlayer)) == 0)
 			continue;
@@ -123,7 +123,7 @@ void LegitBackstab(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCmd)
 		if (!AimbotUtils::IsValidEntity(pPlayer))
 			continue;
 
-		if (AutoBackstab::IsBehindAndFacingEntity(localCenter, pPlayer->GetCenter(), localViewAngles, pPlayer->m_angEyeAngles()))
+		if (features::autobackstab.IsBehindAndFacingEntity(localCenter, pPlayer->GetCenter(), localViewAngles, pPlayer->m_angEyeAngles()))
 		{
 			if ((pPlayer->GetCenter() - localCenter).Length() <= (48 * 2))
 			{
@@ -135,12 +135,12 @@ void LegitBackstab(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCmd)
 		}
 
 		std::vector<LagCompRecord> records;
-		if (!Backtrack::GetRecords(pPlayer, records))
+		if (!features::backtrack.GetRecords(pPlayer, records))
 			continue;
 
 		for (const auto &record : records)
 		{
-			if (!AutoBackstab::IsBehindAndFacingEntity(localCenter, record.m_vecAbsCenter, localViewAngles,
+			if (!features::autobackstab.IsBehindAndFacingEntity(localCenter, record.m_vecAbsCenter, localViewAngles,
 								   record.m_vecViewAngles))
 				continue;
 
@@ -151,7 +151,7 @@ void LegitBackstab(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCmd)
 
 			if (helper::localplayer::IsAttacking(pLocal, pWeapon, pCmd))
 			{
-				pCmd->tick_count = TIME_TO_TICKS(record.m_flSimTime + Backtrack::GetInterp());
+				pCmd->tick_count = TIME_TO_TICKS(record.m_flSimTime + features::backtrack.GetInterp());
 				return;
 			}
 		}
@@ -162,7 +162,7 @@ void RageBackstab(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCmd, boo
 {
 	Vector localCenter = pLocal->GetCenter();
 
-	for (const auto &entry : EntityList::GetEnemies())
+	for (const auto &entry : features::entities.GetEnemies())
 	{
 		if ((entry.flags & (EntityFlags::IsAlive | EntityFlags::IsPlayer)) == 0)
 			continue;
@@ -174,7 +174,7 @@ void RageBackstab(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCmd, boo
 		if (!AimbotUtils::IsValidEntity(pPlayer))
 			continue;
 
-		if (AutoBackstab::IsBehindEntity(localCenter, pPlayer->GetCenter(), pPlayer->m_angEyeAngles()))
+		if (features::autobackstab.IsBehindEntity(localCenter, pPlayer->GetCenter(), pPlayer->m_angEyeAngles()))
 		{
 			if ((pPlayer->GetCenter() - localCenter).Length() <= (48 * 2))
 			{
@@ -191,12 +191,12 @@ void RageBackstab(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCmd, boo
 		}
 
 		std::vector<LagCompRecord> records;
-		if (!Backtrack::GetRecords(pPlayer, records))
+		if (!features::backtrack.GetRecords(pPlayer, records))
 			continue;
 
 		for (const auto &record : records)
 		{
-			if (!AutoBackstab::IsBehindEntity(localCenter, record.m_vecAbsCenter, record.m_vecViewAngles))
+			if (!features::autobackstab.IsBehindEntity(localCenter, record.m_vecAbsCenter, record.m_vecViewAngles))
 				continue;
 
 			if ((record.m_vecAbsCenter - localCenter).Length() > (48 * 2))
@@ -208,7 +208,7 @@ void RageBackstab(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCmd, boo
 			{
 				Vector dir	 = record.m_vecAbsCenter - localCenter;
 				pCmd->viewangles = dir.ToAngle();
-				pCmd->tick_count = TIME_TO_TICKS(record.m_flSimTime + Backtrack::GetInterp());
+				pCmd->tick_count = TIME_TO_TICKS(record.m_flSimTime + features::backtrack.GetInterp());
 				*pSendPacket	 = false;
 				return;
 			}

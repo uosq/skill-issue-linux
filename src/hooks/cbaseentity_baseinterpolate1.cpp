@@ -15,9 +15,9 @@ int Hooked_BaseInterpolatePart1(CBaseEntity *self, float *currentTime, Vector *o
 	    oldVel == nullptr || bNoMoreChanges == nullptr)
 		return INTERPOLATE_STOP;
 
-	if (Warp::m_bShifting || Warp::m_bRecharging)
+	if (features::warp.IsShifting() || features::warp.IsRecharging())
 	{
-		auto pLocal = EntityList::GetLocal();
+		auto pLocal = features::entities.GetLocal();
 		if (pLocal && pLocal == self)
 			return INTERPOLATE_STOP;
 	}

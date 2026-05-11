@@ -34,7 +34,7 @@ else
 endif
 
 # Compiler flags
-CFLAGS = -march=$(MARCH) -shared -std=c++17 $(OPT) -fPIC -Werror -g -rdynamic
+CFLAGS = -march=$(MARCH) -shared -std=c++17 $(OPT) -fPIC -Werror -g -rdynamic -DSOL_ALL_SAFETIES_ON=1
 CFLAGS_C = -march=$(MARCH) $(OPT) -fPIC -Werror -g -rdynamic
 
 # Linker flags

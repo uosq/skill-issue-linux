@@ -12,24 +12,24 @@
 #include "../features/esp/esp.h"
 #include "../features/antiafk/antiafk.h"
 
-#include "../features/angelscript/api/libraries/hooks/hooks.h"
+#include "../features/scriptmanager/scriptmanager.h"
 
 using LevelShutdownFn = void (*)(CHLClient* rdi);
 
 static void LevelShutdown(CHLClient* rdi)
 {
-	EntityList::Clear();
-	Warp::Reset();
-	Backtrack::Reset();
+	features::entities.Clear();
+	features::warp.Reset();
+	features::backtrack.Reset();
 	gAimProjectile.Reset();
 	gAimProjectile.ResetIndicator();
-	Bhop::Reset();
-	Spectators::OnLevelShutdown();
-	Chams::OnLevelShutdown();
-	ESP::OnLevelShutdown();
-	AntiAFK::OnLevelShutdown();
+	features::bhop.Reset();
+	features::spectators.OnLevelShutdown();
+	features::chams.OnLevelShutdown();
+	features::esp.OnLevelShutdown();
+	features::antiafk.OnLevelShutdown();
 
-	Hooks_CallHooks("LevelShutdown");
+	features::scriptmanager.CallHooks("LevelShutdown");
 
 	auto original = VMTHooks::Client.GetOriginal<LevelShutdownFn>(7);
 	original(rdi);

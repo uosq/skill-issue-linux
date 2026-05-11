@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "../../imgui/imgui.h"
+#include "../feature.h"
 
 enum class HotkeyMode
 {
@@ -48,13 +49,13 @@ struct Hotkey
 
 class Binds
 {
-      private:
+private:
 	std::vector<std::unique_ptr<Hotkey>> m_hotkeys;
 	bool IsKeyDown(const Hotkey *hk);
 	int GetPressedKey();
 	const char *GetKeyName(const Hotkey *hk);
 
-      public:
+public:
 	Hotkey *RegisterHotkey(const char *name);
 	std::vector<std::unique_ptr<Hotkey>> &GetHotkeys();
 	bool IsActive(const Hotkey *hk) const;
@@ -66,4 +67,4 @@ class Binds
 	void DrawWindow(bool bMenuOpen);
 };
 
-extern Binds gBinds;
+DECLARE_FEATURE(Binds, binds)

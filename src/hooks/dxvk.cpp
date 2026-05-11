@@ -121,56 +121,7 @@ void RenderImGui()
 	ImGui_ImplSDL2_NewFrame();
 	ImGui::NewFrame();
 
-	if (ImGui::IsKeyPressed(ImGuiKey_Insert, false) || ImGui::IsKeyPressed(ImGuiKey_F11, false))
-	{
-		Settings::menu_open = !Settings::menu_open;
-		interfaces::Surface->SetCursorAlwaysVisible(Settings::menu_open);
-	}
-
-	if (ImGui::IsKeyPressed(ImGuiKey_Escape, false))
-	{
-		Settings::menu_open = false;
-		interfaces::Surface->SetCursorAlwaysVisible(Settings::menu_open);
-	}
-
-	cursor = ImGui::GetMouseCursor();
-
-	gBinds.Update();
-
-	bool pushfont = false;
-	switch (static_cast<ESPFont>(Config.esp.font.selected))
-	{
-        	case ESPFont::TF2BUILD:
-		ImGui::PushFont(IMFONT_TF2Build, Config.esp.font.size);
-		pushfont = true;
-		break;
-        	case ESPFont::ARIAL:
-		ImGui::PushFont(IMFONT_Arial, Config.esp.font.size);
-		pushfont = true;
-		break;
-		case ESPFont::INVALID:
-        	case ESPFont::COUNT:
-        	{
-			Logs::Error("Invalid font!");
-			break;
-		}
-        }
-
-        if (Config.warp.key->IsEnabled())
-		Warp::RunWindow();
-
-	if (Config.radar.packed.enabled)
-		Radar::Run();
-
-	if (Config.misc.packed.spectatorlist)
-		GUI::RunSpectatorList();
-
 	GUI::RunMainWindow();
-
-	gBinds.DrawWindow(Settings::menu_open);
-
-	if (pushfont)
-		ImGui::PopFont();
 
 	ImGui::EndFrame();
 	ImGui::Render();

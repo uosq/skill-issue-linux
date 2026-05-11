@@ -7,7 +7,7 @@
 
 #include "../hooks.h"
 
-#include "../features/angelscript/api/libraries/hooks/hooks.h"
+#include "../features/scriptmanager/scriptmanager.h"
 
 #include "../core/core.h"
 
@@ -30,7 +30,7 @@ static void VGuiPaint(IEngineVGui* rdi, PaintMode_t paint)
 	{
 		interfaces::Surface->StartDrawing();
 
-		Hooks_CallHooks("Draw");
+		features::scriptmanager.CallHooks("Draw");
 
 		interfaces::Surface->FinishDrawing();
 	}

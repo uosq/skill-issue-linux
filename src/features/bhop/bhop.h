@@ -2,13 +2,19 @@
 
 #include "../../sdk/classes/player.h"
 #include "../../sdk/definitions/cusercmd.h"
+
 #include "../../settings/settings.h"
+#include "../feature.h"
 
-namespace Bhop
+class Bhop
 {
-	extern bool m_bJumpReleased;
-	extern bool m_bUsedAirJump;
-
+public:
 	void Run(CTFPlayer *pLocal, CUserCmd *pCmd);
 	void Reset();
-} // namespace Bhop
+
+private:
+	bool m_bJumpReleased{false};
+	bool m_bUsedAirJump{false};
+};
+
+DECLARE_FEATURE(Bhop, bhop)

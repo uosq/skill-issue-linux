@@ -8,7 +8,7 @@
 #include "../features/backtrack/backtrack.h"
 #include "../features/entitylist/entitylist.h"
 #include "../features/spectators/spectators.h"
-#include "../features/angelscript/api/libraries/hooks/hooks.h"
+#include "../features/scriptmanager/scriptmanager.h"
 #include "../features/esp/esp.h"
 #include "../features/spyalert/spyalert.h"
 #include "../features/playerlist/playerlist.h"
@@ -25,7 +25,7 @@ static void FrameStageNotify(CHLClient* rdi, int stage)
 		{
 			if (Config.misc.thirdperson_key->IsActive())
 			{
-				CTFPlayer *pLocal = EntityList::GetLocal();
+				CTFPlayer *pLocal = features::entities.GetLocal();
 				if (pLocal && pLocal->IsAlive())
 					interfaces::Prediction->SetLocalViewAngles(helper::localplayer::LastAngle);
 			}
@@ -37,22 +37,22 @@ static void FrameStageNotify(CHLClient* rdi, int stage)
 
 	original(rdi, stage);
 
-	Hooks_CallHooks("FrameStageNotify", [&](asIScriptContext *ctx) { ctx->SetArgDWord(0, stage); });
+	features::scriptmanager.CallHooks("FrameStageNotify", stage);
 
 	switch (stage)
 	{
 	case FRAME_RENDER_START:
 	{
-		ESP::OnFrameStageNotify();
+		features::esp.OnFrameStageNotify();
 		break;
 	}
 	case FRAME_NET_UPDATE_END:
 	{
-		EntityList::Store();
-		Backtrack::Store();
-		Spectators::OnFrameStageNotify();
-		SpyAlert::OnFrameStageNotify();
-		Playerlist::Store();
+		features::entities.Store();
+		features::backtrack.Store();
+		features::spectators.OnFrameStageNotify();
+		features::spyalert.OnFrameStageNotify();
+		features::playerlist.Store();
 		break;
 	}
 

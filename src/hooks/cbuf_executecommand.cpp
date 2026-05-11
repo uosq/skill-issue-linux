@@ -22,5 +22,5 @@ void Hook_Cbuf_ExecuteCommand()
 {
 	detour_init(&ctx, Sigs::Cbuf_ExecuteCommand.GetPointer(), (void*)&Hooked_Cbuf_ExecuteCommand);
 	if (!detour_enable(&ctx))
-		Logs::Error("Couldn't hook Cbuf_ExecuteCommand");
+		features::logs.Error("Couldn't hook Cbuf_ExecuteCommand");
 }

@@ -8,22 +8,20 @@
 
 #include "../logs/logs.h"
 
-static int s_iTicksAfk = 0;
-
-void AntiAFK::OnCreateMove(CUserCmd *pCmd)
+void Antiafk::OnCreateMove(CUserCmd *pCmd)
 {
 	// mp_idlemaxtime is in minutes
 	static ConVar* mp_idlemaxtime = interfaces::Cvar->FindVar("mp_idlemaxtime");
 	if (mp_idlemaxtime == nullptr)
-		return Logs::Error("[AntiAFK::OnCreateMove] mp_idlemaxtime is null");
+		return features::logs.Error("[AntiAFK::OnCreateMove] mp_idlemaxtime is null");
 
 	if (!Config.misc.packed.antiafk)
 		return;
 
-	s_iTicksAfk++;
+	m_afkticks++;
 
 	if (pCmd->buttons != 0 && pCmd->mousedx == 0 && pCmd->mousedy == 0)
-		s_iTicksAfk = 0;
+		m_afkticks = 0;
 
 	// the localplayer can modify
 	// convars any time, gotta make
@@ -32,15 +30,15 @@ void AntiAFK::OnCreateMove(CUserCmd *pCmd)
 	// always
 	float flMaxTime = std::max(mp_idlemaxtime->GetFloat() * 0.5f, 0.1f);
 
-	if (TICKS_TO_TIME(s_iTicksAfk) >= (flMaxTime * 60.0f))
+	if (TICKS_TO_TIME(m_afkticks) >= (flMaxTime * 60.0f))
 	{
 		pCmd->forwardmove = 450.0f;
 		pCmd->buttons |= IN_FORWARD;
-		s_iTicksAfk = 0;
+		m_afkticks = 0;
 	}
 }
 
-void AntiAFK::OnLevelShutdown()
+void Antiafk::OnLevelShutdown()
 {
-	s_iTicksAfk = 0;
+	m_afkticks = 0;
 }

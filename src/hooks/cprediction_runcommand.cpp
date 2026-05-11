@@ -7,10 +7,10 @@ detour_ctx_t runcommand_ctx;
 
 void Hooked_RunCommand(IPrediction *self, CTFPlayer *player, CUserCmd *ucmd, void *moveHelper)
 {
-	if (Warp::m_bShifting)
-		player->GetTickBase() -= Warp::m_iShiftAmount;
+	if (features::warp.IsShifting())
+		player->GetTickBase() -= features::warp.m_iShiftAmount;
 
-	if (Warp::m_bRecharging)
+	if (features::warp.IsRecharging())
 		player->GetTickBase()--;
 
 	DETOUR_ORIG_CALL(&runcommand_ctx, RunCommand, self, player, ucmd, moveHelper);

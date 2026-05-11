@@ -11,7 +11,7 @@
 #include "../features/visuals/norecoil/norecoil.h"
 #include "../features/visuals/thirdperson/thirdperson.h"
 
-#include "../features/angelscript/api/libraries/hooks/hooks.h"
+#include "../features/scriptmanager/scriptmanager.h"
 
 using OverrideViewFn = void (*)(IClientMode* rdi, CViewSetup *pView);
 
@@ -23,13 +23,13 @@ static void OverrideView(IClientMode* rdi, CViewSetup *pView)
 	if (pView == nullptr)
 		return;
 
-	Hooks_CallHooks("OverrideView", [&](asIScriptContext *ctx) { ctx->SetArgObject(0, &pView); });
+	features::scriptmanager.CallHooks("OverrideView", pView);
 
-	if (CTFPlayer *pLocal = EntityList::GetLocal(); pLocal != nullptr)
+	if (CTFPlayer *pLocal = features::entities.GetLocal(); pLocal != nullptr)
 	{
-		Thirdperson::OverrideView(pLocal, pView);
-		NoRecoil::RunOverrideView(pLocal, pView);
-		CustomFov::Run(pLocal, pView);
+		features::thirdperson.OverrideView(pLocal, pView);
+		features::norecoil.RunOverrideView(pLocal, pView);
+		features::customfov.Run(pLocal, pView);
 	}
 }
 

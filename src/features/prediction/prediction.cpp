@@ -50,28 +50,28 @@ float CPrediction::GetGravity()
 void CPrediction::BeginPrediction(CTFPlayer *pEntity, float flTargetSeconds)
 {
 	if (m_bIsStarted)
-		return Logs::Error("[CPrediction::BeginPrediction] Tried to start prediction "
+		return features::logs.Error("[CPrediction::BeginPrediction] Tried to start prediction "
 				   "when it was already started!");
 
 	if (!pEntity)
-		return Logs::Error("[CPrediction::BeginPrediction] pEntity is nullptr!");
+		return features::logs.Error("[CPrediction::BeginPrediction] pEntity is nullptr!");
 
 	static ConVar *sv_accelerate = interfaces::Cvar->FindVar("sv_accelerate");
 	if (!sv_accelerate)
-		return Logs::Error("[CPrediction::BeginPrediction] "
+		return features::logs.Error("[CPrediction::BeginPrediction] "
 				   "sv_accelerate is nullptr!");
 
 	static ConVar *sv_friction = interfaces::Cvar->FindVar("sv_friction");
 	if (!sv_friction)
-		return Logs::Error("[CPrediction::BeginPrediction] sv_friction is nullptr!");
+		return features::logs.Error("[CPrediction::BeginPrediction] sv_friction is nullptr!");
 
 	static ConVar *sv_stopspeed = interfaces::Cvar->FindVar("sv_stopspeed");
 	if (!sv_stopspeed)
-		return Logs::Error("[CPrediction::BeginPrediction] sv_stopspeed is nullptr!");
+		return features::logs.Error("[CPrediction::BeginPrediction] sv_stopspeed is nullptr!");
 
 	static ConVar *sv_bounce = interfaces::Cvar->FindVar("sv_bounce");
 	if (!sv_bounce)
-		return Logs::Error("[CPrediction::BeginPrediction] sv_bounce is nullptr!");
+		return features::logs.Error("[CPrediction::BeginPrediction] sv_bounce is nullptr!");
 
 	m_filter.pSkip = m_pTarget = pEntity;
 
@@ -106,7 +106,7 @@ void CPrediction::BeginPrediction(CTFPlayer *pEntity, float flTargetSeconds)
 void CPrediction::EndPrediction()
 {
 	if (!m_bIsStarted)
-		return Logs::Error("[CPrediction::EndPrediction] Tried to "
+		return features::logs.Error("[CPrediction::EndPrediction] Tried to "
 				   "end prediction while it wasn't started");
 
 	m_pTarget = nullptr;
@@ -826,14 +826,14 @@ bool CPrediction::Simulate(std::vector<Vector> &path)
 {
 	if (!m_bIsStarted)
 	{
-		Logs::Error("[CPrediction::Simulate] Tried simulating while "
+		features::logs.Error("[CPrediction::Simulate] Tried simulating while "
 			    "prediction not started!");
 		return false;
 	}
 
 	float flClock = 0.0f;
 
-	if (auto pLocal = EntityList::GetLocal(); pLocal != nullptr && pLocal->IsAlive())
+	if (auto pLocal = features::entities.GetLocal(); pLocal != nullptr && pLocal->IsAlive())
 	{
 		Vec3 vecCenter = m_pTarget->GetCenter();
 		Vec3 vecLocalCenter = pLocal->GetCenter();

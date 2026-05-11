@@ -30,7 +30,7 @@ void DrawMaterialEditor()
 	static int selected = -1;
 	static int last_selected = -1;
 	
-	auto& materials = MaterialRegistry::GetMaterials();
+	auto& materials = features::material_registry.GetMaterials();
 
 	constexpr int TABLE_FLAGS =ImGuiTableFlags_Resizable | 
 				ImGuiTableFlags_BordersInnerV |
@@ -122,7 +122,7 @@ void DrawMaterialEditor()
 						remove_from_vec(Config.chams.active_materials);
 						remove_from_vec(Config.backtrack.active_materials);
 
-						MaterialRegistry::RemoveMaterial(matName);
+						features::material_registry.RemoveMaterial(matName);
 
 						selected = -1;
 					}

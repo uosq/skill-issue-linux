@@ -4,8 +4,11 @@
 #include "../../../sdk/interfaces/interfaces.h"
 #include "../../../settings/settings.h"
 
-namespace Thirdperson
+#include "../../feature.h"
+
+class Thirdperson
 {
+public:
 	// Call in FrameStageNotify -> FRAME_NET_UPDATE_END
 	void FrameStageNotify(CTFPlayer *pLocal);
 	void OverrideView(CTFPlayer *pLocal, CViewSetup *pView);
@@ -14,4 +17,6 @@ namespace Thirdperson
 	bool ShouldIgnoreBind(CTFPlayer *pLocal);
 
 	Vector GetCameraOffset();
-}; // namespace Thirdperson
+};
+
+DECLARE_FEATURE(Thirdperson, thirdperson)

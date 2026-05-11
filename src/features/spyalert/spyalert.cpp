@@ -17,8 +17,6 @@ enum class SpyStatus : uint8_t
 	HOLY_SHIT_ITS_CLOSE // very close
 };
 
-static uint8_t s_iSpyStatus = 0;
-
 void SpyAlert::OnFrameStageNotify()
 {
 	if (!Config.misc.packed.spyalert)
@@ -26,7 +24,7 @@ void SpyAlert::OnFrameStageNotify()
 
 	s_iSpyStatus = (int)SpyStatus::NONE;
 
-	CTFPlayer* pLocal = EntityList::GetLocal();
+	CTFPlayer* pLocal = features::entities.GetLocal();
 	if (pLocal == nullptr)
 		return;
 
@@ -36,7 +34,7 @@ void SpyAlert::OnFrameStageNotify()
 	Vec3 localViewAngles;
 	interfaces::Engine->GetViewAngles(localViewAngles);
 
-	for (const auto& entry : EntityList::GetEnemies())
+	for (const auto& entry : features::entities.GetEnemies())
 	{
 		if (entry.ptr == nullptr)
 			continue;
@@ -59,7 +57,7 @@ void SpyAlert::OnFrameStageNotify()
 		Vec3 targetCenter = entry.ptr->GetCenter();
 		Vec3 viewAngles = pPlayer->m_angEyeAngles();
 
-		if (!AutoBackstab::IsBehindAndFacingEntity(targetCenter, localCenter, viewAngles, localViewAngles))
+		if (!features::autobackstab.IsBehindAndFacingEntity(targetCenter, localCenter, viewAngles, localViewAngles))
 			continue;
 
 		s_iSpyStatus = (int)SpyStatus::CLOSE;

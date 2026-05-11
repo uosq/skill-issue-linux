@@ -109,7 +109,7 @@ static bool EvaluatePlayerTarget(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CTFP
 
 	outTarget.fov = FLT_MAX;
 
-	float flLatency = Backtrack::GetInterp() + Backtrack::GetLatency();
+	float flLatency = features::backtrack.GetInterp() + features::backtrack.GetLatency();
 
 	Vector targetOrigin = pTargetEntity->GetAbsOrigin();
 	Vector targetVelocity = pTargetEntity->GetVelocity();
@@ -143,7 +143,7 @@ static bool EvaluatePlayerTarget(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CTFP
 	if (!bFoundRecord && Config.backtrack.packed.enabled)
 	{
 		std::vector<LagCompRecord> records;
-		if (Backtrack::GetRecords(pTargetEntity, records) && !records.empty())
+		if (features::backtrack.GetRecords(pTargetEntity, records) && !records.empty())
 		{
 			for (auto& record : records)
 			{
@@ -333,10 +333,10 @@ static void ApplyAim(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCmd, 
 		break;
 	}
 
-	EntityList::SetAimbotTarget(target.entity);
+	features::entities.SetAimbotTarget(target.entity);
 
 	if (target.useBacktrack && helper::localplayer::IsAttacking(pLocal, pWeapon, pCmd))
-		pCmd->tick_count = TIME_TO_TICKS(target.simTime + Backtrack::GetInterp());
+		pCmd->tick_count = TIME_TO_TICKS(target.simTime + features::backtrack.GetInterp());
 }
 
 static bool IsLocalPlayerInvalid(CTFPlayer* pLocal)

@@ -3,7 +3,7 @@
 #include "../features/backtrack/backtrack.h"
 #include "../features/chams/chams.h"
 #include "../features/glow/glow.h"
-#include "../features/angelscript/api/libraries/hooks/hooks.h"
+#include "../features/scriptmanager/scriptmanager.h"
 
 #include "../hooks.h"
 
@@ -11,14 +11,14 @@ using DoPostScreenSpaceEffectsFn = bool (*)(IClientMode* rdi, CViewSetup* setup)
 
 static bool DoPostScreenSpaceEffects(IClientMode* rdi, CViewSetup* setup)
 {
-	Backtrack::DoPostScreenSpaceEffects();
+	features::backtrack.DoPostScreenSpaceEffects();
 	//Chams::Run();
-	Glow::Run();
+	features::glow.Run();
 
-	if (auto pLocal = EntityList::GetLocal(); pLocal != nullptr)
-		Chams::OnDoPostScreenSpaceEffects(pLocal);
+	if (auto pLocal = features::entities.GetLocal(); pLocal != nullptr)
+		features::chams.OnDoPostScreenSpaceEffects(pLocal);
 
-	Hooks_CallHooks("DoPostScreenSpaceEffects");
+	features::scriptmanager.CallHooks("DoPostScreenSpaceEffects");
 
 	auto original = VMTHooks::ClientMode.GetOriginal<DoPostScreenSpaceEffectsFn>(40);
 	return original(rdi, setup);
