@@ -33,9 +33,12 @@ else
 	OPT = -O2
 endif
 
+# Dependency generation flags
+DEP_FLAGS = -MMD -MP
+
 # Compiler flags
-CFLAGS = -march=$(MARCH) -shared -std=c++17 $(OPT) -fPIC -Werror -g -rdynamic -DSOL_ALL_SAFETIES_ON=1
-CFLAGS_C = -march=$(MARCH) $(OPT) -fPIC -Werror -g -rdynamic
+CFLAGS = -march=$(MARCH) -shared -std=c++17 $(OPT) -fPIC -Werror -g -rdynamic -DSOL_ALL_SAFETIES_ON=1 $(DEP_FLAGS)
+CFLAGS_C = -march=$(MARCH) $(OPT) -fPIC -Werror -g -rdynamic $(DEP_FLAGS)
 
 # Linker flags
 LDFLAGS = -lSDL2 -lvulkan -lm -ldl
@@ -49,6 +52,9 @@ C_FILES = $(shell find src/ -name '*.c')
 OBJ_CPP = $(addprefix $(OBJ_DIR)/, $(CPP_FILES:=.o))
 OBJ_C = $(addprefix $(OBJ_DIR)/, $(C_FILES:=.o))
 OBJS = $(OBJ_CPP) $(OBJ_C)
+
+# Dependency files
+DEPS = $(OBJS:.o=.d)
 
 .PHONY: all clean v3 compat
 
@@ -92,3 +98,6 @@ $(OBJ_DIR)/%.cpp.o: %.cpp
 $(OBJ_DIR)/%.c.o: %.c
 	@mkdir -p $(dir $@)
 	$(CC_C) $(CFLAGS_C) -c -o $@ $<
+
+# Include the generated dependency files
+-include $(DEPS)

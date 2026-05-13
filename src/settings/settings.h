@@ -316,9 +316,7 @@ struct MiscConfig
 			uint32_t infopanel : 1;
 			uint32_t spyalert : 1;
 
-			uint32_t safemode : 1;
-
-			uint32_t _reserved : 13; // padding
+			uint32_t _reserved : 14; // padding
 		};
 	} packed;
 

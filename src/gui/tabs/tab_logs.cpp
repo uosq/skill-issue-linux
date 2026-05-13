@@ -1,6 +1,5 @@
 #include "tab_logs.h"
 
-#include "../../imgui/imgui.h"
 #include "../../imgui/texteditor/TextEditor.h"
 #include "../../features/logs/logs.h"
 

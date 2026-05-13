@@ -17,8 +17,8 @@ void DrawMiscTab()
 		// lef column
 		ImGui::TableNextColumn();
 
-		ImGui::TextUnformatted("Safe Mode");
-		ImGui_CheckboxBit("Enabled##Safe Mode", Config.misc.packed.safemode);
+		//ImGui::TextUnformatted("Safe Mode");
+		//ImGui_CheckboxBit("Enabled##Safe Mode", Config.misc.packed.safemode);
 
 		ImGui::Separator();
 
@@ -31,7 +31,7 @@ void DrawMiscTab()
 		ImGui_CheckboxBit("Autostrafe", Config.misc.packed.autostrafe);
 		ImGui_CheckboxBit("Backpack Expander", Config.misc.packed.backpack_expander);
 		ImGui_CheckboxBit("Accept Item Drops", Config.misc.packed.accept_item_drop);
-		ImGui_SafeCheckboxBit("No Recoil", Config.misc.packed.norecoil);
+		ImGui_CheckboxBit("No Recoil", Config.misc.packed.norecoil);
 		ImGui_CheckboxBit("No Engine Sleep", Config.misc.packed.no_engine_sleep);
 		ImGui_CheckboxBit("No Scope Overlay", Config.misc.packed.no_scope_overlay);
 		ImGui_CheckboxBit("No Zoom", Config.misc.packed.no_zoom);
@@ -43,7 +43,7 @@ void DrawMiscTab()
 		ImGui::Separator();
 
 		ImGui::TextUnformatted("Backtrack");
-		ImGui_SafeCheckboxBit("Enabled##Backtrack", Config.backtrack.packed.enabled);
+		ImGui_CheckboxBit("Enabled##Backtrack", Config.backtrack.packed.enabled);
 
 		{
 			constexpr const char *items[]{"None", "Last Record Only", "All Records"};
@@ -80,7 +80,7 @@ void DrawMiscTab()
 
 		ImGui::Separator();
 
-		ImGui::PushStyleVar(ImGuiStyleVar_Alpha, (!Config.misc.packed.safemode && Config.warp.key->IsEnabled()) ? 1.0f : 0.5f);
+		ImGui::PushStyleVar(ImGuiStyleVar_Alpha, Config.warp.key->IsEnabled() ? 1.0f : 0.5f);
 		{
 			ImGui::TextUnformatted("Warp");
 			features::binds.RenderHotkey("Key", Config.warp.key);
