@@ -101,7 +101,7 @@ bool AimbotHitscan::GetShotPosition(CTFPlayer *pLocal, CBaseEntity *pTarget, CTF
 	return true;
 }
 
-static bool EvaluatePlayerTarget(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CTFPlayer *pTargetEntity, CUserCmd *pCmd, const Vector &shootPos, const Vector &viewAngles, float maxFov, bool bNoFovLimit, AimbotTarget &outTarget)
+bool AimbotHitscan::EvaluatePlayerTarget(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CTFPlayer *pTargetEntity, CUserCmd *pCmd, const Vector &shootPos, const Vector &viewAngles, float maxFov, bool bNoFovLimit, AimbotTarget &outTarget)
 {
 	bool bIsSniperRifle = pWeapon->IsSniperRifle();
 	bool bIsZoomed = pLocal->InCond(TF_COND_ZOOMED);
@@ -120,7 +120,7 @@ static bool EvaluatePlayerTarget(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CTFP
 	if (AimbotUtils::RebuildAnimationMatrix(pTargetEntity, targetOrigin, targetVelocity, predictedTime, predictedBones))
 	{
 		Vector pos;
-		bool bShotFound = AimbotHitscan::GetShotPosition(pLocal, pTargetEntity, pWeapon, shootPos, pos, predictedBones);
+		bool bShotFound = GetShotPosition(pLocal, pTargetEntity, pWeapon, shootPos, pos, predictedBones);
 
 		if (bShotFound)
 		{
@@ -151,7 +151,7 @@ static bool EvaluatePlayerTarget(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CTFP
 					continue;
 
 				Vector pos;
-				if (!AimbotHitscan::GetShotPosition(pLocal, pTargetEntity, pWeapon, shootPos, pos, record.m_Bones))
+				if (!GetShotPosition(pLocal, pTargetEntity, pWeapon, shootPos, pos, record.m_Bones))
 					continue;
 
 				float distance = (pos - shootPos).Normalize();
@@ -180,7 +180,7 @@ static bool EvaluatePlayerTarget(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CTFP
 	return bFoundRecord;
 }
 
-static bool EvaluateNonPlayerTarget(CTFPlayer *pLocal, CBaseEntity *pEntity, const Vector &shootPos, const Vector &viewAngles, float maxFov, bool bNoFovLimit, AimbotTarget &outTarget)
+bool AimbotHitscan::EvaluateNonPlayerTarget(CTFPlayer *pLocal, CBaseEntity *pEntity, const Vector &shootPos, const Vector &viewAngles, float maxFov, bool bNoFovLimit, AimbotTarget &outTarget)
 {
 	Vector pos = pEntity->GetCenter();
 	float distance = (pos - shootPos).Normalize();
@@ -206,7 +206,7 @@ static bool EvaluateNonPlayerTarget(CTFPlayer *pLocal, CBaseEntity *pEntity, con
 	return true;
 }
 
-static bool FindBestTarget(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCmd, const Vector &shootPos, const Vector &viewAngles, AimbotTarget &outBestTarget)
+bool AimbotHitscan::FindBestTarget(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCmd, const Vector &shootPos, const Vector &viewAngles, AimbotTarget &outBestTarget)
 {
 	std::vector<AimbotTarget> targets;
 

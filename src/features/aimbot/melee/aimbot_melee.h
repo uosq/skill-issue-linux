@@ -16,8 +16,8 @@
 #include "../utils/utils.h"
 #include <climits>
 
-namespace AimbotMelee
+class AimbotMelee
 {
+public:
 	void Run(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCmd, AimbotState &state);
-	std::string GetMeleeModeName();
-}; // namespace AimbotMelee
+};

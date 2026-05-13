@@ -12,6 +12,7 @@
 
 #include "hitscan/aimbot_hitscan.h"
 #include "melee/aimbot_melee.h"
+#include "projectile/projectile.h"
 #include "utils/utils.h"
 
 #include "../feature.h"
@@ -24,11 +25,15 @@ public:
 	bool ShouldSilent();
 	void Run(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCmd);
 	void OnImGui(ImDrawList* pDraw);
+	void Reset();
 
 	AimbotState& GetState();
 
 private:
 	AimbotState m_state {};
+	AimbotMelee m_melee {};
+	CAimbotProjectile m_projectile {};
+	AimbotHitscan m_hitscan {};
 }; // namespace Aimbot
 
 DECLARE_FEATURE(Aimbot, aimbot)

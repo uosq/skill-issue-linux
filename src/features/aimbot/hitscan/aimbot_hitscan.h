@@ -37,9 +37,14 @@ struct AimbotTarget
 	bool useBacktrack;
 };
 
-namespace AimbotHitscan
+class AimbotHitscan
 {
+public:
 	HitscanOffset GetInitialOffset(CTFPlayer *pLocal, CTFWeaponBase *pWeapon);
 	bool GetShotPosition(CTFPlayer *pLocal, CBaseEntity *pTarget, CTFWeaponBase *pWeapon, Vector eyePos, Vector &shotPosition, matrix3x4* pBones = nullptr);
 	void Run(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCmd, AimbotState &state);
-}; // namespace AimbotHitscan
+private:
+	bool EvaluatePlayerTarget(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CTFPlayer *pTargetEntity, CUserCmd *pCmd, const Vector &shootPos, const Vector &viewAngles, float maxFov, bool bNoFovLimit, AimbotTarget &outTarget);
+	bool FindBestTarget(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCmd, const Vector &shootPos, const Vector &viewAngles, AimbotTarget &outBestTarget);
+	bool EvaluateNonPlayerTarget(CTFPlayer *pLocal, CBaseEntity *pEntity, const Vector &shootPos, const Vector &viewAngles, float maxFov, bool bNoFovLimit, AimbotTarget &outTarget);
+};

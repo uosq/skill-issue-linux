@@ -2,7 +2,7 @@
 
 #include "../hooks.h"
 
-#include "../features/aimbot/projectile/projectile.h"
+#include "../features/aimbot/aimbot.h"
 #include "../features/backtrack/backtrack.h"
 #include "../features/bhop/bhop.h"
 #include "../features/entitylist/entitylist.h"
@@ -21,8 +21,7 @@ static void LevelShutdown(CHLClient* rdi)
 	features::entities.Clear();
 	features::warp.Reset();
 	features::backtrack.Reset();
-	gAimProjectile.Reset();
-	gAimProjectile.ResetIndicator();
+	features::aimbot.Reset();
 	features::bhop.Reset();
 	features::spectators.OnLevelShutdown();
 	features::chams.OnLevelShutdown();

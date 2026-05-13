@@ -7,7 +7,7 @@
 
 class CAimbotProjectile
 {
-      public:
+public:
 	~CAimbotProjectile() = default;
 	CAimbotProjectile();
 
@@ -40,7 +40,7 @@ class CAimbotProjectile
 	void OnRightClickWeapons(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd, AimbotState& pState);
 	void ApplyAim(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd, AimbotState& pState);
 
-      private:
+private:
 	std::vector<Vector> m_vecPath;
 	CBaseEntity *m_pTarget;
 	Vector m_vecAimAngle;
@@ -55,5 +55,3 @@ class CAimbotProjectile
 	IPhysicsEnvironment* m_pPhysEnv = nullptr;
 	#endif
 };
-
-extern CAimbotProjectile gAimProjectile;

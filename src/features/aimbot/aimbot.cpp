@@ -2,6 +2,7 @@
 
 #include "../binds/binds.h"
 #include "../ticks/ticks.h"
+#include "melee/aimbot_melee.h"
 #include "utils/utils.h"
 
 #include "projectile/projectile.h"
@@ -51,13 +52,13 @@ void Aimbot::Run(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCmd)
 	switch (pWeapon->GetWeaponType())
 	{
 	case EWeaponType::HITSCAN:
-		AimbotHitscan::Run(pLocal, pWeapon, pCmd, m_state);
+		m_hitscan.Run(pLocal, pWeapon, pCmd, m_state);
 		break;
 
 	case EWeaponType::PROJECTILE:
 	{
-		gAimProjectile.RunMain(pLocal, pWeapon);
-		gAimProjectile.RunAim(pLocal, pWeapon, pCmd, m_state);
+		m_projectile.RunMain(pLocal, pWeapon);
+		m_projectile.RunAim(pLocal, pWeapon, pCmd, m_state);
 
 		if (m_state.shouldSilent)
 			TickManager::m_bSendPacket = false;
@@ -67,7 +68,7 @@ void Aimbot::Run(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCmd)
 
 	case EWeaponType::MELEE:
 	{
-		AimbotMelee::Run(pLocal, pWeapon, pCmd, m_state);
+		m_melee.Run(pLocal, pWeapon, pCmd, m_state);
 
 		if (m_state.shouldSilent)
 			TickManager::m_bSendPacket = false;
@@ -85,11 +86,17 @@ void Aimbot::OnImGui(ImDrawList* pDraw)
 		return;
 
 	DrawFOVIndicator(pDraw);
-	gAimProjectile.RunPath(pDraw);
-	gAimProjectile.RunIndicator(pDraw);
+	m_projectile.RunPath(pDraw);
+	m_projectile.RunIndicator(pDraw);
 }
 
 AimbotState& Aimbot::GetState()
 {
 	return m_state;
+}
+
+void Aimbot::Reset()
+{
+	m_projectile.Reset();
+	m_projectile.ResetIndicator();
 }
