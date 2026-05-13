@@ -21,6 +21,11 @@ extern void BindWeaponData(sol::state& lua);
 extern void BindEntities(sol::state& lua);
 extern void BindEngine(sol::state& lua);
 
+// enums
+extern void Bind_IN_Buttons(sol::state& lua);
+extern void BindTFClass(sol::state& lua);
+extern void BindPlayerFlags(sol::state& lua);
+
 static void BindLogging(sol::state& lua)
 {
 	auto argsToString = [&lua](sol::variadic_args va) -> std::string
@@ -92,6 +97,11 @@ void ScriptManager::Init()
 	{
 		return this->RemoveHook(event, id);
 	};
+
+	// enums
+	Bind_IN_Buttons(m_Lua);
+	BindTFClass(m_Lua);
+	BindPlayerFlags(m_Lua);
 
 	// classes
 	BindVector(m_Lua);
