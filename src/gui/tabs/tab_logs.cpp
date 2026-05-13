@@ -1,5 +1,3 @@
-#include "tab_logs.h"
-
 #include "../../imgui/texteditor/TextEditor.h"
 #include "../../features/logs/logs.h"
 

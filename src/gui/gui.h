@@ -11,21 +11,6 @@
 #include "../features/entitylist/entitylist.h"
 #include "../features/triggerbot/triggerbot.h"
 
-enum TabMenu
-{
-	TAB_AIMBOT = 0,
-	TAB_ESP,
-	TAB_MISC,
-	TAB_TRIGGER,
-	TAB_ANTIAIM,
-	TAB_LUA,
-	TAB_NETVARS,
-	TAB_RADAR,
-	TAB_CONFIG,
-	TAB_LOGS,
-	TAB_CHAMS,
-};
-
 namespace GUI
 {
 	void RunMainWindow();

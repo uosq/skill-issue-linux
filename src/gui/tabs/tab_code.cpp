@@ -1,4 +1,4 @@
-#include "tab_code.h"
+
 
 #include "../../imgui/imgui.h"
 #include "../../imgui/imgui_stdlib.h"
@@ -59,7 +59,7 @@ void DrawCodeTab()
 
 					ImGui::TableNextColumn();
 
-					std::string fullPath = std::string(SCRIPT_DIR) + "/" + file;
+					std::string fullPath = std::string(SCRIPT_DIR) + file;
 
 					Script &script = features::scriptmanager.GetOrCreate(fullPath);
 

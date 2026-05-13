@@ -2,5 +2,5 @@
 
 #include <string>
 
-std::string ToLower(std::string str);
+std::string ToLower(const std::string& str);
 bool ContainsInsensitive(const std::string &text, const std::string &search);

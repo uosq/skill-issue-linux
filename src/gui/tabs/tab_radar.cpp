@@ -1,5 +1,3 @@
-#include "tab_radar.h"
-
 #include "../../imgui/imgui.h"
 #include "../../settings/settings.h"
 

@@ -1,5 +1,3 @@
-#include "tab_mateditor.h"
-
 #include <algorithm>
 #include <filesystem>
 #include <string>

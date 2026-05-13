@@ -1,16 +1,5 @@
 #include "gui.h"
 
-#include "tabs/tab_aimbot.h"
-#include "tabs/tab_esp.h"
-#include "tabs/tab_misc.h"
-#include "tabs/tab_trigger.h"
-#include "tabs/tab_code.h"
-#include "tabs/tab_netvars.h"
-#include "tabs/tab_radar.h"
-#include "tabs/tab_config.h"
-#include "tabs/tab_logs.h"
-#include "tabs/tab_mateditor.h"
-
 #include "../features/scriptmanager/scriptmanager.h"
 #include "../features/spectators/spectators.h"
 #include "../features/esp/esp.h"
@@ -26,6 +15,17 @@ extern ImFont* IMFONT_TF2Build;
 extern ImFont* IMFONT_Arial;
 extern const unsigned int Arial_compressed_size;
 extern const unsigned char Arial_compressed_data[668199];
+
+extern void DrawAimbotTab();
+extern void DrawESPTab();
+extern void DrawMiscTab();
+extern void DrawTriggerTab();
+extern void DrawCodeTab();
+extern void DrawNetvarsTab();
+extern void DrawRadarTab();
+extern void DrawConfigTab();
+extern void DrawLogsTab();
+extern void DrawMaterialEditor();
 
 void GUI::RunSpectatorList()
 {

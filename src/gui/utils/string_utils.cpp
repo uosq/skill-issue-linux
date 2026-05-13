@@ -1,13 +1,14 @@
 #include "string_utils.h"
 #include <algorithm>
 
-std::string ToLower(std::string str)
+std::string ToLower(const std::string& str)
 {
 	// wtf is this syntax
 	// why the fuck do we need to specify the begin, end and then
 	// the fucking begin again?? fuck you C++
-	std::transform(str.begin(), str.end(), str.begin(), [](unsigned char c) { return std::tolower(c); });
-	return str;
+	std::string result = "";
+	std::transform(str.begin(), str.end(), result.begin(), [](unsigned char c) { return std::tolower(c); });
+	return result;
 }
 
 bool ContainsInsensitive(const std::string &text, const std::string &search)
