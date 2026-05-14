@@ -56,6 +56,7 @@
 #include "../hooks/cbuf_executecommand.h"
 //#include "../hooks/ctfplayeranimstate_update.h"
 #include "../hooks/cengineclient_getscreenaspectratio.h"
+//#include "../hooks/ctfplayershared_incond.h"
 
 CApp::CApp() : m_bInitialized(false)
 {
@@ -141,6 +142,7 @@ bool CApp::StartHooks()
 	Hook_Cbuf_ExecuteCommand();
 	//Hook_CTFPlayerAnimState_Update();
 	Hook_CEngineClient_GetScreenAspectRatio();
+	//Hook_CTFPlayerShared_InCond();
 
 	m_bInitialized = true;
 	return true;
