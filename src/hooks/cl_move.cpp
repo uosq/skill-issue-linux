@@ -7,7 +7,7 @@ static detour_ctx_t move_ctx;
 
 void HookedCL_Move(float accumulated_extra_samples, bool bFinalTick)
 {
-	TickManager::Run(accumulated_extra_samples, bFinalTick);
+	features::ticks.Run(accumulated_extra_samples, bFinalTick);
 }
 
 void HookCL_Move(void)

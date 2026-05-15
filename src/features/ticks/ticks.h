@@ -1,18 +1,25 @@
 #pragma once
 
 #include "../../sdk/interfaces/interfaces.h"
+#include "../feature.h"
 
-namespace TickManager
+class TickManager
 {
-	extern bool m_bSendPacket;
-	extern uint8_t m_iChokedCommands;
-
-	void CL_Move(float accumulated_extra_samples, bool bFinalTick);
-	void CL_SendMove(void);
-	void Post_CreateMove(int sequence_number);
-
+public:
 	void Init(void);
 
 	// call in CL_Move
 	void Run(float accumulated_extra_samples, bool bFinalTick);
-} // namespace TickManager
+
+	uint8_t GetChokedCommands();
+	bool& GetSendPacket();
+private:
+	void CL_Move(float accumulated_extra_samples, bool bFinalTick);
+	void CL_SendMove(void);
+	void Post_CreateMove(int sequence_number);
+
+	bool m_bSendPacket;
+	uint8_t m_iChokedCommands;
+};
+
+DECLARE_FEATURE(TickManager, ticks)

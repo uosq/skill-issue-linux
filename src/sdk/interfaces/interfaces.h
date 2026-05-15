@@ -28,6 +28,7 @@
 #include "../definitions/vphysics_interface.h"
 #include "../definitions/weaponinfo.h"
 #include "../definitions/ilocalize.h"
+#include "../definitions/demo.h"
 
 using AttributeHookValueFn = float (*)(float defaultValue, const char *attribName, CBaseEntity *pEntity, void *, bool);
 extern AttributeHookValueFn AttributeHookValue;
@@ -62,6 +63,8 @@ namespace interfaces
 	extern IPhysics *Physics;
 	extern IPhysicsCollision* PhysicsCollision;
 	extern ILocalize* VGuiLocalize;
+	extern IDemoPlayer* DemoPlayer;
+	extern IDemoRecorder* DemoRecorder;
 } // namespace interfaces
 
 namespace factories

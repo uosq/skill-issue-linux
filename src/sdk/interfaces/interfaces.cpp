@@ -33,6 +33,8 @@ namespace interfaces
 	IPhysics *Physics = nullptr;
 	IPhysicsCollision *PhysicsCollision = nullptr;
 	ILocalize* VGuiLocalize = nullptr;
+	IDemoPlayer* DemoPlayer = nullptr;
+	IDemoRecorder* DemoRecorder = nullptr;
 } // namespace interfaces
 
 namespace factories
@@ -283,6 +285,37 @@ bool InitializeInterfaces()
 	{	// g_notificationQueue
 		//uintptr_t movInstr = reinterpret_cast<uintptr_t>(sigscan_module("client.so", "83 EA 01 48 8D 54 D0 08 EB ? 48 83 C0 08")) + 11;
 		//interfaces::g_notificationQueue = reinterpret_cast<CEconNotificationQueue*>(RelToAbs(movInstr));
+	}
+
+	{
+		uintptr_t CEngineClient_vfunction125 = reinterpret_cast<uintptr_t>(sigscan_module("engine.so", "55 48 89 E5 53 48 83 EC 08 48 8D 1D ? ? ? ? 48 8B 3B 48 8B 07 FF 50 20 84 C0 74 ? 48 8B 3B 48 8B 07"));
+
+		interfaces::DemoRecorder = *reinterpret_cast<IDemoRecorder**>(RelToAbs(CEngineClient_vfunction125 + 0x9));
+
+		// the 0x9 is because the LEA instruction starts 9 bytes after the start of the function
+		/*
+			void __thiscall vfunction125(void)
+			void              <VOID>         <RETURN>
+			undefined8        Stack[-0x10]:8 local_10                                XREF[2]:     004ae71d(R), 
+														004ae730(R)  
+					CEngineClient::vfunction125                     XREF[2]:     0090aee4, 009302d8(*)  
+			004ae6e0 55              PUSH       RBP
+			004ae6e1 48 89 E5        MOV        RBP,RSP
+			004ae6e4 53              PUSH       RBX
+			004ae6e5 48 83 EC 08     SUB        RSP,0x8
+			004ae6e9 48 8D 1D        LEA        RBX,[demorecorder]                               = ??
+				70 10 6C 00
+
+			55 = 1 BYTE
+			48 89 E5 = 3 BYTES
+			53 = 1 BYTE
+			48 83 EC 08 = 4 BYTES
+			TOTAL = 9 BYTES
+		*/
+
+		// same with demoplayer but 38 bytes
+
+		interfaces::DemoPlayer = *reinterpret_cast<IDemoPlayer**>(RelToAbs(CEngineClient_vfunction125 + 0x26));
 	}
 
 	return true;

@@ -52,9 +52,9 @@ void Triggerbot::Run(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCmd)
 		Hitscan(pLocal, pWeapon, pCmd);
 
 	if (Config.trigger.packed.autobackstab != static_cast<int>(GenericMode::NONE) && pWeapon->IsMelee())
-		features::autobackstab.Run(pLocal, pWeapon, pCmd, &TickManager::m_bSendPacket);
+		features::autobackstab.Run(pLocal, pWeapon, pCmd, &features::ticks.GetSendPacket());
 
 	if (Config.trigger.packed.autoairblast != static_cast<int>(GenericMode::NONE) &&
 	    pWeapon->GetWeaponID() == TF_WEAPON_FLAMETHROWER)
-		features::autoairblast.Run(pLocal, pWeapon, pCmd, &TickManager::m_bSendPacket);
+		features::autoairblast.Run(pLocal, pWeapon, pCmd, &features::ticks.GetSendPacket());
 }

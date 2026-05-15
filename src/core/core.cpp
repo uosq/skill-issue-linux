@@ -83,7 +83,7 @@ void CApp::Setup()
 	features::scriptmanager.Init();
 
 	GUI::Init();
-	TickManager::Init();
+	features::ticks.Init();
 	MaterialManager::Init();
 	features::material_registry.Init();
 	features::playerlist.Init();

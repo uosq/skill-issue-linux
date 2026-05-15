@@ -35,10 +35,7 @@ ADD_SIG(host_state_addr, "engine.so", "48 8D 05 ? ? ? ? 48 83 38 00 74 ? E9")
 ADD_SIG(Con_NXPrintf, "engine.so", "55 49 89 F2 48 89 E5 41 55 41 54 49 89 FC 48 81 EC D0 10 00 00")
 ADD_SIG(Host_ShouldRun, "engine.so", "48 8B 15 ? ? ? ? B8 01 00 00 00 8B 72 58")
 
-using Host_ShouldRunFn		       = bool (*)(void);
-
-bool TickManager::m_bSendPacket	       = true;
-uint8_t TickManager::m_iChokedCommands = 0;
+using Host_ShouldRunFn = bool (*)(void);
 
 void TickManager::Post_CreateMove(int sequence_number)
 {
@@ -47,7 +44,7 @@ void TickManager::Post_CreateMove(int sequence_number)
 		return;
 
 	if (!interfaces::Engine->IsInGame() || !interfaces::Engine->IsConnected() ||
-	    interfaces::Engine->IsPlayingDemo())
+	    interfaces::Engine->IsPlayingDemo() || interfaces::DemoPlayer->IsPlayingBack())
 		return;
 
 	features::entities.SetAimbotTarget(nullptr);
@@ -72,9 +69,9 @@ void TickManager::Post_CreateMove(int sequence_number)
 
 	features::norecoil.RunCreateMove(pLocal, pWeapon, pCmd);
 	features::backtrack.Run(pLocal, pWeapon, pCmd);
-
 	features::aimbot.Run(pLocal, pWeapon, pCmd);
 	features::trigger.Run(pLocal, pWeapon, pCmd);
+	features::warp.RunCreateMove(pLocal, pWeapon, pCmd);
 
 	features::scriptmanager.CallHooks("CreateMove", pCmd);
 
@@ -83,8 +80,6 @@ void TickManager::Post_CreateMove(int sequence_number)
 
 	if (m_bSendPacket)
 		helper::localplayer::LastAngle = pCmd->viewangles;
-
-	features::warp.RunCreateMove(pLocal, pWeapon, pCmd);
 
 	helper::engine::FixMovement(pCmd, originalAngles, pCmd->viewangles);
 }
@@ -143,15 +138,10 @@ void TickManager::CL_Move(float accumulated_extra_samples, bool bFinalTick)
 	static ConVar *host_limitlocal = interfaces::Cvar->FindVar("host_limitlocal");
 	static ConVar *cl_cmdrate      = interfaces::Cvar->FindVar("cl_cmdrate");
 
-	// returns the right thing
-	double net_time =
-	    *reinterpret_cast<double *>(RelToAbs(uintptr_t(Sigs::net_time_addr.GetPointer()), 3, 7));
-	float host_frametime_unbounded = *reinterpret_cast<float *>(
-	    RelToAbs(uintptr_t(Sigs::host_frametime_unbounded_addr.GetPointer()), 3, 7));
-	float host_frametime_stddeviation = *reinterpret_cast<float *>(
-	    RelToAbs(uintptr_t(Sigs::host_frametime_stddeviation_addr.GetPointer()), 3, 7));
-	CCommonHostState *host_state = reinterpret_cast<CCommonHostState *>(
-	    RelToAbs(uintptr_t(Sigs::host_state_addr.GetPointer()), 3, 7));
+	double net_time = *reinterpret_cast<double *>(RelToAbs(uintptr_t(Sigs::net_time_addr.GetPointer())));
+	float host_frametime_unbounded = *reinterpret_cast<float *>(RelToAbs(uintptr_t(Sigs::host_frametime_unbounded_addr.GetPointer())));
+	float host_frametime_stddeviation = *reinterpret_cast<float *>(RelToAbs(uintptr_t(Sigs::host_frametime_stddeviation_addr.GetPointer())));
+	CCommonHostState *host_state = reinterpret_cast<CCommonHostState *>(RelToAbs(uintptr_t(Sigs::host_state_addr.GetPointer())));
 
 	// interfaces::Cvar->ConsolePrintf("net_time: %f\n", net_time);
 
@@ -188,27 +178,13 @@ void TickManager::CL_Move(float accumulated_extra_samples, bool bFinalTick)
 	{
 		int nextcommandnr = cl->lastoutgoingcommand + m_iChokedCommands + 1;
 
-		interfaces::ClientDLL->CreateMove(
-		    nextcommandnr, host_state->interval_per_tick - accumulated_extra_samples, !cl->m_bPaused);
+		interfaces::ClientDLL->CreateMove(nextcommandnr, host_state->interval_per_tick - accumulated_extra_samples, !cl->m_bPaused);
 
-		// i dont think the game likes what im doing here
-		// lol ts just crashes my game
-		/*static uintptr_t demorecorder_addr =
-		reinterpret_cast<uintptr_t>(sigscan_module("engine.so", "4C 8D
-		3D 76 AF 6B 00 49 8B 3F 48 8B 07 FF 50 20 84 C0 74 0F 49 8B
-		3F")); uintptr_t demorecorder =
-		RelToAbs(demorecorder_addr, 3, 7); bool
-		demorecorder_isrecording = demorecorder + 0x20;
+		if (interfaces::DemoRecorder->IsRecording())
+			interfaces::DemoRecorder->RecordUserInput(nextcommandnr);
 
-		if (demorecorder_isrecording)
-		{
-			//using RecordInputFn = void(*)(void* self, int
-		cmdnum);
-			//reinterpret_cast<RecordInputFn>((demorecorder +
-		0x48))(reinterpret_cast<void*>(demorecorder), nextcommandnr);
-			//vtable::call<10, int>(demorecorder, nextcommandnr);
-		}*/
-
+		// doesn't matter if its after or before, somehow demorecorder sees the flicks
+		// TODO: fix it later somehow!
 		Post_CreateMove(nextcommandnr);
 
 		if (m_bSendPacket)
@@ -226,7 +202,7 @@ void TickManager::CL_Move(float accumulated_extra_samples, bool bFinalTick)
 	if (!m_bSendPacket)
 		return;
 
-	bool hasProblem = cl->m_NetChannel->IsTimingOut() && cl->m_nSignonState == SIGNONSTATE_FULL;
+	bool hasProblem = cl->m_NetChannel->IsTimingOut() && !interfaces::DemoPlayer->IsPlayingBack() && cl->m_nSignonState == SIGNONSTATE_FULL;
 	if (hasProblem && cl->m_nDeltaTick != -1)
 	{
 		using Con_NXPrintf   = void (*)(const con_nprint_t *, const char *fmt, ...);
@@ -318,4 +294,14 @@ void TickManager::Run(float accumulated_extra_samples, bool bFinalTick)
 		features::warp.m_bShifting     = false;
 		return;
 	}
+}
+
+uint8_t TickManager::GetChokedCommands()
+{
+	return m_iChokedCommands;
+}
+
+bool& TickManager::GetSendPacket()
+{
+	return m_bSendPacket;
 }

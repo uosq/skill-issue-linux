@@ -61,7 +61,7 @@ void Aimbot::Run(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCmd)
 		m_projectile.RunAim(pLocal, pWeapon, pCmd, m_state);
 
 		if (m_state.shouldSilent)
-			TickManager::m_bSendPacket = false;
+			features::ticks.GetSendPacket() = false;
 
 		break;
 	}
@@ -71,7 +71,7 @@ void Aimbot::Run(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCmd)
 		m_melee.Run(pLocal, pWeapon, pCmd, m_state);
 
 		if (m_state.shouldSilent)
-			TickManager::m_bSendPacket = false;
+			features::ticks.GetSendPacket() = false;
 
 		break;
 	}
