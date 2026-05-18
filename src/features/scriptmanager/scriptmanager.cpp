@@ -16,10 +16,14 @@ extern void BindEntity(sol::state& lua);
 extern void BindPlayer(sol::state& lua);
 extern void BindWeapon(sol::state& lua);
 extern void BindWeaponData(sol::state& lua);
+extern void BindPlayerInfo(sol::state& lua);
+extern void BindConVar(sol::state& lua);
+extern void BindVector2(sol::state& lua);
 
 // libraries
 extern void BindEntities(sol::state& lua);
 extern void BindEngine(sol::state& lua);
+extern void BindClient(sol::state& lua);
 
 // enums
 extern void Bind_IN_Buttons(sol::state& lua);
@@ -46,14 +50,14 @@ static void BindLogging(sol::state& lua)
 	lua.set_function("print", [argsToString](sol::variadic_args va) 
 	{
 		std::string msg = argsToString(va);
-		interfaces::Cvar->ConsolePrintf("%s", msg.c_str());
+		interfaces::Cvar->ConsolePrintf("%s\n", msg.c_str());
 	});
 
 	lua.set_function("warn", [argsToString](sol::variadic_args va)
 	{
 		std::string msg = argsToString(va);
 		Color_t color{255, 166, 0, 255};
-		interfaces::Cvar->ConsoleColorPrintf(color, "%s", msg.c_str());
+		interfaces::Cvar->ConsoleColorPrintf(color, "%s\n", msg.c_str());
 	});
 
 	// i know &lua is not used
@@ -111,10 +115,14 @@ void ScriptManager::Init()
 	BindPlayer(m_Lua);
 	BindWeaponData(m_Lua);
 	BindWeapon(m_Lua);
+	BindPlayerInfo(m_Lua);
+	BindConVar(m_Lua);
+	BindVector2(m_Lua);
 
 	// libraries
 	BindEngine(m_Lua);
 	BindEntities(m_Lua);
+	BindClient(m_Lua);
 }
 
 void ScriptManager::Shutdown()

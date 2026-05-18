@@ -1,6 +1,7 @@
 #include "aimbot_hitscan.h"
 
 #include "../../backtrack/backtrack.h"
+#include "../../../sdk/math.h"
 
 HitscanOffset AimbotHitscan::GetInitialOffset(CTFPlayer *pLocal, CTFWeaponBase *pWeapon)
 {
@@ -218,7 +219,7 @@ bool AimbotHitscan::FindBestTarget(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CU
 	for (EntityListEntry entry : AimbotUtils::GetTargets(bCanHitTeammates, localTeam))
 	{
 		CBaseEntity *entity = entry.ptr;
-		AimbotTarget potentialTarget;
+		AimbotTarget potentialTarget {};
 
 		if (entity->IsPlayer())
 		{
@@ -256,9 +257,8 @@ static void SmoothAssistanceAimbot(CTFPlayer* pLocal, CUserCmd* pCmd, const Aimb
 {
 	if (mode == AimbotMode::ASSISTANCE && pCmd->mousedx == 0 && pCmd->mousedy == 0)
 		return;
-
-	Vector delta = target.dir - viewAngles;
 	
+	Vector delta = target.dir - viewAngles;
 	delta.x = Math::NormalizeAngle(delta.x);
 	delta.y = Math::NormalizeAngle(delta.y);
 	
@@ -269,19 +269,24 @@ static void SmoothAssistanceAimbot(CTFPlayer* pLocal, CUserCmd* pCmd, const Aimb
 	state.angle = smoothedAngle;
 	interfaces::Engine->SetViewAngles(smoothedAngle);
 	pCmd->viewangles = smoothedAngle;
-	
 	state.running = true;
-
+	
+	Vector smoothedForward;
+	Math::AngleVectors(smoothedAngle, &smoothedForward);
+	
 	CGameTrace trace;
 	CTraceFilterHitscan filter;
 	filter.pSkip = pLocal;
-	helper::engine::Trace(shootPos, shootPos + (viewForward * 2048), MASK_SHOT | CONTENTS_HITBOX, &filter, &trace);
 
+	helper::engine::Trace(shootPos, shootPos + (smoothedForward * 8192.0f), MASK_SHOT | CONTENTS_HITBOX, &filter, &trace);
+	
+	bool bShouldShoot = false;
+	
 	if (trace.DidHit() && trace.m_pEnt == target.entity)
-	{
-		if (Config.aimbot.packed.autoshoot)
-			pCmd->buttons |= IN_ATTACK;
-	}
+		bShouldShoot = true;
+	
+	if (bShouldShoot && Config.aimbot.packed.autoshoot)
+		pCmd->buttons |= IN_ATTACK;
 }
 
 static void SilentAimbot(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd, const AimbotTarget& target, AimbotState& state)

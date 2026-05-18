@@ -8,6 +8,8 @@
 #include "../../mem.h"
 
 #include "../../gui/utils/string_utils.h"
+#include "utlvector.h"
+#include "vphysics_interface.h"
 
 ADD_SIG(C_BaseAnimating_InvalidadeBoneCaches, "client.so", "48 83 05 ? ? ? ? 01 C3");
 
@@ -143,6 +145,28 @@ class CBaseAnimating : public CBaseEntity
 			return false;
 
 		return ContainsInsensitive(name, "ammopack");
+	}
+
+	inline CUtlVector<matrix3x4_t>* m_CachedBoneData()
+	{
+		/*
+		xref: GetBoneCache
+
+		We want he 0x16f offset inside C_BaseAnimating::GetBoneCache
+
+			local_40 = self[0x16f];
+			local_38 = gpGlobals->curtime;
+			local_34 = 0x100;
+			local_48 = pStudioHdr;
+			lVar2 = FUN_0180c240(&local_48);
+			self[0x173] = lVar2;
+			lVar2 = FUN_0180c080(lVar2);
+			return lVar2;
+			}
+		*/
+
+        	// MOV RAX,qword ptr [R13 + 0xb78]
+		return reinterpret_cast<CUtlVector<matrix3x4_t>*>(uintptr_t(this) + (0x16F * sizeof(void*)));
 	}
 };
 

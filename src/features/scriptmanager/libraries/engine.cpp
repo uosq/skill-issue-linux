@@ -6,39 +6,39 @@ void BindEngine(sol::state& lua)
 {
 	sol::table engine = lua.create_named_table("engine");
 
-	engine["PlaySound"] = [](const std::string& sound) -> void
+	engine["play_sound"] = [](const std::string& sound) -> void
 	{
 		interfaces::Surface->PlaySound(sound.c_str());
 	};
 
-	engine["GetMaxClients"] = []() -> int
+	engine["get_max_clients"] = []() -> int
 	{
 		return interfaces::Engine->GetMaxClients();
 	};
 
-	engine["GetViewAngles"] = []() -> Vec3
+	engine["get_viewangles"] = []() -> Vec3
 	{
 		Vec3 viewangles;
 		interfaces::Engine->GetViewAngles(viewangles);
 		return viewangles;
 	};
 
-	engine["IsTakingScreenshot"] = []() -> bool
+	engine["is_taking_screenshot"] = []() -> bool
 	{
 		return interfaces::Engine->IsTakingScreenshot();
 	};
 
-	engine["SetViewAngles"] = [](Vec3& vec) -> void
+	engine["set_viewangles"] = [](Vec3& vec) -> void
 	{
 		interfaces::Engine->SetViewAngles(vec);
 	};
 
-	engine["IsInGame"] = []() -> bool
+	engine["is_in_game"] = []() -> bool
 	{
 		return interfaces::Engine->IsInGame();
 	};
 
-	engine["ClientCmd"] = [](const std::string& cmd, bool unrestricted = false) -> void
+	engine["client_cmd"] = [](const std::string& cmd, bool unrestricted = false) -> void
 	{
 		if (unrestricted)
 			interfaces::Engine->ClientCmd_Unrestricted(cmd.c_str());
@@ -46,17 +46,17 @@ void BindEngine(sol::state& lua)
 			interfaces::Engine->ClientCmd(cmd.c_str());
 	};
 
-	engine["IsGameUIVisible"] = []() -> bool
+	engine["is_gameui_visible"] = []() -> bool
 	{
 		return interfaces::EngineVGui->IsGameUIVisible();
 	};
 
-	engine["IsConsoleVisible"] = []() -> bool
+	engine["is_console_visible"] = []() -> bool
 	{
 		return interfaces::EngineVGui->IsConsoleVisible();
 	};
 
-	engine["IsConnected"] = []() -> bool
+	engine["is_connected"] = []() -> bool
 	{
 		return interfaces::Engine->IsConnected();
 	};

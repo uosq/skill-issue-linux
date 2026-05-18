@@ -260,48 +260,46 @@ function hooks:remove(event, id) end
 engine = {}
 
 ---@param filepath string
-function engine:PlaySound(filepath) end
+function engine:play_sounds(filepath) end
 
 ---@return integer
-function engine:GetMaxClients() end
+function engine:get_max_clients() end
 
 ---@return Vector3
-function engine:GetViewAngles() end
+function engine:get_viewangles() end
 
 ---@param viewangles Vector3
-function engine:SetViewAngles(viewangles) end
+function engine:set_viewangles(viewangles) end
 
 ---@return boolean
-function engine:IsTakingScreenshot() end
+function engine:is_taking_screenshot() end
 
 ---@return boolean
-function engine:IsInGame() end
+function engine:is_in_game() end
 
 ---@param cmd string
 ---@param unrestricted boolean?
-function engine:ClientCmd(cmd, unrestricted) end
+function engine:client_cmd(cmd, unrestricted) end
 
 ---@return boolean
-function engine:IsGameUIVisible() end
+function engine:is_gameui_visible() end
 
 ---@return boolean
-function engine:IsConsoleVisible() end
+function engine:is_console_visible() end
 
 ---@return boolean
-function engine:IsConnected() end
+function engine:is_connected() end
 
 entities = {}
 
 ---@param entindex integer
-function entities:GetClientEntity(entindex) end
+function entities:get_client_entity(entindex) end
 
 ---@return integer
-function entities:GetMaxEntities() end
+function entities:get_max_entities() end
 
 ---@return Player?
-function entities:GetLocalPlayer() end
-
-
+function entities:get_localplayer() end
 
 IN_ATTACK = (1 << 0)
 IN_JUMP = (1 << 1)
@@ -362,3 +360,59 @@ FL_ATCONTROLS = (1 << 6)
 FL_CLIENT = (1 << 7)
 FL_FAKECLIENT = (1 << 8)
 FL_INWATER = (1 << 9)
+
+---@class ConVar
+local ConVar = {}
+
+---@return integer
+function ConVar:GetInt() end
+
+---@return number
+function ConVar:GetFloat() end
+
+---@return string
+function ConVar:GetString() end
+
+---@return string
+function ConVar:GetName() end
+
+---@return string
+function ConVar:GetHelpText() end
+
+---@return boolean
+function ConVar:IsCommand() end
+
+---@param flag integer
+---@return boolean
+function ConVar:IsFlagSet(flag) end
+
+---@param flags integer
+function ConVar:AddFlags(flags) end
+
+---@param value integer|number|string
+function ConVar:SetValue(value) end
+
+---@class PlayerInfo
+---@field is_htlv boolean
+---@field is_replay boolean
+---@field is_bot boolean
+---@field userid integer
+---@field name string
+---@field steamid string
+
+client = {}
+
+---@return PlayerInfo
+function client.get_player_info(index) end
+
+---@class Vector2
+---@field x number
+---@field y number
+
+---@param world_pos Vector3
+---@param out_pos Vector2
+---@return boolean
+function client.world_to_screen(world_pos, out_pos) end
+
+---@return ConVar
+function client.get_convar(name) end

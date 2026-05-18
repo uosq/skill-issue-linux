@@ -3,12 +3,10 @@
 
 std::string ToLower(const std::string& str)
 {
-	// wtf is this syntax
-	// why the fuck do we need to specify the begin, end and then
-	// the fucking begin again?? fuck you C++
-	std::string result = "";
-	std::transform(str.begin(), str.end(), result.begin(), [](unsigned char c) { return std::tolower(c); });
-	return result;
+	// gotta make sure we have enough stack space lol
+        std::string result = str;
+        std::transform(result.begin(), result.end(), result.begin(), [](unsigned char c) { return std::tolower(c); });
+        return result;
 }
 
 bool ContainsInsensitive(const std::string &text, const std::string &search)

@@ -102,6 +102,12 @@ class CTFPlayer : public CBaseCombatCharacter
 
 	NETVAR_OFFSET(m_iEFlags, "CTFPlayer->m_nWaterLevel", int, -8)
 
+	inline std::array<int, 32> &m_iAmmo()
+	{
+		static int nOffset = Netvars::m_netvarMap[fnv::HashConst("CBasePlayer->m_iAmmo")];
+		return *reinterpret_cast<std::array<int, 32> *>(uintptr_t(this) + nOffset);
+	}
+
 	bool IsAlive();
 	bool InCond(ETFCond cond);
 	Vector GetCenter();

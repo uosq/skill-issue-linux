@@ -7,7 +7,7 @@ void BindEntities(sol::state& lua)
 {
 	auto entities = lua.create_named_table("entities");
 
-	entities["GetClientEntity"] = [](int entnum) -> CBaseEntity*
+	entities["get_client_entity"] = [](int entnum) -> CBaseEntity*
 	{
 		IClientEntity* clientEntity = interfaces::EntityList->GetClientEntity(entnum);
 
@@ -18,12 +18,12 @@ void BindEntities(sol::state& lua)
 		return entity;
 	};
 
-	entities["GetMaxEntities"] = []() -> int
+	entities["get_max_entities"] = []() -> int
 	{
 		return interfaces::EntityList->GetMaxEntities();
 	};
 
-	entities["GetLocalPlayer"] = []() -> CTFPlayer*
+	entities["get_localplayer"] = []() -> CTFPlayer*
 	{
 		int index = interfaces::Engine->GetLocalPlayer();
 

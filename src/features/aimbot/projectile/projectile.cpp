@@ -423,9 +423,9 @@ void CAimbotProjectile::RunMain(CTFPlayer *pLocal, CTFWeaponBase *pWeapon)
 	Vec3 vecEyePos;// = pLocal->GetEyePos();
 	{
 		std::vector<Vec3> vPath;
-		gPrediction.BeginPrediction(pLocal, TICKS_TO_TIME(1));
-		gPrediction.Simulate(vPath);
-		gPrediction.EndPrediction();
+		features::prediction.BeginPrediction(pLocal, TICKS_TO_TIME(1));
+		features::prediction.Simulate(vPath);
+		features::prediction.EndPrediction();
 
 		vecEyePos = vPath.back() + pLocal->m_vecViewOffset();
 	}
@@ -454,9 +454,9 @@ void CAimbotProjectile::RunMain(CTFPlayer *pLocal, CTFWeaponBase *pWeapon)
 			// try to avoid reallocating a lot of memory
 			vPath.reserve(TIME_TO_TICKS(flTime));
 
-			gPrediction.BeginPrediction(pPlayer, flTime);
-			gPrediction.Simulate(vPath);
-			gPrediction.EndPrediction();
+			features::prediction.BeginPrediction(pPlayer, flTime);
+			features::prediction.Simulate(vPath);
+			features::prediction.EndPrediction();
 
 			if (vPath.empty())
 				continue;

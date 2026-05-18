@@ -278,7 +278,10 @@ struct AimbotConfig
 			uint32_t teamselection : 2;
 			uint32_t proj_indicator : 2;
 
-			uint32_t _reserved : 12;
+			uint32_t swing_pred : 1;
+			uint32_t swing_pred_local : 1;
+
+			uint32_t _reserved : 10;
 		};
 	} packed;
 

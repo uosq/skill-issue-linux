@@ -65,9 +65,6 @@ void BindEntity(sol::state& lua)
 
 		"ToWeapon", [](CBaseEntity* self) -> CTFWeaponBase*
 		{
-			if (!self->IsWeapon())
-				return nullptr;
-
 			return static_cast<CTFWeaponBase*>(self);
 		},
 
@@ -76,7 +73,7 @@ void BindEntity(sol::state& lua)
 			return static_cast<int>(AttributeHookValue(defValue.value_or(1.0f), attrName.c_str(), self, nullptr, false));
 		},
 
-		"AttributeHookFloat", [](CBaseEntity* self, const std::string& attrName,std::optional<int> defValue)
+		"AttributeHookFloat", [](CBaseEntity* self, const std::string& attrName,std::optional<float> defValue)
 		{
 			return AttributeHookValue(defValue.value_or(1.0f), attrName.c_str(), self, nullptr, false);
 		},

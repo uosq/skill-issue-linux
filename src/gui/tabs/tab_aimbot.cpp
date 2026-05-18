@@ -46,6 +46,11 @@ void DrawAimbotTab()
 			ImGui_CheckboxBit("ViewModel Aim", Config.aimbot.packed.viewmodelaim);
 			ImGui_CheckboxBit("Wait For Charge", Config.aimbot.packed.waitforcharge);
 			ImGui_CheckboxBit("Hold Minigun Spin", Config.aimbot.packed.hold_minigun_spin);
+			ImGui_CheckboxBit("Swing Prediction", Config.aimbot.packed.swing_pred);
+			ImGui_CheckboxBit("Swing Prediction LocalPlayer", Config.aimbot.packed.swing_pred_local);
+
+			if (ImGui::IsItemHovered())
+				ImGui::SetTooltip("%s", "Predicts yourself on swing pred");
 
 			ImGui::Separator();
 

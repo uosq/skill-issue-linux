@@ -21,25 +21,33 @@ struct LagCompRecord
 		m_vecAbsCenter	= {};
 		m_vecViewAngles = {};
 		m_vecVelocity	= {};
+		m_vecMins	= {};
+		m_vecMaxs	= {};
+		m_vecAbsOrigin	= {};
 		memset(m_Bones, 0, sizeof(m_Bones));
 	}
 
-	LagCompRecord(matrix3x4 *pBones, float flSimTime, Vector vecCenter, Vector vecViewAngles, Vector vecVelocity)
+	LagCompRecord(matrix3x4 *pBones, float flSimTime, const Vec3& vecCenter, const Vec3& vecViewAngles, const Vec3& vecVelocity, const Vec3& vecMins, const Vec3& vecMaxs, const Vec3& absOrigin)
 	{
-		memcpy(m_Bones, pBones, sizeof(m_Bones));
 		m_flSimTime	= flSimTime;
 		m_vecAbsCenter	= vecCenter;
 		m_vecViewAngles = vecViewAngles;
 		m_vecVelocity	= vecVelocity;
+		m_vecMins	= vecMins;
+		m_vecMaxs	= vecMaxs;
+		memcpy(m_Bones, pBones, sizeof(m_Bones));
 	}
 
 	bool IsValid(CUserCmd* pCmd);
 
 	float m_flSimTime;
-	Vector m_vecAbsCenter;
+	Vec3 m_vecAbsCenter;
 	matrix3x4 m_Bones[MAXSTUDIOBONES];
-	Vector m_vecViewAngles;
-	Vector m_vecVelocity;
+	Vec3 m_vecViewAngles;
+	Vec3 m_vecVelocity;
+	Vec3 m_vecMins;
+	Vec3 m_vecMaxs;
+	Vec3 m_vecAbsOrigin;
 };
 
 class Backtrack

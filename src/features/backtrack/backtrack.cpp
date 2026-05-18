@@ -182,22 +182,31 @@ void Backtrack::Store()
 
 		if (entry.ptr->IsBuilding())
 			continue;
-	
+
 		CTFPlayer* pEntity = static_cast<CTFPlayer*>(entry.ptr);
-	
+
 		if (localTeam == pEntity->m_iTeamNum())
 			continue;
-	
+
 		auto &records = m_records[pEntity->GetIndex()];
-	
+
 		if (!records.empty() && records.front().m_flSimTime == pEntity->m_flSimulationTime())
 			continue;
-	
+
 		matrix3x4 bones[MAXSTUDIOBONES];
 		if (!pEntity->SetupBones(bones, MAXSTUDIOBONES, BONE_USED_BY_ANYTHING, pEntity->m_flSimulationTime()))
 			continue;
-	
-		records.emplace_front(bones, pEntity->m_flSimulationTime(), pEntity->GetCenter(), pEntity->m_angEyeAngles(), pEntity->EstimateAbsVelocity());
+
+		records.emplace_front
+		(
+			bones,
+			pEntity->m_flSimulationTime(),
+			pEntity->GetCenter(),
+			pEntity->m_angEyeAngles(),
+			pEntity->EstimateAbsVelocity(),
+			pEntity->m_vecMins(), pEntity->m_vecMaxs(),
+			pEntity->m_vecOrigin()
+		);
 	}
 }
 
@@ -212,108 +221,108 @@ void Backtrack::DoPostScreenSpaceEffects()
 	if (!Config.backtrack.packed.enabled)
 		return;
 
-        if (m_records.empty())
-                return;
+	if (m_records.empty())
+		return;
 
-        CTFPlayer *pLocal = helper::engine::GetLocalPlayer();
-        if (pLocal == nullptr || !pLocal->IsAlive())
-                return;
+	CTFPlayer *pLocal = helper::engine::GetLocalPlayer();
+	if (pLocal == nullptr || !pLocal->IsAlive())
+		return;
 
-        CTFWeaponBase *pWeapon = HandleAs<CTFWeaponBase *>(pLocal->GetActiveWeapon());
-        if (pWeapon == nullptr)
-                return;
+	CTFWeaponBase *pWeapon = HandleAs<CTFWeaponBase *>(pLocal->GetActiveWeapon());
+	if (pWeapon == nullptr)
+		return;
 
-        // only hitscan and melee!
-        if (!(pWeapon->IsMelee() || pWeapon->IsHitscan()))
-                return;
+	// only hitscan and melee!
+	if (!(pWeapon->IsMelee() || pWeapon->IsHitscan()))
+		return;
 
-        BacktrackMode mode = static_cast<BacktrackMode>(Config.backtrack.packed.draw_mode);
-        if (mode >= BacktrackMode::MAX || mode <= BacktrackMode::INVALID || mode == BacktrackMode::NONE)
-                return;
+	BacktrackMode mode = static_cast<BacktrackMode>(Config.backtrack.packed.draw_mode);
+	if (mode >= BacktrackMode::MAX || mode <= BacktrackMode::INVALID || mode == BacktrackMode::NONE)
+		return;
 
-        // no materials no drawing
-        if (Config.backtrack.active_materials.empty())
-                return;
+	// no materials no drawing
+	if (Config.backtrack.active_materials.empty())
+		return;
 
-        float savedColor[3], savedBlend;
-        IMaterial *savedMat;
-        OverrideType_t type;
+	float savedColor[3], savedBlend;
+	IMaterial *savedMat;
+	OverrideType_t type;
 
 	// save our cool stuff
-        interfaces::ModelRender->GetMaterialOverride(&savedMat, &type);
-        interfaces::RenderView->GetColorModulation(savedColor);
-        savedBlend = interfaces::RenderView->GetBlend();
+	interfaces::ModelRender->GetMaterialOverride(&savedMat, &type);
+	interfaces::RenderView->GetColorModulation(savedColor);
+	savedBlend = interfaces::RenderView->GetBlend();
 
-        float color[] = {1.0f, 1.0f, 1.0f};
-        interfaces::RenderView->SetColorModulation(color);
+	float color[] = {1.0f, 1.0f, 1.0f};
+	interfaces::RenderView->SetColorModulation(color);
 
-        auto DrawRecords = [&]() 
-        {
-                switch (mode)
-                {
-                case BacktrackMode::LAST_ONLY:
-                {
-                        for (auto &[index, records] : m_records)
-                        {
-                                if (records.empty())
-                                        continue;
+	auto DrawRecords = [&]()
+	{
+		switch (mode)
+		{
+		case BacktrackMode::LAST_ONLY:
+		{
+			for (auto &[index, records] : m_records)
+			{
+				if (records.empty())
+					continue;
 
-                                CTFPlayer *entity = static_cast<CTFPlayer *>(interfaces::EntityList->GetClientEntity(index));
-                                if (entity == nullptr || !entity->ShouldDraw())
-                                        continue;
+				CTFPlayer *entity = static_cast<CTFPlayer *>(interfaces::EntityList->GetClientEntity(index));
+				if (entity == nullptr || !entity->ShouldDraw())
+					continue;
 
-                                if (pLocal->m_iTeamNum() == entity->m_iTeamNum())
-                                        continue;
+				if (pLocal->m_iTeamNum() == entity->m_iTeamNum())
+					continue;
 
-                                m_current_drawing_record = &records.back();
-                                entity->DrawModel(STUDIO_RENDER | STUDIO_NOSHADOWS);
-                        }
-                        break;
-                }
-                case BacktrackMode::ALL_RECORDS:
-                {
-                        for (auto &[index, records] : m_records)
-                        {
-                                CTFPlayer *entity = static_cast<CTFPlayer *>(interfaces::EntityList->GetClientEntity(index));
-                                if (entity == nullptr || !entity->ShouldDraw() || !entity->IsAlive())
-                                        continue;
+				m_current_drawing_record = &records.back();
+				entity->DrawModel(STUDIO_RENDER | STUDIO_NOSHADOWS);
+			}
+			break;
+		}
+		case BacktrackMode::ALL_RECORDS:
+		{
+			for (auto &[index, records] : m_records)
+			{
+				CTFPlayer *entity = static_cast<CTFPlayer *>(interfaces::EntityList->GetClientEntity(index));
+				if (entity == nullptr || !entity->ShouldDraw() || !entity->IsAlive())
+					continue;
 
-                                if (records.empty() || pLocal->m_iTeamNum() == entity->m_iTeamNum())
-                                        continue;
+				if (records.empty() || pLocal->m_iTeamNum() == entity->m_iTeamNum())
+					continue;
 
-                                for (auto &record : records)
-                                {
-                                        m_current_drawing_record = &record;
-                                        entity->DrawModel(STUDIO_RENDER | STUDIO_NOSHADOWS);
-                                }
-                        }
-                        break;
-                }
-                default:
-                        break;
-                }
-        };
+				for (auto &record : records)
+				{
+					m_current_drawing_record = &record;
+					entity->DrawModel(STUDIO_RENDER | STUDIO_NOSHADOWS);
+				}
+			}
+			break;
+		}
+		default:
+			break;
+		}
+	};
 
-        for (const auto& mat_name : Config.backtrack.active_materials)
-        {
-                auto mat = features::material_registry.GetMaterialByName(mat_name);
-                
-                if (!mat || !mat->IsValidMat())
-                        continue;
+	for (const auto& mat_name : Config.backtrack.active_materials)
+	{
+		auto mat = features::material_registry.GetMaterialByName(mat_name);
 
-                interfaces::RenderView->SetBlend(mat->GetAlpha());
-                interfaces::ModelRender->ForcedMaterialOverride(mat->GetMaterial());
+		if (!mat || !mat->IsValidMat())
+			continue;
 
-                m_drawing = true;
-                DrawRecords();
-                m_drawing = false;
-        }
+		interfaces::RenderView->SetBlend(mat->GetAlpha());
+		interfaces::ModelRender->ForcedMaterialOverride(mat->GetMaterial());
 
-        m_current_drawing_record = nullptr;
-        
-        interfaces::RenderView->SetBlend(savedBlend);
-        interfaces::RenderView->SetColorModulation(savedColor);
-        interfaces::ModelRender->ForcedMaterialOverride(savedMat);
+		m_drawing = true;
+		DrawRecords();
+		m_drawing = false;
+	}
+
+	m_current_drawing_record = nullptr;
+
+	interfaces::RenderView->SetBlend(savedBlend);
+	interfaces::RenderView->SetColorModulation(savedColor);
+	interfaces::ModelRender->ForcedMaterialOverride(savedMat);
 }
 
 bool Backtrack::GetRecords(CTFPlayer *pEntity, std::vector<LagCompRecord> &out)
@@ -324,7 +333,17 @@ bool Backtrack::GetRecords(CTFPlayer *pEntity, std::vector<LagCompRecord> &out)
 		if (!pEntity->SetupBones(bones, MAXSTUDIOBONES, BONE_USED_BY_ANYTHING, interfaces::GlobalVars->curtime))
 			return false;
 
-		out.emplace_back(bones, pEntity->m_flSimulationTime(), pEntity->GetCenter(), pEntity->GetAbsAngles(), pEntity->EstimateAbsVelocity());
+		out.emplace_back
+		(
+			bones,
+			pEntity->m_flSimulationTime(),
+			pEntity->GetCenter(),
+			pEntity->GetAbsAngles(),
+			pEntity->EstimateAbsVelocity(),
+			pEntity->m_vecMins(), pEntity->m_vecMaxs(),
+			pEntity->m_vecOrigin()
+		);
+
 		return true;
 	}
 

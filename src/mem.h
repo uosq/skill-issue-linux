@@ -8,17 +8,17 @@ inline uintptr_t RelToAbs(uintptr_t instr, int dispOffset = 3, int instrSize = 7
 	return instr + instrSize + disp;
 }
 
-template <std::size_t I, typename T, typename... Args> inline T vtable_call(void *p, Args... args)
+template <std::size_t Index, typename Ret, typename... Args> inline Ret vtable_call(void *p, Args... args)
 {
 	auto vTable = *static_cast<void ***>(p);
-	return reinterpret_cast<T (*)(void *, Args...)>(vTable[I])(p, args...);
+	return reinterpret_cast<Ret (*)(void *, Args...)>(vTable[Index])(p, args...);
 }
 
-template <std::size_t I, typename T, typename... Args> inline T vtable_call(uintptr_t u, Args... args)
+template <std::size_t Index, typename Ret, typename... Args> inline Ret vtable_call(uintptr_t u, Args... args)
 {
 	auto p	    = reinterpret_cast<void *>(u);
 	auto vTable = *static_cast<void ***>(p);
-	return reinterpret_cast<T (*)(void *, Args...)>(vTable[I])(p, args...);
+	return reinterpret_cast<Ret (*)(void *, Args...)>(vTable[Index])(p, args...);
 }
 
 inline void **vtable_get(void *obj)

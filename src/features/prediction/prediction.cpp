@@ -844,6 +844,8 @@ bool CPrediction::Simulate(std::vector<Vector> &path)
 		m_flTickInterval *= flMultiplier;
 	}
 
+	path.emplace_back(m_vecAbsOrigin);
+
 	while (flClock < m_flTargetSeconds)
 	{
 		if (!CheckWater())
@@ -899,5 +901,3 @@ float CPrediction::GetAirSpeedCap()
 	float mod_air_control = AttributeHookValue(1.0f, "mod_air_control", m_pTarget, nullptr, true);
 	return flCap * mod_air_control;
 }
-
-CPrediction gPrediction{};

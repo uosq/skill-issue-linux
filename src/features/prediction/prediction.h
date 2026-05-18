@@ -1,8 +1,11 @@
 #pragma once
 
+#include <vector>
+
 #include "../../sdk/classes/entity.h"
 #include "../../sdk/definitions/ctracefilters.h"
-#include <vector>
+
+#include "../feature.h"
 
 struct PredictionResult
 {
@@ -78,4 +81,4 @@ class CPrediction
 	CTraceFilterWorldAndPropsOnly m_filter;
 };
 
-extern CPrediction gPrediction;
+DECLARE_FEATURE(CPrediction, prediction)

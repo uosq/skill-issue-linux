@@ -7,6 +7,7 @@
 #include "../definitions/icliententity.h"
 #include "../definitions/iclientleafsystem.h"
 #include "../definitions/types.h"
+#include "../definitions/bspflags.h"
 
 #include "../handle_utils.h"
 #include "../interfaces/interfaces.h"
@@ -65,7 +66,9 @@ class CBaseEntity : public IClientEntity
 	NETVAR(m_bAlternateSorting, "CBaseEntity->m_bAlternateSorting", bool);
 	NETVAR(m_nModelIndexOverrides, "CBaseEntity->m_nModelIndexOverrides", void *);
 	NETVAR(movetype, "CBaseEntity->movetype", int);
-	NETVAR(m_flNextAttack, "CBaseCombatCharacter->m_flNextAttack", float)
+	NETVAR(m_flNextAttack, "CBaseCombatCharacter->m_flNextAttack", float);
+	NETVAR_OFFSET(m_flRadius, "CBaseEntity->m_usSolidFlags", float, -sizeof(float));
+	//NETVAR_OFFSET(m_iEFlags, "CBaseEntity->m_Collision", int, -6);
 
 	bool IsPlayer()
 	{
@@ -375,5 +378,74 @@ class CBaseEntity : public IClientEntity
 		using SetAbsAnglesFn = void(*)(void* self, const Vec3& absAngle);
 		static SetAbsAnglesFn original = (SetAbsAnglesFn)Sigs::CBaseEntity_SetAbsAngles.GetPointer();
 		original((void*)this, absAngle);
+	}
+
+	bool ShouldCollide(int collisionGroup, int contentsMask)
+	{
+		if ( m_CollisionGroup() == COLLISION_GROUP_DEBRIS )
+		{
+			if ( ! (contentsMask & CONTENTS_DEBRIS) )
+				return false;
+		}
+		return true;
+	}
+
+	float m_flModelScale()
+	{
+		return *reinterpret_cast<float*>(uintptr_t(this) + 0x914);
+	}
+
+	/*void MarkPartitionHandleDirty()
+	{
+		if (entindex() == 0)
+			return;
+
+		if ()
+	}
+
+	void MarkSurroundingBoundsDirty()
+	{
+		MarkShadowDirty(true);
+	}*/
+
+	void SetCollisionBounds(const Vec3& mins , const Vec3& maxs)
+	{
+		if ((m_vecMinsPreScaled() != mins) || (m_vecMaxsPreScaled() != maxs))
+		{
+			m_vecMinsPreScaled() = mins;
+			m_vecMaxs() = maxs;
+		}
+
+		bool bDirty = false;
+		if (m_flModelScale() != 1.0f)
+		{
+			Vec3 vecNewMins = mins * m_flModelScale();
+			Vec3 vecNewMaxs = maxs * m_flModelScale();
+
+			if ( ( m_vecMins() != vecNewMins ) || ( m_vecMaxs() != vecNewMaxs ) )
+			{
+				m_vecMins() = vecNewMins;
+				m_vecMaxs() = vecNewMaxs;
+				bDirty = true;
+			}
+		}
+		else
+		{
+			if ( ( m_vecMins() != mins ) || ( m_vecMaxs() != maxs ) )
+			{
+				m_vecMins() = mins;
+				m_vecMaxs() = maxs;
+				bDirty = true;
+			}
+		}
+
+		if (bDirty)
+		{
+			Vector vecSize = m_vecMaxs() - m_vecMins();
+			m_flRadius() = vecSize.Length() * 0.5f;
+
+			// too lazy to fix this
+			//MarkSurroundingBoundsDirty();
+		}
 	}
 };

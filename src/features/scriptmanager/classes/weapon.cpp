@@ -18,6 +18,7 @@ void BindWeapon(sol::state& lua)
 		"IsHitscan", &CTFWeaponBase::IsHitscan,
 		"CanHitTeammates", &CTFWeaponBase::CanHitTeammates,
 		"GetDeflectionSize", &CTFWeaponBase::GetDeflectionSize,
+		"GetSwingRange", &CTFWeaponBase::GetSwingRange,
 
 		"GetType", [](CTFWeaponBase* self)
 		{
@@ -59,6 +60,11 @@ void BindWeapon(sol::state& lua)
 		"GetData", [](CTFWeaponBase* self) -> const WeaponData_t&
 		{
 			return self->GetWeaponData();
+		},
+
+		"GetMode", [](CTFWeaponBase* self) -> int
+		{
+			return self->m_iWeaponMode();
 		}
 	);
 }

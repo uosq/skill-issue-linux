@@ -16,7 +16,7 @@ using DrawModelExecuteFn = void(*)(IVModelRender *thisptr,
                                    const ModelRenderInfo_t &pInfo,
                                    matrix3x4 *pCustomBoneToWorld);
 
-static void DrawModelExecute(IVModelRender* thisptr, const DrawModelState_t &state, const ModelRenderInfo_t &pInfo, matrix3x4 *pCustomBoneToWorld)
+static void DrawModelExecute(IVModelRender* thisptr, const DrawModelState_t &state, const ModelRenderInfo_t &pInfo, matrix3x4* pCustomBoneToWorld)
 {
 	auto original = VMTHooks::ModelRender.GetOriginal<DrawModelExecuteFn>(19);
 

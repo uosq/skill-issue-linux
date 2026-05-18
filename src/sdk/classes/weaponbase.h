@@ -1,8 +1,10 @@
 #pragma once
 
 #include "../definitions/weaponinfo.h"
+
 #include "../defs.h"
 #include "../handle_utils.h"
+
 #include "basecombatcharacter.h"
 #include "basecombatweapon.h"
 #include "entity.h"
@@ -50,7 +52,7 @@ inline FileWeaponInfo_t *original_GetFileWeaponInfoFromHandle(void *handle)
 
 class CTFWeaponBase : public CBaseCombatWeapon
 {
-      public:
+public:
 	NETVAR(m_bLowered, "CTFWeaponBase->m_bLowered", bool)
 	NETVAR(m_iReloadMode, "CTFWeaponBase->m_iReloadMode", int)
 	NETVAR(m_bResetParity, "CTFWeaponBase->m_bResetParity", bool)
@@ -71,8 +73,6 @@ class CTFWeaponBase : public CBaseCombatWeapon
 	NETVAR(m_nInspectStage, "CTFWeaponBase->m_nInspectStage", int)
 	NETVAR(m_iConsecutiveShots, "CTFWeaponBase->m_iConsecutiveShots", int)
 
-	// gotta check, but these are probably all useless or return garbage dataa
-	NETVAR_OFFSET(m_pWeaponInfo, "CTFWeaponBase->m_flLastCritCheckTime", CTFWeaponInfo*, 4);
 	NETVAR_OFFSET(m_flSmackTime, "CTFWeaponBase->m_nInspectStage", float, 28);
 	NETVAR_OFFSET(m_flCritTokenBucket, "CTFWeaponBase->m_iReloadMode", float, -244);
 	NETVAR_OFFSET(m_nCritChecks, "CTFWeaponBase->m_iReloadMode", int, -240);
@@ -82,19 +82,27 @@ class CTFWeaponBase : public CBaseCombatWeapon
 	NETVAR_OFFSET(m_iCurrentSeed, "CTFWeaponBase->m_flLastCritCheckTime", int, 8);
 	NETVAR_OFFSET(m_flLastRapidFireCritCheckTime, "CTFWeaponBase->m_flLastCritCheckTime", float, 12);
 
-	// dentro de CTFWeaponBase!
-	const CTFWeaponInfo *GetWeaponInfo()
+	CTFWeaponInfo* m_pWeaponInfo()
 	{
-		// offset from EDI,word ptr [RDI + 0xF12] in CTFWeaponBase->GetTFWpnData()
-		uintptr_t handleAddress = reinterpret_cast<uintptr_t>(this) + 0xf12;
-		void *handleValue	= *(void **)handleAddress;
-		return static_cast<CTFWeaponInfo*>(original_GetFileWeaponInfoFromHandle(handleValue));
+		/*
+		xref: ShotgunPunchAngle
+		There is 2 functions, one has a if checking for > 0 and one that doesn't
+		go to the one that doesn't have the if checking for > 0
+		you'll go to CTFShotgun::UpdatePunchAngles
+		you get the offset from
+		fVar1 = *(float *)((long)*(int *)((long)this + 0xf70) * 0x40 + *(long *)((long)this + 0xf80) + 0x734);
+		0xf80 is m_pWeaponInfo
+		0xf70 is m_iWeaponMode
+		GetWeaponData() is the 0x40
+		m_flPunchAngle is 0x734
+		*/
+
+		return *reinterpret_cast<CTFWeaponInfo**>(uintptr_t(this) + 0xf80);
 	}
 
 	const WeaponData_t& GetWeaponData()
 	{
-		auto info = GetWeaponInfo();
-		return info->GetWeaponData(m_iWeaponMode());
+		return m_pWeaponInfo()->GetWeaponData(m_iWeaponMode());
 	}
 
 	int GetWeaponID()
@@ -108,6 +116,7 @@ class CTFWeaponBase : public CBaseCombatWeapon
   			uVar5 = FUN_01fdca00(0x40);
   			FUN_01fda880(uVar5,"-use_action_slot_item_server");
 		*/
+
 		using Fn    = int (*)(void *);
 		auto vtable = *reinterpret_cast<void ***>(this);
 		auto fn	    = reinterpret_cast<Fn>(vtable[0xE18 / sizeof(void *)]);
@@ -120,7 +129,7 @@ class CTFWeaponBase : public CBaseCombatWeapon
 	}
 	int GetSlot()
 	{
-		return GetWeaponInfo()->iSlot;
+		return m_pWeaponInfo()->iSlot;
 	}
 
 	EWeaponType GetWeaponType()
@@ -289,6 +298,46 @@ class CTFWeaponBase : public CBaseCombatWeapon
 	Vector GetDeflectionSize()
 	{
 		return Vector(128, 128, 64);
+	}
+
+	float GetSmackDelay()
+	{
+		float delay = GetWeaponData().m_flSmackDelay;
+		return delay > 0 ? delay : 0.2f;
+	}
+
+	bool DoSwingTrace(CGameTrace& trace)
+	{
+		if (!IsMelee()) return false;
+		return vtable_call<530, bool, CGameTrace&>(this, trace);
+	}
+
+	float GetSwingRange()
+	{
+		float range = 48.0f;
+
+		CTFPlayer* pOwner = HandleAs<CTFPlayer*>(m_hOwner());
+
+		if (pOwner)
+		{
+			if (pOwner->InCond(TF_COND_SHIELD_CHARGE))
+			{
+				range = 128.0f;
+			}
+			else
+			{
+				int is_sword = AttributeHookValue(0, "is_a_sword", this, nullptr, false);
+				if (is_sword) range = 72.0f;
+			}
+
+			if (pOwner->m_flModelScale() > 1.0f)
+				range *= pOwner->m_flModelScale();
+		}
+
+		float melee_range_multiplier = AttributeHookValue(1.0f, "melee_range_multiplier", this, nullptr, false);
+		range *= melee_range_multiplier;
+
+		return range;
 	}
 };
 
