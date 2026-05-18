@@ -212,6 +212,7 @@ void DrawESPTab()
 		float accent[3] = {Config.colors.menu_accent.r() / 255.0f, Config.colors.menu_accent.g() / 255.0f, Config.colors.menu_accent.b() / 255.0f};
 		float ammo[3] = {Config.colors.ammopack.r() / 255.0f, Config.colors.ammopack.g() / 255.0f, Config.colors.ammopack.b() / 255.0f};
 		float medkit[3] = {Config.colors.healthkit.r() / 255.0f, Config.colors.healthkit.g() / 255.0f, Config.colors.healthkit.b() / 255.0f};
+		float backtrack[3] = {Config.colors.backtrack.r() / 255.0f, Config.colors.backtrack.g() / 255.0f, Config.colors.backtrack.b() / 255.0f};
 
 		if (ImGui::ColorEdit3("RED Team", red))
 			Config.colors.red_team.SetColor(red[0] * 255.0f, red[1] * 255.0f, red[2] * 255.0f, 255.0f);
@@ -231,11 +232,14 @@ void DrawESPTab()
 			ChangeMenuAccentColor();
 		}
 
-		if (ImGui::ColorEdit3("Ammo Pack", weapon))
+		if (ImGui::ColorEdit3("Ammo Pack", ammo))
 			Config.colors.ammopack.SetColor(ammo[0] * 255.0f, ammo[1] * 255.0f, ammo[2] * 255.0f, 255.0f);
 
-		if (ImGui::ColorEdit3("Medkit", weapon))
+		if (ImGui::ColorEdit3("Medkit", medkit))
 			Config.colors.healthkit.SetColor(medkit[0] * 255.0f, medkit[1] * 255.0f, medkit[2] * 255.0f, 255.0f);
+
+		if (ImGui::ColorEdit3("Backtrack", backtrack))
+			Config.colors.backtrack.SetColor(backtrack[0] * 255.0f, backtrack[1] * 255.0f, backtrack[2] * 255.0f, 255.0f);
 
 		ImGui::TableNextColumn();
 		ImGui::Separator();

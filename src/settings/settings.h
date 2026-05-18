@@ -351,13 +351,14 @@ struct TriggerConfig
 
 struct ColorsConfig
 {
-	Color red_team	    = {255, 0, 0, 255};
-	Color blu_team	    = {0, 255, 255, 255};
-	Color aimbot_target = {255, 255, 255, 255};
-	Color weapon	    = {255, 255, 255, 255};
-	Color menu_accent   = {0, 150, 255, 255};
-	Color healthkit	    = {255, 100, 100, 255};
-	Color ammopack      = {255, 255, 255, 255};
+	Color red_team		{255, 0, 0, 255};
+	Color blu_team		{0, 255, 255, 255};
+	Color aimbot_target	{255, 255, 255, 255};
+	Color weapon		{255, 255, 255, 255};
+	Color menu_accent	{0, 150, 255, 255};
+	Color healthkit		{255, 100, 100, 255};
+	Color ammopack		{255, 255, 255, 255};
+	Color backtrack		{255, 255, 255, 255};
 };
 
 struct RadarConfig

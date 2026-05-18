@@ -253,9 +253,6 @@ void Backtrack::DoPostScreenSpaceEffects()
 	interfaces::RenderView->GetColorModulation(savedColor);
 	savedBlend = interfaces::RenderView->GetBlend();
 
-	float color[] = {1.0f, 1.0f, 1.0f};
-	interfaces::RenderView->SetColorModulation(color);
-
 	auto DrawRecords = [&]()
 	{
 		switch (mode)
@@ -302,6 +299,14 @@ void Backtrack::DoPostScreenSpaceEffects()
 			break;
 		}
 	};
+
+	float color[3]
+	{
+		Config.colors.backtrack.r()/255.0f,
+		Config.colors.backtrack.g()/255.0f,
+		Config.colors.backtrack.b()/255.0f
+	};
+	interfaces::RenderView->SetColorModulation(color);
 
 	for (const auto& mat_name : Config.backtrack.active_materials)
 	{
