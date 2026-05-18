@@ -251,55 +251,55 @@ hooks = {}
 ---@param event "CreateMove"|"ImGui"|"FireGameEvent"|"Draw"|"LevelInitPreEntity"|"LevelInitPostEntity"|"DoPostScreenSpaceEffects"|"OverrideView"|"FrameStageNotify"|"GameShutdown"|"DrawModel"|"AimbotShoot"
 ---@param id string
 ---@param func function
-function hooks:add(event, id, func) end
+function hooks.add(event, id, func) end
 
 ---@param event "CreateMove"|"ImGui"|"FireGameEvent"|"Draw"|"LevelInitPreEntity"|"LevelInitPostEntity"|"DoPostScreenSpaceEffects"|"OverrideView"|"FrameStageNotify"|"GameShutdown"|"DrawModel"|"AimbotShoot"
 ---@param id string
-function hooks:remove(event, id) end
+function hooks.remove(event, id) end
 
 engine = {}
 
 ---@param filepath string
-function engine:play_sounds(filepath) end
+function engine.play_sounds(filepath) end
 
 ---@return integer
-function engine:get_max_clients() end
+function engine.get_max_clients() end
 
 ---@return Vector3
-function engine:get_viewangles() end
+function engine.get_viewangles() end
 
 ---@param viewangles Vector3
-function engine:set_viewangles(viewangles) end
+function engine.set_viewangles(viewangles) end
 
 ---@return boolean
-function engine:is_taking_screenshot() end
+function engine.is_taking_screenshot() end
 
 ---@return boolean
-function engine:is_in_game() end
+function engine.is_in_game() end
 
 ---@param cmd string
 ---@param unrestricted boolean?
-function engine:client_cmd(cmd, unrestricted) end
+function engine.client_cmd(cmd, unrestricted) end
 
 ---@return boolean
-function engine:is_gameui_visible() end
+function engine.is_gameui_visible() end
 
 ---@return boolean
-function engine:is_console_visible() end
+function engine.is_console_visible() end
 
 ---@return boolean
-function engine:is_connected() end
+function engine.is_connected() end
 
 entities = {}
 
 ---@param entindex integer
-function entities:get_client_entity(entindex) end
+function entities.get_client_entity(entindex) end
 
 ---@return integer
-function entities:get_max_entities() end
+function entities.get_max_entities() end
 
 ---@return Player?
-function entities:get_localplayer() end
+function entities.get_localplayer() end
 
 IN_ATTACK = (1 << 0)
 IN_JUMP = (1 << 1)

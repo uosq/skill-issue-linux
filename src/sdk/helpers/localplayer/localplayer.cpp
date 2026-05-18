@@ -265,7 +265,7 @@ bool helper::localplayer::Shoot(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUser
 {
 	bool ret = ShootInternal(pLocal, pWeapon, pCmd, pTarget);
 
-	features::scriptmanager.CallHooks("AimbotShoot", pCmd, pTarget);
+	if (ret) features::scriptmanager.CallHooks("AimbotShoot", pCmd, pTarget);
 
 	return ret;
 }

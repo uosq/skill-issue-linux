@@ -669,6 +669,8 @@ void CAimbotProjectile::RunAim(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserC
 	if (m_pTarget == nullptr || m_vecPath.empty())
 		return;
 
+	pState.target = m_pTarget;
+
 	ApplyAim(pLocal, pWeapon, pCmd, pState);
 
 	// we never get melee weapons so this doesn't matter
