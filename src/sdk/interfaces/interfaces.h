@@ -79,7 +79,7 @@ namespace factories
 	extern CreateInterfaceFn materialsystem;
 	extern CreateInterfaceFn studiorender;
 	extern CreateInterfaceFn vphysics;
-	extern CreateInterfaceFn tier0;
+	//extern CreateInterfaceFn tier0;
 }; // namespace factories
 
 template <typename T> bool GetInterface(T *&out, CreateInterfaceFn factory, const char *name);

@@ -1,0 +1,22 @@
+#pragma once
+
+#include "../../../sdk/helpers/helper.h"
+#include "../../../sdk/interfaces/interfaces.h"
+#include "../../../settings/settings.h"
+
+#include "../../feature.h"
+
+class Thirdperson
+{
+public:
+	// Call in FrameStageNotify -> FRAME_NET_UPDATE_END
+	void FrameStageNotify(CTFPlayer *pLocal);
+	void OverrideView(CTFPlayer *pLocal, CViewSetup *pView);
+
+	bool IsThirdPerson(CTFPlayer *pLocal);
+	bool ShouldIgnoreBind(CTFPlayer *pLocal);
+
+	Vector GetCameraOffset();
+};
+
+DECLARE_FEATURE(Thirdperson, thirdperson)

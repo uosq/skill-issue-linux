@@ -1,0 +1,120 @@
+#include "../../imgui/imgui.h"
+#include "../../imgui/imgui_stdlib.h"
+
+#include "../../features/configmanager/configmgr.h"
+
+#define CONFIG_DIR "./skill-issue/configs/"
+
+static int s_iSelectedIndex = -1;
+static std::string s_strNewConfigName = "";
+static bool s_bOpenDeletePopup = false;
+static bool s_bFirstTimeOpen = true;
+
+void DrawConfigTab()
+{
+	const std::string configFolder = CONFIG_DIR;
+	auto& configs = features::configs.GetConfigs();
+
+	if (s_bFirstTimeOpen)
+	{
+		features::configs.RefreshConfigs();
+		s_bFirstTimeOpen = false;
+	}
+
+	if (ImGui::Button("Refresh"))
+	{
+		features::configs.RefreshConfigs();
+		s_iSelectedIndex = -1;
+	}
+
+	ImGui::SameLine();
+
+	float buttonWidth = 120.0f;
+	ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x - buttonWidth - ImGui::GetStyle().ItemSpacing.x);
+
+	ImGui::InputText("##NewConfigName", &s_strNewConfigName, sizeof(s_strNewConfigName));
+
+	ImGui::SameLine();
+
+	if (ImGui::Button("Create & Save", ImVec2(buttonWidth, 0)))
+	{
+		if (s_strNewConfigName.length() > 0)
+		{
+			std::string filename = s_strNewConfigName + ".ini";
+			std::string fullPath = configFolder + filename;
+
+			features::configs.Save(fullPath);
+			features::configs.RefreshConfigs();
+		}
+	}
+
+	ImGui::Separator();
+
+	if (ImGui::BeginChild("##Configs"))
+	{
+		// config list
+		for (int i = 0; i < configs.size(); ++i)
+		{
+			bool isSelected = s_iSelectedIndex == i;
+
+			if (ImGui::Selectable(configs[i].c_str(), isSelected))
+				s_iSelectedIndex = i;
+
+			if (isSelected)
+			{
+				std::string fullPath = configFolder + configs[i] + ".ini";
+
+				if (ImGui::Button("Load"))
+				{
+					(void)features::configs.Load(fullPath);
+					features::configs.RefreshConfigs();
+				}
+
+				ImGui::SameLine();
+
+				if (ImGui::Button("Save"))
+				{
+					(void)features::configs.Save(fullPath);
+					features::configs.RefreshConfigs();
+				}
+
+				ImGui::SameLine();
+
+				if (ImGui::Button("Delete"))
+					s_bOpenDeletePopup = true;
+
+				// this doesn't look good to me
+				// should I change it?
+				if (s_bOpenDeletePopup)
+					ImGui::OpenPopup("ConfirmDelete");
+
+				if (ImGui::BeginPopupModal("ConfirmDelete", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
+				{
+					ImGui::Text("Delete selected config?");
+					ImGui::Separator();
+
+					if (ImGui::Button("Yes", ImVec2(120, 0)))
+					{
+						features::configs.Delete(fullPath);
+						features::configs.RefreshConfigs();
+						s_iSelectedIndex   = -1;
+						s_bOpenDeletePopup = false;
+						ImGui::CloseCurrentPopup();
+					}
+
+					ImGui::SameLine();
+
+					if (ImGui::Button("No", ImVec2(120, 0)))
+					{
+						s_bOpenDeletePopup = false;
+						ImGui::CloseCurrentPopup();
+					}
+
+					ImGui::EndPopup();
+				}
+			}
+		}
+	}
+
+	ImGui::EndChild();
+}
