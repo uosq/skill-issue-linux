@@ -43,6 +43,10 @@ MARCH=$(sk_get_march)
 
 sk_update_app()
 {
+	if [ -d "skill-issue" ]; then
+		rm -fr "skill-issue"
+	fi
+
 	# download our shit
 	wget -P skill-issue/ "https://nightly.link/uosq/skill-issue-linux/workflows/main/main/skillissue-$MARCH.zip"
 	unzip skill-issue/skillissue-$MARCH.zip -d skill-issue
@@ -115,17 +119,22 @@ while true; do
 
 		"Attach")
 		whiptail --title "Attaching" --infobox "Attaching Skill Issue" 8 40
-		
+
 		PID=$(pidof -s tf_linux64)
 
-		if [ -z $PID ]; then
+		if [ -z "$PID" ]; then
 			whiptail --title "Fail" --msgbox "TF2 is not open!" 8 40
+		else
+			cd skill-issue
+
+			if sk_attach; then
+				whiptail --title "Success" --msgbox "Attached!" 8 40
+			else
+				whiptail --title "Fail" --msgbox "Failed to attach! (Check terminal for GDB errors)" 8 40
+			fi
+
+			cd ..
 		fi
-
-		cd skill-issue
-		sk_attach
-
-		exit 0
 		;;
 
 		"Exit")
