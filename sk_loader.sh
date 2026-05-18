@@ -72,11 +72,10 @@ sk_attach()
 
 while true; do
 	CHOICE=$(whiptail --title "Skill Issue Loader" --menu "What would you like to do?" 16 55 5 \
-		"Download"	"Fetch the source code" \
-		"Compile"	"Build the application" \
-		"Update"	"Fetch changes and recompile" \
-		"Attach"	"Run/Attach to the program" \
-		"Exit"		"Close this loader" \
+		"Download"	"Get latest build" \
+		"Compile"	"Build SK" \
+		"Attach"	"Attach to TF2" \
+		"Exit"		"Close this" \
 		3>&1 1>&2 2>&3)
 
 	# check if pressed cancel or esc
@@ -107,14 +106,6 @@ while true; do
 
 			whiptail --title "Success" --msgbox "Compilation complete!" 8 40
 		fi
-		;;
-
-		"Update")
-		whiptail --title "Updating" --infobox "Pulling updates and recompiling..." 8 40
-
-		sk_update_app
-
-		whiptail --title "Success" --msgbox "Update complete!" 8 40
 		;;
 
 		"Attach")

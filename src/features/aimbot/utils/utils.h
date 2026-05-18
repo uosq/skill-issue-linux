@@ -66,4 +66,7 @@ namespace AimbotUtils
 	std::vector<EntityListEntry> GetTargets(const bool &bCanHitTeammates, int localTeam);
 
 	bool RebuildAnimationMatrix(CTFPlayer* pPlayer, const Vector& predictedOrigin, const Vector& predictedVelocity, float predictedTime, matrix3x4* outBones);
+
+	Vec3 GetSmoothedAngle(const Vec3& viewAngles, const Vec3& targetDir);
+	CBaseEntity* LookingAtEntity(CTFPlayer* pLocal, const Vec3& viewAngles);
 }; // namespace AimbotUtils

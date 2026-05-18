@@ -213,7 +213,7 @@ void GUI::RunMainWindow()
 					ImGui::EndTabItem();
 				}
 
-				if (ImGui::BeginTabItem("TRIGGER"))
+				/*if (ImGui::BeginTabItem("TRIGGER"))
 				{
 					if (ImGui::BeginChild("MainTabContent"))
 					{
@@ -221,7 +221,7 @@ void GUI::RunMainWindow()
 					}
 					ImGui::EndChild();
 					ImGui::EndTabItem();
-				}
+				}*/
 
 				if (ImGui::BeginTabItem("LUA"))
 				{

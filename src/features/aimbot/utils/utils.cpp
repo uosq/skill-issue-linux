@@ -270,3 +270,29 @@ bool AimbotUtils::RebuildAnimationMatrix(CTFPlayer* pPlayer, const Vector& predi
 
         return bSuccess;
 }
+
+Vec3 AimbotUtils::GetSmoothedAngle(const Vec3& viewAngles, const Vec3& targetDir)
+{
+	Vector delta = targetDir - viewAngles;
+	delta.x = Math::NormalizeAngle(delta.x);
+	delta.y = Math::NormalizeAngle(delta.y);
+	
+	float smoothFactor = std::max(1.0f, Config.aimbot.smoothness);
+	Vector stepAngle = delta / smoothFactor;
+
+	return viewAngles + stepAngle;
+}
+
+CBaseEntity* AimbotUtils::LookingAtEntity(CTFPlayer* pLocal, const Vec3& viewAngles)
+{
+	CGameTrace trace {};
+	CTraceFilterHitscan filter {};
+	filter.pSkip = pLocal;
+
+	Vec3 forward; /* = */ Math::AngleVectors(viewAngles, &forward);
+	Vec3 shoot_pos = pLocal->GetEyePos();
+
+	helper::engine::Trace(shoot_pos, shoot_pos + (forward * 8192), MASK_SHOT | CONTENTS_HITBOX, &filter, &trace);
+
+	return trace.m_pEnt;
+}

@@ -24,11 +24,11 @@ public:
 
 	bool GetProjectileInfo(ProjectileInfo_t &pOut, CTFPlayer *pLocal, CTFWeaponBase *pWeapon);
 
-      protected:
+private:
 	float GetInitialZOffset(CTFWeaponBase *pWeapon, const Vector &vecMaxs);
 	bool SolveBallisticArc(Vector &outAngle, const Vector p0, const Vector p1, float flSpeed, float flGravity);
 	bool CheckTrajectory(CBaseEntity *pTarget, const Vector vecStartPos, const Vector vecTargetPos,
-			     const Vector vecAngle, const ProjectileInfo_t &prjInfo, float flGravity);
+			const Vector vecAngle, const ProjectileInfo_t &prjInfo, float flGravity);
 	std::vector<PotentialTarget> GetBestTargets(CTFPlayer *pLocal, CTFWeaponBase *pWeapon);
 	float GetAimDrop(float flGravity, float flTimeSeconds);
 	void DrawPath(ImDrawList* pDraw, const std::vector<Vector>& vPath);
@@ -38,6 +38,10 @@ public:
 	void OnGenericWeapons(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd, AimbotState& pState);
 	void OnChargeWeapons(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd, AimbotState& pState);
 	void OnRightClickWeapons(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd, AimbotState& pState);
+
+	void ApplyPlainAim(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd, AimbotState& pState);
+	void ApplySmoothAssistanceAim(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd, AimbotState& pState);
+	void ApplySilentAim(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd, AimbotState& pState);
 	void ApplyAim(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd, AimbotState& pState);
 
 private:

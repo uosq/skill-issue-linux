@@ -243,28 +243,22 @@ bool AimbotHitscan::FindBestTarget(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CU
 	return true;
 }
 
-static void PlainAimbot(CUserCmd* pCmd, const AimbotTarget& target)
+static void PlainAimbot(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd, const AimbotTarget& target)
 {
 	if (Config.aimbot.packed.autoshoot)
-		pCmd->buttons |= IN_ATTACK;
+		helper::localplayer::Shoot(pLocal, pWeapon, pCmd, target.entity);
 
 	Vec3 angle = target.dir;
 	pCmd->viewangles = angle;
 	interfaces::Engine->SetViewAngles(angle);
 }
 
-static void SmoothAssistanceAimbot(CTFPlayer* pLocal, CUserCmd* pCmd, const AimbotTarget& target, const AimbotMode& mode, const Vec3& viewAngles, const Vec3& viewForward, const Vec3& shootPos, AimbotState& state)
+static void SmoothAssistanceAimbot(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd, const AimbotTarget& target, const AimbotMode& mode, const Vec3& viewAngles, const Vec3& viewForward, const Vec3& shootPos, AimbotState& state)
 {
 	if (mode == AimbotMode::ASSISTANCE && pCmd->mousedx == 0 && pCmd->mousedy == 0)
 		return;
 	
-	Vector delta = target.dir - viewAngles;
-	delta.x = Math::NormalizeAngle(delta.x);
-	delta.y = Math::NormalizeAngle(delta.y);
-	
-	float smoothFactor = std::max(1.0f, Config.aimbot.smoothness);
-	Vector stepAngle = delta / smoothFactor;
-	Vector smoothedAngle = viewAngles + stepAngle;
+	Vec3 smoothedAngle = AimbotUtils::GetSmoothedAngle(viewAngles, target.dir);
 	
 	state.angle = smoothedAngle;
 	interfaces::Engine->SetViewAngles(smoothedAngle);
@@ -286,15 +280,17 @@ static void SmoothAssistanceAimbot(CTFPlayer* pLocal, CUserCmd* pCmd, const Aimb
 		bShouldShoot = true;
 	
 	if (bShouldShoot && Config.aimbot.packed.autoshoot)
-		pCmd->buttons |= IN_ATTACK;
+		helper::localplayer::Shoot(pLocal, pWeapon, pCmd, target.entity);
 }
 
 static void SilentAimbot(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd, const AimbotTarget& target, AimbotState& state)
 {
-	if (Config.aimbot.packed.autoshoot)
-		pCmd->buttons |= IN_ATTACK;
+	bool shooting = false;
 
-	if (helper::localplayer::IsAttacking(pLocal, pWeapon, pCmd))
+	if (Config.aimbot.packed.autoshoot)
+		shooting = helper::localplayer::Shoot(pLocal, pWeapon, pCmd, target.entity);
+
+	if (shooting || helper::localplayer::IsAttacking(pLocal, pWeapon, pCmd))
 	{
 		pCmd->viewangles = target.dir;
 		state.angle = target.dir;
@@ -319,13 +315,13 @@ static void ApplyAim(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCmd, 
 	{
 	case AimbotMode::PLAIN:
 	{
-		PlainAimbot(pCmd, target);
+		PlainAimbot(pLocal, pWeapon, pCmd, target);
 		break;
 	}
 	case AimbotMode::ASSISTANCE:
 	case AimbotMode::SMOOTH:
 	{
-		SmoothAssistanceAimbot(pLocal, pCmd, target, mode, viewAngles, viewForward, shootPos, state);
+		SmoothAssistanceAimbot(pLocal, pWeapon, pCmd, target, mode, viewAngles, viewForward, shootPos, state);
 		break;
 	}
 	case AimbotMode::SILENT:

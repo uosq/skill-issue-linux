@@ -36,7 +36,7 @@ void Triggerbot::Hitscan(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pC
 	if (trace.m_pEnt->m_iTeamNum() == localTeam)
 		return;
 
-	pCmd->buttons |= IN_ATTACK;
+	helper::localplayer::Shoot(pLocal, pWeapon, pCmd, trace.m_pEnt);
 	features::entities.SetAimbotTarget(trace.m_pEnt);
 }
 

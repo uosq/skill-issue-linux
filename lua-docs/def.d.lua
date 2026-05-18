@@ -248,12 +248,12 @@ function Player:SetNetvarEntity(className, prop, value) end
 
 hooks = {}
 
----@param event "CreateMove"|"ImGui"|"FireGameEvent"|"Draw"|"LevelInitPreEntity"|"LevelInitPostEntity"|"DoPostScreenSpaceEffects"|"OverrideView"|"FrameStageNotify"|"GameShutdown"|"DrawModel"
+---@param event "CreateMove"|"ImGui"|"FireGameEvent"|"Draw"|"LevelInitPreEntity"|"LevelInitPostEntity"|"DoPostScreenSpaceEffects"|"OverrideView"|"FrameStageNotify"|"GameShutdown"|"DrawModel"|"AimbotShoot"
 ---@param id string
 ---@param func function
 function hooks:add(event, id, func) end
 
----@param event "CreateMove"|"ImGui"|"FireGameEvent"|"Draw"|"LevelInitPreEntity"|"LevelInitPostEntity"|"DoPostScreenSpaceEffects"|"OverrideView"|"FrameStageNotify"|"GameShutdown"|"DrawModel"
+---@param event "CreateMove"|"ImGui"|"FireGameEvent"|"Draw"|"LevelInitPreEntity"|"LevelInitPostEntity"|"DoPostScreenSpaceEffects"|"OverrideView"|"FrameStageNotify"|"GameShutdown"|"DrawModel"|"AimbotShoot"
 ---@param id string
 function hooks:remove(event, id) end
 

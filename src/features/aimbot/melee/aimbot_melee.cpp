@@ -14,6 +14,9 @@ static bool CanHit
 	float target_dist // distance to the target's current or predicted position
 )
 {
+	assert(pWeapon && "pWeapon is null");
+	assert(pTarget && "pTarget is null");
+
 	Vec3 swingMins {}, swingMaxs {};
 	float fBoundsScale = AttributeHookValue(1.0f, "melee_bounds_multiplier", pWeapon, nullptr, true);
 
@@ -46,10 +49,14 @@ static bool CanHit
 
 static bool CanWrenchHitBuilding(CBaseEntity* pTarget, CTFWeaponBase* pWeapon)
 {
+	assert(pTarget && "pTarget is null");
+	assert(pWeapon && "pWeapon is null");
+
 	if (!pTarget->IsBuilding() || pWeapon->GetWeaponID() != TF_WEAPON_WRENCH)
 		return false;
 
 	CBaseObject* pObj = static_cast<CBaseObject*>(pTarget);
+	assert(pObj && "pObj is null");
 
 	int max_level = pObj->m_iHighestUpgradeLevel();
 	int current_level = pObj->m_iUpgradeLevel();
@@ -66,6 +73,76 @@ static bool CanWrenchHitBuilding(CBaseEntity* pTarget, CTFWeaponBase* pWeapon)
 static inline bool LocalPlayerHasMetal(CTFPlayer* pLocal)
 {
 	return pLocal->m_iAmmo()[TF_AMMO_METAL] > 0;
+}
+
+static void ApplyAim(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CBaseEntity* pTarget, AimbotState& state, const Vec3& viewAngles, Vec3 targetAngles, CUserCmd* pCmd)
+{
+	assert(pLocal && "pLocal is null");
+	assert(pTarget && "pTarget is null");
+	assert(pCmd && "pCmd is null");
+
+	state.shouldSilent = false;
+	state.running = true;
+
+	switch ((AimbotMode)Config.aimbot.packed.aimmode)
+	{
+	case AimbotMode::PLAIN:
+	{
+		interfaces::Engine->SetViewAngles(targetAngles);
+		pCmd->viewangles = targetAngles;
+		state.angle = targetAngles;
+
+		if (Config.aimbot.packed.autoshoot)
+			pCmd->buttons |= IN_ATTACK;
+
+		break;
+	}
+
+	case AimbotMode::SMOOTH:
+	case AimbotMode::ASSISTANCE:
+	{
+		if (Config.aimbot.packed.aimmode == (int)AimbotMode::ASSISTANCE)
+		{
+			if (pCmd->mousedx == 0 && pCmd->mousedy == 0)
+				break;
+		}
+
+		Vec3 smoothedAngle = AimbotUtils::GetSmoothedAngle(viewAngles, targetAngles);
+
+		state.angle = smoothedAngle;
+		pCmd->viewangles = smoothedAngle;
+		interfaces::Engine->SetViewAngles(smoothedAngle);
+
+		CBaseEntity* pAimEntity = AimbotUtils::LookingAtEntity(pLocal, smoothedAngle);
+
+		if (pAimEntity != pTarget)
+			break;
+
+		if (Config.aimbot.packed.autoshoot)
+			pCmd->buttons |= IN_ATTACK;
+
+		break;
+	}
+
+	case AimbotMode::SILENT:
+	{
+		if (Config.aimbot.packed.autoshoot)
+			pCmd->buttons |= IN_ATTACK;
+
+		if (helper::localplayer::IsAttacking(pLocal, pWeapon, pCmd))
+		{
+			state.shouldSilent = true;
+			pCmd->viewangles = targetAngles;
+			state.angle = targetAngles;
+		}
+
+		break;
+	}
+
+	case AimbotMode::INVALID:
+	case AimbotMode::MAX:
+	break;
+	}
 }
 
 // pretty legit ngl
@@ -102,11 +179,12 @@ static void LegitMelee(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd
 		}
 	}
 
-	state.angle = pCmd->viewangles;
+        state.angle = pCmd->viewangles;
 	state.shouldSilent = false;
 	state.running = true;
 
-	pCmd->buttons |= IN_ATTACK;
+	if (Config.aimbot.packed.autoshoot)
+		pCmd->buttons |= IN_ATTACK;
 
 	features::entities.SetAimbotTarget(pTarget);
 }
@@ -221,23 +299,12 @@ static void PredictedMelee(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* 
 	if (pTarget == nullptr)
 		return;
 
-	if (Config.aimbot.packed.autoshoot)
-		pCmd->buttons |= IN_ATTACK;
-
-	if (helper::localplayer::IsAttacking(pLocal, pWeapon, pCmd))
-	{
-		pCmd->viewangles = targetAngles;
-
-		state.running = true;
-		state.angle = targetAngles;
-		state.target = pTarget;
-		state.shouldSilent = true;
-	}
+	ApplyAim(pLocal, pWeapon, pTarget, state, viewAngles, targetAngles, pCmd);
 
 	features::entities.SetAimbotTarget(pTarget);
 }
 
-static void NormalMelee(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd, AimbotState& state)
+static void RageMelee(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd, AimbotState& state)
 {
 	assert(pLocal && "Local Player is null");
 	assert(pWeapon && "Local Weapon is null");
@@ -355,21 +422,10 @@ static void NormalMelee(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCm
 	if (pTarget == nullptr)
 		return;
 
-	if (Config.aimbot.packed.autoshoot)
-		pCmd->buttons |= IN_ATTACK;
+	ApplyAim(pLocal, pWeapon, pTarget, state, viewAngles, targetAngles, pCmd);
 
-	if (helper::localplayer::IsAttacking(pLocal, pWeapon, pCmd))
-	{
-		pCmd->viewangles = targetAngles;
-
-		if (best_tick != -1)
-			pCmd->tick_count = best_tick;
-
-		state.running = true;
-		state.angle = targetAngles;
-		state.target = pTarget;
-		state.shouldSilent = true;
-	}
+	if (best_tick != -1)
+		pCmd->tick_count = best_tick;
 
 	features::entities.SetAimbotTarget(pTarget);
 }
@@ -398,7 +454,7 @@ void AimbotMelee::Run(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCmd,
 	break;
 
 	case MeleeMode::RAGE:
-	NormalMelee(pLocal, pWeapon, pCmd, state);
+	RageMelee(pLocal, pWeapon, pCmd, state);
 	break;
 
 	case MeleeMode::NONE:

@@ -533,21 +533,87 @@ void CAimbotProjectile::RunMain(CTFPlayer *pLocal, CTFWeaponBase *pWeapon)
 	}
 }
 
-void CAimbotProjectile::ApplyAim(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd, AimbotState& pState)
+void CAimbotProjectile::ApplyPlainAim(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd, AimbotState& pState)
+{
+	assert(pLocal && "pLocal is null");
+	assert(pWeapon && "pWeapon is null");
+	assert(pCmd && "pCmd is null");
+
+	pState.targetPath = m_vecPath;
+	pState.running = true;
+	pState.angle = m_vecAimAngle;
+	pState.shouldSilent = false;
+
+	pCmd->viewangles = m_vecAimAngle;
+	interfaces::Engine->SetViewAngles(m_vecAimAngle);
+}
+
+void CAimbotProjectile::ApplySmoothAssistanceAim(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd, AimbotState& pState)
+{
+	if (Config.aimbot.packed.aimmode == (int)AimbotMode::ASSISTANCE && pCmd->mousedx == 0 && pCmd->mousedy == 0)
+		return;
+
+	Vec3 viewAngles; /* = */ interfaces::Engine->GetViewAngles(viewAngles);
+	Vec3 smoothed = AimbotUtils::GetSmoothedAngle(viewAngles, m_vecAimAngle);
+
+	pState.targetPath = m_vecPath;
+	pState.running = true;
+	pState.angle = smoothed;
+	pState.shouldSilent = false;
+
+	pCmd->viewangles = smoothed;
+	interfaces::Engine->SetViewAngles(smoothed);
+
+	float fov = Math::CalcFov(smoothed, m_vecAimAngle);
+
+	if (fov > 5.0f)
+		return;
+
+	if (Config.aimbot.packed.autoshoot)
+		helper::localplayer::Shoot(pLocal, pWeapon, pCmd, pState.target);
+}
+
+void CAimbotProjectile::ApplySilentAim(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd, AimbotState& pState)
 {
 	pState.targetPath = m_vecPath;
-	pState.running	  = true;
-	pState.angle	  = m_vecAimAngle;
+	pState.running = true;
+	pState.angle = m_vecAimAngle;
 
-	pCmd->viewangles  = m_vecAimAngle;
+	bool shooting = false;
 
-	AimbotMode mode	  = static_cast<AimbotMode>(Config.aimbot.packed.aimmode);
+	if (Config.aimbot.packed.autoshoot)
+		shooting = helper::localplayer::Shoot(pLocal, pWeapon, pCmd, pState.target);
 
-	if (mode == AimbotMode::SILENT && !IsRightAttack(pWeapon))
-		pState.shouldSilent = true;
+	if (shooting || helper::localplayer::IsAttacking(pLocal, pWeapon, pCmd))
+	{
+		pCmd->viewangles = m_vecAimAngle;
+		pState.shouldSilent = !IsRightAttack(pWeapon) && pWeapon->m_iItemDefinitionIndex() != Pyro_m_DragonsFury;
+	}
+}
 
-	if (mode == AimbotMode::PLAIN)
-		interfaces::Engine->SetViewAngles(m_vecAimAngle);
+void CAimbotProjectile::ApplyAim(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd, AimbotState& pState)
+{
+	AimbotMode mode = static_cast<AimbotMode>(Config.aimbot.packed.aimmode);
+
+	switch(mode)
+	{
+        case AimbotMode::PLAIN:
+	ApplyPlainAim(pLocal, pWeapon, pCmd, pState);
+	break;
+
+        case AimbotMode::SMOOTH:
+        case AimbotMode::ASSISTANCE:
+	ApplySmoothAssistanceAim(pLocal, pWeapon, pCmd, pState);
+	break;
+
+        case AimbotMode::SILENT:
+	ApplySilentAim(pLocal, pWeapon, pCmd, pState);
+	break;
+
+	case AimbotMode::INVALID:
+        case AimbotMode::MAX:
+        break;
+        }
 }
 
 // i know i should just merge them in a single function
@@ -559,10 +625,12 @@ void CAimbotProjectile::ApplyAim(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUse
 // that is only click and shoot
 void CAimbotProjectile::OnGenericWeapons(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd, AimbotState& pState)
 {
-	if (Config.aimbot.packed.autoshoot)
-		pCmd->buttons |= IN_ATTACK;
+	bool shooting = false;
 
-	if (helper::localplayer::IsAttacking(pLocal, pWeapon, pCmd))
+	if (Config.aimbot.packed.autoshoot)
+		shooting = helper::localplayer::Shoot(pLocal, pWeapon, pCmd, pState.target);
+
+	if (shooting || helper::localplayer::IsAttacking(pLocal, pWeapon, pCmd))
 		ApplyAim(pLocal, pWeapon, pCmd, pState);
 }
 
@@ -570,40 +638,13 @@ void CAimbotProjectile::OnGenericWeapons(CTFPlayer* pLocal, CTFWeaponBase* pWeap
 // like sticky bomb launcher and huntsman
 void CAimbotProjectile::OnChargeWeapons(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd, AimbotState& pState)
 {
-	float flchargebegintime = static_cast<CTFPipebombLauncher *>(pWeapon)->m_flChargeBeginTime();
-
-	float charge =	flchargebegintime > 0.f
-			? TICKS_TO_TIME(pLocal->GetTickBase()) - flchargebegintime
-			: 0.f;
-
-	// loose cannon starts at 1
-	bool is_cannon = pWeapon->GetWeaponID() == TF_WEAPON_CANNON;
-	if (is_cannon)
-		charge = static_cast<CTFGrenadeLauncher*>(pWeapon)->m_flDetonateTime();
-	// should probably normalize to [0.0, 1.0] but fuck it
-
 	bool autoshoot = Config.aimbot.packed.autoshoot;
+	bool shooting = false;
 
 	if (autoshoot)
-	{
-		// just to be sure yk
-		if (charge <= 0.0f)
-		{
-			pCmd->buttons |= IN_ATTACK;
-			return; // cant do shit anyway
-		}
-		else
-		{
-			pCmd->buttons &= ~IN_ATTACK;
+		shooting = helper::localplayer::Shoot(pLocal, pWeapon, pCmd, pState.target);
 
-			// we already know we are shooting
-			// no need for IsAttacking
-			ApplyAim(pLocal, pWeapon, pCmd, pState);
-			return;
-		}
-	}
-
-	if (helper::localplayer::IsAttacking(pLocal, pWeapon, pCmd))
+	if (shooting || helper::localplayer::IsAttacking(pLocal, pWeapon, pCmd))
 		ApplyAim(pLocal, pWeapon, pCmd, pState);
 }
 
@@ -628,6 +669,10 @@ void CAimbotProjectile::RunAim(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserC
 	if (m_pTarget == nullptr || m_vecPath.empty())
 		return;
 
+	ApplyAim(pLocal, pWeapon, pCmd, pState);
+
+	// we never get melee weapons so this doesn't matter
+	#if 0
 	int weaponID = pWeapon->GetWeaponID();
 
 	switch(weaponID)
@@ -638,16 +683,11 @@ void CAimbotProjectile::RunAim(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserC
 		OnRightClickWeapons(pLocal, pWeapon, pCmd, pState);
 		break;
 
-		case TF_WEAPON_COMPOUND_BOW:
-		case TF_WEAPON_PIPEBOMBLAUNCHER:
-		case TF_WEAPON_CANNON:
-		OnChargeWeapons(pLocal, pWeapon, pCmd, pState);
-		break;
-
 		default:
-		OnGenericWeapons(pLocal, pWeapon, pCmd, pState);
+		ApplyAim(pLocal, pWeapon, pCmd, pState);
 		break;
 	}
+	#endif
 }
 
 void CAimbotProjectile::ResetIndicator()
