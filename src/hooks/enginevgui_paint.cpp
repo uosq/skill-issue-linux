@@ -11,9 +11,9 @@
 
 #include "../core/core.h"
 
-using VGuiPaintFn = void (*)(IEngineVGui *rdi, PaintMode_t paint);
+using VGuiPaintFn = void (*)(IEngineVGuiInternal *rdi, PaintMode_t paint);
 
-static void VGuiPaint(IEngineVGui* rdi, PaintMode_t paint)
+static void VGuiPaint(IEngineVGuiInternal* rdi, PaintMode_t paint)
 {
 	auto original = VMTHooks::EngineVGui.GetOriginal<VGuiPaintFn>(15);
 	original(rdi, paint);

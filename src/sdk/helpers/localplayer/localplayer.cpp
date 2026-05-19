@@ -137,7 +137,7 @@ bool helper::localplayer::Shoot(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUser
 				}
 
 				pCmd->buttons |= IN_ATTACK;
-				return true;
+				return IsAttacking(pLocal, pWeapon, pCmd);
 			}
 
 			case TF_WEAPON_SNIPERRIFLE_CLASSIC:
