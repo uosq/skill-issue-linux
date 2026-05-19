@@ -82,49 +82,74 @@ static uint32_t DrawSliderWithFlag(const char* label, uint32_t flagValue, int mi
 
 static void ChangeMenuAccentColor()
 {
-        const Color& accent = Config.colors.menu_accent;
-        ImGuiStyle& style = ImGui::GetStyle();
+	const Color& accent = Config.colors.menu_accent;
+	ImGuiStyle& style = ImGui::GetStyle();
 
-        // Divide by 255.0f to convert 0-255 into 0.0f-1.0f for ImGui math
-        float r = accent.r() / 255.0f;
-        float g = accent.g() / 255.0f;
-        float b = accent.b() / 255.0f;
-        float a = accent.a() / 255.0f;
+	// Divide by 255.0f to convert 0-255 into 0.0f-1.0f for ImGui math
+	float r = accent.r() / 255.0f;
+	float g = accent.g() / 255.0f;
+	float b = accent.b() / 255.0f;
+	float a = accent.a() / 255.0f;
 
-        float h, s, v;
-        ImGui::ColorConvertRGBtoHSV(r, g, b, h, s, v);
+	float h, s, v;
+	ImGui::ColorConvertRGBtoHSV(r, g, b, h, s, v);
 
-        float hovered_s = std::clamp(s * 0.88f, 0.0f, 1.0f);
-        float hovered_v = std::clamp(v * 1.18f, 0.0f, 1.0f);
+	float hovered_s = std::clamp(s * 0.88f, 0.0f, 1.0f);
+	float hovered_v = std::clamp(v * 1.18f, 0.0f, 1.0f);
 
-        float active_s  = s;
-        float active_v  = std::clamp(v * 1.17f, 0.0f, 1.0f);
+	float active_s  = s;
+	float active_v  = std::clamp(v * 1.17f, 0.0f, 1.0f);
 
-        float r_base, g_base, b_base;
-        ImGui::ColorConvertHSVtoRGB(h, s, v, r_base, g_base, b_base);
+	float r_base, g_base, b_base;
+	ImGui::ColorConvertHSVtoRGB(h, s, v, r_base, g_base, b_base);
 
-        float r_hov, g_hov, b_hov;
-        ImGui::ColorConvertHSVtoRGB(h, hovered_s, hovered_v, r_hov, g_hov, b_hov);
+	float r_hov, g_hov, b_hov;
+	ImGui::ColorConvertHSVtoRGB(h, hovered_s, hovered_v, r_hov, g_hov, b_hov);
 
-        float r_act, g_act, b_act;
-        ImGui::ColorConvertHSVtoRGB(h, active_s, active_v, r_act, g_act, b_act);
+	float r_act, g_act, b_act;
+	ImGui::ColorConvertHSVtoRGB(h, active_s, active_v, r_act, g_act, b_act);
 
-        // base accent
-        style.Colors[ImGuiCol_CheckMark]             = ImVec4(r_base, g_base, b_base, a);
-        style.Colors[ImGuiCol_SliderGrab]            = ImVec4(r_base, g_base, b_base, a);
-        style.Colors[ImGuiCol_HeaderActive]          = ImVec4(r_base, g_base, b_base, a);
-        style.Colors[ImGuiCol_TabActive]             = ImVec4(r_base, g_base, b_base, a);
-        style.Colors[ImGuiCol_TabUnfocusedActive]    = ImVec4(r_base, g_base, b_base, a);
-        style.Colors[ImGuiCol_TextSelectedBg]        = ImVec4(r_base, g_base, b_base, a);
+	// base accent
+	style.Colors[ImGuiCol_CheckMark]             = ImVec4(r_base, g_base, b_base, a);
+	style.Colors[ImGuiCol_SliderGrab]            = ImVec4(r_base, g_base, b_base, a);
+	style.Colors[ImGuiCol_HeaderActive]          = ImVec4(r_base, g_base, b_base, a);
+	style.Colors[ImGuiCol_TabActive]             = ImVec4(r_base, g_base, b_base, a);
+	style.Colors[ImGuiCol_TabUnfocusedActive]    = ImVec4(r_base, g_base, b_base, a);
+	style.Colors[ImGuiCol_TextSelectedBg]        = ImVec4(r_base, g_base, b_base, a);
 
-        // hovered accent 
-        style.Colors[ImGuiCol_ButtonHovered]         = ImVec4(r_hov, g_hov, b_hov, a);
-        style.Colors[ImGuiCol_ButtonActive]          = ImVec4(r_hov, g_hov, b_hov, a);
-        style.Colors[ImGuiCol_HeaderHovered]         = ImVec4(r_hov, g_hov, b_hov, a);
-        style.Colors[ImGuiCol_TabHovered]            = ImVec4(r_hov, g_hov, b_hov, a);
+	// hovered accent
+	style.Colors[ImGuiCol_ButtonHovered]         = ImVec4(r_hov, g_hov, b_hov, a);
+	style.Colors[ImGuiCol_ButtonActive]          = ImVec4(r_hov, g_hov, b_hov, a);
+	style.Colors[ImGuiCol_HeaderHovered]         = ImVec4(r_hov, g_hov, b_hov, a);
+	style.Colors[ImGuiCol_TabHovered]            = ImVec4(r_hov, g_hov, b_hov, a);
 
-        // active accent
-        style.Colors[ImGuiCol_SliderGrabActive]      = ImVec4(r_act, g_act, b_act, a);
+	// active accent
+	style.Colors[ImGuiCol_SliderGrabActive]      = ImVec4(r_act, g_act, b_act, a);
+}
+
+static bool CustomColorEdit(const char* label, Color& color)
+{
+	float col[3]
+	{
+		color.r() / 255.0f,
+		color.g() / 255.0f,
+		color.b() / 255.0f
+	};
+
+	if (ImGui::ColorEdit3(label, col))
+	{
+		color.SetColor
+		(
+			col[0] * 255.0f,
+			col[1] * 255.0f,
+			col[2] * 255.0f,
+			255.0f
+		);
+
+		return true;
+	}
+
+	return false;
 }
 
 void DrawESPTab()
@@ -205,41 +230,17 @@ void DrawESPTab()
 
 		ImGui::TextUnformatted("Colors");
 
-		float red[3] = {Config.colors.red_team.r() / 255.0f, Config.colors.red_team.g() / 255.0f, Config.colors.red_team.b() / 255.0f};
-		float blu[3] = {Config.colors.blu_team.r() / 255.0f, Config.colors.blu_team.g() / 255.0f, Config.colors.blu_team.b() / 255.0f};
-		float target[3] = {Config.colors.aimbot_target.r() / 255.0f, Config.colors.aimbot_target.g() / 255.0f, Config.colors.aimbot_target.b() / 255.0f};
-		float weapon[3] = {Config.colors.weapon.r() / 255.0f, Config.colors.weapon.g() / 255.0f, Config.colors.weapon.b() / 255.0f};
-		float accent[3] = {Config.colors.menu_accent.r() / 255.0f, Config.colors.menu_accent.g() / 255.0f, Config.colors.menu_accent.b() / 255.0f};
-		float ammo[3] = {Config.colors.ammopack.r() / 255.0f, Config.colors.ammopack.g() / 255.0f, Config.colors.ammopack.b() / 255.0f};
-		float medkit[3] = {Config.colors.healthkit.r() / 255.0f, Config.colors.healthkit.g() / 255.0f, Config.colors.healthkit.b() / 255.0f};
-		float backtrack[3] = {Config.colors.backtrack.r() / 255.0f, Config.colors.backtrack.g() / 255.0f, Config.colors.backtrack.b() / 255.0f};
+		CustomColorEdit("RED Team", Config.colors.red_team);
+		CustomColorEdit("BLU Team", Config.colors.blu_team);
+		CustomColorEdit("Aimbot Target", Config.colors.aimbot_target);
+		CustomColorEdit("Weapon", Config.colors.weapon);
 
-		if (ImGui::ColorEdit3("RED Team", red))
-			Config.colors.red_team.SetColor(red[0] * 255.0f, red[1] * 255.0f, red[2] * 255.0f, 255.0f);
-
-		if (ImGui::ColorEdit3("BLU Team", blu))
-			Config.colors.blu_team.SetColor(blu[0] * 255.0f, blu[1] * 255.0f, blu[2] * 255.0f, 255.0f);
-
-		if (ImGui::ColorEdit3("Aimbot Target", target))
-			Config.colors.aimbot_target.SetColor(target[0] * 255.0f, target[1] * 255.0f, target[2] * 255.0f, 255.0f);
-
-		if (ImGui::ColorEdit3("Weapon", weapon))
-			Config.colors.weapon.SetColor(weapon[0] * 255.0f, weapon[1] * 255.0f, weapon[2] * 255.0f, 255.0f);
-
-		if (ImGui::ColorEdit3("Menu Accent", accent))
-		{
-			Config.colors.menu_accent.SetColor(accent[0] * 255.0f, accent[1] * 255.0f, accent[2] * 255.0f, 255.0f);
+		if (CustomColorEdit("Menu Accent", Config.colors.menu_accent))
 			ChangeMenuAccentColor();
-		}
 
-		if (ImGui::ColorEdit3("Ammo Pack", ammo))
-			Config.colors.ammopack.SetColor(ammo[0] * 255.0f, ammo[1] * 255.0f, ammo[2] * 255.0f, 255.0f);
-
-		if (ImGui::ColorEdit3("Medkit", medkit))
-			Config.colors.healthkit.SetColor(medkit[0] * 255.0f, medkit[1] * 255.0f, medkit[2] * 255.0f, 255.0f);
-
-		if (ImGui::ColorEdit3("Backtrack", backtrack))
-			Config.colors.backtrack.SetColor(backtrack[0] * 255.0f, backtrack[1] * 255.0f, backtrack[2] * 255.0f, 255.0f);
+		CustomColorEdit("Ammo Pack", Config.colors.ammopack);
+		CustomColorEdit("Medkit", Config.colors.healthkit);
+		CustomColorEdit("Backtrack", Config.colors.backtrack);
 
 		ImGui::TableNextColumn();
 		ImGui::Separator();

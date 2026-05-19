@@ -533,7 +533,7 @@ void CAimbotProjectile::RunMain(CTFPlayer *pLocal, CTFWeaponBase *pWeapon)
 	}
 }
 
-void CAimbotProjectile::ApplyPlainAim(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd, AimbotState& pState)
+bool CAimbotProjectile::ApplyPlainAim(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd, AimbotState& pState)
 {
 	assert(pLocal && "pLocal is null");
 	assert(pWeapon && "pWeapon is null");
@@ -546,12 +546,14 @@ void CAimbotProjectile::ApplyPlainAim(CTFPlayer* pLocal, CTFWeaponBase* pWeapon,
 
 	pCmd->viewangles = m_vecAimAngle;
 	interfaces::Engine->SetViewAngles(m_vecAimAngle);
+
+	return true;
 }
 
-void CAimbotProjectile::ApplySmoothAssistanceAim(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd, AimbotState& pState)
+bool CAimbotProjectile::ApplySmoothAssistanceAim(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd, AimbotState& pState)
 {
 	if (Config.aimbot.packed.aimmode == (int)AimbotMode::ASSISTANCE && pCmd->mousedx == 0 && pCmd->mousedy == 0)
-		return;
+		return false;
 
 	Vec3 viewAngles; /* = */ interfaces::Engine->GetViewAngles(viewAngles);
 	Vec3 smoothed = AimbotUtils::GetSmoothedAngle(viewAngles, m_vecAimAngle);
@@ -567,13 +569,17 @@ void CAimbotProjectile::ApplySmoothAssistanceAim(CTFPlayer* pLocal, CTFWeaponBas
 	float fov = Math::CalcFov(smoothed, m_vecAimAngle);
 
 	if (fov > 5.0f)
-		return;
+		return false;
+
+	bool shooting = false;
 
 	if (Config.aimbot.packed.autoshoot)
-		helper::localplayer::Shoot(pLocal, pWeapon, pCmd, pState.target);
+		shooting = helper::localplayer::Shoot(pLocal, pWeapon, pCmd, pState.target);
+
+	return shooting;
 }
 
-void CAimbotProjectile::ApplySilentAim(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd, AimbotState& pState)
+bool CAimbotProjectile::ApplySilentAim(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd, AimbotState& pState)
 {
 	pState.targetPath = m_vecPath;
 	pState.running = true;
@@ -588,32 +594,38 @@ void CAimbotProjectile::ApplySilentAim(CTFPlayer* pLocal, CTFWeaponBase* pWeapon
 	{
 		pCmd->viewangles = m_vecAimAngle;
 		pState.shouldSilent = !IsRightAttack(pWeapon) && pWeapon->m_iItemDefinitionIndex() != Pyro_m_DragonsFury;
+		return true;
 	}
+
+	return false;
 }
 
-void CAimbotProjectile::ApplyAim(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd, AimbotState& pState)
+bool CAimbotProjectile::ApplyAim(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd, AimbotState& pState)
 {
 	AimbotMode mode = static_cast<AimbotMode>(Config.aimbot.packed.aimmode);
+	bool ret = false;
 
 	switch(mode)
 	{
         case AimbotMode::PLAIN:
-	ApplyPlainAim(pLocal, pWeapon, pCmd, pState);
+	ret = ApplyPlainAim(pLocal, pWeapon, pCmd, pState);
 	break;
 
         case AimbotMode::SMOOTH:
         case AimbotMode::ASSISTANCE:
-	ApplySmoothAssistanceAim(pLocal, pWeapon, pCmd, pState);
+	ret = ApplySmoothAssistanceAim(pLocal, pWeapon, pCmd, pState);
 	break;
 
         case AimbotMode::SILENT:
-	ApplySilentAim(pLocal, pWeapon, pCmd, pState);
+	ret = ApplySilentAim(pLocal, pWeapon, pCmd, pState);
 	break;
 
 	case AimbotMode::INVALID:
         case AimbotMode::MAX:
         break;
         }
+
+	return ret;
 }
 
 // i know i should just merge them in a single function
@@ -671,25 +683,8 @@ void CAimbotProjectile::RunAim(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserC
 
 	pState.target = m_pTarget;
 
-	ApplyAim(pLocal, pWeapon, pCmd, pState);
-
-	// we never get melee weapons so this doesn't matter
-	#if 0
-	int weaponID = pWeapon->GetWeaponID();
-
-	switch(weaponID)
-	{
-		case TF_WEAPON_LUNCHBOX:
-		case TF_WEAPON_BAT_WOOD:
-		case TF_WEAPON_BAT_GIFTWRAP:
-		OnRightClickWeapons(pLocal, pWeapon, pCmd, pState);
-		break;
-
-		default:
-		ApplyAim(pLocal, pWeapon, pCmd, pState);
-		break;
-	}
-	#endif
+	if (ApplyAim(pLocal, pWeapon, pCmd, pState))
+		AimbotUtils::ShootCallback(pCmd, pState.target);
 }
 
 void CAimbotProjectile::ResetIndicator()

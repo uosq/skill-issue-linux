@@ -69,4 +69,6 @@ namespace AimbotUtils
 
 	Vec3 GetSmoothedAngle(const Vec3& viewAngles, const Vec3& targetDir);
 	CBaseEntity* LookingAtEntity(CTFPlayer* pLocal, const Vec3& viewAngles);
+
+	void ShootCallback(CUserCmd* pCmd, CBaseEntity* pTarget = nullptr);
 }; // namespace AimbotUtils

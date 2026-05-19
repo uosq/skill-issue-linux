@@ -336,8 +336,15 @@ static void ApplyAim(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCmd, 
 
 	features::entities.SetAimbotTarget(target.entity);
 
-	if (target.useBacktrack && helper::localplayer::IsAttacking(pLocal, pWeapon, pCmd))
-		pCmd->tick_count = TIME_TO_TICKS(target.simTime + features::backtrack.GetInterp());
+	bool shooting = helper::localplayer::IsAttacking(pLocal, pWeapon, pCmd);
+
+	if (shooting)
+	{
+		if (target.useBacktrack)
+			pCmd->tick_count = TIME_TO_TICKS(target.simTime + features::backtrack.GetInterp());
+
+		AimbotUtils::ShootCallback(pCmd, target.entity);
+	}
 }
 
 static bool IsLocalPlayerInvalid(CTFPlayer* pLocal)

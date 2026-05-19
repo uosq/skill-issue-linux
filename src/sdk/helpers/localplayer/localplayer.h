@@ -16,7 +16,6 @@ namespace helper
 		void ChatPrintf(int iPlayerIndex, int iFilter, const char *fmt);
 
 		// returns if we are shooting
-		bool ShootInternal(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd, CBaseEntity* pTarget = nullptr);
 		bool Shoot(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd, CBaseEntity* pTarget = nullptr);
 	} // namespace localplayer
 } // namespace helper

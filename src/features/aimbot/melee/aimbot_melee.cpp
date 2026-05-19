@@ -75,7 +75,7 @@ static inline bool LocalPlayerHasMetal(CTFPlayer* pLocal)
 	return pLocal->m_iAmmo()[TF_AMMO_METAL] > 0;
 }
 
-static void ApplyAim(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CBaseEntity* pTarget, AimbotState& state, const Vec3& viewAngles, Vec3 targetAngles, CUserCmd* pCmd)
+static bool ApplyAim(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CBaseEntity* pTarget, AimbotState& state, const Vec3& viewAngles, Vec3 targetAngles, CUserCmd* pCmd)
 {
 	assert(pLocal && "pLocal is null");
 	assert(pTarget && "pTarget is null");
@@ -83,6 +83,8 @@ static void ApplyAim(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CBaseEntity* pTa
 
 	state.shouldSilent = false;
 	state.running = true;
+
+	bool shooting = false;
 
 	switch ((AimbotMode)Config.aimbot.packed.aimmode)
 	{
@@ -94,6 +96,9 @@ static void ApplyAim(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CBaseEntity* pTa
 
 		if (Config.aimbot.packed.autoshoot)
 			pCmd->buttons |= IN_ATTACK;
+
+		if (helper::localplayer::IsAttacking(pLocal, pWeapon, pCmd))
+			shooting = true;
 
 		break;
 	}
@@ -121,6 +126,9 @@ static void ApplyAim(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CBaseEntity* pTa
 		if (Config.aimbot.packed.autoshoot)
 			pCmd->buttons |= IN_ATTACK;
 
+		if (helper::localplayer::IsAttacking(pLocal, pWeapon, pCmd))
+			shooting = true;
+
 		break;
 	}
 
@@ -134,6 +142,7 @@ static void ApplyAim(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CBaseEntity* pTa
 			state.shouldSilent = true;
 			pCmd->viewangles = targetAngles;
 			state.angle = targetAngles;
+			shooting = true;
 		}
 
 		break;
@@ -143,10 +152,12 @@ static void ApplyAim(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CBaseEntity* pTa
 	case AimbotMode::MAX:
 	break;
 	}
+
+	return shooting;
 }
 
 // pretty legit ngl
-static void LegitMelee(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd, AimbotState& state)
+static bool LegitMelee(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd, AimbotState& state)
 {
 	assert(pLocal && "Local Player is null");
 	assert(pWeapon && "Local Weapon is null");
@@ -155,10 +166,10 @@ static void LegitMelee(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd
 	CGameTrace trace {};
 
 	if (!pWeapon->DoSwingTrace(trace))
-		return;
+		return false;
 
 	if (!trace.DidHit() || trace.m_pEnt == nullptr)
-		return;
+		return false;
 
 	CBaseEntity* pTarget = trace.m_pEnt;
 
@@ -172,10 +183,10 @@ static void LegitMelee(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd
 			const bool bHasMetal = LocalPlayerHasMetal(pLocal);
 
 			if (!bHasMetal && pTarget->IsBuilding())
-				return;
+				return false;
 
 			if (!CanWrenchHitBuilding(pTarget, pWeapon))
-				return;
+				return false;
 		}
 	}
 
@@ -187,6 +198,8 @@ static void LegitMelee(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd
 		pCmd->buttons |= IN_ATTACK;
 
 	features::entities.SetAimbotTarget(pTarget);
+
+	return helper::localplayer::IsAttacking(pLocal, pWeapon, pCmd);
 }
 
 static void PredictedMelee(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd, AimbotState& state)
@@ -220,7 +233,7 @@ static void PredictedMelee(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* 
 		features::prediction.BeginPrediction(pLocal, smack_delay);
 
 		if (!features::prediction.Simulate(path) || path.empty())
-			return;
+			return features::prediction.EndPrediction();
 
 		features::prediction.EndPrediction();
 
@@ -299,7 +312,8 @@ static void PredictedMelee(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* 
 	if (pTarget == nullptr)
 		return;
 
-	ApplyAim(pLocal, pWeapon, pTarget, state, viewAngles, targetAngles, pCmd);
+	if (ApplyAim(pLocal, pWeapon, pTarget, state, viewAngles, targetAngles, pCmd))
+		AimbotUtils::ShootCallback(pCmd, pTarget);
 
 	features::entities.SetAimbotTarget(pTarget);
 }
@@ -422,10 +436,11 @@ static void RageMelee(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd,
 	if (pTarget == nullptr)
 		return;
 
-	ApplyAim(pLocal, pWeapon, pTarget, state, viewAngles, targetAngles, pCmd);
-
 	if (best_tick != -1)
 		pCmd->tick_count = best_tick;
+
+	if (ApplyAim(pLocal, pWeapon, pTarget, state, viewAngles, targetAngles, pCmd))
+		AimbotUtils::ShootCallback(pCmd, pTarget);
 
 	features::entities.SetAimbotTarget(pTarget);
 }

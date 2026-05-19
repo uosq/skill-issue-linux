@@ -5,8 +5,6 @@
 #include "../../../sdk/classes/cbaseobject.h"
 #include "../../../sdk/classes/ctfrobotdestruction_robot.h"
 
-#include "../../../features/scriptmanager/scriptmanager.h"
-
 static float GetMinimumHeadshotDamage(CBaseEntity* pTarget)
 {
 	assert(pTarget && "pTarget is null");
@@ -58,7 +56,7 @@ static int GetMinimumRocketDamage(CBaseEntity* pTarget)
 	return minimum_damage;
 }
 
-bool helper::localplayer::ShootInternal(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd* pCmd, CBaseEntity* pTarget)
+bool helper::localplayer::Shoot(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd* pCmd, CBaseEntity* pTarget)
 {
 	assert(pLocal && "pLocal is null");
 	assert(pWeapon && "pWeapon is null");
@@ -148,9 +146,8 @@ bool helper::localplayer::ShootInternal(CTFPlayer *pLocal, CTFWeaponBase *pWeapo
 
 				bool onground = (pLocal->GetFlags() & FL_ONGROUND);
 				float damage = pClassic->GetChargedDamage();
-				bool charging = pClassic->m_bCharging();
 
-				if (charging && Config.aimbot.packed.waitforcharge)
+				if (pClassic->m_bCharging() && Config.aimbot.packed.waitforcharge)
 				{
 					// we can headshot now
 					if (damage >= 450.0f && onground)
@@ -158,11 +155,9 @@ bool helper::localplayer::ShootInternal(CTFPlayer *pLocal, CTFWeaponBase *pWeapo
 						pCmd->buttons &= ~IN_ATTACK;
 						return true;
 					}
-					else
-					{
-						pCmd->buttons |= IN_ATTACK;
-						return false;
-					}
+					
+					pCmd->buttons |= IN_ATTACK;
+					return false;
 				}
 
 				// dont care about headshot
@@ -175,7 +170,6 @@ bool helper::localplayer::ShootInternal(CTFPlayer *pLocal, CTFWeaponBase *pWeapo
 				// charge
 				pCmd->buttons |= IN_ATTACK;
 				return false;
-				break;
 			}
 
 			default:
@@ -255,19 +249,10 @@ bool helper::localplayer::ShootInternal(CTFPlayer *pLocal, CTFWeaponBase *pWeapo
 
 	case EWeaponType::UNKNOWN:
         default:
-	break;
+		break;
         }
 
 	return false;
-}
-
-bool helper::localplayer::Shoot(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd* pCmd, CBaseEntity* pTarget)
-{
-	bool ret = ShootInternal(pLocal, pWeapon, pCmd, pTarget);
-
-	if (ret) features::scriptmanager.CallHooks("AimbotShoot", pCmd, pTarget);
-
-	return ret;
 }
 
 bool helper::localplayer::CanShoot(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCmd, bool ignoreAttack)

@@ -2,6 +2,8 @@
 
 #define ARRAYSIZE(x) sizeof((x)) / sizeof((x[0]))
 
+#include "../../scriptmanager/scriptmanager.h"
+
 namespace AimbotUtils
 {
 	bool IsValidEntity(CBaseEntity *entity)
@@ -295,4 +297,9 @@ CBaseEntity* AimbotUtils::LookingAtEntity(CTFPlayer* pLocal, const Vec3& viewAng
 	helper::engine::Trace(shoot_pos, shoot_pos + (forward * 8192), MASK_SHOT | CONTENTS_HITBOX, &filter, &trace);
 
 	return trace.m_pEnt;
+}
+
+void AimbotUtils::ShootCallback(CUserCmd* pCmd, CBaseEntity* pTarget)
+{
+	features::scriptmanager.CallHooks("AimbotShoot", pCmd, pTarget);
 }

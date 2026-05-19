@@ -6,7 +6,7 @@ void BindVector(sol::state& lua)
 {
 	lua.new_usertype<Vec3>
 	(
-		"Vector3", sol::constructors<Vec3()>(),
+		"Vector3", sol::constructors<Vec3(), Vec3(float, float, float)>(),
 
 		"x", &Vec3::x,
 		"y", &Vec3::y,
@@ -45,6 +45,30 @@ void BindVector(sol::state& lua)
 			return "Vector3(" + std::to_string(v.x) + ", " +
 					    std::to_string(v.y) + ", " +
 					    std::to_string(v.z) + ")";
-		}
+		},
+
+		sol::meta_function::length, &Vec3::Length,
+
+		"Zero",		&Vec3::Zero,
+		"Set",		&Vec3::Set,
+		"To2D",		&Vec3::To2D,
+		"Length",	&Vec3::Length,
+		"LengthSqr",	&Vec3::LengthSqr,
+		"Normalize",	&Vec3::Normalize,
+		"Normalize2D",	&Vec3::Normalize2D,
+		"Normalized",	&Vec3::Normalized,
+		"Normalized2D",	&Vec3::Normalized2D,
+		"Get2D",	&Vec3::Get2D,
+		"Length2D",	&Vec3::Length2D,
+		"Length2DSqr",	&Vec3::Length2DSqr,
+		"DistTo",	&Vec3::DistTo,
+		"DistTo2D",	&Vec3::DistTo2D,
+		"DistToSqr",	&Vec3::DistToSqr,
+		"DistTo2DSqr",	&Vec3::DistTo2DSqr,
+		"Dot",		&Vec3::Dot,
+		"Cross",	&Vec3::Cross,
+		"IsZero",	&Vec3::IsZero,
+		"ToAngle",	&Vec3::ToAngle,
+		"FromAngle",	&Vec3::FromAngle
 	);
 }
