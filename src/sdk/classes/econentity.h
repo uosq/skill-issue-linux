@@ -5,8 +5,9 @@
 
 class CEconEntity : public CBaseAnimating
 {
-      public:
+public:
 	NETVAR(m_iItemDefinitionIndex, "CEconEntity->m_iItemDefinitionIndex", int);
+
 	void UpdateAttachmentModels()
 	{
 		return vtable_call<213, void>(this);

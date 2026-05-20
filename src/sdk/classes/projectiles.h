@@ -6,13 +6,13 @@
 
 class CBaseProjectile : public CBaseAnimating
 {
-      public:
+public:
 	NETVAR(m_hOriginalLauncher, "CBaseProjectile->m_hOriginalLauncher", EHANDLE);
 };
 
 class CBaseGrenade : public CBaseProjectile
 {
-      public:
+public:
 	NETVAR(m_flDamage, "CBaseGrenade->m_flDamage", float);
 	NETVAR(m_DmgRadius, "CBaseGrenade->m_DmgRadius", float);
 	NETVAR(m_bIsLive, "CBaseGrenade->m_bIsLive", bool);
@@ -23,7 +23,7 @@ class CBaseGrenade : public CBaseProjectile
 
 class CTFWeaponBaseGrenadeProj : public CBaseGrenade
 {
-      public:
+public:
 	NETVAR(m_vInitialVelocity, "CTFWeaponBaseGrenadeProj->m_vInitialVelocity", Vector);
 	NETVAR(m_bCritical, "CTFWeaponBaseGrenadeProj->m_bCritical", bool);
 	NETVAR(m_iDeflected, "CTFWeaponBaseGrenadeProj->m_iDeflected", int);
@@ -34,7 +34,7 @@ class CTFWeaponBaseGrenadeProj : public CBaseGrenade
 
 class CTFGrenadePipebombProjectile : public CTFWeaponBaseGrenadeProj
 {
-      public:
+public:
 	NETVAR(m_bTouched, "CTFGrenadePipebombProjectile->m_bTouched", bool);
 	NETVAR(m_iType, "CTFGrenadePipebombProjectile->m_iType", int);
 	NETVAR(m_hLauncher, "CTFGrenadePipebombProjectile->m_hLauncher", EHANDLE);

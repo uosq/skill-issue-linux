@@ -1,9 +1,11 @@
 #include "player.h"
 #include "entity.h"
+#include "playerresource.h"
 #include "weaponbase.h"
 
 #include "../signatures/signatures.h"
 #include "../../features/logs/logs.h"
+#include "../../features/entitylist/entitylist.h"
 
 /*
 xref: item_eater_recharger
@@ -195,13 +197,16 @@ void CTFPlayer::ThirdPersonSwitch(bool state)
 	}
 	*/
 
-	auto vt = vtable_get(this);
+	/*auto vt = vtable_get(this);
 
 	if (vt == nullptr)
 		return;
 
 	ThirdPersonSwitchFn func = reinterpret_cast<ThirdPersonSwitchFn>(vt[0xa00 / sizeof(uintptr_t)]);
-	func(this, state);
+	func(this, state);*/
+
+	constexpr int index = 0xA00/sizeof(uintptr_t);
+	vtable_call<index, void, bool>(this, state);
 }
 
 /*CTFWeaponBase* CTFPlayer::GetWeaponFromSlot(int index)
@@ -246,4 +251,73 @@ uint32_t CTFPlayer::GetSteamID3()
 		return 0;
 
 	return pi.friendsID;
+}
+
+int CTFPlayer::GetMaxHealth()
+{
+	CTFPlayerResource* pPR = features::entities.GetPlayerResources();
+
+	if (pPR)
+	{
+		return pPR->m_iMaxHealth(entindex());
+	}
+
+	return 0;
+}
+
+int CTFPlayer::GetMaxBuffedHealth()
+{
+	CTFPlayerResource* pPR = features::entities.GetPlayerResources();
+
+	if (pPR)
+	{
+		return pPR->m_iMaxBuffedHealth(entindex());
+	}
+
+	return 0;
+}
+
+float CTFPlayer::GetHealthFraction()
+{
+	float frac = static_cast<float>(GetHealth())/static_cast<float>(GetMaxHealth());
+	return std::clamp(frac, 0.0f, 1.0f);
+}
+
+bool CTFPlayer::IsCritBoosted()
+{
+	bool bAllWeaponCritActive = (
+		InCond( TF_COND_CRITBOOSTED )			||
+		InCond( TF_COND_CRITBOOSTED_PUMPKIN )		||
+		InCond( TF_COND_CRITBOOSTED_USER_BUFF )		||
+		InCond( TF_COND_CRITBOOSTED_DEMO_CHARGE )	||
+		InCond( TF_COND_CRITBOOSTED_FIRST_BLOOD )	||
+		InCond( TF_COND_CRITBOOSTED_BONUS_TIME )	||
+		InCond( TF_COND_CRITBOOSTED_CTF_CAPTURE )	||
+		InCond( TF_COND_CRITBOOSTED_ON_KILL )		||
+		InCond( TF_COND_CRITBOOSTED_CARD_EFFECT )	||
+		InCond( TF_COND_CRITBOOSTED_RUNE_TEMP )
+	);
+
+	if ( bAllWeaponCritActive )
+		return true;
+
+
+	CTFWeaponBase *pWeapon = HandleAs<CTFWeaponBase*>(GetActiveWeapon());
+	if ( pWeapon )
+	{
+		if ( InCond( TF_COND_CRITBOOSTED_RAGE_BUFF ) && pWeapon->m_pWeaponInfo()->m_iWeaponType == TF_WPN_TYPE_PRIMARY )
+		{
+			// Only primary weapon can be crit boosted by pyro rage
+			return true;
+		}
+
+		float flCritHealthPercent = AttributeHookValue(1.0f, "mult_crit_when_health_is_below_percent", pWeapon, nullptr, false);
+
+		if ( flCritHealthPercent < 1.0f && GetHealthFraction() < flCritHealthPercent )
+		{
+			return true;
+		}
+	}
+
+	return false;
 }

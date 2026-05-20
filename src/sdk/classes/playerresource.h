@@ -4,7 +4,7 @@
 
 class CTFPlayerResource : public IClientEntity
 {
-      public:
+public:
 	NETVAR_ARRAY(m_iTotalScore, "CTFPlayerResource->m_iTotalScore", int);
 	NETVAR_ARRAY(m_iMaxHealth, "CTFPlayerResource->m_iMaxHealth", int);
 	NETVAR_ARRAY(m_iMaxBuffedHealth, "CTFPlayerResource->m_iMaxBuffedHealth", int);

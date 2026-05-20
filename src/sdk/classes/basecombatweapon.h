@@ -6,7 +6,7 @@
 
 class CBaseCombatWeapon : public CEconEntity
 {
-      public:
+public:
 	NETVAR(m_iClip1, "CBaseCombatWeapon->m_iClip1", int)
 	NETVAR(m_iClip2, "CBaseCombatWeapon->m_iClip2", int)
 	NETVAR(m_iPrimaryAmmoType, "CBaseCombatWeapon->m_iPrimaryAmmoType", int)

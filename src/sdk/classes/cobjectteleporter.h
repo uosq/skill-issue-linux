@@ -4,7 +4,7 @@
 
 class CObjectTeleporter : public CBaseObject
 {
-      public:
+public:
 	NETVAR(m_iState, "CObjectTeleporter->m_iState", int);
 	NETVAR(m_flRechargeTime, "CObjectTeleporter->m_flRechargeTime", float);
 	NETVAR(m_flCurrentRechargeDuration, "CObjectTeleporter->m_flCurrentRechargeDuration", float);

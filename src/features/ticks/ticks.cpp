@@ -61,7 +61,7 @@ void TickManager::Post_CreateMove(int sequence_number)
 	features::autostrafe.Run(pLocal, pCmd);
 	features::antiafk.OnCreateMove(pCmd);
 
-	CTFWeaponBase* pWeapon = HandleAs<CTFWeaponBase*>(pLocal->GetActiveWeapon());
+	CTFWeaponBase* pWeapon = pLocal->GetActiveWeapon().Get();
 	if (pWeapon == nullptr)
 		return;
 

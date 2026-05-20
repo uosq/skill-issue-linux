@@ -10,7 +10,7 @@
 
 class CBaseHandle
 {
-      public:
+public:
 	CBaseHandle();
 	CBaseHandle(const CBaseHandle &other);
 	CBaseHandle(unsigned long value);
@@ -137,7 +137,7 @@ inline const CBaseHandle &CBaseHandle::Set(const IHandleEntity *pEntity)
 
 template <class T> class CHandle : public CBaseHandle
 {
-      public:
+public:
 	CHandle();
 	CHandle(int iEntry, int iSerialNumber);
 	CHandle(const CBaseHandle &handle);

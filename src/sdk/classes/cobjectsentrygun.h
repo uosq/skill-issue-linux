@@ -4,7 +4,7 @@
 
 class CObjectSentrygun : public CBaseObject
 {
-      public:
+public:
 	NETVAR(m_iAmmoShells, "CObjectSentrygun->m_iAmmoShells", int);
 	NETVAR(m_iAmmoRockets, "CObjectSentrygun->m_iAmmoRockets", int);
 	NETVAR(m_iState, "CObjectSentrygun->m_iState", int);

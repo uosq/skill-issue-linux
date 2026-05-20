@@ -7,6 +7,7 @@
 #include "basecombatcharacter.h"
 #include "entity.h"
 #include "playerresource.h"
+#include "weaponbase.h"
 
 #define FL_ONGROUND (1 << 0)
 #define FL_DUCKING (1 << 1)
@@ -63,8 +64,8 @@ enum
 
 class CTFPlayer : public CBaseCombatCharacter
 {
-      public:
-	NETVAR(GetActiveWeapon, "CBaseCombatCharacter->m_hActiveWeapon", EHANDLE)
+public:
+	NETVAR(GetActiveWeapon, "CBaseCombatCharacter->m_hActiveWeapon", CHandle<CTFWeaponBase>)
 	NETVAR(GetTickBase, "CBasePlayer->m_nTickBase", int)
 	NETVAR(GetVelocity, "CBasePlayer->m_vecVelocity[0]", Vector)
 	NETVAR(GetFlags, "CBasePlayer->m_fFlags", int)
@@ -125,6 +126,10 @@ class CTFPlayer : public CBaseCombatCharacter
 	int GetUserID();
 	std::string GetSteamID();
 	uint32_t GetSteamID3();
+	int GetMaxBuffedHealth();
+	int GetMaxHealth();
+	float GetHealthFraction();
+	bool IsCritBoosted();
 
 	//void SetAbsOrigin();
 };

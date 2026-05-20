@@ -10,7 +10,7 @@ class CTeamplayRules
 
 class CTeamplayRoundBasedRules : public CTeamplayRules
 {
-      public:
+public:
 	NETVAR(m_iRoundState, "CTeamplayRoundBasedRulesProxy->m_iRoundState", int);
 	NETVAR(m_bInOvertime, "CTeamplayRoundBasedRulesProxy->m_bInOvertime", bool);
 	NETVAR(m_bInSetup, "CTeamplayRoundBasedRulesProxy->m_bInSetup", bool);
@@ -35,7 +35,7 @@ class CTeamplayRoundBasedRules : public CTeamplayRules
 
 class CTFGameRules : public CTeamplayRoundBasedRules
 {
-      public:
+public:
 	NETVAR(m_nGameType, "CTFGameRulesProxy->m_nGameType", int);
 	NETVAR(m_nStopWatchState, "CTFGameRulesProxy->m_nStopWatchState", int);
 	NETVAR(m_pszTeamGoalStringRed, "CTFGameRulesProxy->m_pszTeamGoalStringRed", const char *);
@@ -91,11 +91,4 @@ class CTFGameRules : public CTeamplayRoundBasedRules
 	NETVAR(m_bRopesHolidayLightsAllowed, "CTFGameRulesProxy->m_bRopesHolidayLightsAllowed", bool);
 };
 
-static CTFGameRules *TFGameRules()
-{
-	static uintptr_t leaInstr =
-	    reinterpret_cast<uintptr_t>(sigscan_module("client.so", "48 8D 05 ? ? ? ? 48 8B 38 48 85 FF 74 ? 31 C0"));
-	static uintptr_t g_pGameRules_addr = RelToAbs(leaInstr, 3, 7);
-	static CTFGameRules *g_pGameRules  = *reinterpret_cast<CTFGameRules **>(g_pGameRules_addr);
-	return g_pGameRules;
-}
+CTFGameRules* TFGameRules();
