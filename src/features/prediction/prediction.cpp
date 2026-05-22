@@ -7,8 +7,6 @@
 
 #include "../logs/logs.h"
 
-#include "../entitylist/entitylist.h"
-
 #define COORD_INTEGER_BITS 14
 #define COORD_FRACTIONAL_BITS 5
 #define COORD_DENOMINATOR (1 << (COORD_FRACTIONAL_BITS))
@@ -832,17 +830,6 @@ bool CPrediction::Simulate(std::vector<Vector> &path)
 	}
 
 	float flClock = 0.0f;
-
-	if (auto pLocal = features::entities.GetLocal(); pLocal != nullptr && pLocal->IsAlive())
-	{
-		Vec3 vecCenter = m_pTarget->GetCenter();
-		Vec3 vecLocalCenter = pLocal->GetCenter();
-		
-		float flDistance = vecLocalCenter.DistTo(vecCenter);
-		float flMultiplier = std::clamp(flDistance / 1000.0f, 1.0f, 5.0f);
-
-		m_flTickInterval *= flMultiplier;
-	}
 
 	path.emplace_back(m_vecAbsOrigin);
 

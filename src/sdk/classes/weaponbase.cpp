@@ -1,5 +1,6 @@
 #include "weaponbase.h"
 
+#include "entity.h"
 #include "player.h"
 
 CTFWeaponInfo* CTFWeaponBase::m_pWeaponInfo()
@@ -262,4 +263,219 @@ float CTFWeaponBase::GetSwingRange()
 	range *= melee_range_multiplier;
 
 	return range;
+}
+
+bool CTFWeaponBase::GetProjectileInfo(ProjectileInfo_t &pOut)
+{
+	CBaseEntity* pOwnerEntity = m_hOwner().Get();
+
+	if (pOwnerEntity == nullptr || !pOwnerEntity->IsPlayer())
+		return false;
+
+	CTFPlayer* pOwner = static_cast<CTFPlayer*>(pOwnerEntity);
+
+	bool bDucking	 = pOwner->GetFlags() & FL_DUCKING;
+	float flGravity	 = interfaces::Cvar->FindVar("sv_gravity")->GetFloat() / 800;
+
+	int id		 = this->GetWeaponID();
+
+	//int iTickBase	 = pOwner->GetTickBase();
+	//float flTickBase = TICKS_TO_TIME(iTickBase);
+
+	switch (id)
+	{
+	case TF_WEAPON_ROCKETLAUNCHER:
+	case TF_WEAPON_ROCKETLAUNCHER_DIRECTHIT:
+	{
+		pOut.hull.Set();
+		pOut.speed    = pOwner->InCond(TF_COND_RUNE_PRECISION)
+				    ? 3000
+				    : AttributeHookValue(1100, "mult_projectile_speed", this, nullptr, true);
+		pOut.offset.x = 23.5f;
+		pOut.offset.y = AttributeHookValue(0, "centerfire_projectile", this, nullptr, true) == 1 ? 0 : 12;
+		pOut.offset.z = bDucking ? 8 : -3;
+		pOut.damage_radius = id == TF_WEAPON_ROCKETLAUNCHER ? 146 : 44;
+		pOut.simple_trace  = true;
+		return true;
+	}
+
+	case TF_WEAPON_PARTICLE_CANNON:
+	case TF_WEAPON_RAYGUN:
+	case TF_WEAPON_DRG_POMSON:
+	{
+		bool bIsCowMangler = id == TF_WEAPON_PARTICLE_CANNON;
+		pOut.offset.Set(23.5, 8, bDucking ? 8 : -3);
+		pOut.speed	  = bIsCowMangler ? 1100 : 1200;
+		pOut.hull	  = bIsCowMangler ? Vector(0, 0, 0) : Vector(1, 1, 1);
+		pOut.simple_trace = true;
+		return true;
+	}
+
+	case TF_WEAPON_GRENADELAUNCHER:
+	case TF_WEAPON_CANNON:
+	{
+		//bool bIsCannon = id == TF_WEAPON_CANNON;
+		/*float mortar =
+		    bIsCannon ? AttributeHookValue(0.f, "grenade_launcher_mortar_mode", this, nullptr, true) : 0;*/
+		pOut.speed =
+		    AttributeHookValue(pOwner->InCond(TF_COND_RUNE_PRECISION)
+					   ? 3000
+					   : AttributeHookValue(1200, "mult_projectile_range", this, nullptr, true),
+				       "mult_projectile_range", this, nullptr, true);
+		pOut.gravity = flGravity;
+		pOut.offset.Set(16, 8, -6);
+		return true;
+	}
+
+	case TF_WEAPON_PIPEBOMBLAUNCHER:
+	{
+		pOut.offset.Set(16, 8, -6);
+		pOut.gravity		  = flGravity;
+
+		/*float charge		  = 0.0f;
+		float m_flChargeBeginTime = ((CTFPipebombLauncher *)this)->m_flChargeBeginTime();
+		if (m_flChargeBeginTime > flTickBase)
+			charge = 0.0f;
+		else
+			charge = flTickBase - m_flChargeBeginTime;*/
+
+		pOut.speed = AttributeHookValue(
+		    Math::RemapVal(0, 0, AttributeHookValue(4.0f, "stickybomb_charge_rate", this, nullptr, true),
+				   900, 2400, true),
+		    "mult_projectile_range", this, nullptr, true);
+		return true;
+	}
+
+	case TF_WEAPON_FLAREGUN:
+	{
+		pOut.offset.Set(23.5, 12, bDucking ? 8 : -3);
+		pOut.hull.Set(0, 0, 0);
+		pOut.speed    = AttributeHookValue(2000, "mult_projectile_speed", this, nullptr, true);
+		pOut.gravity  = 0.01f;
+		pOut.lifetime = 0.3 * flGravity;
+		return true;
+	}
+
+	case TF_WEAPON_FLAREGUN_REVENGE:
+	{
+		pOut.offset.Set(23.5, 12, bDucking ? 8 : -3);
+		pOut.hull.Set(0, 0, 0);
+		pOut.speed = 3000;
+		return true;
+	}
+
+	case TF_WEAPON_COMPOUND_BOW:
+	{
+		pOut.offset.Set(23.5, 12, -3);
+		pOut.hull.Set(1, 1, 1);
+
+		float flchargebegintime = static_cast<CTFPipebombLauncher *>(this)->m_flChargeBeginTime();
+		float charge		= 0.0f;
+		if (flchargebegintime > 0)
+			charge = TICKS_TO_TIME(pOwner->GetTickBase()) - flchargebegintime;
+
+		pOut.speed    = Math::RemapVal(charge, 0, 1, 1800, 2600);
+		pOut.gravity  = Math::RemapVal(charge, 0, 1, 0.5, 0.1) * flGravity;
+		pOut.lifetime = 10;
+		return true;
+	}
+
+	case TF_WEAPON_CROSSBOW:
+	case TF_WEAPON_SHOTGUN_BUILDING_RESCUE:
+	{
+		bool isCrossbow = id == TF_WEAPON_CROSSBOW;
+		pOut.offset.Set(23.5, 12, -3);
+		pOut.hull     = isCrossbow ? Vector(3, 3, 3) : Vector(1, 1, 1);
+		pOut.speed    = 2400;
+		pOut.gravity  = flGravity * 0.2;
+		pOut.lifetime = 10;
+		return true;
+	}
+
+	case TF_WEAPON_SYRINGEGUN_MEDIC:
+	{
+		pOut.offset.Set(16, 6, -8);
+		pOut.hull.Set(1, 1, 1);
+		pOut.speed   = 1000;
+		pOut.gravity = 0.3 * flGravity;
+		return true;
+	}
+
+	case TF_WEAPON_FLAMETHROWER:
+	{
+		static ConVar *tf_flamethrower_size = interfaces::Cvar->FindVar("tf_flamethrower_size");
+		if (!tf_flamethrower_size)
+			return false;
+
+		float flhull = tf_flamethrower_size->GetFloat();
+		pOut.offset.Set(40, 5, 0);
+		pOut.hull.Set(flhull, flhull, flhull);
+		pOut.speed	  = 1000;
+		pOut.lifetime	  = 0.285;
+		pOut.simple_trace = true;
+		return true;
+	}
+
+	case TF_WEAPON_FLAME_BALL:
+	{
+		pOut.offset.Set(3, 7, -9);
+		pOut.hull.Set(1, 1, 1);
+		pOut.speed	  = 3000;
+		pOut.lifetime	  = 0.18;
+		pOut.gravity	  = 0;
+		pOut.simple_trace = true;
+		return true;
+	}
+
+	case TF_WEAPON_CLEAVER:
+	{
+		pOut.offset.Set(16, 8, -6);
+		pOut.hull.Set(1, 1, 10); // wtf is this 10?
+		pOut.gravity  = 1;
+		pOut.lifetime = 2.2;
+		return true;
+	}
+
+	case TF_WEAPON_BAT_WOOD:
+	case TF_WEAPON_BAT_GIFTWRAP:
+	{
+		static ConVar *tf_scout_stunball_base_speed = interfaces::Cvar->FindVar("tf_scout_stunball_base_speed");
+		pOut.speed				    = tf_scout_stunball_base_speed->GetFloat();
+		pOut.gravity				    = 1;
+		pOut.lifetime				    = flGravity;
+		return true;
+	}
+
+	case TF_WEAPON_JAR:
+	case TF_WEAPON_JAR_MILK:
+	{
+		pOut.offset.Set(16, 8, -6);
+		pOut.speed    = 1000;
+		pOut.gravity  = 1;
+		pOut.lifetime = 2.2;
+		pOut.hull.Set(3, 3, 3);
+		return true;
+	}
+
+	case TF_WEAPON_JAR_GAS:
+	{
+		pOut.offset.Set(16, 8, -6);
+		pOut.speed    = 2000;
+		pOut.gravity  = 1;
+		pOut.lifetime = 2.2;
+		pOut.hull.Set(3, 3, 3);
+		return true;
+	}
+
+	case TF_WEAPON_LUNCHBOX:
+	{
+		pOut.offset.z = -8;
+		pOut.hull.Set(17, 17, 7);
+		pOut.speed   = 500;
+		pOut.gravity = 1 * flGravity;
+		return true;
+	}
+	}
+
+	return false;
 }

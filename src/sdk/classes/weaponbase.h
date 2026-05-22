@@ -18,6 +18,18 @@ class CTFGrenadePipebombProjectile;
 
 typedef unsigned short WEAPON_FILE_INFO_HANDLE;
 
+struct ProjectileInfo_t
+{
+	float speed	    = 0;
+	float gravity	    = 0;
+	float primetime	    = 0;
+	float damage_radius = 0;
+	float lifetime	    = 60.0f;
+	bool simple_trace   = false;
+	Vector offset{};
+	Vector hull{6, 6, 6};
+};
+
 struct BobState_t
 {
 	BobState_t()
@@ -108,6 +120,8 @@ public:
 
 	bool DoSwingTrace(CGameTrace& trace);
 	float GetSwingRange();
+
+	bool GetProjectileInfo(ProjectileInfo_t &pOut);
 };
 
 class CTFKnife : public CTFWeaponBase

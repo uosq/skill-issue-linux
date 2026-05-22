@@ -22,9 +22,9 @@ bool Hooked_CBasePlayer_ShouldDrawLocalPlayer(void)
 
 void Hook_CBasePlayer_ShouldDrawLocalPlayer()
 {
-	detour_init(&entity_shoulddraw, Sigs::CBasePlayer_ShouldDrawLocalPlayer.GetPointer(),
-		    (void *)&Hooked_CBasePlayer_ShouldDrawLocalPlayer);
+	//detour_init(&entity_shoulddraw, Sigs::CBasePlayer_ShouldDrawLocalPlayer.GetPointer(),
+		    //(void *)&Hooked_CBasePlayer_ShouldDrawLocalPlayer);
 
-	if (!detour_enable(&entity_shoulddraw))
-		features::logs.Error("Couldn't hook C_BasePlayer::ShouldDrawLocalPlayer");
+	//if (!detour_enable(&entity_shoulddraw))
+		//features::logs.Error("Couldn't hook C_BasePlayer::ShouldDrawLocalPlayer");
 }

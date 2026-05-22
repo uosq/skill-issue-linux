@@ -22,8 +22,6 @@ public:
 	std::vector<Vector> &GetPath();
 	CBaseEntity *GetCurrentTarget();
 
-	bool GetProjectileInfo(ProjectileInfo_t &pOut, CTFPlayer *pLocal, CTFWeaponBase *pWeapon);
-
 private:
 	float GetInitialZOffset(CTFWeaponBase *pWeapon, const Vector &vecMaxs);
 	bool SolveBallisticArc(Vector &outAngle, const Vector p0, const Vector p1, float flSpeed, float flGravity);
