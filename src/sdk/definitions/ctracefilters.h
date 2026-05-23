@@ -1,8 +1,11 @@
 #pragma once
 
 #include "../defs.h"
+
 #include "cgametrace.h"
 #include "ienginetrace.h"
+
+#include "../../sol3/sol.hpp"
 
 enum
 {
@@ -31,7 +34,7 @@ enum
 
 class CTraceFilterHitscan : public ITraceFilter
 {
-      public:
+public:
 	bool ShouldHitEntity(IHandleEntity *pServerEntity, int nContentsMask) override;
 	TraceType_t GetTraceType() const override;
 	CBaseEntity *pSkip	  = nullptr;
@@ -45,7 +48,7 @@ class CTraceFilterHitscan : public ITraceFilter
 
 class CTraceFilterCollideable : public ITraceFilter
 {
-      public:
+public:
 	bool ShouldHitEntity(IHandleEntity *pServerEntity, int nContentsMask) override;
 	TraceType_t GetTraceType() const override;
 	CBaseEntity *pSkip	  = nullptr;
@@ -62,7 +65,7 @@ class CTraceFilterCollideable : public ITraceFilter
 
 class CTraceFilterWorldAndPropsOnly : public ITraceFilter
 {
-      public:
+public:
 	bool ShouldHitEntity(IHandleEntity *pServerEntity, int nContentsMask) override;
 	TraceType_t GetTraceType() const override;
 	CBaseEntity *pSkip = nullptr;
@@ -72,7 +75,12 @@ class CTraceFilterWorldAndPropsOnly : public ITraceFilter
 
 class CTraceFilterLua : public ITraceFilter
 {
-      public:
+public:
+	CTraceFilterLua(sol::function cb) : callback(std::move(cb)) {}
+
 	bool ShouldHitEntity(IHandleEntity *pServerEntity, int nContentsMask) override;
 	TraceType_t GetTraceType() const override;
+
+private:
+	sol::function callback;
 };

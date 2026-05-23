@@ -174,35 +174,11 @@ TraceType_t CTraceFilterLua::GetTraceType() const
 
 bool CTraceFilterLua::ShouldHitEntity(IHandleEntity *pServerEntity, int nContentsMask)
 {
-	/*luaL_checktype(Lua::m_luaState, 4, LUA_TFUNCTION);
-	lua_pushvalue(Lua::m_luaState, 4);
+	if (pServerEntity == nullptr)
+		return false;
 
-	int callbackRef = luaL_ref(Lua::m_luaState, LUA_REGISTRYINDEX);
-	lua_rawgeti(Lua::m_luaState, LUA_REGISTRYINDEX, callbackRef);
+	if (callback.valid())
+		return callback(static_cast<CBaseEntity*>(pServerEntity), nContentsMask);
 
-	LuaClasses::EntityLua::push_entity(Lua::m_luaState, static_cast<CBaseEntity*>(pServerEntity));
-	lua_pushinteger(Lua::m_luaState, nContentsMask);
-
-	bool result = true;
-
-	if (lua_pcall(Lua::m_luaState, 2, 1, 0) != LUA_OK)
-	{
-		const char* err = lua_tostring(Lua::m_luaState, -1);
-		if (err) consoleText += std::string(err) + "\n";
-		lua_pop(Lua::m_luaState, 1);
-	}
-	else
-	{
-		// read return value
-		if (lua_isboolean(Lua::m_luaState, -1))
-			result = lua_toboolean(Lua::m_luaState, -1);
-
-		lua_pop(Lua::m_luaState, 1); // pop return value
-	}
-
-	luaL_unref(Lua::m_luaState, LUA_REGISTRYINDEX, callbackRef);
-
-	return result;
-	*/
-	return false;
+	return true;
 }

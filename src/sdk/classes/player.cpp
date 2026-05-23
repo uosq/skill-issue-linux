@@ -175,7 +175,7 @@ uint8_t CTFPlayer::GetMoveType()
 
 void CTFPlayer::ThirdPersonSwitch(bool state)
 {
-	using ThirdPersonSwitchFn = void (*)(CTFPlayer *self, bool state);
+	//using ThirdPersonSwitchFn = void (*)(CTFPlayer *self, bool state);
 
 	// The offset I got from
 	// CInput::CAM_ToFirstPerson

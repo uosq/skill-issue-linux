@@ -95,9 +95,25 @@ class KeyValues
 
 	void Initialize(const char *name)
 	{
-		using constructorFn = void(void *self, const char *);
+		/*using constructorFn = void(void *self, const char *);
 		static auto orig    = (constructorFn *)sigscan_module("engine.so", "55 31 C0 66 0F EF C0 48 89 E5 53");
-		orig(this, name);
+		orig(this, name);*/
+		m_iKeyName = INVALID_KEY_SYMBOL;
+		m_iDataType = TYPE_NONE;
+
+		m_pSub = NULL;
+		m_pPeer = NULL;
+		m_pChain = NULL;
+
+		m_sValue = NULL;
+		m_wsValue = NULL;
+		m_pValue = NULL;
+		
+		m_bHasEscapeSequences = false;
+		m_bEvaluateConditionals = true;
+
+		// for future proof
+		memset( unused, 0, sizeof(unused) );
 	}
 
 	KeyValues(const char *name)

@@ -1,6 +1,9 @@
 #include "../../../sol3/sol.hpp"
 
 #include "../../../sdk/interfaces/interfaces.h"
+#include "../../../sdk/helpers/engine/engine.h"
+#include "../../../sdk/definitions/cgametrace.h"
+#include "../../../sdk/definitions/ctracefilters.h"
 
 void BindEngine(sol::state& lua)
 {
@@ -59,5 +62,31 @@ void BindEngine(sol::state& lua)
 	engine["is_connected"] = []() -> bool
 	{
 		return interfaces::Engine->IsConnected();
+	};
+
+	engine["trace_line"] = [](const Vec3& start, const Vec3& end, unsigned int mask, sol::function callback) -> CGameTrace
+	{
+		if (!callback.valid())
+			return {};
+
+		CGameTrace trace {};
+		CTraceFilterLua filter {callback};
+
+		helper::engine::Trace(start, end, mask, &filter, &trace);
+
+		return trace;
+	};
+
+	engine["trace_hull"] = [](const Vec3& start, const Vec3& end, const Vec3& mins, const Vec3& maxs, unsigned int mask, sol::function callback) -> CGameTrace
+	{
+		if (!callback.valid())
+			return {};
+
+		CGameTrace trace {};
+		CTraceFilterLua filter {callback};
+
+		helper::engine::TraceHull(start, end, mins, maxs, mask, &filter, &trace);
+
+		return trace;
 	};
 }
