@@ -1,5 +1,7 @@
 #include "core.h"
 
+#include <atomic>
+
 #include "../sdk/interfaces/interfaces.h"
 #include "../sdk/signatures/signatures.h"
 
@@ -57,6 +59,7 @@
 //#include "../hooks/ctfplayeranimstate_update.h"
 #include "../hooks/cengineclient_getscreenaspectratio.h"
 //#include "../hooks/ctfplayershared_incond.h"
+#include "../hooks/enginevgui_paint.h"
 
 CApp::CApp() : m_bInitialized(false)
 {
@@ -64,7 +67,7 @@ CApp::CApp() : m_bInitialized(false)
 
 bool CApp::IsInitialized()
 {
-	return m_bInitialized;
+	return m_bInitialized.load();
 }
 
 bool CApp::StartInterfaces()
@@ -104,7 +107,7 @@ bool CApp::StartHooks()
 	HookSDL();
 	HookDXVK();
 
-	//HookEngineVGuiPaint(); Already initialized
+	HookEngineVGuiPaint();
 	HookFrameStageNotify();
 	HookOverrideView();
 	HookCalcViewModelView();
@@ -144,8 +147,8 @@ bool CApp::StartHooks()
 	Hook_CEngineClient_GetScreenAspectRatio();
 	//Hook_CTFPlayerShared_InCond();
 
-	m_bInitialized = true;
+	m_bInitialized.store(true, std::memory_order_release);
 	return true;
 }
 
-CApp gApp{};
+CApp* gApp{nullptr};

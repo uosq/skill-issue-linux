@@ -5,12 +5,17 @@
 
 #include "../hooks.h"
 
+#include "../core/core.h"
+
 using ForcedMaterialOverrideFn = void (*)(IStudioRender* rdi, IMaterial* mat, OverrideType_t nOverrideType);
 
 static void ForcedMaterialOverride(IStudioRender* rdi, IMaterial *mat, OverrideType_t nOverrideType)
 {
-	if (features::chams.IsDrawing() || features::glow.IsRunning())
-		return;
+	if (gApp->IsInitialized())
+	{
+		if (features::chams.IsDrawing() || features::glow.IsRunning())
+			return;
+	}
 
 	auto original = VMTHooks::StudioRender.GetOriginal<ForcedMaterialOverrideFn>(33);
 	original(rdi, mat, nOverrideType);

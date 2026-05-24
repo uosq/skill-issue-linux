@@ -8,6 +8,8 @@
 #include "../features/entitylist/entitylist.h"
 #include "../features/logs/logs.h"
 
+#include "../core/core.h"
+
 /*
 xref: CViewRender::DrawViewModel
 
@@ -31,11 +33,14 @@ static detour_ctx_t ctx;
 
 bool CViewRender_ShouldDrawViewModel(void* self, bool bDrawviewmodel)
 {
-	if (Config.misc.packed.no_zoom)
+	if (gApp->IsInitialized())
 	{
-		CTFPlayer* pLocal = features::entities.GetLocal();
-		if (pLocal && pLocal->InCond(TF_COND_ZOOMED))
-			return true;
+		if (Config.misc.packed.no_zoom)
+		{
+			CTFPlayer* pLocal = features::entities.GetLocal();
+			if (pLocal && pLocal->InCond(TF_COND_ZOOMED))
+				return true;
+		}
 	}
 	
 	bool ret = true;

@@ -12,6 +12,8 @@
 
 #include "sdl.h"
 
+#include "../core/core.h"
+
 typedef struct IDirect3DDevice9 *LPDIRECT3DDEVICE9;
 
 LPDIRECT3DDEVICE9 g_pd3dDevice = nullptr;
@@ -126,14 +128,21 @@ void RenderImGui()
 		g_pd3dDevice->SetRenderState(D3DRS_SRGBWRITEENABLE, oldSRGBState);
 }
 
-HRESULT __stdcall Hooked_Present(IDirect3DDevice9 *pDevice, const RECT *pSourceRect, const RECT *pDestRect,
-					HWND hDestWindowOverride, const RGNDATA *pDirtyRegion)
+HRESULT __stdcall Hooked_Present
+(
+	IDirect3DDevice9 *pDevice,
+	const RECT *pSourceRect, const RECT *pDestRect,
+	HWND hDestWindowOverride, const RGNDATA *pDirtyRegion
+)
 {
-	if (!g_pd3dDevice)
-		g_pd3dDevice = pDevice;
-
-	InitImGui();
-	RenderImGui();
+	if (gApp->IsInitialized())
+	{
+		if (!g_pd3dDevice)
+			g_pd3dDevice = pDevice;
+	
+		InitImGui();
+		RenderImGui();
+	}
 
 	HRESULT ret;
 	DETOUR_ORIG_GET(&present_ctx, ret, original_Present, pDevice, pSourceRect, pDestRect, hDestWindowOverride,
@@ -143,13 +152,16 @@ HRESULT __stdcall Hooked_Present(IDirect3DDevice9 *pDevice, const RECT *pSourceR
 
 HRESULT __stdcall Hooked_Reset(IDirect3DDevice9 *pDevice, D3DPRESENT_PARAMETERS *pPresentationParameters)
 {
-	// ImGui needs to be cleaned up before device reset
-	CleanupImGui();
+	if (gApp->IsInitialized())
+	{
+		// ImGui needs to be cleaned up before device reset
+		CleanupImGui();
+	}
 
 	HRESULT ret;
 	DETOUR_ORIG_GET(&reset_ctx, ret, original_Reset, pDevice, pPresentationParameters);
 
-	if (SUCCEEDED(ret))
+	if (gApp->IsInitialized() && SUCCEEDED(ret))
 	{
 		g_d3dpp = *pPresentationParameters;
 		// ImGui will be reinitialized on next Present call

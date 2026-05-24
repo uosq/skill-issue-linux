@@ -12,6 +12,8 @@
 #include "../features/scriptmanager/scriptmanager.h"
 #include "../features/scriptmanager/classes/drawmodelcontext.h"
 
+#include "../core/core.h"
+
 using DrawModelExecuteFn = void(*)(IVModelRender *thisptr,
                                    const DrawModelState_t &state,
                                    const ModelRenderInfo_t &pInfo,
@@ -21,7 +23,7 @@ static void DrawModelExecute(IVModelRender* thisptr, const DrawModelState_t &sta
 {
 	auto original = VMTHooks::ModelRender.GetOriginal<DrawModelExecuteFn>(19);
 
-	if (interfaces::Engine->IsTakingScreenshot())
+	if (!gApp->IsInitialized() || interfaces::Engine->IsTakingScreenshot())
 		return original(thisptr, state, pInfo, pCustomBoneToWorld);
 
 	{

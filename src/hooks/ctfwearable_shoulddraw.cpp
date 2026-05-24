@@ -2,7 +2,7 @@
 
 #include "../libdetour/libdetour.h"
 
-//#include "../features/logs/logs.h"
+#include "../core/core.h"
 
 DETOUR_DECL_TYPE(bool, CTFWearable_ShouldDraw, void *self);
 detour_ctx_t ctfwearable_shoulddraw_ctx;

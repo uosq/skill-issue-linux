@@ -3,6 +3,8 @@
 #include "../sdk/interfaces/interfaces.h"
 #include "../libdetour/libdetour.h"
 
+#include "../core/core.h"
+
 DETOUR_DECL_TYPE(void, DataTable_Warning, const char *pInMessage, ...);
 detour_ctx_t warning_ctx;
 

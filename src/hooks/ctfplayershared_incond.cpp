@@ -7,6 +7,7 @@
 #include "../settings/settings.h"
 
 #include "../features/logs//logs.h"
+#include "../core/core.h"
 
 ADD_SIG(CTFPlayerShared_InCond, "client.so", "55 83 FE 1F 48 89 E5 41 54 41 89 F4")
 
@@ -15,8 +16,11 @@ DETOUR_DECL_TYPE(bool, CTFPlayerShared_InCond, void*, ETFCond);
 
 static bool Hooked_InCond(void* rdi, ETFCond eCond)
 {
-	if (eCond == TF_COND_ZOOMED && Config.misc.packed.no_scope_overlay)
-		return false;
+	if (gApp->IsInitialized())
+	{
+		if (eCond == TF_COND_ZOOMED && Config.misc.packed.no_scope_overlay)
+			return false;
+	}
 
 	bool ret{false};
 	DETOUR_ORIG_GET(&ctx, ret, CTFPlayerShared_InCond, rdi, eCond);

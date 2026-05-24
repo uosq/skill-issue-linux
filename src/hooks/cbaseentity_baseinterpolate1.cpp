@@ -4,6 +4,8 @@
 #include "../libdetour/libdetour.h"
 #include "../features/entitylist/entitylist.h"
 
+#include "../core/core.h"
+
 DETOUR_DECL_TYPE(int, BaseInterpolatePart1, CBaseEntity *self, float *currentTime, Vector *oldOrigin, QAngle *oldAngles, Vector *oldVel, int *bNoMoreChanges);
 detour_ctx_t interp_ctx;
 
@@ -11,7 +13,7 @@ int Hooked_BaseInterpolatePart1(CBaseEntity *self, float *currentTime, Vector *o
 {
 	const int INTERPOLATE_STOP = 0;
 
-	if (self == nullptr || currentTime == nullptr || oldOrigin == nullptr || oldAngles == nullptr ||
+	if (!gApp->IsInitialized() || self == nullptr || currentTime == nullptr || oldOrigin == nullptr || oldAngles == nullptr ||
 	    oldVel == nullptr || bNoMoreChanges == nullptr)
 		return INTERPOLATE_STOP;
 

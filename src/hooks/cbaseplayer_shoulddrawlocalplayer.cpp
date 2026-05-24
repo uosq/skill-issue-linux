@@ -5,6 +5,8 @@
 #include "../features/entitylist/entitylist.h"
 #include "../features/logs/logs.h"
 
+#include "../core/core.h"
+
 DETOUR_DECL_TYPE(bool, CBasePlayer_ShouldDrawLocalPlayer, void);
 detour_ctx_t entity_shoulddraw;
 
@@ -13,9 +15,12 @@ bool Hooked_CBasePlayer_ShouldDrawLocalPlayer(void)
 	bool ret;
 	DETOUR_ORIG_GET(&entity_shoulddraw, ret, CBasePlayer_ShouldDrawLocalPlayer);
 
-	auto pLocal = features::entities.GetLocal();
-	if (pLocal != nullptr && pLocal->IsAlive() && pLocal->InCond(TF_COND_ZOOMED))
-		return true;
+	if (gApp->IsInitialized())
+	{
+		auto pLocal = features::entities.GetLocal();
+		if (pLocal != nullptr && pLocal->IsAlive() && pLocal->InCond(TF_COND_ZOOMED))
+			return true;
+	}
 
 	return ret;
 }

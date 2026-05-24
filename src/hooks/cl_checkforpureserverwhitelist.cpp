@@ -2,14 +2,18 @@
 
 #include "../libdetour/libdetour.h"
 #include "../settings/settings.h"
+#include "../core/core.h"
 
 DETOUR_DECL_TYPE(void, originalCheckForPureServerWhitelistFn, void *&pFilesToReload);
 detour_ctx_t CL_CheckForPureServerWhitelist_ctx;
 
 void Hooked_CL_CheckForPureServerWhitelist(void *&pFilesToReload)
 {
-	if (Config.misc.packed.sv_pure_bypass)
-		return;
+	if (gApp->IsInitialized())
+	{
+		if (Config.misc.packed.sv_pure_bypass)
+			return;
+	}
 
 	DETOUR_ORIG_CALL(&CL_CheckForPureServerWhitelist_ctx, originalCheckForPureServerWhitelistFn, pFilesToReload);
 }

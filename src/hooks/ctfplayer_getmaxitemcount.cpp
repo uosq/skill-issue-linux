@@ -2,14 +2,18 @@
 
 #include "../libdetour/libdetour.h"
 #include "../settings/settings.h"
+#include "../core/core.h"
 
 DETOUR_DECL_TYPE(int, originalMaxItemCountFn, void *thisptr);
 detour_ctx_t GetMaxItemCount_ctx;
 
 int Hooked_GetMaxItemCount(void *thisptr)
 {
-	if (Config.misc.packed.backpack_expander)
-		return 4000;
+	if (gApp->IsInitialized())
+	{
+		if (Config.misc.packed.backpack_expander)
+			return 4000;
+	}
 
 	int ret;
 	DETOUR_ORIG_GET(&GetMaxItemCount_ctx, ret, originalMaxItemCountFn, thisptr);

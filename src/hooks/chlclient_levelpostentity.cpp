@@ -1,6 +1,7 @@
 #include "chlclient_levelpostentity.h"
 
 #include "../hooks.h"
+#include "../core/core.h"
 
 #include "../features/entitylist/entitylist.h"
 #include "../features/spectators/spectators.h"
@@ -16,6 +17,9 @@ static void LevelInitPostEntity(CHLClient* rdi)
 {
 	auto original = VMTHooks::Client.GetOriginal<LevelInitPostEntityFn>(6);
 	original(rdi);
+
+	if (!gApp->IsInitialized())
+		return;
 
 	features::entities.Reserve();
 	features::viewmodel_aim.ResetStopTime();

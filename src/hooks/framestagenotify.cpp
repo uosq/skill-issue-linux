@@ -13,11 +13,16 @@
 #include "../features/spyalert/spyalert.h"
 #include "../features/playerlist/playerlist.h"
 
+#include "../core/core.h"
+
 using FrameStageNotifyFn = void (*)(CHLClient* rdi, int stage);
 
 static void FrameStageNotify(CHLClient* rdi, int stage)
 {
 	auto original = VMTHooks::Client.GetOriginal<FrameStageNotifyFn>(35);
+
+	if (!gApp->IsInitialized())
+		return original(rdi, stage);
 
 	switch (stage)
 	{

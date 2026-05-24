@@ -72,7 +72,7 @@ namespace factories
 	extern CreateInterfaceFn engine;
 	extern CreateInterfaceFn client;
 	extern CreateInterfaceFn vstdlib;
-	extern CreateInterfaceFn vgui;
+	extern CreateInterfaceFn vgui2;
 	extern CreateInterfaceFn surface;
 	extern CreateInterfaceFn enginevgui;
 	extern CreateInterfaceFn inputsystem;
@@ -82,5 +82,8 @@ namespace factories
 	//extern CreateInterfaceFn tier0;
 }; // namespace factories
 
-template <typename T> bool GetInterface(T *&out, CreateInterfaceFn factory, const char *name);
 bool InitializeInterfaces();
+
+bool init_factories();
+bool init_interfaces();
+bool init_global_interfaces();

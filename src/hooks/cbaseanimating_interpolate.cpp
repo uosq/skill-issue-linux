@@ -5,12 +5,14 @@
 #include "../features/warp/warp.h"
 #include "../features/entitylist/entitylist.h"
 
+#include "../core/core.h"
+
 DETOUR_DECL_TYPE(bool, Interpolate, CBaseEntity *self, float currentTime);
 detour_ctx_t interpolate_ctx;
 
 bool Hooked_Interpolate(CBaseAnimating *self, float currentTime)
 {
-	if (self == nullptr)
+	if (!gApp->IsInitialized() || self == nullptr)
 	{
 		bool retVal;
 		DETOUR_ORIG_GET(&interpolate_ctx, retVal, Interpolate, self, currentTime);

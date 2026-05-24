@@ -2,6 +2,7 @@
 
 #include "../libdetour/libdetour.h"
 #include "../settings/settings.h"
+#include "../core/core.h"
 
 #include "../sdk/interfaces/interfaces.h"
 
@@ -10,11 +11,14 @@ detour_ctx_t showitemsctx;
 
 bool HookedShowItemsPickedUpFn(void *thisptr, bool bForce, bool bReturnToGame, bool bNoPanel)
 {
-	if (Config.misc.packed.accept_item_drop)
+	if (gApp->IsInitialized())
 	{
-		interfaces::Cvar->ConsolePrintf("Collected item drop\n");
-		DETOUR_ORIG_CALL(&showitemsctx, original_ShowItemsPickedUpFn, thisptr, true, true, true);
-		return false;
+		if (Config.misc.packed.accept_item_drop)
+		{
+			interfaces::Cvar->ConsolePrintf("Collected item drop\n");
+			DETOUR_ORIG_CALL(&showitemsctx, original_ShowItemsPickedUpFn, thisptr, true, true, true);
+			return false;
+		}
 	}
 
 	bool ret;

@@ -2,12 +2,20 @@
 
 #include "../features/ticks/ticks.h"
 #include "../libdetour/libdetour.h"
+#include "../core/core.h"
 
 static detour_ctx_t move_ctx;
+DETOUR_DECL_TYPE(void, CL_Move, float, float);
 
 void HookedCL_Move(float accumulated_extra_samples, bool bFinalTick)
 {
-	features::ticks.Run(accumulated_extra_samples, bFinalTick);
+	if (gApp->IsInitialized())
+	{
+		features::ticks.Run(accumulated_extra_samples, bFinalTick);
+		return;
+	}
+
+	DETOUR_ORIG_CALL(&move_ctx, CL_Move, accumulated_extra_samples, bFinalTick);
 }
 
 void HookCL_Move(void)

@@ -13,6 +13,8 @@
 #include "../gui/gui.h"
 #include "../settings/settings.h"
 
+#include "../core/core.h"
+
 DETOUR_DECL_TYPE(void, original_SwapWindow, SDL_Window *window);
 DETOUR_DECL_TYPE(int, original_PollEvent, SDL_Event *event);
 DETOUR_DECL_TYPE(int, original_GetWindowSize, SDL_Window *window, int *w, int *h);
@@ -124,34 +126,37 @@ void SetupImGuiStyle()
 
 void Hooked_SwapWindow(SDL_Window *window)
 {
-	static SDL_GLContext origcontext = nullptr, ourcontext = nullptr;
-
-	if (ourcontext == nullptr)
+	if (gApp->IsInitialized())
 	{
-		origcontext = SDL_GL_GetCurrentContext();
-		ourcontext  = SDL_GL_CreateContext(window);
-
-		ImGui::CreateContext();
-		ImGui::StyleColorsDark();
-		ImGui_ImplOpenGL3_Init("#version 100");
-		ImGui_ImplSDL2_InitForOpenGL(window, nullptr);
-		ImGuiIO &io = ImGui::GetIO();
-		SetupImGuiStyle();
-		io.ConfigWindowsMoveFromTitleBarOnly = true;
+		static SDL_GLContext origcontext = nullptr, ourcontext = nullptr;
+	
+		if (ourcontext == nullptr)
+		{
+			origcontext = SDL_GL_GetCurrentContext();
+			ourcontext  = SDL_GL_CreateContext(window);
+	
+			ImGui::CreateContext();
+			ImGui::StyleColorsDark();
+			ImGui_ImplOpenGL3_Init("#version 100");
+			ImGui_ImplSDL2_InitForOpenGL(window, nullptr);
+			ImGuiIO &io = ImGui::GetIO();
+			SetupImGuiStyle();
+			io.ConfigWindowsMoveFromTitleBarOnly = true;
+		}
+	
+		SDL_GL_MakeCurrent(window, ourcontext);
+	
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplSDL2_NewFrame();
+		ImGui::NewFrame();
+	
+		GUI::RunMainWindow();
+	
+		ImGui::Render();
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+	
+		SDL_GL_MakeCurrent(window, origcontext);
 	}
-
-	SDL_GL_MakeCurrent(window, ourcontext);
-
-	ImGui_ImplOpenGL3_NewFrame();
-	ImGui_ImplSDL2_NewFrame();
-	ImGui::NewFrame();
-
-	GUI::RunMainWindow();
-
-	ImGui::Render();
-	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
-	SDL_GL_MakeCurrent(window, origcontext);
 
 	DETOUR_ORIG_CALL(&swapdetour, original_SwapWindow, window);
 }
@@ -161,7 +166,8 @@ int Hooked_PollEvent(SDL_Event *event)
 	int ret = 0;
 	DETOUR_ORIG_GET(&polldetour, ret, original_PollEvent, event);
 
-	if ( ret == 0) return ret;
+	if ( !gApp->IsInitialized() || ret == 0 )
+		return ret;
 
 	if (ret > 0 && event != nullptr)
 	{

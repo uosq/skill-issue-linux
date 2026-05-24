@@ -7,12 +7,14 @@
 #include "../features/logs/logs.h"
 #include "../settings/settings.h"
 
+#include "../core/core.h"
+
 DETOUR_DECL_TYPE(float, CalcViewModelBobHelper, CTFPlayer *pPlayer, BobState_t *pBobState);
 detour_ctx_t calcbobhelper;
 
 float Hooked_CalcViewModelBobHelper(CTFPlayer *pPlayer, BobState_t *pBobState)
 {
-	if (!Config.misc.packed.no_viewmodel_bob)
+	if (!gApp->IsInitialized() || !Config.misc.packed.no_viewmodel_bob)
 	{
 		DETOUR_ORIG_CALL(&calcbobhelper, CalcViewModelBobHelper, pPlayer, pBobState);
 		return 0.0f;

@@ -4,15 +4,19 @@
 
 #include "../settings/settings.h"
 
+#include "../core/core.h"
+
 using SleepUntilInputFn = void (*)(void* rdi, int nMaxSleepTimeMS);
 
 static void SleepUntilInput(void* rdi, int nMaxSleepTimeMS)
 {
-	if (Config.misc.packed.no_engine_sleep)
-		return;
+	if (gApp->IsInitialized())
+	{
+		if (Config.misc.packed.no_engine_sleep)
+			return;
+	}
 
 	auto original = VMTHooks::InputSystem.GetOriginal<SleepUntilInputFn>(31);
-
 	original(rdi, nMaxSleepTimeMS);
 }
 

@@ -6,19 +6,23 @@
 #include "../features/scriptmanager/scriptmanager.h"
 
 #include "../hooks.h"
+#include "../core/core.h"
 
 using DoPostScreenSpaceEffectsFn = bool (*)(IClientMode* rdi, CViewSetup* setup);
 
 static bool DoPostScreenSpaceEffects(IClientMode* rdi, CViewSetup* setup)
 {
-	features::backtrack.DoPostScreenSpaceEffects();
-	//Chams::Run();
-	features::glow.Run();
-
-	if (auto pLocal = features::entities.GetLocal(); pLocal != nullptr)
-		features::chams.OnDoPostScreenSpaceEffects(pLocal);
-
-	features::scriptmanager.CallHooks("DoPostScreenSpaceEffects");
+	if (gApp->IsInitialized())
+	{
+		features::backtrack.DoPostScreenSpaceEffects();
+		//Chams::Run();
+		features::glow.Run();
+	
+		if (auto pLocal = features::entities.GetLocal(); pLocal != nullptr)
+			features::chams.OnDoPostScreenSpaceEffects(pLocal);
+	
+		features::scriptmanager.CallHooks("DoPostScreenSpaceEffects");
+	}
 
 	auto original = VMTHooks::ClientMode.GetOriginal<DoPostScreenSpaceEffectsFn>(40);
 	return original(rdi, setup);

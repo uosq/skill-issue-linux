@@ -1,17 +1,21 @@
 #include "cprediction_runcommand.h"
 
 #include "../features/warp/warp.h"
+#include "../core/core.h"
 
 DETOUR_DECL_TYPE(void, RunCommand, IPrediction *self, CTFPlayer *player, CUserCmd *ucmd, void *moveHelper);
 detour_ctx_t runcommand_ctx;
 
 void Hooked_RunCommand(IPrediction *self, CTFPlayer *player, CUserCmd *ucmd, void *moveHelper)
 {
-	if (features::warp.IsShifting())
-		player->GetTickBase() -= features::warp.m_iShiftAmount;
-
-	if (features::warp.IsRecharging())
-		player->GetTickBase()--;
+	if (gApp->IsInitialized())
+	{
+		if (features::warp.IsShifting())
+			player->GetTickBase() -= features::warp.m_iShiftAmount;
+	
+		if (features::warp.IsRecharging())
+			player->GetTickBase()--;
+	}
 
 	DETOUR_ORIG_CALL(&runcommand_ctx, RunCommand, self, player, ucmd, moveHelper);
 }

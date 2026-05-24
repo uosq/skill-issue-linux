@@ -1,8 +1,11 @@
 #pragma once
 
+#include <atomic>
+
 class CApp
 {
-      public:
+public:
+	~CApp() = default;
 	CApp();
 
 	bool IsInitialized();
@@ -10,8 +13,8 @@ class CApp
 	bool StartInterfaces();
 	bool StartHooks();
 
-      private:
-	bool m_bInitialized;
+private:
+	std::atomic<bool> m_bInitialized;
 };
 
-extern CApp gApp;
+extern CApp* gApp;

@@ -8,7 +8,6 @@
 #include "../hooks.h"
 
 #include "../features/scriptmanager/scriptmanager.h"
-
 #include "../core/core.h"
 
 using VGuiPaintFn = void (*)(IEngineVGuiInternal *rdi, PaintMode_t paint);
@@ -18,12 +17,7 @@ static void VGuiPaint(IEngineVGuiInternal* rdi, PaintMode_t paint)
 	auto original = VMTHooks::EngineVGui.GetOriginal<VGuiPaintFn>(15);
 	original(rdi, paint);
 
-	// I don't trust
-	// C++'s static initialization
-	if (!gApp.IsInitialized())
-		return gApp.Setup();
-
-	if (interfaces::Engine->IsTakingScreenshot())
+	if (!gApp->IsInitialized() || interfaces::Engine->IsTakingScreenshot())
 		return;
 
 	if (paint & PAINT_UIPANELS)

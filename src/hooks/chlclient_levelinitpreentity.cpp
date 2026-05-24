@@ -3,6 +3,7 @@
 #include "../sdk/definitions/ivengineclient.h"
 
 #include "../hooks.h"
+#include "../core/core.h"
 
 #include "../features/scriptmanager/scriptmanager.h"
 
@@ -12,7 +13,11 @@ static void LevelInitPreEntity(CHLClient* thisptr, const char* mapName)
 {
 	auto original = VMTHooks::Client.GetOriginal<LevelInitPreEntityFn>(5);
 
-	AS_LevelInitPreEntity_Callback(mapName);
+	if (gApp->IsInitialized())
+	{
+		AS_LevelInitPreEntity_Callback(mapName);
+	}
+
 	original(thisptr, mapName);
 }
 

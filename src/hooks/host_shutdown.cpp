@@ -7,16 +7,22 @@
 #include "../features/materialregistry/reg.h"
 #include "../features/playerlist/playerlist.h"
 
+#include "../core/core.h"
+
 DETOUR_DECL_TYPE(void, originalHost_ShutdownFn, void);
 detour_ctx_t shutdownctx;
 
 void HookedHost_ShutdownFn(void)
 {
-	features::chams.OnGameShutdown();
-	features::playerlist.Shutdown();
-	features::material_registry.Shutdown();
+	if (gApp->IsInitialized())
+	{
+		features::chams.OnGameShutdown();
+		features::playerlist.Shutdown();
+		features::material_registry.Shutdown();
+	
+		features::scriptmanager.CallHooks("GameShutdown");
+	}
 
-	features::scriptmanager.CallHooks("GameShutdown");
 	DETOUR_ORIG_CALL(&shutdownctx, originalHost_ShutdownFn);
 }
 

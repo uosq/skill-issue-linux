@@ -5,6 +5,7 @@
 #include "../sdk/classes/player.h"
 
 #include "../hooks.h"
+#include "../core/core.h"
 
 #include "../features/entitylist/entitylist.h"
 #include "../features/visuals/customfov/customfov.h"
@@ -20,7 +21,7 @@ static void OverrideView(IClientMode* rdi, CViewSetup *pView)
 	auto original = VMTHooks::ClientMode.GetOriginal<OverrideViewFn>(17);
 	original(rdi, pView);
 
-	if (pView == nullptr)
+	if (!gApp->IsInitialized() || pView == nullptr)
 		return;
 
 	features::scriptmanager.CallHooks("OverrideView", pView);

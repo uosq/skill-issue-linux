@@ -6,6 +6,8 @@
 #include "../features/entitylist/entitylist.h"
 #include "../features/logs/logs.h"
 
+#include "../core/core.h"
+
 DETOUR_DECL_TYPE(void, CTFPlayerAnimState_Update, void* thisptr, float eyeYaw, float eyePitch);
 detour_ctx_t animstate_update_ctx;
 
@@ -14,25 +16,28 @@ void Hooked_CTFPlayerAnimState_Update(void* thisptr, float eyeYaw, float eyePitc
 	if (thisptr == nullptr)
 		return;
 
-	uintptr_t ptr = reinterpret_cast<uintptr_t>(thisptr);
-	CTFPlayer* pPlayer = reinterpret_cast<CTFPlayer*>(ptr + 0x130);
-
-	if (pPlayer == nullptr)
+	if (gApp->IsInitialized())
 	{
-		DETOUR_ORIG_CALL(&animstate_update_ctx, CTFPlayerAnimState_Update, thisptr, eyeYaw, eyePitch);
-		return;
-	}
-
-	if (features::entities.GetLocal() == nullptr)
-	{
-		DETOUR_ORIG_CALL(&animstate_update_ctx, CTFPlayerAnimState_Update, thisptr, eyeYaw, eyePitch);
-		return;
-	}
-
-	if (pPlayer != features::entities.GetLocal())
-	{
-		DETOUR_ORIG_CALL(&animstate_update_ctx, CTFPlayerAnimState_Update, thisptr, eyeYaw, eyePitch);
-		return;
+		uintptr_t ptr = reinterpret_cast<uintptr_t>(thisptr);
+		CTFPlayer* pPlayer = reinterpret_cast<CTFPlayer*>(ptr + 0x130);
+	
+		if (pPlayer == nullptr)
+		{
+			DETOUR_ORIG_CALL(&animstate_update_ctx, CTFPlayerAnimState_Update, thisptr, eyeYaw, eyePitch);
+			return;
+		}
+	
+		if (features::entities.GetLocal() == nullptr)
+		{
+			DETOUR_ORIG_CALL(&animstate_update_ctx, CTFPlayerAnimState_Update, thisptr, eyeYaw, eyePitch);
+			return;
+		}
+	
+		if (pPlayer != features::entities.GetLocal())
+		{
+			DETOUR_ORIG_CALL(&animstate_update_ctx, CTFPlayerAnimState_Update, thisptr, eyeYaw, eyePitch);
+			return;
+		}
 	}
 
 	// this shit does nothing

@@ -3,6 +3,7 @@
 #include "../sdk/interfaces/interfaces.h"
 
 #include "../hooks.h"
+#include "../core/core.h"
 
 using GetUserCmdFn = CUserCmd *(*)(void *input, int sequence_number);
 

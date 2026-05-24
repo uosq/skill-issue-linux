@@ -10,6 +10,8 @@
 #include "../features/visuals/norecoil/norecoil.h"
 #include "../features/scriptmanager/scriptmanager.h"
 
+#include "../core/core.h"
+
 DETOUR_DECL_TYPE(void, original_CalcViewModelView, void *thisptr, CBaseEntity *, const Vector &, const QAngle &);
 detour_ctx_t calcViewModel_ctx;
 
@@ -19,7 +21,7 @@ void HookedCalcViewModelView(void *thisptr, CBaseEntity *owner, const Vector &ey
 	Vector angle	= eyeAngles;
 	Vector position = eyePosition;
 
-	if (owner)
+	if (owner && gApp->IsInitialized())
 	{
 		features::scriptmanager.CallHooks("CalcViewModelView", &position, &angle);
 

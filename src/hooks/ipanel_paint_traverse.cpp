@@ -8,30 +8,35 @@
 
 #include "../hooks.h"
 
+#include "../core/core.h"
+
 using PaintTraverseFn = void (*)(IPanel* rdi, VPANEL vguiPanel, bool forceRepaint, bool allowForce);
 
 static void PaintTraverse(IPanel* rdi, VPANEL vguiPanel, bool forceRepaint, bool allowForce)
 {
-	const char *panelName = interfaces::VGui->GetName(vguiPanel);
-
-	// https://github.com/rei-2/Amalgam/blob/master/Amalgam/src/Hooks/IPanel_PaintTraverse.cpp
-	if (Config.misc.packed.streamer_mode)
+	if (gApp->IsInitialized())
 	{
-		switch (fnv::Hash(panelName))
+		const char *panelName = interfaces::VGui->GetName(vguiPanel);
+	
+		// https://github.com/rei-2/Amalgam/blob/master/Amalgam/src/Hooks/IPanel_PaintTraverse.cpp
+		if (Config.misc.packed.streamer_mode)
 		{
-		case fnv::HashConst("SteamFriendsList"):
-		case fnv::HashConst("avatar"):
-		case fnv::HashConst("RankPanel"):
-		case fnv::HashConst("ModelContainer"):
-		case fnv::HashConst("ServerLabelNew"):
-			return;
+			switch (fnv::Hash(panelName))
+			{
+			case fnv::HashConst("SteamFriendsList"):
+			case fnv::HashConst("avatar"):
+			case fnv::HashConst("RankPanel"):
+			case fnv::HashConst("ModelContainer"):
+			case fnv::HashConst("ServerLabelNew"):
+				return;
+			}
 		}
-	}
-
-	if (Config.misc.packed.no_scope_overlay)
-	{
-		if (fnv::Hash(panelName) == fnv::HashConst("HudScope"))
-			return;
+	
+		if (Config.misc.packed.no_scope_overlay)
+		{
+			if (fnv::Hash(panelName) == fnv::HashConst("HudScope"))
+				return;
+		}
 	}
 
 	auto original = VMTHooks::VGui.GetOriginal<PaintTraverseFn>(42);

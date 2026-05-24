@@ -1,7 +1,10 @@
 #include "cmaterial_uncache.h"
 
-#include "../libdetour/libdetour.h"
 #include "../sdk/MaterialManager/materialmanager.h"
+
+#include "../libdetour/libdetour.h"
+#include "../core/core.h"
+
 
 DETOUR_DECL_TYPE(void, original_Uncache, IMaterial *mat, bool bPreserveVars);
 detour_ctx_t uncache_ctx;
@@ -9,7 +12,7 @@ detour_ctx_t uncache_ctx;
 void HookedUncache(IMaterial *mat, bool bPreserveVars)
 {
 	// hopefully fix the crash that happens here
-	if (mat == nullptr)
+	if (!gApp->IsInitialized() || mat == nullptr)
 	{
 		DETOUR_ORIG_CALL(&uncache_ctx, original_Uncache, mat, bPreserveVars);
 		return;

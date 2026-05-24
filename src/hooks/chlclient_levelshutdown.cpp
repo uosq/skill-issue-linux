@@ -1,6 +1,7 @@
 #include "chlclient_levelshutdown.h"
 
 #include "../hooks.h"
+#include "../core/core.h"
 
 #include "../features/aimbot/aimbot.h"
 #include "../features/backtrack/backtrack.h"
@@ -18,17 +19,20 @@ using LevelShutdownFn = void (*)(CHLClient* rdi);
 
 static void LevelShutdown(CHLClient* rdi)
 {
-	features::entities.Clear();
-	features::warp.Reset();
-	features::backtrack.Reset();
-	features::aimbot.Reset();
-	features::bhop.Reset();
-	features::spectators.OnLevelShutdown();
-	features::chams.OnLevelShutdown();
-	features::esp.OnLevelShutdown();
-	features::antiafk.OnLevelShutdown();
-
-	features::scriptmanager.CallHooks("LevelShutdown");
+	if (gApp->IsInitialized())
+	{
+		features::entities.Clear();
+		features::warp.Reset();
+		features::backtrack.Reset();
+		features::aimbot.Reset();
+		features::bhop.Reset();
+		features::spectators.OnLevelShutdown();
+		features::chams.OnLevelShutdown();
+		features::esp.OnLevelShutdown();
+		features::antiafk.OnLevelShutdown();
+	
+		features::scriptmanager.CallHooks("LevelShutdown");
+	}
 
 	auto original = VMTHooks::Client.GetOriginal<LevelShutdownFn>(7);
 	original(rdi);
