@@ -44,9 +44,6 @@ namespace AimbotUtils
 	// I should probably check bones
 	bool GetVisiblePoint(Vector &out, CTFPlayer *pLocal, Vector origin, Vector mins, Vector maxs);
 
-	std::string GetAimbotModeName();
-	std::string GetTeamModeName();
-
 	bool CanDamageWithSniperRifle(CTFPlayer *pLocal, CBaseEntity *pTarget, CTFWeaponBase *pWeapon);
 	float GetFovScaled(float flFov);
 	float GetAimbotFovScaled();

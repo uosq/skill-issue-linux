@@ -10,6 +10,7 @@
 #include "../features/glow/glow.h"
 
 #include "../features/scriptmanager/scriptmanager.h"
+#include "../features/scriptmanager/classes/drawmodelcontext.h"
 
 using DrawModelExecuteFn = void(*)(IVModelRender *thisptr,
                                    const DrawModelState_t &state,
@@ -22,6 +23,27 @@ static void DrawModelExecute(IVModelRender* thisptr, const DrawModelState_t &sta
 
 	if (interfaces::Engine->IsTakingScreenshot())
 		return original(thisptr, state, pInfo, pCustomBoneToWorld);
+
+	{
+		DrawModelState_t ctx_state = state;
+		ModelRenderInfo_t ctx_info = pInfo;
+
+		DrawModelContext ctx
+		{
+			pInfo.entity_index,
+			features::backtrack.IsDrawing(),
+			features::glow.IsRunning(),
+			features::glow.IsRunning(),
+
+			thisptr, ctx_state, ctx_info, pCustomBoneToWorld,
+
+			true
+		};
+
+		features::scriptmanager.CallHooks("DrawModel", ctx);
+
+		ctx.valid = false;
+	}
 
 	if (features::backtrack.IsDrawing())
 		return original(thisptr, state, pInfo, features::backtrack.GetDrawingRecord()->m_Bones);

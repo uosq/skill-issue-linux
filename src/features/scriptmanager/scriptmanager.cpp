@@ -26,6 +26,7 @@ extern void BindEntities(sol::state& lua);
 extern void BindEngine(sol::state& lua);
 extern void BindClient(sol::state& lua);
 extern void BindFS(sol::state& lua);
+extern void BindGameRules(sol::state& lua);
 
 // enums
 extern void Bind_IN_Buttons(sol::state& lua);
@@ -127,6 +128,7 @@ void ScriptManager::Init()
 	BindEntities(m_Lua);
 	BindClient(m_Lua);
 	BindFS(m_Lua);
+	BindGameRules(m_Lua);
 }
 
 void ScriptManager::Shutdown()

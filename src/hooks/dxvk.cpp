@@ -10,11 +10,6 @@
 
 #include "../gui/gui.h"
 
-#include "../features/binds/binds.h"
-#include "../features/radar/radar.h"
-#include "../features/warp/warp.h"
-#include "../features/logs/logs.h"
-
 #include "sdl.h"
 
 typedef struct IDirect3DDevice9 *LPDIRECT3DDEVICE9;

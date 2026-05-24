@@ -273,7 +273,7 @@ struct AimbotConfig
 
 			uint32_t proj_path : 1;
 
-			uint32_t aimmode : 3;
+			uint32_t aimmethod_hitscan : 3;
 			uint32_t meleemode : 2;
 			uint32_t teamselection : 2;
 			uint32_t proj_indicator : 2;
@@ -281,7 +281,10 @@ struct AimbotConfig
 			uint32_t swing_pred : 1;
 			uint32_t swing_pred_local : 1;
 
-			uint32_t _reserved : 10;
+			uint32_t aimmethod_melee : 3;
+			uint32_t aimmethod_projectile : 3;
+
+			uint32_t _reserved : 4;
 		};
 	} packed;
 

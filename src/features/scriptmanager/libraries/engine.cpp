@@ -89,4 +89,11 @@ void BindEngine(sol::state& lua)
 
 		return trace;
 	};
+
+	engine["get_screen_size"] = []() -> std::tuple<int, int>
+	{
+		int width, height;
+		interfaces::Engine->GetScreenSize(width, height);
+		return std::make_tuple(width, height);
+	};
 }

@@ -86,7 +86,7 @@ static bool ApplyAim(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CBaseEntity* pTa
 
 	bool shooting = false;
 
-	switch ((AimbotMode)Config.aimbot.packed.aimmode)
+	switch ((AimbotMode)Config.aimbot.packed.aimmethod_melee)
 	{
 	case AimbotMode::PLAIN:
 	{
@@ -106,7 +106,7 @@ static bool ApplyAim(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CBaseEntity* pTa
 	case AimbotMode::SMOOTH:
 	case AimbotMode::ASSISTANCE:
 	{
-		if (Config.aimbot.packed.aimmode == (int)AimbotMode::ASSISTANCE)
+		if (Config.aimbot.packed.aimmethod_melee == (int)AimbotMode::ASSISTANCE)
 		{
 			if (pCmd->mousedx == 0 && pCmd->mousedy == 0)
 				break;

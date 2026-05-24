@@ -309,7 +309,7 @@ static void ApplyAim(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCmd, 
 	if (target.entity == nullptr)
 		return;
 
-	AimbotMode mode = static_cast<AimbotMode>(Config.aimbot.packed.aimmode);
+	AimbotMode mode = static_cast<AimbotMode>(Config.aimbot.packed.aimmethod_hitscan);
 
 	switch (mode)
 	{

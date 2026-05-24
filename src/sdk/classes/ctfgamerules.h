@@ -2,6 +2,7 @@
 
 #include "../netvars/netvar.h"
 #include "../../mem.h"
+#include <array>
 
 class CTeamplayRules
 {
@@ -21,16 +22,21 @@ public:
 	NETVAR(m_bAwaitingReadyRestart, "CTeamplayRoundBasedRulesProxy->m_bAwaitingReadyRestart", bool);
 	NETVAR(m_flRestartRoundTime, "CTeamplayRoundBasedRulesProxy->m_flRestartRoundTime", float);
 	NETVAR(m_flMapResetTime, "CTeamplayRoundBasedRulesProxy->m_flMapResetTime", float);
-	NETVAR(m_flNextRespawnWave, "CTeamplayRoundBasedRulesProxy->m_flNextRespawnWave", void *);
-	NETVAR(m_bTeamReady, "CTeamplayRoundBasedRulesProxy->m_bTeamReady", void *);
+	NETVAR(m_flNextRespawnWave, "CTeamplayRoundBasedRulesProxy->m_flNextRespawnWave", float);
+	NETVAR(m_bTeamReady, "CTeamplayRoundBasedRulesProxy->m_bTeamReady", bool);
 	NETVAR(m_bStopWatch, "CTeamplayRoundBasedRulesProxy->m_bStopWatch", bool);
 	NETVAR(m_bMultipleTrains, "CTeamplayRoundBasedRulesProxy->m_bMultipleTrains", bool);
-	NETVAR(m_bPlayerReady, "CTeamplayRoundBasedRulesProxy->m_bPlayerReady", void *);
+	NETVAR(m_bPlayerReady, "CTeamplayRoundBasedRulesProxy->m_bPlayerReady", bool);
 	NETVAR(m_bCheatsEnabledDuringLevel, "CTeamplayRoundBasedRulesProxy->m_bCheatsEnabledDuringLevel", bool);
 	NETVAR(m_nRoundsPlayed, "CTeamplayRoundBasedRulesProxy->m_nRoundsPlayed", int);
 	NETVAR(m_flCountdownTime, "CTeamplayRoundBasedRulesProxy->m_flCountdownTime", float);
 	NETVAR(m_flStateTransitionTime, "CTeamplayRoundBasedRulesProxy->m_flStateTransitionTime", float);
-	NETVAR(m_TeamRespawnWaveTimes, "CTeamplayRoundBasedRulesProxy->m_TeamRespawnWaveTimes", void *);
+
+	inline std::array<float, 32>& m_TeamRespawnWaveTimes()
+	{
+		static auto offset = Netvars::m_netvarMap[fnv ::HashConst("CTeamplayRoundBasedRulesProxy->m_TeamRespawnWaveTimes")];
+		return *reinterpret_cast<std::array<float, 32>*>(reinterpret_cast<uintptr_t>(this) + offset);
+	}
 };
 
 class CTFGameRules : public CTeamplayRoundBasedRules
@@ -74,14 +80,14 @@ public:
 	NETVAR(m_bMapHasMatchSummaryStage, "CTFGameRulesProxy->m_bMapHasMatchSummaryStage", bool);
 	NETVAR(m_bPlayersAreOnMatchSummaryStage, "CTFGameRulesProxy->m_bPlayersAreOnMatchSummaryStage", bool);
 	NETVAR(m_bStopWatchWinner, "CTFGameRulesProxy->m_bStopWatchWinner", bool);
-	NETVAR(m_ePlayerWantsRematch, "CTFGameRulesProxy->m_ePlayerWantsRematch", void *);
+	NETVAR(m_ePlayerWantsRematch, "CTFGameRulesProxy->m_ePlayerWantsRematch", int);
 	NETVAR(m_eRematchState, "CTFGameRulesProxy->m_eRematchState", int);
-	NETVAR(m_nNextMapVoteOptions, "CTFGameRulesProxy->m_nNextMapVoteOptions", void *);
+	NETVAR(m_nNextMapVoteOptions, "CTFGameRulesProxy->m_nNextMapVoteOptions", int);
 	NETVAR(m_nBossHealth, "CTFGameRulesProxy->m_nBossHealth", int);
 	NETVAR(m_nMaxBossHealth, "CTFGameRulesProxy->m_nMaxBossHealth", int);
 	NETVAR(m_fBossNormalizedTravelDistance, "CTFGameRulesProxy->m_fBossNormalizedTravelDistance", int);
-	NETVAR(m_itHandle, "CTFGameRulesProxy->m_itHandle", int);
-	NETVAR(m_hBirthdayPlayer, "CTFGameRulesProxy->m_hBirthdayPlayer", int);
+	NETVAR(m_itHandle, "CTFGameRulesProxy->m_itHandle", EHANDLE);
+	NETVAR(m_hBirthdayPlayer, "CTFGameRulesProxy->m_hBirthdayPlayer", CHandle<CTFPlayer>);
 	NETVAR(m_nHalloweenEffect, "CTFGameRulesProxy->m_nHalloweenEffect", int);
 	NETVAR(m_fHalloweenEffectStartTime, "CTFGameRulesProxy->m_fHalloweenEffectStartTime", float);
 	NETVAR(m_fHalloweenEffectDuration, "CTFGameRulesProxy->m_fHalloweenEffectDuration", float);

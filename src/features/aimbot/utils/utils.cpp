@@ -89,38 +89,6 @@ namespace AimbotUtils
 		return false;
 	}
 
-	std::string GetAimbotModeName()
-	{
-		switch (static_cast<AimbotMode>(Config.aimbot.packed.aimmode))
-		{
-		case AimbotMode::PLAIN:
-			return "Plain";
-		case AimbotMode::SMOOTH:
-			return "Smooth";
-		case AimbotMode::ASSISTANCE:
-			return "Assistance";
-		case AimbotMode::SILENT:
-			return "Silent";
-		default:
-			return "Invalid";
-		}
-	}
-
-	std::string GetTeamModeName()
-	{
-		switch (static_cast<TeamMode>(Config.aimbot.packed.teamselection))
-		{
-		case TeamMode::ONLYENEMY:
-			return "Only Enemy";
-		case TeamMode::ONLYTEAMMATE:
-			return "Only Teammate";
-		case TeamMode::BOTH:
-			return "Both";
-		default:
-			return "Invalid";
-		}
-	}
-
 	bool CanDamageWithSniperRifle(CTFPlayer *pLocal, CBaseEntity *pTarget, CTFWeaponBase *pWeapon)
 	{
 		if (pLocal == nullptr || pTarget == nullptr || pWeapon == nullptr)

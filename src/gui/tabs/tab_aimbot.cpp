@@ -3,19 +3,43 @@
 
 #include "../utils/gui_utils.h"
 
+/*static void make_hitscan_popup()
+{
+	if (ImGui::BeginPopup("HitscanPopup"))
+	{
+		{
+			constexpr const char *items[]{"Plain", "Smooth", "Assistance", "Silent"};
+			int temp = Config.aimbot.packed.aimmethod_hitscan;
+			ImGui::Combo("Method##Hitscan", &temp, items, 4);
+			Config.aimbot.packed.aimmethod_hitscan = temp;
+		}
+
+		ImGui::EndPopup();
+	}
+}*/
+
+#define AIM_METHOD(name, item) \
+do { \
+	constexpr const char *items[]{"Plain", "Smooth", "Assistance", "Silent"}; \
+	int temp = item; \
+	ImGui::Combo(name, &temp, items, 4); \
+	item = temp; \
+} while(0);
+
 static void DrawLeftColumn()
 {
+	//make_hitscan_popup();
+
 	ImGui::TextUnformatted("Targeting");
 	{
-		constexpr const char *items[]{"Plain", "Smooth", "Assistance", "Silent"};
-		int temp = Config.aimbot.packed.aimmode;
-		ImGui::Combo("Method", &temp, items, 4);
-		Config.aimbot.packed.aimmode = temp;
+		AIM_METHOD("Hitscan Aim Method", Config.aimbot.packed.aimmethod_hitscan)
+		AIM_METHOD("Projectile Aim Method", Config.aimbot.packed.aimmethod_projectile)
+		AIM_METHOD("Melee Aim Method", Config.aimbot.packed.aimmethod_melee)
 	}
 	{
 		constexpr const char *items[]{"None", "Legit", "Rage"};
 		int temp = Config.aimbot.packed.meleemode;
-		ImGui::Combo("Melee Aimbot", &temp, items, 3);
+		ImGui::Combo("Melee Aimbot Mode", &temp, items, 3);
 		Config.aimbot.packed.meleemode = temp;
 	}
 	{

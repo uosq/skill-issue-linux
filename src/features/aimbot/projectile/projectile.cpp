@@ -342,7 +342,7 @@ bool CAimbotProjectile::ApplyPlainAim(CTFPlayer* pLocal, CTFWeaponBase* pWeapon,
 
 bool CAimbotProjectile::ApplySmoothAssistanceAim(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd, AimbotState& pState)
 {
-	if (Config.aimbot.packed.aimmode == (int)AimbotMode::ASSISTANCE && pCmd->mousedx == 0 && pCmd->mousedy == 0)
+	if (Config.aimbot.packed.aimmethod_projectile == (int)AimbotMode::ASSISTANCE && pCmd->mousedx == 0 && pCmd->mousedy == 0)
 		return false;
 
 	Vec3 viewAngles; /* = */ interfaces::Engine->GetViewAngles(viewAngles);
@@ -392,7 +392,7 @@ bool CAimbotProjectile::ApplySilentAim(CTFPlayer* pLocal, CTFWeaponBase* pWeapon
 
 bool CAimbotProjectile::ApplyAim(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd, AimbotState& pState)
 {
-	AimbotMode mode = static_cast<AimbotMode>(Config.aimbot.packed.aimmode);
+	AimbotMode mode = static_cast<AimbotMode>(Config.aimbot.packed.aimmethod_projectile);
 	bool ret = false;
 
 	switch(mode)
