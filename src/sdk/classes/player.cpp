@@ -16,13 +16,38 @@ Above the dynamic cast to grappling hook
   if (lVar7 == 0) {
     if (((g_pGameRules == (long *)0x0) || (cVar3 = FUN_01cbf710(), cVar3 == '\0')) ||
 ===>       ((lVar7 = GetEntityForLoadoutSlot(plVar6,9,0), lVar7 == 0 ||
-        (lVar7 = __dynamic_cast(lVar7,&C_BaseEntity::typeinfo,&C_TFGrapplingHook::typeinfo,0),
-        lVar7 == 0)))) {
+	(lVar7 = __dynamic_cast(lVar7,&C_BaseEntity::typeinfo,&C_TFGrapplingHook::typeinfo,0),
+	lVar7 == 0)))) {
       DAT_02fc86a8 = '\0';
       plVar6 = (long *)FUN_01de8230(plVar6,9,0);
 */
 ADD_SIG(GetEntityForLoadoutSlot, "client.so", "55 8D 46 F9 48 89 E5")
+
+/*
+Search for "UpdateClientSideAnimations"
+You'll find C_BaseAnimating::UpdateClientSideAnimations
+inside, find the the offset that it is calling from the vftable
+
+		if (_DAT_0303b29c == 0) {
+		if (DAT_02ecd8b0 < 1) goto LAB_016125df;
+		LAB_016125a1:
+		iVar2 = DAT_02ecd8b0;
+		lVar7 = 0;
+		do {
+		puVar5 = (undefined8 *)(lVar7 * 0x10 + DAT_02ecd8a0);
+		if ((*(byte *)(puVar5 + 1) & 1) != 0) {
+======>			(**(code **)(*(long *)*puVar5 + 0x800))();
+		}
+		lVar7 = lVar7 + 1;
+
+0x800/sizeof(uintptr_t) = 256
+so it is the 256's index of C_BaseAnimating's vftable
+*/
 ADD_SIG(CBaseAnimating_UpdateClientSideAnimation, "client.so", "80 BF D0 0A 00 00 00 75")
+
+/*
+explained in the function implementation
+*/
 ADD_SIG(CTFPlayer_GetEffectiveInvisibility, "client.so", "55 48 89 E5 41 56 41 55 4C 8D AF 78 1E 00 00 41 54 49 89 FC 4C 89 EF 53 E8")
 
 bool CTFPlayer::IsAlive()
@@ -156,8 +181,8 @@ uint8_t CTFPlayer::GetMoveType()
 	// the switch condition is it
 	// the function is CGameMovement::PlayerMove
 	/*
-	its thhe 0x214 from cVar5
-		cVar5 = *(char *)(lVar7 + 0x214);
+	its the 0x214 from cVar5
+======>		cVar5 = *(char *)(lVar7 + 0x214);
 		LAB_016fa147:
 		switch(cVar5) {
 		case '\0':
@@ -175,8 +200,6 @@ uint8_t CTFPlayer::GetMoveType()
 
 void CTFPlayer::ThirdPersonSwitch(bool state)
 {
-	//using ThirdPersonSwitchFn = void (*)(CTFPlayer *self, bool state);
-
 	// The offset I got from
 	// CInput::CAM_ToFirstPerson
 	/*

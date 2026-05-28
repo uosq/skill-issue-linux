@@ -29,6 +29,7 @@
 #include "../definitions/weaponinfo.h"
 #include "../definitions/ilocalize.h"
 #include "../definitions/demo.h"
+#include "../definitions/cclientstate.h"
 
 using AttributeHookValueFn = float (*)(float defaultValue, const char *attribName, CBaseEntity *pEntity, void *, bool);
 extern AttributeHookValueFn AttributeHookValue;
@@ -55,34 +56,20 @@ namespace interfaces
 	extern IVModelRender *ModelRender;
 	extern IKeyValuesSystem *KeyValuesSystem;
 	extern IVModelInfoClient *ModelInfoClient;
-	extern void *ClientState;
+	extern CClientState *ClientState;
 	extern CBaseHudChat *gHUD;
+	#if 0
+	extern IGameMovement* GameMovement;
+	extern CEconNotificationQueue* g_notificationQueue;
+	#endif
+
 	extern IStudioRender *StudioRender;
-	//extern IGameMovement* GameMovement;
-	//extern CEconNotificationQueue* g_notificationQueue;
 	extern IPhysics *Physics;
 	extern IPhysicsCollision* PhysicsCollision;
 	extern ILocalize* VGuiLocalize;
 	extern IDemoPlayer* DemoPlayer;
 	extern IDemoRecorder* DemoRecorder;
 } // namespace interfaces
-
-namespace factories
-{
-	extern CreateInterfaceFn engine;
-	extern CreateInterfaceFn client;
-	extern CreateInterfaceFn vstdlib;
-	extern CreateInterfaceFn vgui2;
-	extern CreateInterfaceFn surface;
-	extern CreateInterfaceFn enginevgui;
-	extern CreateInterfaceFn inputsystem;
-	extern CreateInterfaceFn materialsystem;
-	extern CreateInterfaceFn studiorender;
-	extern CreateInterfaceFn vphysics;
-	//extern CreateInterfaceFn tier0;
-}; // namespace factories
-
-bool InitializeInterfaces();
 
 bool init_factories();
 bool init_interfaces();

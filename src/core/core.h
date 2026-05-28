@@ -10,10 +10,9 @@ public:
 
 	bool IsInitialized();
 	void Setup();
-	bool StartInterfaces();
-	bool StartHooks();
 
 private:
+	bool StartHooks();
 	std::atomic<bool> m_bInitialized;
 };
 

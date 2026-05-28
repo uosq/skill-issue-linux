@@ -2,7 +2,6 @@
 
 #include <atomic>
 
-#include "../sdk/interfaces/interfaces.h"
 #include "../sdk/signatures/signatures.h"
 
 #include "../features/scriptmanager/scriptmanager.h"
@@ -68,11 +67,6 @@ CApp::CApp() : m_bInitialized(false)
 bool CApp::IsInitialized()
 {
 	return m_bInitialized.load();
-}
-
-bool CApp::StartInterfaces()
-{
-	return InitializeInterfaces();
 }
 
 void CApp::Setup()

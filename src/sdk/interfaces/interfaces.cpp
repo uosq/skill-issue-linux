@@ -30,8 +30,9 @@ namespace interfaces
 	IVModelRender *ModelRender	   = nullptr;
 	IKeyValuesSystem *KeyValuesSystem  = nullptr;
 	IVModelInfoClient *ModelInfoClient = nullptr;
-	void *ClientState		   = nullptr; // fuck C++
+	CClientState *ClientState	   = nullptr; // fuck C++
 	CBaseHudChat *gHUD		   = nullptr;
+
 	IStudioRender *StudioRender	   = nullptr;
 	//CEconNotificationQueue* g_notificationQueue = nullptr;
 	IPhysics *Physics = nullptr;
@@ -53,7 +54,6 @@ namespace factories
 	CreateInterfaceFn materialsystem = nullptr;
 	CreateInterfaceFn studiorender	 = nullptr;
 	CreateInterfaceFn vphysics	 = nullptr;
-	//CreateInterfaceFn tier0		 = nullptr;
 }; // namespace factories
 
 template <typename T> bool GetInterface(T *&out, CreateInterfaceFn factory, const char *name)
@@ -243,7 +243,28 @@ bool init_global_interfaces()
 	if (!GetGlobalInterface(interfaces::ClientState, "engine.so", "48 8D 05 ? ? ? ? 4C 8B 40", "ClientState", true))
 		return false;
 
-	if (!GetGlobalInterface(interfaces::gHUD, "client.so", "4C 8D 25 ? ? ? ? 53 48 89 FB 4C 89 E7 E8 ? ? ? ?", "gHUD", true))
+	/*
+	xref:	HL2_KILL_ODESSAGUNSHIP
+	or 	Test Notification Message A (1/10)
+	or	Test Message B
+
+	very conveniently placed LEA right where I want it :))
+                               undefined achievement_notification_test_command_callback()
+             undefined         <UNASSIGNED>   <RETURN>
+                             achievement_notification_test_command_callback  XREF[3]:     _INIT_27:0154177c(*), 024582a4, 
+                                                                                          024e81a4(*)  
+        015d25f0 48 8D 3D        LEA        RDI,[gHUD]                                       = ??
+                 69 EA 97 01
+        015d25f7 55              PUSH       RBP
+        015d25f8 48 8D 35        LEA        RSI,[s_CAchievementNotificationPanel_023277f9]   = "CAchievementNotificationPanel"
+                 FA 51 D5 00
+        015d25ff 48 89 E5        MOV        RBP,RSP
+        015d2602 E8 09 5B        CALL       FUN_01708110                                     undefined FUN_01708110()
+                 13 00
+	*/
+
+	// HACKHACKHACK: this shit is not a mov instruction!
+	if (!GetGlobalInterface(interfaces::gHUD, "client.so", "48 8D 3D ? ? ? ? 55 48 8D 35 ? ? ? ? 48 89 E5 E8 ? ? ? ? 48 85 C0 74 ? F6 05 ? ? ? ? 01", "gHUD", true))
 		return false;
 
 	uintptr_t CEngineClient_vfunction125 = reinterpret_cast<uintptr_t>(sigscan_module("engine.so", "55 48 89 E5 53 48 83 EC 08 48 8D 1D ? ? ? ? 48 8B 3B 48 8B 07 FF 50 20 84 C0 74 ? 48 8B 3B 48 8B 07"));

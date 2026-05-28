@@ -213,16 +213,6 @@ void GUI::RunMainWindow()
 					ImGui::EndTabItem();
 				}
 
-				/*if (ImGui::BeginTabItem("TRIGGER"))
-				{
-					if (ImGui::BeginChild("MainTabContent"))
-					{
-						DrawTriggerTab();
-					}
-					ImGui::EndChild();
-					ImGui::EndTabItem();
-				}*/
-
 				if (ImGui::BeginTabItem("LUA"))
 				{
 					if (ImGui::BeginChild("MainTabContent"))
