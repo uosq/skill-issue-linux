@@ -1,20 +1,15 @@
 #pragma once
 
-#include "../../../sdk/helpers/helper.h"
-#include "../../../sdk/interfaces/interfaces.h"
-
-#include "../../../settings/settings.h"
 #include "../../feature.h"
 
-class CustomFov
+class CTFPlayer;
+class CViewSetup;
+
+class CCustomFov
 {
 public:
-	void Run(CTFPlayer *pLocal, CViewSetup *pView);
-	float GetFov();
-
-private:
-	float m_flFov{90};
-	float m_flOldFov{90};
+	void OnOverrideView(CTFPlayer* pLocal, CViewSetup* pView);
+	float GetTargetFov(CTFPlayer* pLocal);
 };
 
-DECLARE_FEATURE(CustomFov, customfov)
+DECLARE_FEATURE(CCustomFov, customfov)

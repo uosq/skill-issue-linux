@@ -1,6 +1,6 @@
 #include "clientmodeshared_firegameevent.h"
 
-#include "../libdetour/libdetour.h"
+#include "../thirdparty/libdetour/libdetour.h"
 #include "../features/scriptmanager/scriptmanager.h"
 
 #include "../core/core.h"

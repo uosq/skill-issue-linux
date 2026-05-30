@@ -1,6 +1,6 @@
 #include "cgameclient_executestringcommand.h"
 
-#include "../libdetour/libdetour.h"
+#include "../thirdparty/libdetour/libdetour.h"
 #include "../core/core.h"
 
 #include "../sdk/interfaces/interfaces.h"

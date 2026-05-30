@@ -1,7 +1,7 @@
 #include "settings.h"
 
 #include "../features/logs/logs.h"
-#include "../simpleini/SimpleIni.h"
+#include "../thirdparty/simpleini/SimpleIni.h"
 
 bool Settings::menu_open = false;
 

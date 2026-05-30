@@ -1,37 +1,85 @@
 #include "customfov.h"
 
-void CustomFov::Run(CTFPlayer *pLocal, CViewSetup *pView)
+#include "../../../sdk/interfaces/interfaces.h"
+#include "../../../sdk/classes/player.h"
+
+#include "../../../settings/settings.h"
+
+static float get_unzoomed_fov(CTFPlayer* local)
 {
-	static ConVar *fov_desired = interfaces::Cvar->FindVar("fov_desired");
+	assert(local);
 
-	bool enabled = Config.misc.packed.customfov_enabled && !interfaces::Engine->IsTakingScreenshot();
-	float target_fov = enabled ? Config.misc.customfov : fov_desired->GetFloat();
+	static ConVar* fov_desired = interfaces::Cvar->FindVar("fov_desired");
 
-	if (pLocal->InCond(TF_COND_ZOOMED))
-		target_fov = enabled ? Config.misc.zoomedfov : 20.0f;
+	// wtf
+	if (!fov_desired)
+		return 90.0f;
 
-	m_flFov = Math::Lerp(m_flOldFov, target_fov, 0.2f);
-
-	if (!pLocal->IsAlive() || interfaces::Engine->IsTakingScreenshot())
+	if (local->IsAlive())
 	{
-		pView->fov = fov_desired->GetFloat();
+		if (Config.misc.packed.customfov_enabled)
+			return Config.misc.customfov;
+	}
+
+	return fov_desired->GetFloat();
+}
+
+static float get_zoomed_fov(CTFPlayer* local)
+{
+	assert(local);
+
+	if (local->IsAlive())
+	{
+		if (Config.misc.packed.customfov_enabled)
+			return Config.misc.zoomedfov;
+	}
+
+	return 20.0f;
+}
+
+float CCustomFov::GetTargetFov(CTFPlayer* local)
+{
+	if (local == nullptr)
+		return 90.0f;
+
+	bool in_zoom = local->InCond(TF_COND_ZOOMED);
+	return in_zoom ? get_zoomed_fov(local) : get_unzoomed_fov(local);
+}
+
+void apply_viewmodel_fov(CTFPlayer* local, float fov)
+{
+	assert(local);
+	
+	if (!local->IsAlive())
+		return;
+
+	local->m_iDefaultFOV() = fov;
+}
+
+void CCustomFov::OnOverrideView(CTFPlayer* local, CViewSetup* view)
+{
+	if (!local || !view)
+		return;
+
+	float target_fov = GetTargetFov(local);
+
+	// force shit
+	if (interfaces::Engine->IsTakingScreenshot())
+	{
+		view->fov = target_fov;
+
+		apply_viewmodel_fov(local, target_fov);
+
 		return;
 	}
 
-	pView->fov = m_flFov;
+	static float old_target_fov = 90.0f;
+	const float deltatime = interfaces::GlobalVars->absolute_frametime;
 
-	if (pLocal->IsAlive())
-	{
-		pLocal->m_iDefaultFOV() =
-		enabled
-		? Config.misc.customfov
-		: fov_desired->GetFloat();
-	}
+	float interpolated_target_fov = Math::Lerp(old_target_fov, target_fov, 20.0f * deltatime);
 
-	m_flOldFov = m_flFov;
-}
+	view->fov = interpolated_target_fov;
+	old_target_fov = interpolated_target_fov;
 
-float CustomFov::GetFov()
-{
-	return m_flFov;
+	apply_viewmodel_fov(local, interpolated_target_fov);
 }

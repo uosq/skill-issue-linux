@@ -2,6 +2,8 @@
 
 #include <cstdint>
 
+#include "../../thirdparty/libsigscan/libsigscan.h"
+
 void* GetItemSchema()
 {
 	/*

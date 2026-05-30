@@ -1,4 +1,4 @@
-#include "../../../sol3/sol.hpp"
+#include "../../../thirdparty/sol3/sol.hpp"
 
 #include "../../../sdk/definitions/cgametrace.h"
 #include "../../../sdk/classes/entity.h"

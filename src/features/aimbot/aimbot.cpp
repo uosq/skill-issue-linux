@@ -2,6 +2,8 @@
 
 #include "../binds/binds.h"
 #include "../ticks/ticks.h"
+#include "../visuals/customfov/customfov.h"
+
 #include "melee/aimbot_melee.h"
 #include "utils/utils.h"
 
@@ -13,7 +15,7 @@ static void DrawFOVIndicator(ImDrawList* pDraw)
 		return;
 
 	float aimFov = DEG2RAD(AimbotUtils::GetAimbotFovScaled());
-	float camFov = DEG2RAD(features::customfov.GetFov() * 0.5f);
+	float camFov = DEG2RAD(features::customfov.GetTargetFov(features::entities.GetLocal()) * 0.5f);
 
 	int w, h;
 	helper::draw::GetScreenSize(w, h);

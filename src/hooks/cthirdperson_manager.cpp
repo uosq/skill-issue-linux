@@ -1,7 +1,7 @@
 #include "cthirdperson_manager.h"
 
 #include "../features/logs/logs.h"
-#include "../libdetour/libdetour.h"
+#include "../thirdparty/libdetour/libdetour.h"
 
 DETOUR_DECL_TYPE(void, CThirdPersonManager_Update, void *self);
 

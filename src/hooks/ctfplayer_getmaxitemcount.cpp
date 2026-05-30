@@ -1,6 +1,6 @@
 #include "ctfplayer_getmaxitemcount.h"
 
-#include "../libdetour/libdetour.h"
+#include "../thirdparty/libdetour/libdetour.h"
 #include "../settings/settings.h"
 #include "../core/core.h"
 

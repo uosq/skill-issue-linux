@@ -2,7 +2,7 @@
 
 #include <cstdint>
 
-#include "../libdetour/libdetour.h"
+#include "../thirdparty/libdetour/libdetour.h"
 #include "../core/core.h"
 
 #include "../features/logs/logs.h"

@@ -1,7 +1,7 @@
 #include "ctfplayeranimstate_update.h"
 
 #include "../sdk/classes/player.h"
-#include "../libdetour/libdetour.h"
+#include "../thirdparty/libdetour/libdetour.h"
 
 #include "../features/entitylist/entitylist.h"
 #include "../features/logs/logs.h"

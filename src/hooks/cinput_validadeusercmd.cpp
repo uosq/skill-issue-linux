@@ -1,6 +1,6 @@
 #include "cinput_validadeusercmd.h"
 
-#include "../libdetour/libdetour.h"
+#include "../thirdparty/libdetour/libdetour.h"
 #include "../core/core.h"
 
 //DETOUR_DECL_TYPE(void, ValidateUserCmd, void *, CUserCmd *, int);

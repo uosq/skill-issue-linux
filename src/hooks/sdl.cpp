@@ -3,12 +3,12 @@
 #include <SDL2/SDL_video.h>
 #include <dlfcn.h>
 
-#include "../libdetour/libdetour.h"
+#include "../thirdparty/libdetour/libdetour.h"
 #include "../sdk/interfaces/interfaces.h"
 
-#include "../imgui/imgui.h"
-#include "../imgui/imgui_impl_opengl3.h"
-#include "../imgui/imgui_impl_sdl2.h"
+#include "../thirdparty/imgui/imgui.h"
+#include "../thirdparty/imgui/imgui_impl_opengl3.h"
+#include "../thirdparty/imgui/imgui_impl_sdl2.h"
 
 #include "../gui/gui.h"
 #include "../settings/settings.h"

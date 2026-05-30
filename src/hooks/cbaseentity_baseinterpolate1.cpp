@@ -1,7 +1,7 @@
 #include "cbaseentity_baseinterpolatepart1.h"
 
 #include "../features/warp/warp.h"
-#include "../libdetour/libdetour.h"
+#include "../thirdparty/libdetour/libdetour.h"
 #include "../features/entitylist/entitylist.h"
 
 #include "../core/core.h"

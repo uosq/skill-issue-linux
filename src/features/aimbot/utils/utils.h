@@ -7,7 +7,6 @@
 #include "../../../sdk/helpers/helper.h"
 #include "../../../settings/settings.h"
 #include "../../entitylist/entitylist.h"
-#include "../../visuals/customfov/customfov.h"
 
 struct PotentialTarget
 {

@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include "../libdetour/libdetour.h"
+#include "../thirdparty/libdetour/libdetour.h"
 
 #include "../features/visuals/viewmodel_aim/viewmodel_aim.h"
 #include "../features/visuals/viewmodel_interp/viewmodel_interp.h"

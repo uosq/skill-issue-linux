@@ -1,5 +1,5 @@
-#include "../../imgui/imgui.h"
-#include "../../imgui/imgui_stdlib.h"
+#include "../../thirdparty/imgui/imgui.h"
+#include "../../thirdparty/imgui/imgui_stdlib.h"
 
 #include "../../features/configmanager/configmgr.h"
 

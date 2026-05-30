@@ -1,6 +1,6 @@
 #include "host_shutdown.h"
 
-#include "../libdetour/libdetour.h"
+#include "../thirdparty/libdetour/libdetour.h"
 
 #include "../features/scriptmanager/scriptmanager.h"
 #include "../features/chams/chams.h"

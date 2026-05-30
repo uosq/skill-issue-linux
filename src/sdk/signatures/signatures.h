@@ -1,8 +1,9 @@
 #pragma once
 
-#include "../../libsigscan.h"
 #include <string>
 #include <vector>
+
+#include "../../thirdparty/libsigscan/libsigscan.h"
 
 class Sig
 {

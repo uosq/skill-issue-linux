@@ -337,7 +337,12 @@ bool CAimbotProjectile::ApplyPlainAim(CTFPlayer* pLocal, CTFWeaponBase* pWeapon,
 	pCmd->viewangles = m_vecAimAngle;
 	interfaces::Engine->SetViewAngles(m_vecAimAngle);
 
-	return true;
+	bool shooting = false;
+
+	if (Config.aimbot.packed.autoshoot)
+		shooting = helper::localplayer::Shoot(pLocal, pWeapon, pCmd, pState.target);
+
+	return shooting;
 }
 
 bool CAimbotProjectile::ApplySmoothAssistanceAim(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd, AimbotState& pState)

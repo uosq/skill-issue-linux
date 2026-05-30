@@ -1,6 +1,6 @@
 #include "cbaseanimating_interpolate.h"
 
-#include "../libdetour/libdetour.h"
+#include "../thirdparty/libdetour/libdetour.h"
 
 #include "../features/warp/warp.h"
 #include "../features/entitylist/entitylist.h"

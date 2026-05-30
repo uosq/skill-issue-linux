@@ -1,7 +1,7 @@
 #include "cbaseentity_shoulddraw.h"
 
 #include "../core/core.h"
-#include "../libdetour/libdetour.h"
+#include "../thirdparty/libdetour/libdetour.h"
 
 #include "../features/logs/logs.h"
 

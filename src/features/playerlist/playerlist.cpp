@@ -8,8 +8,8 @@
 
 #include "../../sdk/classes/player.h"
 
-#include "../../simpleini/SimpleIni.h"
-#include "../../imgui/imgui.h"
+#include "../../thirdparty/simpleini/SimpleIni.h"
+#include "../../thirdparty/imgui/imgui.h"
 #include "../../settings/settings.h"
 
 #define CACHE_FILE "./skill-issue/players.ini"

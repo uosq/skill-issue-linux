@@ -8,11 +8,11 @@
 #include "../core/core.h"
 
 #include "../features/entitylist/entitylist.h"
-#include "../features/visuals/customfov/customfov.h"
 #include "../features/visuals/norecoil/norecoil.h"
 #include "../features/visuals/thirdperson/thirdperson.h"
 
 #include "../features/scriptmanager/scriptmanager.h"
+#include "../features/visuals/customfov/customfov.h"
 
 using OverrideViewFn = void (*)(IClientMode* rdi, CViewSetup *pView);
 
@@ -30,7 +30,7 @@ static void OverrideView(IClientMode* rdi, CViewSetup *pView)
 	{
 		features::thirdperson.OverrideView(pLocal, pView);
 		features::norecoil.RunOverrideView(pLocal, pView);
-		features::customfov.Run(pLocal, pView);
+		features::customfov.OnOverrideView(pLocal, pView);
 	}
 }
 

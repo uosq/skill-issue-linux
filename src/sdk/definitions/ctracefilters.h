@@ -5,7 +5,7 @@
 #include "cgametrace.h"
 #include "ienginetrace.h"
 
-#include "../../sol3/sol.hpp"
+#include "../../thirdparty/sol3/sol.hpp"
 
 enum
 {

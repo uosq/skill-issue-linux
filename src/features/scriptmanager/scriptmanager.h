@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 
-#include "../../sol3/sol.hpp"
+#include "../../thirdparty/sol3/sol.hpp"
 #include "../feature.h"
 
 struct LuaHook

@@ -3,6 +3,7 @@
 #define ARRAYSIZE(x) sizeof((x)) / sizeof((x[0]))
 
 #include "../../scriptmanager/scriptmanager.h"
+#include "../../visuals/customfov/customfov.h"
 
 namespace AimbotUtils
 {
@@ -122,7 +123,8 @@ namespace AimbotUtils
 
 	float GetFovScaled(float flFov)
 	{
-		float cameraFOV		    = features::customfov.GetFov();
+		// won't check for null as we SHOULD be calling this only when a localplayer exists
+		float cameraFOV		    = features::customfov.GetTargetFov(features::entities.GetLocal());
 
 		float radAimbotHalf	    = DEG2RAD(flFov / 2.0f);
 		float radPlayerHalf	    = DEG2RAD(cameraFOV / 2.0f);

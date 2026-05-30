@@ -3,8 +3,8 @@
 #include <string>
 #include <vector>
 
-#include "../../imgui/imgui.h"
-#include "../../imgui/texteditor/TextEditor.h"
+#include "../../thirdparty/imgui/imgui.h"
+#include "../../thirdparty/imgui/texteditor/TextEditor.h"
 #include "../../settings/settings.h"
 
 #include "../../features/materialregistry/reg.h"

@@ -18,7 +18,7 @@
 #include "localplayer/localplayer.h"
 #include "materials/materials.h"
 
-#include "../../libdetour/libdetour.h"
+#include "../../thirdparty/libdetour/libdetour.h"
 
 namespace helper
 {

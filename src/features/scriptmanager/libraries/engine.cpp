@@ -1,4 +1,4 @@
-#include "../../../sol3/sol.hpp"
+#include "../../../thirdparty/sol3/sol.hpp"
 
 #include "../../../sdk/interfaces/interfaces.h"
 #include "../../../sdk/helpers/engine/engine.h"

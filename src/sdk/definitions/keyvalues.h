@@ -1,9 +1,10 @@
 #pragma once
 
-#include "../../libsigscan.h"
+#include <stdint.h>
+
+#include "../../thirdparty/libsigscan/libsigscan.h"
 #include "../interfaces/interfaces.h"
 #include "types.h"
-#include <stdint.h>
 
 /*
 sigs

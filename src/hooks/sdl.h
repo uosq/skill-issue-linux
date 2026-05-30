@@ -5,7 +5,7 @@
 #include <SDL2/SDL_events.h>
 #include <SDL2/SDL_video.h>
 
-#include "../imgui/imgui.h"
+#include "../thirdparty/imgui/imgui.h"
 
 extern SDL_Window* tfwindow;
 

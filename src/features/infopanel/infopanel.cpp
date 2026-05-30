@@ -1,6 +1,6 @@
 #include "infopanel.h"
 
-#include "../../imgui/imgui.h"
+#include "../../thirdparty/imgui/imgui.h"
 #include "../../settings/settings.h"
 
 #include "../aimbot/aimbot.h"

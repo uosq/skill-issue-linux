@@ -1,10 +1,12 @@
 #pragma once
 
-#include "../../libsigscan.h"
+#include <cstdint>
+
 #include "iappsystem.h"
 #include "ipanel.h"
 #include "types.h"
-#include <cstdint>
+
+#include "../../thirdparty/libsigscan/libsigscan.h"
 
 class Color;
 class ITexture;

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../libsigscan.h"
+#include "../thirdparty/libsigscan/libsigscan.h"
 #include "../sdk/interfaces/interfaces.h"
 #include "../sdk/signatures/signatures.h"
 

@@ -1,6 +1,6 @@
 #include "spyalert.h"
 
-#include "../../imgui/imgui.h"
+#include "../../thirdparty/imgui/imgui.h"
 
 #include "../../sdk/classes/player.h"
 #include "../../sdk/imgui_utils/imgui_utils.h"

@@ -3,7 +3,7 @@
 #include <algorithm>
 #include <filesystem>
 
-#include "../../sol3/lua/lua.hpp"
+#include "../../thirdparty/sol3/lua/lua.hpp"
 #include "../../sdk/interfaces/interfaces.h"
 
 #define SCRIPT_DIR "./skill-issue/scripts"

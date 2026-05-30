@@ -1,5 +1,8 @@
 #include "gui.h"
 
+#include "../thirdparty/imgui/imgui.h"
+#include "../settings/settings.h"
+
 #include "../features/scriptmanager/scriptmanager.h"
 #include "../features/spectators/spectators.h"
 #include "../features/esp/esp.h"

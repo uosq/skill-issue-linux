@@ -1,6 +1,6 @@
 #include "ctfwearable_shoulddraw.h"
 
-#include "../libdetour/libdetour.h"
+#include "../thirdparty/libdetour/libdetour.h"
 
 #include "../core/core.h"
 

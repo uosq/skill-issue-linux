@@ -1,7 +1,7 @@
 #include "cl_move.h"
 
 #include "../features/ticks/ticks.h"
-#include "../libdetour/libdetour.h"
+#include "../thirdparty/libdetour/libdetour.h"
 #include "../core/core.h"
 
 static detour_ctx_t move_ctx;

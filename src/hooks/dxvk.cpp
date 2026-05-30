@@ -2,11 +2,13 @@
 
 #include "../sdk/interfaces/interfaces.h"
 
-#include "../imgui/imgui.h"
-#include "../imgui/imgui_impl_dx9.h"
-#include "../imgui/imgui_impl_sdl2.h"
+#include <fstream>
 
-#include "../libdetour/libdetour.h"
+#include "../thirdparty/imgui/imgui.h"
+#include "../thirdparty/imgui/imgui_impl_dx9.h"
+#include "../thirdparty/imgui/imgui_impl_sdl2.h"
+
+#include "../thirdparty/libdetour/libdetour.h"
 
 #include "../gui/gui.h"
 

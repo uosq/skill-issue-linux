@@ -3,7 +3,7 @@
 #include "createinterface.h"
 #include <dlfcn.h>
 
-#include "../../libsigscan.h"
+#include "../../thirdparty/libsigscan/libsigscan.h"
 
 #include "../definitions/ceconnotificationqueue.h"
 #include "../definitions/cglobalvars.h"

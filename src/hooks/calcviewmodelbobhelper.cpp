@@ -2,7 +2,7 @@
 
 #include <cstring>
 
-#include "../libdetour/libdetour.h"
+#include "../thirdparty/libdetour/libdetour.h"
 
 #include "../features/logs/logs.h"
 #include "../settings/settings.h"

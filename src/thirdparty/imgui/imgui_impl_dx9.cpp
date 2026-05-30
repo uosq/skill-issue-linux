@@ -45,7 +45,7 @@
 #include "imgui_impl_dx9.h"
 
 // DirectX
-#include "../sdk/definitions/d3d9.h"
+#include "../../sdk/definitions/d3d9.h"
 
 // Clang/GCC warnings with -Weverything
 #if defined(__clang__)

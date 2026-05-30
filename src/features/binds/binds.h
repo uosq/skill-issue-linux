@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-#include "../../imgui/imgui.h"
+#include "../../thirdparty/imgui/imgui.h"
 #include "../feature.h"
 
 enum class HotkeyMode

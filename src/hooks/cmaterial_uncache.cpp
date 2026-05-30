@@ -2,7 +2,7 @@
 
 #include "../sdk/MaterialManager/materialmanager.h"
 
-#include "../libdetour/libdetour.h"
+#include "../thirdparty/libdetour/libdetour.h"
 #include "../core/core.h"
 
 

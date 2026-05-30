@@ -2,7 +2,7 @@
 
 #include "../sdk/signatures/signatures.h"
 
-#include "../libdetour/libdetour.h"
+#include "../thirdparty/libdetour/libdetour.h"
 #include "../settings/settings.h"
 
 #include "../features/entitylist/entitylist.h"

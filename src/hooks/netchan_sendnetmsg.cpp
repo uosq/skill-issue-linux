@@ -1,6 +1,6 @@
 #include "netchan_sendnetmsg.h"
 
-#include "../libdetour/libdetour.h"
+#include "../thirdparty/libdetour/libdetour.h"
 
 #include "../core/core.h"
 
