@@ -41,15 +41,45 @@ bool CNetwork::init()
 	return true;
 }
 
+__always_inline static void set_curl_timeout(CURL* curl, int connect_timeout = 5, int timeout = 15)
+{
+	curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, static_cast<long>(connect_timeout));
+	curl_easy_setopt(curl, CURLOPT_TIMEOUT, static_cast<long>(timeout));
+	curl_easy_setopt(curl, CURLOPT_SSLVERSION, static_cast<long>(CURL_SSLVERSION_TLSv1_2));
+}
+
+__always_inline static void set_curl_redirects(CURL* curl, int follow_location = 1, int max_redirs = 5)
+{
+	curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, static_cast<long>(follow_location)); // allow redirects
+	curl_easy_setopt(curl, CURLOPT_MAXREDIRS, static_cast<long>(max_redirs)); // max redirects
+}
+
+__always_inline static void enable_curl_compresson(CURL* curl)
+{
+	curl_easy_setopt(curl, CURLOPT_ACCEPT_ENCODING, ""); // compress to gzip
+}
+
+__always_inline static void set_curl_useragent(CURL* curl, const char* user_agent = "libcurl-agent/1.0")
+{
+	curl_easy_setopt(curl, CURLOPT_USERAGENT, user_agent);
+}
+
+__always_inline static void set_curl_write_callback(CURL* curl, void* cb)
+{
+	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, cb);
+}
+
 std::string CNetwork::request(const std::string& url, bool& success)
 {
 	success = false;
+
 	if (!initialized)
 		return "";
 
 	// i know making a curl every request is not a good idea
 	// but i dont want to mess with multithreading
 	CURL* local_curl = curl_easy_init();
+
 	if (!local_curl)
 		return "";
 
@@ -57,22 +87,15 @@ std::string CNetwork::request(const std::string& url, bool& success)
 	char error_buffer[CURL_ERROR_SIZE] = { 0 };
 
 	curl_easy_setopt(local_curl, CURLOPT_URL, url.c_str());
-	curl_easy_setopt(local_curl, CURLOPT_WRITEFUNCTION, mem_callback);
 	curl_easy_setopt(local_curl, CURLOPT_WRITEDATA, static_cast<void*>(&chunk));
 	curl_easy_setopt(local_curl, CURLOPT_ERRORBUFFER, error_buffer);
-	
-	curl_easy_setopt(local_curl, CURLOPT_USERAGENT, "libcurl-agent/1.0");
-	curl_easy_setopt(local_curl, CURLOPT_ACCEPT_ENCODING, ""); // compress to gzip
-	curl_easy_setopt(local_curl, CURLOPT_FOLLOWLOCATION, 1L); // allow redirects
-	curl_easy_setopt(local_curl, CURLOPT_MAXREDIRS, 5L); // max redirects
-	
-	// only wait for like 15 seconds
-	// maybe reduce this?
-	// maybe 5 seconds would be better
-	// cant make the game freeze for 15 whole seconds, that would be crazy
-	curl_easy_setopt(local_curl, CURLOPT_CONNECTTIMEOUT, 5L);  
-	curl_easy_setopt(local_curl, CURLOPT_TIMEOUT, 15L);        
-	curl_easy_setopt(local_curl, CURLOPT_SSLVERSION, static_cast<long>(CURL_SSLVERSION_TLSv1_2));
+
+	enable_curl_compresson(local_curl);
+
+	set_curl_write_callback(local_curl, (void*)&mem_callback);
+	set_curl_useragent(local_curl);
+	set_curl_redirects(local_curl);
+	set_curl_timeout(local_curl);
 
 	CURLcode result = curl_easy_perform(local_curl);
 

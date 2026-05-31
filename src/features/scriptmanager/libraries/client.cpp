@@ -39,6 +39,9 @@ void BindClient(sol::state& lua)
 
 	client["chat_print"] = [](const char* text) -> void
 	{
+		if (!interfaces::Engine->IsInGame())
+			return;
+
 		helper::localplayer::ChatPrintf(0, 0, "%s", text);
 	};
 }
