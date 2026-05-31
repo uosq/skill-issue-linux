@@ -37,12 +37,14 @@ endif
 DEP_FLAGS = -MMD -MP
 
 # Compiler flags
-CFLAGS = -march=$(MARCH) -shared -std=c++17 $(OPT) -fPIC -Werror -g -rdynamic -DSOL_ALL_SAFETIES_ON=1 $(DEP_FLAGS)
+CFLAGS = -march=$(MARCH) -shared -std=c++17 $(OPT) -fPIC -Werror -g -rdynamic -DSOL_ALL_SAFETIES_ON=1 $(DEP_FLAGS) -lcurl
 CFLAGS_C = -march=$(MARCH) $(OPT) -fPIC -Werror -g -rdynamic $(DEP_FLAGS)
 
 # Linker flags
 LDFLAGS = -lSDL2 -lvulkan -lm -ldl
-LDFLAGS += $(shell find $(BUILD_DIR) -name '*.a' 2>/dev/null)
+$(BIN): $(OBJS)
+	@mkdir -p $(dir $@)
+	$(CC_CPP) $(CFLAGS) -o $@ $^ $(LDFLAGS) $(shell find $(BUILD_DIR) -name '*.a' 2>/dev/null)
 
 # Source files
 CPP_FILES = $(shell find src/ -name '*.cpp')
@@ -56,17 +58,17 @@ OBJS = $(OBJ_CPP) $(OBJ_C)
 # Dependency files
 DEPS = $(OBJS:.o=.d)
 
-.PHONY: all clean v3 compat
+.PHONY: all clean v3 compat multiarch
 
 #-------------------------------------------------------------------------------
 
-all: $(BIN)
+all: v3 compat
 
 v3:
-	$(MAKE) MARCH=x86-64-v3 BIN=$(BIN_V3) DEBUG=$(DEBUG)
+	@$(MAKE) MARCH=x86-64-v3 BIN=$(BIN_V3) DEBUG=$(DEBUG)
 
 compat:
-	$(MAKE) MARCH=x86-64 BIN=$(BIN_COMPAT) DEBUG=$(DEBUG)
+	@$(MAKE) MARCH=x86-64 BIN=$(BIN_COMPAT) DEBUG=$(DEBUG)
 
 clean:
 	rm -rf obj

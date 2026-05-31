@@ -8,6 +8,7 @@
 #include "../features/materialregistry/reg.h"
 #include "../features/playerlist/playerlist.h"
 #include "../features/hook_initializer/initializer.h"
+#include "../features/network/network.h"
 
 ADD_SIG(Host_Shutdown, "engine.so", "80 3D ? ? ? ? 00 0F 85 ? ? ? ? 55 31 F6")
 
@@ -21,6 +22,7 @@ void HookedHost_ShutdownFn(void)
 		features::chams.OnGameShutdown();
 		features::playerlist.Shutdown();
 		features::material_registry.Shutdown();
+		features::network.shutdown();
 	
 		features::scriptmanager.CallHooks("GameShutdown");
 	}

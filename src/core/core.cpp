@@ -16,6 +16,7 @@
 #include "../features/materialregistry/reg.h"
 #include "../features/playerlist/playerlist.h"
 #include "../features/hook_initializer/initializer.h"
+#include "../features/network/network.h"
 
 #include "../gui/gui.h"
 #include "../hooks.h"
@@ -31,6 +32,10 @@ bool CApp::IsInitialized()
 
 void CApp::Setup()
 {
+	// we are fucked
+	if (!features::network.init())
+		return;
+
 	if (!Sigs_InitAll())
 		return;
 
