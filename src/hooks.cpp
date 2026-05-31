@@ -4,16 +4,16 @@
 
 namespace VMTHooks
 {
-	VMT Engine;
-	VMT EngineVGui;
-	VMT InputSystem;
-	VMT Client;
-	VMT ClientMode;
-	VMT Surface;
-	VMT ModelRender;
-	VMT StudioRender;
-	VMT CInput;
-	VMT VGui;
+	VMT Engine {};
+	VMT EngineVGui {};
+	VMT InputSystem {};
+	VMT Client {};
+	VMT ClientMode {};
+	VMT Surface {};
+	VMT ModelRender {};
+	VMT StudioRender {};
+	VMT CInput {};
+	VMT VGui {};
 }
 
 void VMTHooks::Initialize()

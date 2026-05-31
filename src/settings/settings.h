@@ -507,40 +507,18 @@ namespace Settings
 	{
 		// aimbot
 		CONFIG_INT("aimbot raw", Config.aimbot.packed.raw),
-		//CONFIG_BOOL("aimbot enabled", Config.aimbot.packed.enabled),
 		CONFIG_FLOAT("aimbot fov", Config.aimbot.fov),
-		//CONFIG_BOOL("aimbot autoshot", Config.aimbot.packed.autoshoot),
 		CONFIG_FLOAT("aimbot max sim time", Config.aimbot.max_sim_time),
-		//CONFIG_BOOL("aimbot viewmodel aim", Config.aimbot.packed.viewmodelaim),
-		//CONFIG_BOOL("aimbot draw fov indicator", Config.aimbot.packed.draw_fov_indicator),
-		//CONFIG_BOOL("aimbot ignore cloaked", Config.aimbot.packed.ignorecloaked),
-		//CONFIG_BOOL("aimbot ignore ubered", Config.aimbot.packed.ignoreubered),
-		//CONFIG_BOOL("aimbot ignore hoovy", Config.aimbot.packed.ignorehoovy),
-		//CONFIG_BOOL("aimbot ignore bonked", Config.aimbot.packed.ignorebonked),
-		//CONFIG_INT("aimbot melee", Config.aimbot.packed.meleemode),
-		//CONFIG_BOOL("aimbot wait for charge", Config.aimbot.packed.waitforcharge),
-		//CONFIG_INT("aimbot mode", Config.aimbot.packed.aimmode),
 		CONFIG_FLOAT("aimbot smoothness", Config.aimbot.smoothness),
-		//CONFIG_INT("aimbot team mode", Config.aimbot.packed.teamselection),
-		//CONFIG_BOOL("aimbot hold minigun spin", Config.aimbot.packed.hold_minigun_spin),
-		//CONFIG_BOOL("aimbot indicator", Config.aimbot.packed.proj_indicator),
 		CONFIG_KEY("aimbot key", Config.aimbot.key),
-		//CONFIG_INT("aimbot path", Config.aimbot.packed.proj_path),
 
 		// esp
 		CONFIG_INT("esp raw", Config.esp.packed.raw),
-		//CONFIG_BOOL("esp enabled", Config.esp.packed.enabled),
-		//CONFIG_BOOL("esp ignore cloaked", Config.esp.packed.ignorecloaked),
-		//CONFIG_BOOL("esp buildings", Config.esp.packed.buildings),
-		//CONFIG_BOOL("esp name", Config.esp.packed.name),
-		//CONFIG_BOOL("esp box", Config.esp.packed.box),
 		CONFIG_INT("esp health", Config.esp.health),
-		//CONFIG_BOOL("esp weapon", Config.esp.packed.weapon),
 		CONFIG_INT("esp conditions", Config.esp.conditions.raw),
 		CONFIG_INT("esp team", Config.esp.team_selection),
 		CONFIG_INT("esp font", Config.esp.font.selected),
 		CONFIG_INT("esp font size", Config.esp.font.size),
-		//CONFIG_BOOL("esp class", Config.esp.packed.class_name),
 		CONFIG_INT("esp fsides", Config.esp.sides.raw),
 		CONFIG_INT("esp custom", Config.esp.custom.raw),
 
@@ -549,38 +527,17 @@ namespace Settings
 
 		// misc
 		CONFIG_INT("misc raw", Config.misc.packed.raw),
-		//CONFIG_BOOL("misc thirdperson", Config.misc.packed.thirdperson),
 		CONFIG_KEY("misc thirdperson key", Config.misc.thirdperson_key),
 		CONFIG_FLOAT4("misc thirdperson offset", Config.misc.thirdperson_offset),
-		//CONFIG_BOOL("misc customfov enabled", Config.misc.packed.customfov_enabled),
 		CONFIG_FLOAT("misc customfov", Config.misc.customfov),
 		CONFIG_FLOAT("misc customfov zoom", Config.misc.zoomedfov),
-		//CONFIG_BOOL("misc spectatorlist", Config.misc.packed.spectatorlist),
-		//CONFIG_BOOL("misc backpack_expander", Config.misc.packed.backpack_expander),
-		//CONFIG_BOOL("misc sv pure bypass", Config.misc.packed.sv_pure_bypass),
-		//CONFIG_BOOL("misc streamer mode", Config.misc.packed.streamer_mode),
-		//CONFIG_BOOL("misc bhop", Config.misc.packed.bhop),
-		//CONFIG_BOOL("misc autostrafe", Config.misc.packed.autostrafe),
-		//CONFIG_BOOL("misc accept item drop", Config.misc.packed.accept_item_drop),
-		//CONFIG_BOOL("misc playerlist", Config.misc.packed.playerlist),
 		CONFIG_FLOAT3("misc viewmodel offset", Config.misc.viewmodel_offset),
 		CONFIG_FLOAT("misc viewmodel interp", Config.misc.viewmodel_interp),
-		//CONFIG_BOOL("misc no recoil", Config.misc.packed.norecoil),
-		//CONFIG_BOOL("misc no engine sleep", Config.misc.packed.no_engine_sleep),
-		//CONFIG_BOOL("misc no scope overlay", Config.misc.packed.no_scope_overlay),
-		//CONFIG_BOOL("misc no zoom", Config.misc.packed.no_zoom),
-		//CONFIG_BOOL("misc no viewmodel bob", Config.misc.packed.no_viewmodel_bob),
-		//CONFIG_BOOL("misc antiafk", Config.misc.packed.antiafk),
-		//CONFIG_BOOL("misc info panel", Config.misc.packed.infopanel),
-		//CONFIG_BOOL("misc spy alert", Config.misc.packed.spyalert),
 		CONFIG_FLOAT("misc aspect ratio", Config.misc.aspectratio),
 
 		//triggerbot
 		CONFIG_KEY("trigger key", Config.trigger.key),
 		CONFIG_INT("trigger raw", Config.trigger.packed.raw),
-		//CONFIG_BOOL("trigger hitscan", Config.trigger.packed.hitscan),
-		//CONFIG_INT("trigger autobackstab", Config.trigger.packed.autobackstab),
-		//CONFIG_INT("trigger autoairblast", Config.trigger.packed.autoairblast),
 
 		// colors
 		CONFIG_FLOAT4("colors red team", Config.colors.red_team),
@@ -591,21 +548,11 @@ namespace Settings
 
 		// warp
 		CONFIG_INT("warp raw", Config.warp.packed.raw),
-		//CONFIG_BOOL("warp enabled", Config.warp.packed.enabled),
-		//CONFIG_INT("warp speed", Config.warp.packed.speed),
 		CONFIG_KEY("warp key", Config.warp.key),
 		CONFIG_KEY("warp recharge key", Config.warp.recharge_key),
 
 		// radar
 		CONFIG_INT("radar raw", Config.radar.packed.raw),
-		//CONFIG_BOOL("radar enabled", Config.radar.packed.enabled),
-		//CONFIG_INT("radar size", Config.radar.packed.size),
-		//CONFIG_INT("radar range", Config.radar.packed.range),
-		//CONFIG_BOOL("radar players", Config.radar.packed.players),
-		//CONFIG_BOOL("radar buildings", Config.radar.packed.buildings),
-		//CONFIG_BOOL("radar objective", Config.radar.packed.objective),
-		//CONFIG_BOOL("radar projectiles", Config.radar.packed.projectiles),
-		//CONFIG_INT("radar icon size", Config.radar.packed.icon_size),
 
 		// chams
 		CONFIG_BOOL("chams enabled", Config.chams.enabled),
@@ -613,9 +560,6 @@ namespace Settings
 
 		// backtrack
 		CONFIG_INT("backtrack raw", Config.backtrack.packed.raw),
-		//CONFIG_BOOL("backtrack enabled", Config.backtrack.packed.enabled),
-		//CONFIG_INT("backtrack draw mode", Config.backtrack.packed.draw_mode),
-		//CONFIG_STRING_VECTOR("backtrack materials", Config.backtrack.active_materials),
 	};
 
 	int Save(const std::string &fullPath);

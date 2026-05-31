@@ -13,7 +13,3 @@ extern ImFont* IMFONT_TF2Build;
 extern ImFont* IMFONT_Arial;
 
 void SetupImGuiStyle();
-
-void Hooked_SwapWindow(SDL_Window *window);
-int Hooked_PollEvent(SDL_Event *event);
-void HookSDL();

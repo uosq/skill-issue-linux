@@ -1,7 +1,3 @@
-#include "clientmodeshared_overrideview.h"
-
-#include <string>
-
 #include "../sdk/classes/player.h"
 
 #include "../hooks.h"
@@ -13,6 +9,7 @@
 
 #include "../features/scriptmanager/scriptmanager.h"
 #include "../features/visuals/customfov/customfov.h"
+#include "../features/hook_initializer/initializer.h"
 
 using OverrideViewFn = void (*)(IClientMode* rdi, CViewSetup *pView);
 
@@ -43,3 +40,5 @@ void HookOverrideView()
 	helper::console::ColoredPrint("ClientModeShared::OverrideView hooked\n", color);
 #endif
 }
+
+MARK_FOR_INIT(HookOverrideView)

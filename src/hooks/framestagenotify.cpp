@@ -1,4 +1,4 @@
-#include "framestagenotify.h"
+#include "../core/core.h"
 
 #include "../sdk/interfaces/interfaces.h"
 
@@ -12,8 +12,7 @@
 #include "../features/esp/esp.h"
 #include "../features/spyalert/spyalert.h"
 #include "../features/playerlist/playerlist.h"
-
-#include "../core/core.h"
+#include "../features/hook_initializer/initializer.h"
 
 using FrameStageNotifyFn = void (*)(CHLClient* rdi, int stage);
 
@@ -75,3 +74,5 @@ void HookFrameStageNotify()
 	helper::console::ColoredPrint("IBaseClientDll::FrameStageNotify hooked\n", color);
 #endif
 }
+
+MARK_FOR_INIT(HookFrameStageNotify)

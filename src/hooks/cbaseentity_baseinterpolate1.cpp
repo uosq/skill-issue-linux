@@ -1,10 +1,16 @@
-#include "cbaseentity_baseinterpolatepart1.h"
-
 #include "../features/warp/warp.h"
 #include "../thirdparty/libdetour/libdetour.h"
 #include "../features/entitylist/entitylist.h"
 
 #include "../core/core.h"
+
+#include "../sdk/signatures/signatures.h"
+#include "../sdk/classes/entity.h"
+
+// sig 55 48 89 E5 41 57 49 89 F7 41 56 49 89 CE 41 55 4D 89 CD
+// args CBaseEntity* self, float &currentTime, Vector &oldOrigin, QAngle &oldAngles, Vector &oldVel, int &bNoMoreChanges
+
+ADD_SIG(CBaseEntity_BaseInterpolateParte1, "client.so", "55 48 89 E5 41 57 49 89 F7 41 56 49 89 CE 41 55 4D 89 CD");
 
 DETOUR_DECL_TYPE(int, BaseInterpolatePart1, CBaseEntity *self, float *currentTime, Vector *oldOrigin, QAngle *oldAngles, Vector *oldVel, int *bNoMoreChanges);
 detour_ctx_t interp_ctx;

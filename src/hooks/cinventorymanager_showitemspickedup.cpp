@@ -1,10 +1,14 @@
-#include "cinventorymanager_showitemspickedup.h"
-
-#include "../thirdparty/libdetour/libdetour.h"
-#include "../settings/settings.h"
 #include "../core/core.h"
 
 #include "../sdk/interfaces/interfaces.h"
+#include "../sdk/signatures/signatures.h"
+
+#include "../settings/settings.h"
+#include "../thirdparty/libdetour/libdetour.h"
+
+#include "../features/hook_initializer/initializer.h"
+
+ADD_SIG(CInventoryManager_ShowItemsPickedUp, "client.so", "55 48 89 E5 41 57 41 56 41 55 41 54 53 48 83 EC 48 48 8B 07")
 
 DETOUR_DECL_TYPE(bool, original_ShowItemsPickedUpFn, void *thisptr, bool bForce, bool bReturnToGame, bool bNoPanel);
 detour_ctx_t showitemsctx;
@@ -36,3 +40,5 @@ void HookShowItemsPickedUp()
 	interfaces::Cvar->ConsolePrintf("CInventoryManager::ShowItemsPickedUp hooked\n");
 #endif
 }
+
+MARK_FOR_INIT(HookShowItemsPickedUp)

@@ -1,10 +1,9 @@
-#include "iinputsystem_sleepuntilinput.h"
+#include "../core/core.h"
 
 #include "../hooks.h"
-
 #include "../settings/settings.h"
 
-#include "../core/core.h"
+#include "../features/hook_initializer/initializer.h"
 
 using SleepUntilInputFn = void (*)(void* rdi, int nMaxSleepTimeMS);
 
@@ -24,3 +23,5 @@ void Hook_SleepUntilInput()
 {
 	VMTHooks::InputSystem.Hook(31, &SleepUntilInput);
 }
+
+MARK_FOR_INIT(Hook_SleepUntilInput)

@@ -1,11 +1,11 @@
-#include "isurface_setcursor.h"
+#include "../core/core.h"
 
 #include "../sdk/interfaces/interfaces.h"
 #include "../settings/settings.h"
 
 #include "../hooks.h"
 
-#include "../core/core.h"
+#include "../features/hook_initializer/initializer.h"
 
 using ISurface_LockCursorFn = void (*)(void* rdi);
 static void ISurface_LockCursor(void* rdi)
@@ -66,3 +66,5 @@ void HookLockCursor()
 	// setcursor
 	VMTHooks::Surface.Hook(51, &ISurface_SetCursor);
 }
+
+MARK_FOR_INIT(HookLockCursor)

@@ -1,12 +1,12 @@
-#include "clientmodeshared_dopostscreenspaceeffects.h"
+#include "../core/core.h"
 
 #include "../features/backtrack/backtrack.h"
 #include "../features/chams/chams.h"
 #include "../features/glow/glow.h"
 #include "../features/scriptmanager/scriptmanager.h"
+#include "../features/hook_initializer/initializer.h"
 
 #include "../hooks.h"
-#include "../core/core.h"
 
 using DoPostScreenSpaceEffectsFn = bool (*)(IClientMode* rdi, CViewSetup* setup);
 
@@ -37,3 +37,5 @@ void HookDoPostScreenSpaceEffects(void)
 	helper::console::ColoredPrint("ClientMode::DoPostScreenSpaceEffects Hooked\n", color);
 #endif
 }
+
+MARK_FOR_INIT(HookDoPostScreenSpaceEffects)

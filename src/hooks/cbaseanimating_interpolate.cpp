@@ -1,16 +1,21 @@
-#include "cbaseanimating_interpolate.h"
-
 #include "../thirdparty/libdetour/libdetour.h"
+
+#include "../sdk/signatures/signatures.h"
+#include "../sdk/definitions/cbaseanimating.h"
 
 #include "../features/warp/warp.h"
 #include "../features/entitylist/entitylist.h"
 
 #include "../core/core.h"
 
-DETOUR_DECL_TYPE(bool, Interpolate, CBaseEntity *self, float currentTime);
-detour_ctx_t interpolate_ctx;
+#include "../features/hook_initializer/initializer.h"
 
-bool Hooked_Interpolate(CBaseAnimating *self, float currentTime)
+ADD_SIG(CBaseAnimating_Interpolate, "client.so", "55 48 89 E5 41 57 41 56 41 55 41 54 53 48 83 EC 68 4C 8B AF B8 07 00 00");
+
+DETOUR_DECL_TYPE(bool, Interpolate, CBaseEntity *self, float currentTime);
+static detour_ctx_t interpolate_ctx;
+
+static bool Hooked_Interpolate(CBaseAnimating *self, float currentTime)
 {
 	if (!gApp->IsInitialized() || self == nullptr)
 	{
@@ -31,7 +36,7 @@ bool Hooked_Interpolate(CBaseAnimating *self, float currentTime)
 	return retVal;
 }
 
-void Hook_Interpolate(void)
+static void Hook_Interpolate(void)
 {
 	//xref: C_BaseAnimating::Interpolate
 	//void* original = sigscan_module("client.so", "55 48 89 E5 41 57 41 56 41 55 41 54 53 48 83 EC 68 4C 8B AF B8 07 00 00");
@@ -47,3 +52,5 @@ void Hook_Interpolate(void)
 	interfaces::Cvar->ConsolePrintf("CBaseAnimating::Interpolate hooked\n");
 #endif
 }
+
+MARK_FOR_INIT(Hook_Interpolate)

@@ -1,13 +1,15 @@
-#include "host_shutdown.h"
+#include "../core/core.h"
 
+#include "../sdk/signatures/signatures.h"
 #include "../thirdparty/libdetour/libdetour.h"
 
 #include "../features/scriptmanager/scriptmanager.h"
 #include "../features/chams/chams.h"
 #include "../features/materialregistry/reg.h"
 #include "../features/playerlist/playerlist.h"
+#include "../features/hook_initializer/initializer.h"
 
-#include "../core/core.h"
+ADD_SIG(Host_Shutdown, "engine.so", "80 3D ? ? ? ? 00 0F 85 ? ? ? ? 55 31 F6")
 
 DETOUR_DECL_TYPE(void, originalHost_ShutdownFn, void);
 detour_ctx_t shutdownctx;
@@ -35,3 +37,5 @@ void HookHost_Shutdown()
 	interfaces::Cvar->ConsolePrintf("Host_Shutdown hooked\n");
 #endif
 }
+
+MARK_FOR_INIT(HookHost_Shutdown)

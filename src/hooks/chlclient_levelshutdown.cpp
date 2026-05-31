@@ -1,5 +1,3 @@
-#include "chlclient_levelshutdown.h"
-
 #include "../hooks.h"
 #include "../core/core.h"
 
@@ -14,6 +12,7 @@
 #include "../features/antiafk/antiafk.h"
 
 #include "../features/scriptmanager/scriptmanager.h"
+#include "../features/hook_initializer/initializer.h"
 
 using LevelShutdownFn = void (*)(CHLClient* rdi);
 
@@ -47,3 +46,5 @@ void HookLevelShutdown()
 	helper::console::ColoredPrint("BaseClientDll::LevelShutdown hooked\n", color);
 #endif
 }
+
+MARK_FOR_INIT(HookLevelShutdown)

@@ -1,11 +1,11 @@
-#include "chlclient_levelinitpreentity.h"
+#include "../core/core.h"
+
+#include "../hooks.h"
 
 #include "../sdk/definitions/ivengineclient.h"
 
-#include "../hooks.h"
-#include "../core/core.h"
-
 #include "../features/scriptmanager/scriptmanager.h"
+#include "../features/hook_initializer/initializer.h"
 
 using LevelInitPreEntityFn = void(*)(CHLClient* thisptr, const char* mapName);
 
@@ -15,15 +15,11 @@ static void LevelInitPreEntity(CHLClient* thisptr, const char* mapName)
 
 	if (gApp->IsInitialized())
 	{
-		AS_LevelInitPreEntity_Callback(mapName);
+		// lua callback
+		features::scriptmanager.CallHooks("LevelInitPreEntity", &mapName);
 	}
 
 	original(thisptr, mapName);
-}
-
-void AS_LevelInitPreEntity_Callback(const char *mapName)
-{
-	features::scriptmanager.CallHooks("LevelInitPreEntity", &mapName);
 }
 
 void HookLevelInitPreEntity()
@@ -35,3 +31,5 @@ void HookLevelInitPreEntity()
 	helper::console::ColoredPrint("BaseClientDll::LevelInitPreEntity hooked\n", color);
 #endif
 }
+
+MARK_FOR_INIT(HookLevelInitPreEntity)

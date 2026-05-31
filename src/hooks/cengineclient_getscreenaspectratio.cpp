@@ -1,11 +1,11 @@
-#include "cengineclient_getscreenaspectratio.h"
-
 #include "../sdk/interfaces/interfaces.h"
 
 #include "../settings/settings.h"
 
 #include "../hooks.h"
 #include "../core/core.h"
+
+#include "../features/hook_initializer/initializer.h"
 
 using GetScreenAspectRatioFn = float(*)(void* self);
 
@@ -21,7 +21,7 @@ static float GetScreenAspectRatio(void* self)
 	return original(self);
 }
 
-void Hook_CEngineClient_GetScreenAspectRatio()
+static void Hook_CEngineClient_GetScreenAspectRatio()
 {
 /*
 void FUN_01f20050(undefined8 param_1,long *param_2)
@@ -53,3 +53,5 @@ first variable
 
 	VMTHooks::Engine.Hook(95, &GetScreenAspectRatio);
 }
+
+MARK_FOR_INIT(Hook_CEngineClient_GetScreenAspectRatio)

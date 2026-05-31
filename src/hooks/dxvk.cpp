@@ -1,8 +1,7 @@
-#include "dxvk.h"
+#include <fstream>
 
 #include "../sdk/interfaces/interfaces.h"
-
-#include <fstream>
+#include "../sdk/definitions/d3d9.h"
 
 #include "../thirdparty/imgui/imgui.h"
 #include "../thirdparty/imgui/imgui_impl_dx9.h"
@@ -11,10 +10,11 @@
 #include "../thirdparty/libdetour/libdetour.h"
 
 #include "../gui/gui.h"
+#include "../core/core.h"
 
 #include "sdl.h"
 
-#include "../core/core.h"
+#include "../features/hook_initializer/initializer.h"
 
 typedef struct IDirect3DDevice9 *LPDIRECT3DDEVICE9;
 
@@ -296,3 +296,5 @@ void HookDXVK()
 	if (!HookD3D9VTable())
 		return interfaces::Cvar->ConsolePrintf("Failed to hook DXVK\n");
 }
+
+MARK_FOR_INIT(HookDXVK);

@@ -2,6 +2,7 @@
 
 #include "../../../sdk/interfaces/interfaces.h"
 #include "../../../sdk/helpers/engine/engine.h"
+#include "../../../sdk/helpers/localplayer/localplayer.h"
 
 void BindClient(sol::state& lua)
 {
@@ -34,5 +35,10 @@ void BindClient(sol::state& lua)
 			return std::nullopt;
 
 		return cvar;
+	};
+
+	client["chat_print"] = [](const char* text) -> void
+	{
+		helper::localplayer::ChatPrintf(0, 0, "%s", text);
 	};
 }

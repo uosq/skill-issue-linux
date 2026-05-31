@@ -1,11 +1,10 @@
-#include "istudiorender_forcedmaterialoverride.h"
-
-#include "../features/chams/chams.h"
-#include "../features/glow/glow.h"
+#include "../core/core.h"
 
 #include "../hooks.h"
 
-#include "../core/core.h"
+#include "../features/chams/chams.h"
+#include "../features/glow/glow.h"
+#include "../features/hook_initializer/initializer.h"
 
 using ForcedMaterialOverrideFn = void (*)(IStudioRender* rdi, IMaterial* mat, OverrideType_t nOverrideType);
 
@@ -30,3 +29,5 @@ void HookForcedMaterialOverride()
 	helper::console::ColoredPrint("IStudioRender::ForcedMaterialOverride hooked\n", color);
 #endif
 }
+
+MARK_FOR_INIT(HookForcedMaterialOverride)

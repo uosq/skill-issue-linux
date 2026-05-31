@@ -1,4 +1,4 @@
-#include "ipanel_paint_traverse.h"
+#include "../core/core.h"
 
 #include "../sdk/definitions/ipanel.h"
 #include "../sdk/interfaces/interfaces.h"
@@ -8,7 +8,7 @@
 
 #include "../hooks.h"
 
-#include "../core/core.h"
+#include "../features/hook_initializer/initializer.h"
 
 using PaintTraverseFn = void (*)(IPanel* rdi, VPANEL vguiPanel, bool forceRepaint, bool allowForce);
 
@@ -52,3 +52,5 @@ void HookPaintTraverse()
 	helper::console::ColoredPrint("IPanel::PaintTraverse hooked\n", color);
 #endif
 }
+
+MARK_FOR_INIT(HookPaintTraverse)

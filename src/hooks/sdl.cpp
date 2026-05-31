@@ -1,11 +1,13 @@
+#include "../core/core.h"
+
 #include "sdl.h"
 
 #include <SDL2/SDL_video.h>
 #include <dlfcn.h>
 
-#include "../thirdparty/libdetour/libdetour.h"
 #include "../sdk/interfaces/interfaces.h"
 
+#include "../thirdparty/libdetour/libdetour.h"
 #include "../thirdparty/imgui/imgui.h"
 #include "../thirdparty/imgui/imgui_impl_opengl3.h"
 #include "../thirdparty/imgui/imgui_impl_sdl2.h"
@@ -13,7 +15,7 @@
 #include "../gui/gui.h"
 #include "../settings/settings.h"
 
-#include "../core/core.h"
+#include "../features/hook_initializer/initializer.h"
 
 DETOUR_DECL_TYPE(void, original_SwapWindow, SDL_Window *window);
 DETOUR_DECL_TYPE(int, original_PollEvent, SDL_Event *event);
@@ -220,3 +222,5 @@ void HookSDL()
 	interfaces::Cvar->ConsolePrintf("SDL2 hooked\n");
 #endif
 }
+
+MARK_FOR_INIT(HookSDL)

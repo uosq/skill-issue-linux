@@ -1,12 +1,17 @@
-#include "ctfplayeranimstate_update.h"
+#include "../core/core.h"
 
 #include "../sdk/classes/player.h"
+#include "../sdk/signatures/signatures.h"
+
 #include "../thirdparty/libdetour/libdetour.h"
 
 #include "../features/entitylist/entitylist.h"
 #include "../features/logs/logs.h"
+#include "../features/hook_initializer/initializer.h"
 
-#include "../core/core.h"
+// CMultiPlayerAnimState::Update
+// one of them is it
+ADD_SIG(CTFPlayerAnimState_Update, "client.so", "55 31 C0 48 89 E5 41 57 41 56 41 55 66 41 0F 7E CD")
 
 DETOUR_DECL_TYPE(void, CTFPlayerAnimState_Update, void* thisptr, float eyeYaw, float eyePitch);
 detour_ctx_t animstate_update_ctx;
@@ -53,3 +58,5 @@ void Hook_CTFPlayerAnimState_Update()
 	if (!detour_enable(&animstate_update_ctx))
 		features::logs.Error("Couldn't hook CTFPlayerAnimState::Update");
 }
+
+//MARK_FOR_INIT(Hook_CTFPlayerAnimState_Update)

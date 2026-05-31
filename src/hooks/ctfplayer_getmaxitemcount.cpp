@@ -1,8 +1,15 @@
-#include "ctfplayer_getmaxitemcount.h"
+#include "../core/core.h"
+
+#include "../sdk/signatures/signatures.h"
 
 #include "../thirdparty/libdetour/libdetour.h"
 #include "../settings/settings.h"
-#include "../core/core.h"
+
+#include "../features/hook_initializer/initializer.h"
+
+ADD_SIG(CTFPlayer_GetMaxItemCount, "client.so",
+	"48 8B BF 98 00 00 00 48 85 FF 74 ? 55 BE 07 00 00 00 48 89 E5 E8 ? "
+	"? ? ? 48 85 C0 74 ? 83 78 28 01 75 ? 48 8B 40 08 48 8B 10")
 
 DETOUR_DECL_TYPE(int, originalMaxItemCountFn, void *thisptr);
 detour_ctx_t GetMaxItemCount_ctx;
@@ -32,3 +39,5 @@ void HookCTFPlayerInventory_MaxItemCount()
 	interfaces::Cvar->ConsoleColorPrintf(color, "CTFPlayerInventory::GetMaxItemCount hooked\n");
 #endif
 }
+
+MARK_FOR_INIT(HookCTFPlayerInventory_MaxItemCount)

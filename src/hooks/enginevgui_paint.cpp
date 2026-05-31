@@ -1,6 +1,4 @@
-#include "enginevgui_paint.h"
-
-#include <string>
+#include "../core/core.h"
 
 #include "../sdk/definitions/ienginevgui.h"
 #include "../sdk/interfaces/interfaces.h"
@@ -8,7 +6,7 @@
 #include "../hooks.h"
 
 #include "../features/scriptmanager/scriptmanager.h"
-#include "../core/core.h"
+#include "../features/hook_initializer/initializer.h"
 
 using VGuiPaintFn = void (*)(IEngineVGuiInternal *rdi, PaintMode_t paint);
 
@@ -41,3 +39,5 @@ void HookEngineVGuiPaint()
 	helper::console::ColoredPrint("EngineVGui::Paint hooked\n", color);
 #endif
 }
+
+MARK_FOR_INIT(HookEngineVGuiPaint)

@@ -1,4 +1,4 @@
-#include "cviewrender_shoulddrawviewmodel.h"
+#include "../core/core.h"
 
 #include "../sdk/signatures/signatures.h"
 
@@ -7,8 +7,7 @@
 
 #include "../features/entitylist/entitylist.h"
 #include "../features/logs/logs.h"
-
-#include "../core/core.h"
+#include "../features/hook_initializer/initializer.h"
 
 /*
 xref: CViewRender::DrawViewModel
@@ -54,3 +53,5 @@ void Hook_ShouldDrawViewModel()
 	if (!detour_enable(&ctx))
 		return features::logs.Error("Couldnt hook CViewRender::ShouldDrawViewModel");
 }
+
+MARK_FOR_INIT(Hook_ShouldDrawViewModel)

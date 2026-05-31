@@ -1,4 +1,4 @@
-#include "modelrender_drawmodelexecute.h"
+#include "../core/core.h"
 
 #include "../sdk/definitions/ivmodelrender.h"
 #include "../sdk/interfaces/interfaces.h"
@@ -11,8 +11,7 @@
 
 #include "../features/scriptmanager/scriptmanager.h"
 #include "../features/scriptmanager/classes/drawmodelcontext.h"
-
-#include "../core/core.h"
+#include "../features/hook_initializer/initializer.h"
 
 using DrawModelExecuteFn = void(*)(IVModelRender *thisptr,
                                    const DrawModelState_t &state,
@@ -78,3 +77,5 @@ void HookDrawModelExecute(void)
 	helper::console::ColoredPrint("IModelRender::DrawModelExecute hooked\n", color);
 #endif
 }
+
+MARK_FOR_INIT(HookDrawModelExecute)

@@ -12,7 +12,6 @@ public:
 	void Setup();
 
 private:
-	bool StartHooks();
 	std::atomic<bool> m_bInitialized;
 };
 

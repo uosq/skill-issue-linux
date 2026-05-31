@@ -1,8 +1,13 @@
-#include "cl_checkforpureserverwhitelist.h"
-
-#include "../thirdparty/libdetour/libdetour.h"
-#include "../settings/settings.h"
 #include "../core/core.h"
+
+#include "../sdk/signatures/signatures.h"
+
+#include "../settings/settings.h"
+#include "../thirdparty/libdetour/libdetour.h"
+
+#include "../features/hook_initializer/initializer.h"
+
+ADD_SIG(CL_CheckForPureServerWhitelist, "engine.so", "83 3D ? ? ? ? 01 7E ? 80 3D ? ? ? ? 00 75")
 
 DETOUR_DECL_TYPE(void, originalCheckForPureServerWhitelistFn, void *&pFilesToReload);
 detour_ctx_t CL_CheckForPureServerWhitelist_ctx;
@@ -29,3 +34,5 @@ void HookCheckForPure()
 	interfaces::Cvar->ConsoleColorPrintf(color, "CL_CheckForPureServerWhitelist hooked\n");
 #endif
 }
+
+MARK_FOR_INIT(HookCheckForPure)

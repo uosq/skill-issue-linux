@@ -1,4 +1,4 @@
-#include "ctfplayershared_incond.h"
+#include "../core/core.h"
 
 #include "../sdk/defs.h"
 #include "../sdk/signatures/signatures.h"
@@ -6,8 +6,8 @@
 #include "../thirdparty/libdetour/libdetour.h"
 #include "../settings/settings.h"
 
-#include "../features/logs//logs.h"
-#include "../core/core.h"
+#include "../features/logs/logs.h"
+#include "../features/hook_initializer/initializer.h"
 
 ADD_SIG(CTFPlayerShared_InCond, "client.so", "55 83 FE 1F 48 89 E5 41 54 41 89 F4")
 
@@ -53,3 +53,5 @@ void Hook_CTFPlayerShared_InCond(void)
 	if (!detour_enable(&ctx))
 		return features::logs.Error("Couldn't hook CTFPlayerShared::InCond");
 }
+
+//MARK_FOR_INIT(Hook_CTFPlayerShared_InCond)

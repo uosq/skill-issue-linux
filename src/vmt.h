@@ -18,6 +18,9 @@ public:
 		if (!object) 
 			return false;
 
+		if (target_object != nullptr || original_vtable != nullptr)
+                	return true;
+
 		target_object = reinterpret_cast<void***>(object);
 		original_vtable = *target_object;
 

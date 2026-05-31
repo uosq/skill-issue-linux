@@ -1,5 +1,3 @@
-#include "chlclient_levelpostentity.h"
-
 #include "../hooks.h"
 #include "../core/core.h"
 
@@ -10,6 +8,7 @@
 #include "../features/esp/esp.h"
 
 #include "../features/scriptmanager/scriptmanager.h"
+#include "../features/hook_initializer/initializer.h"
 
 using LevelInitPostEntityFn = void (*)(CHLClient *thisptr);
 
@@ -39,3 +38,5 @@ void HookLevelInitPostEntity()
 	helper::console::ColoredPrint("BaseClientDll::LevelInitPostEntity hooked\n", color);
 #endif
 }
+
+MARK_FOR_INIT(HookLevelInitPostEntity)
