@@ -1,7 +1,7 @@
 #include "entitylist.h"
 #include "structs.h"
 
-#include "../../gui/utils/string_utils.h"
+#include "../gui/utils/string_utils.h"
 
 void EntityList::Clear()
 {

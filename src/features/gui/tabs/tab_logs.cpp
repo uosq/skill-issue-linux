@@ -1,5 +1,5 @@
-#include "../../thirdparty/imgui/texteditor/TextEditor.h"
-#include "../../features/logs/logs.h"
+#include "../../../thirdparty/imgui/texteditor/TextEditor.h"
+#include "../../logs/logs.h"
 
 void DrawLogsTab()
 {

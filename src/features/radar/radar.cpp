@@ -4,6 +4,9 @@
 
 void Radar::Run()
 {
+	if (!Config.radar.packed.enabled)
+		return;
+
 	int size   = Config.radar.packed.size;
 
 	m_iRange   = Config.radar.packed.range;

@@ -662,5 +662,3 @@ bool CAimbotProjectile::FindVisiblePosToShoot(const ProjectileInfo_t& prjInfo,
 	// shit
 	return false;
 }
-
-CAimbotProjectile gAimProjectile{};

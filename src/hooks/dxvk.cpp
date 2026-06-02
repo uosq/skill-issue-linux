@@ -3,24 +3,12 @@
 #include "../sdk/interfaces/interfaces.h"
 #include "../sdk/definitions/d3d9.h"
 
-#include "../thirdparty/imgui/imgui.h"
 #include "../thirdparty/imgui/imgui_impl_dx9.h"
-#include "../thirdparty/imgui/imgui_impl_sdl2.h"
-
 #include "../thirdparty/libdetour/libdetour.h"
 
-#include "../gui/gui.h"
-#include "../core/core.h"
-
-#include "sdl.h"
+#include "../features/gui/gui.h"
 
 #include "../features/hook_initializer/initializer.h"
-
-typedef struct IDirect3DDevice9 *LPDIRECT3DDEVICE9;
-
-LPDIRECT3DDEVICE9 g_pd3dDevice = nullptr;
-D3DPRESENT_PARAMETERS g_d3dpp  = {};
-bool g_ImGuiInitialized	      = false;
 
 typedef HRESULT(__stdcall *Present_t)(IDirect3DDevice9 *, CONST RECT *, CONST RECT *, HWND, CONST RGNDATA *);
 typedef HRESULT(__stdcall *Reset_t)(IDirect3DDevice9 *, D3DPRESENT_PARAMETERS *);
@@ -28,107 +16,8 @@ typedef HRESULT(__stdcall *Reset_t)(IDirect3DDevice9 *, D3DPRESENT_PARAMETERS *)
 DETOUR_DECL_TYPE(HRESULT, original_Present, IDirect3DDevice9 *, CONST RECT *, CONST RECT *, HWND, CONST RGNDATA *);
 DETOUR_DECL_TYPE(HRESULT, original_Reset, IDirect3DDevice9 *, D3DPRESENT_PARAMETERS *);
 
-detour_ctx_t present_ctx;
-detour_ctx_t reset_ctx;
-
-void InitImGui()
-{
-	if (g_ImGuiInitialized || !g_pd3dDevice)
-		return;
-
-#ifdef DEBUG
-	if (!tfwindow)
-		return interfaces::Cvar->ConsolePrintf("SDL window is NULL!\n");
-#else
-	if (!tfwindow)
-		return;
-#endif
-
-	if (ImGui::GetCurrentContext() == nullptr)
-		ImGui::CreateContext();
-
-	ImGui::GetIO().ConfigWindowsMoveFromTitleBarOnly = true;
-
-	if (!ImGui_ImplSDL2_InitForVulkan(tfwindow))
-	{
-		interfaces::Cvar->ConsolePrintf("ImGui_ImplSDL2_InitForVulkan failed!\n");
-		return;
-	}
-
-	ImGui_ImplDX9_Init(g_pd3dDevice);
-	SetupImGuiStyle();
-
-	g_ImGuiInitialized = true;
-}
-
-void CleanupImGui()
-{
-	if (!g_ImGuiInitialized)
-		return;
-
-	ImGui_ImplDX9_Shutdown();
-	ImGui_ImplSDL2_Shutdown();
-
-	g_ImGuiInitialized = false;
-}
-
-D3DFORMAT GetBackBufferFormat(IDirect3DDevice9 *device)
-{
-	IDirect3DSurface9 *pBackBuffer = nullptr;
-	device->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &pBackBuffer);
-
-	if (pBackBuffer)
-	{
-		D3DSURFACE_DESC desc;
-		pBackBuffer->GetDesc(&desc);
-		pBackBuffer->Release();
-
-		//interfaces::Cvar->ConsolePrintf("Backbuffer format: %d\n", desc.Format);
-		return desc.Format;
-	}
-
-	return D3DFMT_UNKNOWN;
-}
-
-void RenderImGui()
-{
-	if (!g_pd3dDevice || !g_ImGuiInitialized)
-		return;
-
-	static bool checkedFormat	 = false;
-	static bool needsGammaCorrection = false;
-
-	if (!checkedFormat)
-	{
-		D3DFORMAT format = GetBackBufferFormat(g_pd3dDevice);
-		// If using sRGB, we need gamma correction
-		needsGammaCorrection = (format == 22 || format == 21); // Common sRGB formats
-		checkedFormat	     = true;
-
-		//interfaces::Cvar->ConsolePrintf("Gamma correction: %s\n", needsGammaCorrection ? "enabled" : "disabled");
-	}
-
-	// Disable sRGB writes temporarily if needed
-	DWORD oldSRGBState = 0;
-	if (needsGammaCorrection)
-	{
-		g_pd3dDevice->GetRenderState(D3DRS_SRGBWRITEENABLE, &oldSRGBState);
-		g_pd3dDevice->SetRenderState(D3DRS_SRGBWRITEENABLE, FALSE);
-	}
-
-	ImGui_ImplDX9_NewFrame();
-	ImGui_ImplSDL2_NewFrame();
-	ImGui::NewFrame();
-
-	GUI::RunMainWindow();
-
-	ImGui::EndFrame();
-	ImGui::Render();
-	ImGui_ImplDX9_RenderDrawData(ImGui::GetDrawData());
-
-	if (needsGammaCorrection)
-		g_pd3dDevice->SetRenderState(D3DRS_SRGBWRITEENABLE, oldSRGBState);
-}
+static detour_ctx_t present_ctx;
+static detour_ctx_t reset_ctx;
 
 HRESULT __stdcall Hooked_Present
 (
@@ -137,14 +26,7 @@ HRESULT __stdcall Hooked_Present
 	HWND hDestWindowOverride, const RGNDATA *pDirtyRegion
 )
 {
-	if (gApp->IsInitialized())
-	{
-		if (!g_pd3dDevice)
-			g_pd3dDevice = pDevice;
-	
-		InitImGui();
-		RenderImGui();
-	}
+	features::gui.on_present(pDevice, pSourceRect, pDestRect, hDestWindowOverride, pDirtyRegion);
 
 	HRESULT ret;
 	DETOUR_ORIG_GET(&present_ctx, ret, original_Present, pDevice, pSourceRect, pDestRect, hDestWindowOverride,
@@ -154,20 +36,13 @@ HRESULT __stdcall Hooked_Present
 
 HRESULT __stdcall Hooked_Reset(IDirect3DDevice9 *pDevice, D3DPRESENT_PARAMETERS *pPresentationParameters)
 {
-	if (gApp->IsInitialized())
-	{
-		// ImGui needs to be cleaned up before device reset
-		CleanupImGui();
-	}
+	features::gui.on_reset(pDevice, pPresentationParameters);
 
 	HRESULT ret;
 	DETOUR_ORIG_GET(&reset_ctx, ret, original_Reset, pDevice, pPresentationParameters);
 
-	if (gApp->IsInitialized() && SUCCEEDED(ret))
-	{
-		g_d3dpp = *pPresentationParameters;
-		// ImGui will be reinitialized on next Present call
-	}
+	if (SUCCEEDED(ret))
+		features::gui.update_presentation_parameters(pPresentationParameters);
 
 	return ret;
 }

@@ -71,6 +71,9 @@ void Warp::DrawContents()
 
 void Warp::RunWindow()
 {
+	if (!Config.warp.key->IsEnabled())
+		return;
+
 	int flags = ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse;
 	if (!Settings::menu_open)
 		flags |= ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoDecoration;

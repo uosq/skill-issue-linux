@@ -3,11 +3,11 @@
 #include <string>
 #include <vector>
 
-#include "../../thirdparty/imgui/imgui.h"
-#include "../../thirdparty/imgui/texteditor/TextEditor.h"
-#include "../../settings/settings.h"
+#include "../../../thirdparty/imgui/imgui.h"
+#include "../../../thirdparty/imgui/texteditor/TextEditor.h"
+#include "../../../settings/settings.h"
 
-#include "../../features/materialregistry/reg.h"
+#include "../../materialregistry/reg.h"
 
 void ToggleMaterialUsage(std::vector<std::string>& mats, const std::string& matName, const char* label)
 {

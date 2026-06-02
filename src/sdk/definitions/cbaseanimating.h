@@ -7,7 +7,7 @@
 #include "../signatures/signatures.h"
 #include "../../mem.h"
 
-#include "../../gui/utils/string_utils.h"
+#include "../../features/gui/utils/string_utils.h"
 #include "utlvector.h"
 #include "vphysics_interface.h"
 

@@ -17,8 +17,8 @@
 #include "../features/playerlist/playerlist.h"
 #include "../features/hook_initializer/initializer.h"
 #include "../features/network/network.h"
+#include "../features/gui/gui.h"
 
-#include "../gui/gui.h"
 #include "../hooks.h"
 
 CApp::CApp() : m_bInitialized(false)
@@ -44,7 +44,6 @@ void CApp::Setup()
 	Settings::InitBinds();
 	features::scriptmanager.Init();
 
-	GUI::Init();
 	features::ticks.Init();
 	MaterialManager::Init();
 	features::material_registry.Init();

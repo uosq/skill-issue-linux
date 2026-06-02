@@ -3,6 +3,8 @@
 #include "../sdk/signatures/signatures.h"
 #include "../thirdparty/libdetour/libdetour.h"
 
+#include "../features/gui/gui.h"
+
 #include "../features/scriptmanager/scriptmanager.h"
 #include "../features/chams/chams.h"
 #include "../features/materialregistry/reg.h"
@@ -23,6 +25,7 @@ void HookedHost_ShutdownFn(void)
 		features::playerlist.Shutdown();
 		features::material_registry.Shutdown();
 		features::network.shutdown();
+		features::gui.shutdown();
 	
 		features::scriptmanager.CallHooks("GameShutdown");
 	}

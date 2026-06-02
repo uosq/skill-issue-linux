@@ -1,5 +1,5 @@
-#include "../../thirdparty/imgui/imgui.h"
-#include "../../settings/settings.h"
+#include "../../../thirdparty/imgui/imgui.h"
+#include "../../../settings/settings.h"
 
 #include "../utils/gui_utils.h"
 #include <algorithm>

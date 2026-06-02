@@ -1,5 +1,5 @@
-#include "../../features/binds/binds.h"
-#include "../../settings/settings.h"
+#include "../../binds/binds.h"
+#include "../../../settings/settings.h"
 
 #include "../utils/gui_utils.h"
 

@@ -1,13 +1,13 @@
 
 
-#include "../../thirdparty/imgui/imgui.h"
-#include "../../thirdparty/imgui/imgui_stdlib.h"
+#include "../../../thirdparty/imgui/imgui.h"
+#include "../../../thirdparty/imgui/imgui_stdlib.h"
 
 #include "../utils/string_utils.h"
 
-#include "../../features/scriptmanager/scriptmanager.h"
+#include "../../scriptmanager/scriptmanager.h"
 
-#include "../../sdk/interfaces/interfaces.h"
+#include "../../../sdk/interfaces/interfaces.h"
 
 #define SCRIPT_DIR "./skill-issue/scripts/"
 

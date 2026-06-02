@@ -1,7 +1,7 @@
-#include "../../thirdparty/imgui/imgui.h"
-#include "../../thirdparty/imgui/imgui_stdlib.h"
+#include "../../../thirdparty/imgui/imgui.h"
+#include "../../../thirdparty/imgui/imgui_stdlib.h"
 
-#include "../../sdk/netvars/netvar.h"
+#include "../../../sdk/netvars/netvar.h"
 
 #include "../utils/string_utils.h"
 
