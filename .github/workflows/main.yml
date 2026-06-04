@@ -12,6 +12,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Update system
+        run: sudo apt update
+
       - name: Install libcurl
         run: sudo apt install -y libcurl4-openssl-dev
 
