@@ -8,7 +8,7 @@ void BindPlayerInfo(sol::state& lua)
 	(
 		"PlayerInfo", sol::no_constructor,
 
-		"is_htlv", &player_info_t::ishltv,
+		"is_hltv", &player_info_t::ishltv,
 		"is_replay", &player_info_t::isreplay,
 		"is_bot", &player_info_t::fakeplayer,
 		"userid", &player_info_t::userID,

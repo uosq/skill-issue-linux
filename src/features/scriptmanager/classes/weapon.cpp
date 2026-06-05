@@ -19,6 +19,7 @@ void BindWeapon(sol::state& lua)
 		"CanHitTeammates", &CTFWeaponBase::CanHitTeammates,
 		"GetDeflectionSize", &CTFWeaponBase::GetDeflectionSize,
 		"GetSwingRange", &CTFWeaponBase::GetSwingRange,
+		"DoSwingTrace", &CTFWeaponBase::DoSwingTrace,
 
 		"GetType", [](CTFWeaponBase* self)
 		{
@@ -50,6 +51,9 @@ void BindWeapon(sol::state& lua)
 				case TF_WEAPON_THROWABLE:
 				return static_cast<CTFThrowable*>(self)->m_flChargeBeginTime();
 
+				case TF_WEAPON_CANNON:
+				return static_cast<CTFGrenadeLauncher*>(self)->m_flDetonateTime();
+
 				default:
 				break;
 			}
@@ -65,6 +69,48 @@ void BindWeapon(sol::state& lua)
 		"GetMode", [](CTFWeaponBase* self) -> int
 		{
 			return self->m_iWeaponMode();
+		},
+
+		"GetCurrentCharge", [](CTFWeaponBase* self) -> float
+		{
+			int weaponID = self->GetWeaponID();
+
+			switch(weaponID)
+			{
+				case TF_WEAPON_PIPEBOMBLAUNCHER:
+				{
+					float begintime = static_cast<CTFPipebombLauncher*>(self)->m_flChargeBeginTime();
+					return begintime > 0.0f ? interfaces::GlobalVars->curtime - begintime : 0.0f;
+				}
+
+				case TF_WEAPON_PARTICLE_CANNON:
+				{
+					float begintime = static_cast<CTFParticleCannon*>(self)->m_flChargeBeginTime();
+					return begintime > 0.0f ? interfaces::GlobalVars->curtime - begintime : 0.0f;
+				}
+
+				case TF_WEAPON_CLEAVER:
+				case TF_WEAPON_BAT_GIFTWRAP:
+				case TF_WEAPON_BAT_WOOD:
+				case TF_WEAPON_JAR:
+				case TF_WEAPON_JAR_MILK:
+				case TF_WEAPON_THROWABLE:
+				{
+					float begintime = static_cast<CTFThrowable*>(self)->m_flChargeBeginTime();
+					return begintime > 0.0f ? interfaces::GlobalVars->curtime - begintime : 0.0f;
+				}
+
+				case TF_WEAPON_CANNON:
+				{
+					float begintime = static_cast<CTFGrenadeLauncher*>(self)->m_flDetonateTime();
+					return begintime > 0.0f ? interfaces::GlobalVars->curtime - begintime : 0.0f;
+				}
+
+				default:
+				break;
+			}
+
+			return 0.0f;
 		}
 	);
 }

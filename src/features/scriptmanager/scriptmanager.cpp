@@ -20,6 +20,7 @@ extern void BindPlayerInfo(sol::state& lua);
 extern void BindConVar(sol::state& lua);
 extern void BindVector2(sol::state& lua);
 extern void BindTrace(sol::state& lua);
+extern void BindBitBuffer(sol::state& lua);
 
 // libraries
 extern void BindEntities(sol::state& lua);
@@ -124,6 +125,7 @@ void ScriptManager::Init()
 	BindConVar(m_Lua);
 	BindVector2(m_Lua);
 	BindTrace(m_Lua);
+	BindBitBuffer(m_Lua);
 
 	// libraries
 	BindEngine(m_Lua);

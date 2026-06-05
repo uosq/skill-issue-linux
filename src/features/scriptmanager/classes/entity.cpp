@@ -3,6 +3,7 @@
 #include "../../../sdk/classes/entity.h"
 #include "../../../sdk/classes/player.h"
 #include "../../../sdk/classes/weaponbase.h"
+#include <optional>
 
 void BindEntity(sol::state& lua)
 {
@@ -148,6 +149,32 @@ void BindEntity(sol::state& lua)
 			EHANDLE handle = value->GetRefEHandle();
 			EHANDLE* val = reinterpret_cast<EHANDLE*>(reinterpret_cast<uintptr_t>(self) + offset);
 			*val = handle;
+		},
+
+		"GetFirstMoveChild", [](CBaseEntity* self) -> CBaseEntity*
+		{
+			auto renderable = self->FirstShadowChild();
+			if (renderable == nullptr)
+				return nullptr;
+
+			auto unknown = renderable->GetIClientUnknown();
+			if (unknown == nullptr)
+				return nullptr;
+
+			return unknown->GetBaseEntity();
+		},
+
+		"GetNextMoveChild", [](CBaseEntity* self) -> CBaseEntity*
+		{
+			auto renderable = self->NextShadowPeer();
+			if (renderable == nullptr)
+				return nullptr;
+
+			auto unknown = renderable->GetIClientUnknown();
+			if (unknown == nullptr)
+				return nullptr;
+
+			return unknown->GetBaseEntity();
 		}
 	);
 }
