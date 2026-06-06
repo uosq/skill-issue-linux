@@ -3,7 +3,9 @@
 #include "../definitions/bspflags.h"
 #include "../definitions/classdata.h"
 #include "../definitions/types.h"
+#include "../definitions/c_playerlocaldata.h"
 #include "../defs.h"
+
 #include "basecombatcharacter.h"
 #include "entity.h"
 #include "playerresource.h"
@@ -102,6 +104,8 @@ public:
 	NETVAR(m_bAllowAutoMovement, "CBasePlayer->m_bAllowAutoMovement", bool)
 
 	NETVAR_OFFSET(m_iEFlags, "CTFPlayer->m_nWaterLevel", int, -8)
+
+	NETVAR(m_Local, "CBasePlayer->m_Local", CPlayerLocalData)
 
 	inline std::array<int, 32> &m_iAmmo()
 	{

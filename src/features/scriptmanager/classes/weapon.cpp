@@ -1,6 +1,7 @@
 #include "../../../thirdparty/sol3/sol.hpp"
 
 #include "../../../sdk/classes/weaponbase.h"
+#include "../../../sdk/definitions/cgametrace.h"
 
 void BindWeapon(sol::state& lua)
 {
