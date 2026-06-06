@@ -345,3 +345,43 @@ bool helper::localplayer::IsAttacking(CTFPlayer *pLocal, CTFWeaponBase *pWeapon,
 
 	return false;
 }
+
+void* helper::localplayer::GetHudElement(const char* element)
+{
+	// xref: Could not find Hud Element: %s\n
+	using GetHudElementFn = void*(*)(void* gHUD, const char* name);
+	static GetHudElementFn GET_HUDLEMENT = reinterpret_cast<GetHudElementFn>(sigscan_module("client.so", "55 48 89 E5 41 57 41 56 41 55 41 54 49 89 F4 53 48 83 EC 08 8B 47 30"));
+
+	return GET_HUDLEMENT(interfaces::gHUD, element);
+}
+
+int helper::localplayer::GetChatMessageMode()
+{
+	void* chat = GetHudElement("CHudChat");
+	if (!chat) return false;
+
+	/* HOW TO GET THE OFFSET 0x2b4
+
+	search for the x-ref: Say (TEAM) :
+	you'll land in CBaseHudChat::StartMessageMode
+
+	at the start of the function you'll find the offset:
+
+		int local_44;
+  		int local_40;
+  		int local_3c [3];
+
+======>		*(undefined4 *)(param_1 + 0x2b4) = param_2;
+  		plVar5 = *(long **)(*(long *)(param_1 + 0x280) + 0x1f0);
+  		(**(code **)(*plVar5 + 0x6b0))(plVar5,&DAT_02396998);
+  		iVar1 = *(int *)(param_1 + 0x2b4);
+	
+	*/
+	int m_nMessageMode = *reinterpret_cast<int*>(uintptr_t(chat) + 0x2b4);
+	return m_nMessageMode;
+}
+
+bool helper::localplayer::IsChatOpen()
+{
+	return GetChatMessageMode() != 0;
+}

@@ -47,8 +47,13 @@ void Aimbot::Run(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCmd)
 {
 	ClearAimbotState(m_state);
 
-	if (helper::engine::IsConsoleVisible() || helper::engine::IsGameUIVisible() ||
-	    helper::engine::IsTakingScreenshot())
+	if (helper::engine::IsConsoleVisible())
+		return;
+
+	if (helper::engine::IsGameUIVisible())
+		return;
+
+	if (helper::localplayer::IsChatOpen())
 		return;
 
 	switch (pWeapon->GetWeaponType())

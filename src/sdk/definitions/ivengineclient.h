@@ -11,6 +11,7 @@
 #include "types.h"
 #include <cstddef>
 #include <sys/types.h>
+#include "iachievementmgr.h"
 
 class KeyValues;
 class IMaterial;
@@ -29,7 +30,6 @@ class CPhysCollide;
 class OcclusionParams_t;
 class SurfInfo;
 class SkyboxVisibility_t;
-class IAchievementMgr;
 class CGamestatsData;
 
 class CGlobalVarsBase;

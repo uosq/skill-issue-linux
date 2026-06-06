@@ -1,6 +1,9 @@
-#include "../../../thirdparty/sol3/sol.hpp"
+#include <vector>
 
+#include "../../../thirdparty/sol3/sol.hpp"
 #include "../../../sdk/classes/player.h"
+
+#include "../../prediction/prediction.h"
 
 void BindPlayer(sol::state& lua)
 {
@@ -24,6 +27,24 @@ void BindPlayer(sol::state& lua)
 		"GetEntityFromLoadoutSlot", &CTFPlayer::GetEntityFromLoadoutSlot,
 		"GetUserID", &CTFPlayer::GetUserID,
 		"GetSteamID", &CTFPlayer::GetSteamID,
-		"GetSteamID3", &CTFPlayer::GetSteamID3
+		"GetSteamID3", &CTFPlayer::GetSteamID3,
+
+		"PredictMovement", [](CTFPlayer* self, float seconds) -> std::optional<std::vector<Vec3>>
+		{
+			std::vector<Vec3> path;
+			path.reserve(TIME_TO_TICKS(seconds));
+
+			features::prediction.BeginPrediction(self, seconds);
+
+			if (!features::prediction.Simulate(path))
+			{
+				features::prediction.EndPrediction();
+				return std::nullopt;
+			}
+
+			features::prediction.EndPrediction();
+
+			return path;
+		}
 	);
 }

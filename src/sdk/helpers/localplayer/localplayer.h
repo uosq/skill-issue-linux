@@ -13,15 +13,12 @@ namespace helper
 
 		bool CanShoot(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCmd, bool ignoreAttack = false);
 		bool IsAttacking(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCmd);
+		void* GetHudElement(const char* element);
 
 		template <typename... Args>
     		void ChatPrintf(int iPlayerIndex, int iFilter, const char *fmt, Args&&... args)
 		{
-			// xref: Could not find Hud Element: %s\n
-			using GetHudElementFn = void*(*)(void* gHUD, const char* name);
-			static GetHudElementFn GET_HUDLEMENT = reinterpret_cast<GetHudElementFn>(sigscan_module("client.so", "55 48 89 E5 41 57 41 56 41 55 41 54 49 89 F4 53 48 83 EC 08 8B 47 30"));
-
-			void* hud_chat = GET_HUDLEMENT(interfaces::gHUD, "CHudChat");
+			void* hud_chat = GetHudElement("CHudChat");
 
 			if (!hud_chat)
 				return;
@@ -46,5 +43,7 @@ namespace helper
 
 		// returns if we are shooting
 		bool Shoot(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd, CBaseEntity* pTarget = nullptr);
+		int GetChatMessageMode();
+		bool IsChatOpen();
 	} // namespace localplayer
 } // namespace helper

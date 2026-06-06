@@ -288,7 +288,6 @@ void CBaseEntity::SetAbsOrigin(const Vec3& absOrigin)
 		uVar6 = (**(code **)(*this + 0x60))(this);
 ======>			SetAbsAngles(plVar4,uVar6);
 		FUN_01796c50(plVar4,this);
-
 	*/
 
 	using SetAbsOriginFn = void(*)(void* self, const Vec3& absOrigin);

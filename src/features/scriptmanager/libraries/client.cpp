@@ -44,4 +44,9 @@ void BindClient(sol::state& lua)
 
 		helper::localplayer::ChatPrintf(0, 0, "%s", text);
 	};
+
+	client["is_chat_open"] = []() -> bool
+	{
+		return helper::localplayer::IsChatOpen();
+	};
 }

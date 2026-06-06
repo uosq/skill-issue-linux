@@ -45,6 +45,15 @@ void Triggerbot::Run(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCmd)
 	if (pLocal == nullptr || pWeapon == nullptr || pCmd == nullptr)
 		return;
 
+	if (helper::localplayer::IsChatOpen())
+		return;
+
+	if (helper::engine::IsGameUIVisible())
+		return;
+
+	if (helper::engine::IsConsoleVisible())
+		return;
+
 	if (!Config.trigger.key->IsActive())
 		return;
 
