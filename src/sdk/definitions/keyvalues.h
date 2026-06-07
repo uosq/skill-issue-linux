@@ -15,6 +15,12 @@ KeyValues::KeyValues
 55 31 C0 66 0F EF C0 48 89 E5 53
 */
 
+/*
+
+The function FX_MuzzleEffectAttached has a lot of KeyValues functions (SetInt, SetFloat, SetString, SetPtr)
+
+*/
+
 enum types_t
 {
 	TYPE_NONE = 0,
@@ -96,9 +102,6 @@ class KeyValues
 
 	void Initialize(const char *name)
 	{
-		/*using constructorFn = void(void *self, const char *);
-		static auto orig    = (constructorFn *)sigscan_module("engine.so", "55 31 C0 66 0F EF C0 48 89 E5 53");
-		orig(this, name);*/
 		m_iKeyName = INVALID_KEY_SYMBOL;
 		m_iDataType = TYPE_NONE;
 
@@ -146,6 +149,33 @@ class KeyValues
 	void DeleteThis()
 	{
 		delete this;
+	}
+
+	void SetString(const char* keyName, const char* value)
+	{
+		using orig_KeyValues_SetString = void(*)(KeyValues*, const char*, const char*);
+		static orig_KeyValues_SetString original = reinterpret_cast<orig_KeyValues_SetString>(sigscan_module("client.so", "55 48 89 E5 41 55 41 54 49 89 D4 BA 01 00 00 00 53 48 83 EC 08 E8 ? ? ? ? 48 85 C0 74 ? 80 78 20 01"));
+
+		original(this, keyName, value);
+	}
+
+	KeyValues* FindKey(const char* keyName, bool bCreate = false)
+	{
+		using orig_KeyValues_FindKey = KeyValues*(*)(KeyValues*, const char*, bool);
+		static orig_KeyValues_FindKey original = reinterpret_cast<orig_KeyValues_FindKey>(sigscan_module("client.so", "55 48 89 E5 41 57 41 56 41 55 41 54 53 48 89 FB 48 81 EC 18 01 00 00 48 85 F6"));
+
+		return original(this, keyName, bCreate);
+	}
+
+	KeyValues* FindKey(int keySymbol) const
+	{
+		for (KeyValues *dat = m_pSub; dat != nullptr; dat = dat->m_pPeer)
+		{
+			if (dat->m_iKeyName == keySymbol)
+				return dat;
+		}
+
+		return nullptr;
 	}
 };
 

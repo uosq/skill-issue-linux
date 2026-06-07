@@ -17,6 +17,11 @@ static detour_ctx_t interpolate_ctx;
 
 static bool Hooked_Interpolate(CBaseAnimating *self, float currentTime)
 {
+	// fucking hell
+	// somehow the game calls this with a ridiculously high(?) negative number
+	// this isn't Back To The Future damn it
+	currentTime = std::max(currentTime, 0.0f);
+
 	if (!gApp->IsInitialized() || self == nullptr)
 	{
 		bool retVal;

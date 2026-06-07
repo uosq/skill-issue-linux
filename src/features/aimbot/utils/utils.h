@@ -21,17 +21,13 @@ struct AimbotState
 {
 	bool running	  = false;
 	bool shouldSilent = false;
-	std::vector<Vector> targetPath;
 	Vector angle = {0, 0, 0};
-	CBaseEntity* target = nullptr;
 };
 
 inline void ClearAimbotState(AimbotState &state)
 {
-	// state.angle.Set(0, 0, 0);
 	state.shouldSilent = false;
 	state.running	   = false;
-	// state.targetPath.clear();
 }
 
 namespace AimbotUtils

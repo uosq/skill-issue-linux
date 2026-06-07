@@ -329,7 +329,6 @@ bool CAimbotProjectile::ApplyPlainAim(CTFPlayer* pLocal, CTFWeaponBase* pWeapon,
 	assert(pWeapon && "pWeapon is null");
 	assert(pCmd && "pCmd is null");
 
-	pState.targetPath = m_vecPath;
 	pState.running = true;
 	pState.angle = m_vecAimAngle;
 	pState.shouldSilent = false;
@@ -340,7 +339,7 @@ bool CAimbotProjectile::ApplyPlainAim(CTFPlayer* pLocal, CTFWeaponBase* pWeapon,
 	bool shooting = false;
 
 	if (Config.aimbot.packed.autoshoot)
-		shooting = helper::localplayer::Shoot(pLocal, pWeapon, pCmd, pState.target);
+		shooting = helper::localplayer::Shoot(pLocal, pWeapon, pCmd, m_pTarget);
 
 	return shooting;
 }
@@ -353,7 +352,6 @@ bool CAimbotProjectile::ApplySmoothAssistanceAim(CTFPlayer* pLocal, CTFWeaponBas
 	Vec3 viewAngles; /* = */ interfaces::Engine->GetViewAngles(viewAngles);
 	Vec3 smoothed = AimbotUtils::GetSmoothedAngle(viewAngles, m_vecAimAngle);
 
-	pState.targetPath = m_vecPath;
 	pState.running = true;
 	pState.angle = smoothed;
 	pState.shouldSilent = false;
@@ -369,21 +367,20 @@ bool CAimbotProjectile::ApplySmoothAssistanceAim(CTFPlayer* pLocal, CTFWeaponBas
 	bool shooting = false;
 
 	if (Config.aimbot.packed.autoshoot)
-		shooting = helper::localplayer::Shoot(pLocal, pWeapon, pCmd, pState.target);
+		shooting = helper::localplayer::Shoot(pLocal, pWeapon, pCmd, m_pTarget);
 
 	return shooting;
 }
 
 bool CAimbotProjectile::ApplySilentAim(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd, AimbotState& pState)
 {
-	pState.targetPath = m_vecPath;
 	pState.running = true;
 	pState.angle = m_vecAimAngle;
 
 	bool shooting = false;
 
 	if (Config.aimbot.packed.autoshoot)
-		shooting = helper::localplayer::Shoot(pLocal, pWeapon, pCmd, pState.target);
+		shooting = helper::localplayer::Shoot(pLocal, pWeapon, pCmd, m_pTarget);
 
 	if (shooting || helper::localplayer::IsAttacking(pLocal, pWeapon, pCmd))
 	{
@@ -435,7 +432,7 @@ void CAimbotProjectile::OnGenericWeapons(CTFPlayer* pLocal, CTFWeaponBase* pWeap
 	bool shooting = false;
 
 	if (Config.aimbot.packed.autoshoot)
-		shooting = helper::localplayer::Shoot(pLocal, pWeapon, pCmd, pState.target);
+		shooting = helper::localplayer::Shoot(pLocal, pWeapon, pCmd, m_pTarget);
 
 	if (shooting || helper::localplayer::IsAttacking(pLocal, pWeapon, pCmd))
 		ApplyAim(pLocal, pWeapon, pCmd, pState);
@@ -449,7 +446,7 @@ void CAimbotProjectile::OnChargeWeapons(CTFPlayer* pLocal, CTFWeaponBase* pWeapo
 	bool shooting = false;
 
 	if (autoshoot)
-		shooting = helper::localplayer::Shoot(pLocal, pWeapon, pCmd, pState.target);
+		shooting = helper::localplayer::Shoot(pLocal, pWeapon, pCmd, m_pTarget);
 
 	if (shooting || helper::localplayer::IsAttacking(pLocal, pWeapon, pCmd))
 		ApplyAim(pLocal, pWeapon, pCmd, pState);
@@ -476,10 +473,8 @@ void CAimbotProjectile::RunAim(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserC
 	if (m_pTarget == nullptr || m_vecPath.empty())
 		return;
 
-	pState.target = m_pTarget;
-
 	if (ApplyAim(pLocal, pWeapon, pCmd, pState))
-		AimbotUtils::ShootCallback(pCmd, pState.target);
+		AimbotUtils::ShootCallback(pCmd, m_pTarget);
 }
 
 void CAimbotProjectile::ResetIndicator()
