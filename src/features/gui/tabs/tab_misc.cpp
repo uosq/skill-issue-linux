@@ -3,6 +3,28 @@
 
 #include "../utils/gui_utils.h"
 
+static void setup_norecoil_popup()
+{
+	if (ImGui::BeginPopup("NoRecoilPopup"))
+	{
+		{
+			int scale = Config.misc.packed.norecoil_scale;
+			if (ImGui::SliderInt("Scale", &scale, 0, 100, "%d%%"))
+				Config.misc.packed.norecoil_scale = scale;
+
+			if (ImGui::IsItemHovered())
+				ImGui::SetTooltip("How much recoil should we see\n0%% = no recoil, 100%% = full recoil");
+		}
+
+		ImGui_CheckboxBit("Ignore Spectators", Config.misc.packed.norecoil_ignore_spectators);
+
+		if (ImGui::IsItemHovered())
+			ImGui::SetTooltip("If no recoil should appear to spectators");
+
+		ImGui::EndPopup();
+	}
+}
+
 void DrawMiscTab()
 {
 	if (ImGui::BeginTable("##MiscContents", 2, ImGuiTableFlags_BordersInnerV | ImGuiTableFlags_SizingStretchProp))
@@ -29,7 +51,17 @@ void DrawMiscTab()
 		ImGui_CheckboxBit("Autostrafe", Config.misc.packed.autostrafe);
 		ImGui_CheckboxBit("Backpack Expander", Config.misc.packed.backpack_expander);
 		ImGui_CheckboxBit("Accept Item Drops", Config.misc.packed.accept_item_drop);
-		ImGui_CheckboxBit("No Recoil", Config.misc.packed.norecoil);
+
+		{
+			setup_norecoil_popup();
+			ImGui_CheckboxBit("No Recoil", Config.misc.packed.norecoil);
+
+			ImGui::SameLine();
+
+			if (ImGui::Button("+"))
+				ImGui::OpenPopup("NoRecoilPopup");
+		}
+
 		ImGui_CheckboxBit("No Push", Config.misc.packed.nopush);
 		ImGui_CheckboxBit("No Engine Sleep", Config.misc.packed.no_engine_sleep);
 		ImGui_CheckboxBit("No Scope Overlay", Config.misc.packed.no_scope_overlay);

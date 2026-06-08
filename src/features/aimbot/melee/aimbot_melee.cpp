@@ -70,6 +70,86 @@ static bool CanWrenchHitBuilding(CBaseEntity* pTarget, CTFWeaponBase* pWeapon)
 	return true;
 }
 
+static bool ShouldPredictSwing(CTFPlayer* pLocal, CTFWeaponBase* pWeapon)
+{
+	int local_team = pLocal->m_iTeamNum();
+	float swing_range = pWeapon->GetSwingRange() * (Config.aimbot.swing_pred_range/100.0f);
+	bool is_wrench = pWeapon->GetWeaponID() == TF_WEAPON_WRENCH;
+	bool can_hit_teammates = pWeapon->CanHitTeammates();
+
+	Vec3 viewAngles; interfaces::Engine->GetViewAngles(viewAngles);
+	Vec3 vecForward; Math::AngleVectors(viewAngles, &vecForward);
+	Vec3 shootPos {};
+
+	float smack_delay = pWeapon->GetSmackDelay() + features::backtrack.GetInterp() + features::backtrack.GetLatency();
+
+	if (Config.aimbot.packed.swing_pred_local)
+	{
+		std::vector<Vec3> path;
+
+		features::prediction.BeginPrediction(pLocal, smack_delay);
+
+		if (!features::prediction.Simulate(path) || path.empty())
+		{
+			features::prediction.EndPrediction();
+			return false;
+		}
+
+		features::prediction.EndPrediction();
+
+		shootPos = path.back() + pLocal->m_vecViewOffset();
+	}
+	else
+	{
+		shootPos = pLocal->GetEyePos();
+	}
+
+	for (const auto& entry : AimbotUtils::GetTargets(can_hit_teammates, local_team))
+	{
+		if (entry.ptr == nullptr || (entry.flags & (EntityFlags::IsAlive | EntityFlags::IsBuilding | EntityFlags::IsPlayer)) == 0)
+			continue;
+
+		bool is_teammate = entry.ptr->m_iTeamNum() == local_team;
+		if (is_teammate)
+		{
+			if (is_wrench)
+			{
+				if (!(entry.flags & EntityFlags::IsBuilding) || !CanWrenchHitBuilding(entry.ptr, pWeapon))
+					continue;
+			}
+			else if (!can_hit_teammates)
+				continue;
+		}
+
+		Vec3 old_origin = entry.ptr->GetAbsOrigin();
+		
+		if (entry.flags & EntityFlags::IsPlayer)
+		{
+			std::vector<Vector> path;
+
+			features::prediction.BeginPrediction(static_cast<CTFPlayer*>(entry.ptr), smack_delay);
+
+			if (features::prediction.Simulate(path) && !path.empty())
+				entry.ptr->SetAbsOrigin(path.back());
+
+			features::prediction.EndPrediction();
+		}
+
+		Vec3 center = entry.ptr->GetCenter();
+		Vec3 dir = center - shootPos;
+		float distance = dir.Normalize();
+
+		bool can_hit = (distance <= (swing_range * 2.5f) && CanHit(pWeapon, entry.ptr, shootPos, dir, distance));
+		
+		entry.ptr->SetAbsOrigin(old_origin);
+
+		if (can_hit)
+			return true; // we can hit someone
+	}
+
+	return false;
+}
+
 static inline bool LocalPlayerHasMetal(CTFPlayer* pLocal)
 {
 	return pLocal->m_iAmmo()[TF_AMMO_METAL] > 0;
@@ -200,122 +280,6 @@ static bool LegitMelee(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd
 	features::entities.SetAimbotTarget(pTarget);
 
 	return helper::localplayer::IsAttacking(pLocal, pWeapon, pCmd);
-}
-
-static void PredictedMelee(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd, AimbotState& state)
-{
-	assert(pLocal && "Local Player is null");
-	assert(pWeapon && "Local Weapon is null");
-	assert(pCmd && "UserCmd is null");
-
-	CBaseEntity* pTarget = nullptr;
-
-	int local_team = pLocal->m_iTeamNum();
-
-	float smallest_fov = FLT_MAX;
-	float max_fov = (MeleeMode)Config.aimbot.packed.meleemode == MeleeMode::LEGIT ? 90 : 180;
-	float swing_range = pWeapon->GetSwingRange() * 0.85f; // safe margin yk
-
-	bool is_wrench = pWeapon->GetWeaponID() == TF_WEAPON_WRENCH;
-	bool can_hit_teammates = pWeapon->CanHitTeammates();
-
-	Vec3 viewAngles; interfaces::Engine->GetViewAngles(viewAngles);
-	Vec3 vecForward; Math::AngleVectors(viewAngles, &vecForward);
-	Vec3 targetAngles {};
-	Vec3 shootPos {};
-
-	float smack_delay = pWeapon->GetSmackDelay() + features::backtrack.GetInterp() + features::backtrack.GetLatency();
-
-	if (Config.aimbot.packed.swing_pred_local)
-	{
-		std::vector<Vec3> path;
-
-		features::prediction.BeginPrediction(pLocal, smack_delay);
-
-		if (!features::prediction.Simulate(path) || path.empty())
-			return features::prediction.EndPrediction();
-
-		features::prediction.EndPrediction();
-
-		shootPos = path.back() + pLocal->m_vecViewOffset();
-	}
-	else
-	{
-		shootPos = pLocal->GetEyePos();
-	}
-
-	for (const auto& entry : AimbotUtils::GetTargets(can_hit_teammates, local_team))
-	{
-		if (entry.ptr == nullptr)
-			continue;
-
-		if ((entry.flags & (EntityFlags::IsAlive | EntityFlags::IsBuilding | EntityFlags::IsPlayer)) == 0)
-			continue;
-
-		bool is_teammate = entry.ptr->m_iTeamNum() == local_team;
-
-		if (is_teammate)
-		{
-			if (is_wrench)
-			{
-				if (!(entry.flags & EntityFlags::IsBuilding))
-					continue;
-
-				if (!CanWrenchHitBuilding(entry.ptr, pWeapon))
-					continue;
-			}
-			else if (!can_hit_teammates)
-				continue;
-		}
-
-		Vec3 old_origin = entry.ptr->GetAbsOrigin();
-		Vec3 old_mins = entry.ptr->m_vecMins();
-		Vec3 old_maxs = entry.ptr->m_vecMaxs();
-
-		// we cant exactly predict a dispenser can we?
-		if (entry.flags & EntityFlags::IsPlayer)
-		{
-			features::prediction.BeginPrediction(static_cast<CTFPlayer*>(entry.ptr), smack_delay);
-
-			std::vector<Vector> path;
-			if (features::prediction.Simulate(path) && !path.empty())
-				entry.ptr->SetAbsOrigin(path.back());
-
-			features::prediction.EndPrediction();
-		}
-
-		Vec3 center = entry.ptr->GetCenter();
-		Vec3 dir = center - shootPos;
-
-		float distance = dir.Normalize();
-
-		if (distance <= (swing_range * 2.5f) && CanHit(pWeapon, entry.ptr, shootPos, dir, distance))
-		{
-			Vec3 aimAngles;
-			Math::VectorAngles(dir, aimAngles);
-
-			float fov = Math::CalcFov(viewAngles, aimAngles);
-
-			if (fov < smallest_fov && fov <= max_fov)
-			{
-				smallest_fov = fov;
-				pTarget = entry.ptr;
-				targetAngles = aimAngles;
-			}
-		}
-
-		entry.ptr->SetAbsOrigin(old_origin);
-		entry.ptr->m_vecMins() = old_mins;
-		entry.ptr->m_vecMaxs() = old_maxs;
-	}
-
-	if (pTarget == nullptr)
-		return;
-
-	if (ApplyAim(pLocal, pWeapon, pTarget, state, viewAngles, targetAngles, pCmd))
-		AimbotUtils::ShootCallback(pCmd, pTarget);
-
-	features::entities.SetAimbotTarget(pTarget);
 }
 
 static void RageMelee(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd, AimbotState& state)
@@ -453,11 +417,10 @@ void AimbotMelee::Run(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCmd,
 	if (Config.aimbot.packed.meleemode == static_cast<int>(MeleeMode::NONE) || pWeapon->GetWeaponID() == TF_WEAPON_KNIFE)
 		return;
 
-	// if swing pred, dont care about the mode
 	if (Config.aimbot.packed.swing_pred)
 	{
-		PredictedMelee(pLocal, pWeapon, pCmd, state);
-		return;
+		if (ShouldPredictSwing(pLocal, pWeapon))
+			pCmd->buttons |= IN_ATTACK; 
 	}
 
 	MeleeMode mode = (MeleeMode)Config.aimbot.packed.meleemode;

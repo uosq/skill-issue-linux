@@ -11,6 +11,8 @@ public:
 	void RunOverrideView(CTFPlayer *pLocal, CViewSetup *pView);
 	void RunCreateMove(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCmd);
 	void RunCalcViewModelView(Vector& angle);
+
+	float GetScale();
 };
 
 DECLARE_FEATURE(NoRecoil, norecoil)

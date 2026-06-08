@@ -291,6 +291,7 @@ struct AimbotConfig
 	float fov		= 0.0f;
 	float max_sim_time	= 0.0f;
 	float smoothness	= 0.0f;
+	uint8_t swing_pred_range= 0;
 	Hotkey *key		= nullptr;
 };
 
@@ -322,8 +323,10 @@ struct MiscConfig
 			uint32_t infopanel : 1;
 			uint32_t spyalert : 1;
 			uint32_t nopush : 1;
+			uint32_t norecoil_scale : 7;
+			uint32_t norecoil_ignore_spectators : 1;
 
-			uint32_t _reserved : 13; // padding
+			uint32_t _reserved : 5; // padding
 		};
 	} packed;
 
@@ -512,6 +515,7 @@ namespace Settings
 		CONFIG_FLOAT("aimbot max sim time", Config.aimbot.max_sim_time),
 		CONFIG_FLOAT("aimbot smoothness", Config.aimbot.smoothness),
 		CONFIG_KEY("aimbot key", Config.aimbot.key),
+		CONFIG_INT("aimbot swing pred range", Config.aimbot.swing_pred_range),
 
 		// esp
 		CONFIG_INT("esp raw", Config.esp.packed.raw),

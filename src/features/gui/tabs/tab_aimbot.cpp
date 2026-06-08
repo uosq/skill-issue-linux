@@ -26,6 +26,31 @@ do { \
 	item = temp; \
 } while(0);
 
+static void setup_swingpred_popup()
+{
+	if (!ImGui::BeginPopup("SwingPredPopup"))
+		return;
+
+	{
+		ImGui_CheckboxBit("Predict LocalPlayer", Config.aimbot.packed.swing_pred_local);
+	
+		if (ImGui::IsItemHovered())
+			ImGui::SetTooltip("If we should predict the localplayer\nwhen doing swing prediction");
+	}
+
+	{
+		int range = static_cast<int>(Config.aimbot.swing_pred_range);
+
+		if (ImGui::SliderInt("Range", &range, 0, 100, "%d%%"))
+			Config.aimbot.swing_pred_range = static_cast<uint8_t>(range);
+
+		if (ImGui::IsItemHovered())
+			ImGui::SetTooltip("Melee's swing range\n0%% = no range, 100%% = full swing range");
+	}
+
+	ImGui::EndPopup();
+}
+
 static void DrawLeftColumn()
 {
 	//make_hitscan_popup();
@@ -56,11 +81,17 @@ static void DrawLeftColumn()
 	ImGui_CheckboxBit("ViewModel Aim", Config.aimbot.packed.viewmodelaim);
 	ImGui_CheckboxBit("Wait For Charge", Config.aimbot.packed.waitforcharge);
 	ImGui_CheckboxBit("Hold Minigun Spin", Config.aimbot.packed.hold_minigun_spin);
-	ImGui_CheckboxBit("Swing Prediction", Config.aimbot.packed.swing_pred);
-	ImGui_CheckboxBit("Swing Prediction LocalPlayer", Config.aimbot.packed.swing_pred_local);
 
-	if (ImGui::IsItemHovered())
-		ImGui::SetTooltip("%s", "Predicts yourself on swing pred");
+	{
+		setup_swingpred_popup();
+
+		ImGui_CheckboxBit("Swing Prediction", Config.aimbot.packed.swing_pred);
+
+		ImGui::SameLine();
+
+		if (ImGui::Button("+"))
+			ImGui::OpenPopup("SwingPredPopup");
+	}
 
 	ImGui::Separator();
 

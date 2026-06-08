@@ -1,7 +1,15 @@
 #include "norecoil.h"
 
 #include "../../entitylist/entitylist.h"
+#include "../../spectators/spectators.h"
+
 #include "../../../settings/settings.h"
+
+float NoRecoil::GetScale()
+{
+	float value = Config.misc.packed.norecoil_scale / 100.0f;
+	return 1.0f - std::clamp(value, 0.0f, 1.0f);
+}
 
 void NoRecoil::RunOverrideView(CTFPlayer *pLocal, CViewSetup *pView)
 {
@@ -18,7 +26,7 @@ void NoRecoil::RunOverrideView(CTFPlayer *pLocal, CViewSetup *pView)
 	if (punchAngle.IsZero())
 		return;
 
-	pView->angles -= punchAngle;
+	pView->angles -= punchAngle * GetScale();
 }
 
 void NoRecoil::RunCreateMove(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCmd)
@@ -33,7 +41,16 @@ void NoRecoil::RunCreateMove(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd
 	if (punchAngle.IsZero())
 		return;
 
-	pCmd->viewangles -= punchAngle;
+	// can't ignore
+	if (!Config.misc.packed.norecoil_ignore_spectators)
+	{
+		int spectator_amount = 0;
+
+		if (features::spectators.IsLocalPlayerSpectated(spectator_amount))
+			return;
+	}
+
+	pCmd->viewangles -= punchAngle * GetScale();
 }
 
 void NoRecoil::RunCalcViewModelView(Vector &angle)
@@ -49,5 +66,5 @@ void NoRecoil::RunCalcViewModelView(Vector &angle)
 	if (punchAngle.IsZero())
 		return;
 
-	angle -= punchAngle;
+	angle -= punchAngle * GetScale();
 }
