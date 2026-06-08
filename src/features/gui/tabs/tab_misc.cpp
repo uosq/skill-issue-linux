@@ -30,6 +30,7 @@ void DrawMiscTab()
 		ImGui_CheckboxBit("Backpack Expander", Config.misc.packed.backpack_expander);
 		ImGui_CheckboxBit("Accept Item Drops", Config.misc.packed.accept_item_drop);
 		ImGui_CheckboxBit("No Recoil", Config.misc.packed.norecoil);
+		ImGui_CheckboxBit("No Push", Config.misc.packed.nopush);
 		ImGui_CheckboxBit("No Engine Sleep", Config.misc.packed.no_engine_sleep);
 		ImGui_CheckboxBit("No Scope Overlay", Config.misc.packed.no_scope_overlay);
 		ImGui_CheckboxBit("No Zoom", Config.misc.packed.no_zoom);

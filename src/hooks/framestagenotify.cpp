@@ -13,6 +13,7 @@
 #include "../features/spyalert/spyalert.h"
 #include "../features/playerlist/playerlist.h"
 #include "../features/hook_initializer/initializer.h"
+#include "../features/nopush/nopush.h"
 
 using FrameStageNotifyFn = void (*)(CHLClient* rdi, int stage);
 
@@ -57,6 +58,7 @@ static void FrameStageNotify(CHLClient* rdi, int stage)
 		features::spectators.OnFrameStageNotify();
 		features::spyalert.OnFrameStageNotify();
 		features::playerlist.Store();
+		features::nopush.OnFrameStageNotify();
 		break;
 	}
 

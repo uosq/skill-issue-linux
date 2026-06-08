@@ -4,6 +4,7 @@
 #include "../sdk/signatures/signatures.h"
 
 #include "../features/hook_initializer/initializer.h"
+#include "../features/nopush/nopush.h"
 
 // xref: NetMsg
 ADD_SIG(CNetChannel_SendNetMsg, "engine.so", "55 48 89 E5 41 56 41 89 D6 41 55 41 89 CD")
@@ -13,6 +14,18 @@ detour_ctx_t SendNetMsg_ctx;
 
 bool Hooked_SendNetMsg(void *ptr, INetMessage &msg, bool bForceReliable, bool bVoice)
 {
+	switch(msg.GetType())
+	{
+		case net_Tick:
+		{
+			features::nopush.OnSendNetMsg(msg);
+			break;
+		}
+
+		default:
+		break;
+	}
+
 	bool ret;
 	DETOUR_ORIG_GET(&SendNetMsg_ctx, ret, originalSendNetMsg, ptr, msg, bForceReliable, bVoice);
 	return ret;

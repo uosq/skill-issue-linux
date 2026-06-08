@@ -321,8 +321,9 @@ struct MiscConfig
 			uint32_t antiafk : 1;
 			uint32_t infopanel : 1;
 			uint32_t spyalert : 1;
+			uint32_t nopush : 1;
 
-			uint32_t _reserved : 14; // padding
+			uint32_t _reserved : 13; // padding
 		};
 	} packed;
 
