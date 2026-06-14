@@ -15,10 +15,6 @@ Source: https://github.com/rei-2/Amalgam/blob/bffae9999cf35a5fbdeb92387b9fae5879
 #undef min
 #undef max
 
-#pragma warning(push)
-#pragma warning(disable : 26451)
-#pragma warning(disable : 4244)
-
 #define floatCompare(x, y) (fabsf(x - y) <= FLT_EPSILON * fmaxf(1.f, fmaxf(fabsf(x), fabsf(y))))
 
 namespace Math
@@ -465,5 +461,3 @@ namespace Math
 		return vRoots;
 	}
 } // namespace Math
-
-#pragma warning(pop)

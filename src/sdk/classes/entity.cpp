@@ -1,5 +1,7 @@
 #include "entity.h"
 
+#include "../definitions/icollideable.h"
+
 bool CBaseEntity::IsWeapon()
 {
 	// I think I got every one of them
@@ -153,13 +155,9 @@ Vector CBaseEntity::EstimateAbsVelocity()
 		return;
 	}
 	*/
-	//Vector* m_vecAbsVelocity = reinterpret_cast<Vector*>(reinterpret_cast<uintptr_t>(this) + 0x1c8);
-	uintptr_t ptr		 = reinterpret_cast<uintptr_t>(this);
-	float *m_vecAbsVelocityX = reinterpret_cast<float *>(ptr + 0x1c8);
-	float *m_vecAbsVelocityY = reinterpret_cast<float *>(ptr + 0x1cc);
-	float *m_vecAbsVelocityZ = reinterpret_cast<float *>(ptr + 0x1d0);
 
-	return Vector(*m_vecAbsVelocityX, *m_vecAbsVelocityY, *m_vecAbsVelocityZ);
+	Vec3 m_vecAbsVelocity = *reinterpret_cast<Vector*>(reinterpret_cast<uintptr_t>(this) + 0x1c8);
+	return m_vecAbsVelocity;
 }
 
 bool CBaseEntity::IsProjectile()
@@ -319,43 +317,33 @@ float CBaseEntity::m_flModelScale()
 	return *reinterpret_cast<float*>(uintptr_t(this) + 0x914);
 }
 
-void CBaseEntity::SetCollisionBounds(const Vec3& mins , const Vec3& maxs)
+void CBaseEntity::SetCollisionBounds(const Vec3& mins, const Vec3& maxs)
 {
-	if ((m_vecMinsPreScaled() != mins) || (m_vecMaxsPreScaled() != maxs))
-	{
-		m_vecMinsPreScaled() = mins;
-		m_vecMaxs() = maxs;
-	}
+	/*
 
-	bool bDirty = false;
-	if (m_flModelScale() != 1.0f)
-	{
-		Vec3 vecNewMins = mins * m_flModelScale();
-		Vec3 vecNewMaxs = maxs * m_flModelScale();
+		HOW TO GET
 
-		if ( ( m_vecMins() != vecNewMins ) || ( m_vecMaxs() != vecNewMaxs ) )
-		{
-			m_vecMins() = vecNewMins;
-			m_vecMaxs() = vecNewMaxs;
-			bDirty = true;
+		In 'client.so', search for: disableshadows
+		You'll find 2 functions that have this string, get the first one
+
+		In there, it should have a "mins" and "maxs" strings
+		Any of them work, you have to get the function after UTIL_StringToVector
+
+		if ((szKeyName == "mins") || (iVar3 = FUN_01fe7d80(szKeyName), iVar3 == 0)) {
+		FUN_017b9e60(&local_34,szValue);
+======>		CCollisionProperty::SetCollisionBounds(this + 0x12,&local_34,&this[0x13].IClientNetworkable.field_0x4);
+		return 1;
 		}
-	}
-	else
-	{
-		if ( ( m_vecMins() != mins ) || ( m_vecMaxs() != maxs ) )
-		{
-			m_vecMins() = mins;
-			m_vecMaxs() = maxs;
-			bDirty = true;
+
+		if ((szKeyName == "maxs") || (iVar3 = FUN_01fe7d80(szKeyName), iVar3 == 0)) {
+		FUN_017b9e60(&local_34,szValue);
+======>		CCollisionProperty::SetCollisionBounds(this + 0x12,&this[0x13].IClientRenderable,&local_34);
+		return 1;
 		}
-	}
+	*/
 
-	if (bDirty)
-	{
-		Vector vecSize = m_vecMaxs() - m_vecMins();
-		m_flRadius() = vecSize.Length() * 0.5f;
+	using SetCollisionBoundsFn = void(*)(ICollideable* rdi, const Vec3& mins, const Vec3& maxs);
+	static SetCollisionBoundsFn original = reinterpret_cast<SetCollisionBoundsFn>(sigscan_module("client.so", "55 48 89 E5 41 55 49 89 D5 41 54 49 89 FC 53 48 89 F3 48 83 EC 28 F3 0F 10 47 10"));
 
-		// too lazy to fix this
-		//MarkSurroundingBoundsDirty();
-	}
+	original(this->GetCollideable(), mins, maxs);
 }
