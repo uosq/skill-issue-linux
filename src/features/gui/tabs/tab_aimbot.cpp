@@ -4,13 +4,11 @@
 #include "../../aimbot/aimbot.h"
 #include "../../triggerbot/triggerbot.h"
 
-#define AIM_METHOD(name, item) \
-do { \
-	constexpr const char *items[]{"Plain", "Smooth", "Assistance", "Silent"}; \
-	int temp = item; \
-	ImGui::Combo(name, &temp, items, 4); \
-	item = temp; \
-} while(0);
+static bool AIM_METHOD(const char* name, int& item)
+{
+	constexpr const char *items[]{"Plain", "Smooth", "Assistance", "Silent"};
+	return ImGui::Combo(name, &item, items, 4);
+}
 
 static void setup_swingpred_popup()
 {
@@ -43,9 +41,9 @@ static void DrawLeftColumn()
 
 	ImGui::TextUnformatted("Targeting");
 	{
-		AIM_METHOD("Hitscan Aim Method", config::aimbot::hitscan_method.Get())
-		AIM_METHOD("Projectile Aim Method", config::aimbot::projectile_method.Get())
-		AIM_METHOD("Melee Aim Method", config::aimbot::melee_method.Get())
+		AIM_METHOD("Hitscan Aim Method", config::aimbot::hitscan_method.Get());
+		AIM_METHOD("Projectile Aim Method", config::aimbot::projectile_method.Get());
+		AIM_METHOD("Melee Aim Method", config::aimbot::melee_method.Get());
 	}
 	{
 		constexpr const char *items[]{"None", "Legit", "Rage"};
@@ -96,6 +94,8 @@ static void DrawRightColumn()
 		ImGui::SetTooltip("Higher is smoother");
 
 	ImGui::SliderFloat("Max Sim Time", &config::aimbot::max_sim_time.Get(), 0.0f, 5.0f);
+	if (ImGui::IsItemHovered())
+		ImGui::SetTooltip("Maximum allowed time to predict");
 
 	ImGui::Separator();
 
@@ -104,9 +104,7 @@ static void DrawRightColumn()
 	ImGui::Checkbox("Draw Target Path", &config::aimbot::draw_predicted_player_path.Get());
 	{
 		constexpr const char *items[]{"None", "Circle", "Square", "Triangle"};
-		int temp = config::aimbot::draw_predicted_player_indicator.Get();
-		ImGui::Combo("Indicator Style", &temp, items, 4);
-		config::aimbot::draw_predicted_player_indicator.Get() = temp;
+		ImGui::Combo("Indicator Style", &config::aimbot::draw_predicted_player_indicator.Get(), items, 4);
 	}
 
 	ImGui::Separator();
@@ -118,18 +116,9 @@ static void DrawRightColumn()
 	{
 		ImGui::Checkbox("Hitscan##Trigger", &config::trigger::hitscan.Get());
 
-		{
-			constexpr const char *items[]{"None", "Legit", "Rage"};
-			int temp = 0;
-
-			temp = config::autobackstab::enabled.Get();
-			ImGui::Combo("Auto Backstab##Trigger", &temp, items, 3);
-			config::autobackstab::enabled.Set(temp);
-
-			temp = config::autoairblast::enabled.Get();
-			ImGui::Combo("Auto Airblast##Trigger", &temp, items, 3);
-			config::autoairblast::enabled.Set(temp);
-		}
+		constexpr const char* items[]{"None", "Legit", "Rage"};
+		ImGui::Combo("Auto Backstab##Trigger", &config::autobackstab::enabled.Get(), items, 3);
+		ImGui::Combo("Auto Airblast##Trigger", &config::autoairblast::enabled.Get(), items, 3);
 	}
 	ImGui::PopStyleVar();
 }

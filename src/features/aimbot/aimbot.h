@@ -49,7 +49,7 @@ BEGIN_CONFIG(aimbot)
 	// PROJECTILE
 	ADD_CONFIG(max_sim_time, "aimbot max sim time", 0.0f)
 	ADD_CONFIG(draw_predicted_player_path, "aimbot predicted player path", false)
-	ADD_CONFIG(draw_predicted_player_indicator, "aimbot predicted player indicator", false)
+	ADD_CONFIG(draw_predicted_player_indicator, "aimbot predicted player indicator", 0)
 
 	ADD_CONFIG(viewmodel_aim, "aimbot viewmodel aim", false)
 END_CONFIG()
