@@ -1,10 +1,9 @@
 #include "spectators.h"
-#include "../../thirdparty/imgui/imgui.h"
-#include "../../settings/settings.h"
-#include "../entitylist/entitylist.h"
+
 #include <mutex>
 
-#include "../../settings/settings.h"
+#include "../../thirdparty/imgui/imgui.h"
+#include "../entitylist/entitylist.h"
 
 void Spectators::OnFrameStageNotify()
 {
@@ -93,14 +92,14 @@ bool Spectators::IsLocalPlayerSpectated(int& amount)
 
 void Spectators::DrawList()
 {
-	if (!Config.misc.packed.spectatorlist || helper::engine::IsTakingScreenshot())
+	if (!config::spectators::enabled.Get() || helper::engine::IsTakingScreenshot())
 		return;
 
 	ImGui::SetNextWindowSizeConstraints(ImVec2(150.0f, 0.0f), ImVec2(FLT_MAX, FLT_MAX));
 
 	int flags = ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse;
 
-	if (!Settings::menu_open)
+	if (!menu_open.Get())
 		flags |= ImGuiWindowFlags_NoMove;
 
 	if (ImGui::Begin("Spectator List", nullptr, flags))

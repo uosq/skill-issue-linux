@@ -3,8 +3,14 @@
 #include "../../sdk/classes/player.h"
 #include "../../sdk/definitions/cusercmd.h"
 
-#include "../../settings/settings.h"
+#include "../config/config.h"
 #include "../feature.h"
+
+BEGIN_CONFIG(bhop)
+
+	ADD_CONFIG(enabled, "bhop enabled", false)
+
+END_CONFIG()
 
 class Bhop
 {

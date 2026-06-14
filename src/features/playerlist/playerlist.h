@@ -10,8 +10,16 @@
 
 #include "../feature.h"
 
+#include "../config/config.h"
+
 #define PLAYERLIST_NORMAL_PRIORITY 1
 #define PLAYERLIST_FRIEND_PRIORITY 0
+
+BEGIN_CONFIG(playerlist)
+
+	ADD_CONFIG(enabled, "player list enabled", false)
+
+END_CONFIG()
 
 class CTFPlayer;
 

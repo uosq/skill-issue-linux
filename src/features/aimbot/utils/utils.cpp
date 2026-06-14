@@ -5,6 +5,8 @@
 #include "../../scriptmanager/scriptmanager.h"
 #include "../../visuals/customfov/customfov.h"
 
+#include "../aimbot.h"
+
 namespace AimbotUtils
 {
 	bool IsValidEntity(CBaseEntity *entity)
@@ -27,16 +29,16 @@ namespace AimbotUtils
 			if (player->IsGhost())
 				return false;
 
-			if (Config.aimbot.packed.ignorecloaked && player->InCond(ETFCond::TF_COND_CLOAKED))
+			if (config::aimbot::ignore_cloaked.Get() && player->InCond(ETFCond::TF_COND_CLOAKED))
 				return false;
 
-			if (Config.aimbot.packed.ignorebonked && player->InCond(ETFCond::TF_COND_BONKED))
+			if (config::aimbot::ignore_bonked.Get() && player->InCond(ETFCond::TF_COND_BONKED))
 				return false;
 
-			if (Config.aimbot.packed.ignoreubered && player->InCond(ETFCond::TF_COND_INVULNERABLE))
+			if (config::aimbot::ignore_uber.Get() && player->InCond(ETFCond::TF_COND_INVULNERABLE))
 				return false;
 
-			if (Config.aimbot.packed.ignorehoovy && player->m_iClass() == ETFClass::TF_CLASS_HEAVYWEAPONS &&
+			if (config::aimbot::ignore_hoovy.Get() && player->m_iClass() == ETFClass::TF_CLASS_HEAVYWEAPONS &&
 			    (player->GetFlags() & FL_DUCKING))
 				return false;
 
@@ -137,7 +139,7 @@ namespace AimbotUtils
 
 	float GetAimbotFovScaled()
 	{
-		return GetFovScaled(Config.aimbot.fov);
+		return GetFovScaled(config::aimbot::fov.Get());
 	}
 
 	std::vector<EntityListEntry> GetTargets(const bool &bCanHitTeammates, int localTeam)
@@ -158,7 +160,7 @@ namespace AimbotUtils
 			if (!IsValidEntity(entry.ptr))
 				continue;
 
-			TeamMode teamMode = static_cast<TeamMode>(Config.aimbot.packed.teamselection);
+			TeamMode teamMode = static_cast<TeamMode>(config::aimbot::team_selected.Get());
 			int teamNum	  = entry.ptr->m_iTeamNum();
 
 			if (!bCanHitTeammates || teamMode == TeamMode::ONLYENEMY)
@@ -249,7 +251,7 @@ Vec3 AimbotUtils::GetSmoothedAngle(const Vec3& viewAngles, const Vec3& targetDir
 	delta.x = Math::NormalizeAngle(delta.x);
 	delta.y = Math::NormalizeAngle(delta.y);
 	
-	float smoothFactor = std::max(1.0f, Config.aimbot.smoothness);
+	float smoothFactor = std::max(1.0f, config::aimbot::smoothness.Get());
 	Vector stepAngle = delta / smoothFactor;
 
 	return viewAngles + stepAngle;

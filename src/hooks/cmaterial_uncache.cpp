@@ -1,12 +1,12 @@
 #include "../core/core.h"
 
-#include "../sdk/MaterialManager/materialmanager.h"
 #include "../sdk/definitions/imaterial.h"
 #include "../sdk/signatures/signatures.h"
 
 #include "../thirdparty/libdetour/libdetour.h"
 
 #include "../features/hook_initializer/initializer.h"
+#include "../features/MaterialManager/materialmanager.h"
 
 ADD_SIG(CMaterial_Uncache, "materialsystem.so", "55 48 89 E5 41 56 41 55 41 54 49 89 FC 53 89 F3 48 81 EC 10 01 00 00")
 
@@ -26,7 +26,7 @@ void HookedUncache(IMaterial *mat, bool bPreserveVars)
 
 	if (name == nullptr) return;
 
-	if (MaterialManager::MaterialExists(name))
+	if (features::materials.DoesMaterialExist(name))
 		return;
 
 	DETOUR_ORIG_CALL(&uncache_ctx, original_Uncache, mat, bPreserveVars);

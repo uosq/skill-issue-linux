@@ -11,7 +11,24 @@
 #include "../../sdk/definitions/studio.h"
 
 #include "../entitylist/structs.h"
+#include "../config/config.h"
+
 #include "../feature.h"
+
+enum class BacktrackMode
+{
+	INVALID = -1,
+	NONE,
+	LAST_ONLY,
+	ALL_RECORDS,
+	MAX
+};
+
+BEGIN_CONFIG(backtrack)
+	ADD_CONFIG(enabled, "backtrack enabled", false)
+	ADD_CONFIG(draw_mode, "backtrack draw mode", 0)
+	ADD_CONFIG(material, "backtrack material", 0)
+END_CONFIG()
 
 struct LagCompRecord
 {

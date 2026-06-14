@@ -15,6 +15,8 @@
 
 #include "esp_utils.h"
 
+#include "../colors/colors.h"
+
 #include "../entitylist/entitylist.h"
 #include "../visuals/thirdperson/thirdperson.h"
 
@@ -131,7 +133,7 @@ static int GetEntityMaxHealth(CBaseEntity* pEntity)
 
 static bool GetHealthbarBounds(CBaseEntity* pTarget, ESPData& data, HealthbarBounds& out)
 {
-	HealthMode mode = static_cast<HealthMode>(Config.esp.health);
+	HealthMode mode = static_cast<HealthMode>(config::esp::health.Get());
 	if (mode != HealthMode::BAR && mode != HealthMode::BOTH)
 		return false;
 
@@ -140,11 +142,11 @@ static bool GetHealthbarBounds(CBaseEntity* pTarget, ESPData& data, HealthbarBou
 	if (hp < 0 || maxHp <= 0)
 		return false;
 
-	TextSide side = static_cast<TextSide>(Config.esp.sides.healthbar);
+	TextSide side = static_cast<TextSide>(config::esp::health_bar.Get());
 
-	float gap = (float)Config.esp.custom.gap;
-	float margin = (float)Config.esp.custom.healthbar_margin;
-	float thickness = (float)Config.esp.custom.healthbar_thickness;
+	float gap = config::esp::custom_gap.Get();
+	float margin = config::esp::custom_healthbar_margin.Get();
+	float thickness = config::esp::custom_healthbar_thickness.Get();
 	float scale = std::max(GetHealthBarScale(data), 0.1f); // cant see shit with size 0
 
 	float size = thickness * scale;
@@ -197,7 +199,7 @@ static void CalcHealthBarLayout(ESPData& data, CBaseEntity* pTarget)
 	if (!GetHealthbarBounds(pTarget, data, hb))
 		return;
 
-	TextSide side = static_cast<TextSide>(Config.esp.sides.healthbar);
+	TextSide side = static_cast<TextSide>(config::esp::health_bar.Get());
 
 	float totalPadding;
 
@@ -315,10 +317,10 @@ void ESP::FillTargets(CTFPlayer* pLocal)
 
 		bool is_ammo_pack = static_cast<CBaseAnimating*>(entry.entity)->IsAmmoPack();
 
-		if (is_ammo_pack && !Config.esp.packed.ammopack)
+		if (is_ammo_pack && !config::esp::ammopack.Get())
 			continue;
 
-		if (!is_ammo_pack && !Config.esp.packed.medkit)
+		if (!is_ammo_pack && !config::esp::medkit.Get())
 			continue;
 
 		ESPData data;
@@ -330,8 +332,8 @@ void ESP::FillTargets(CTFPlayer* pLocal)
 		data.hasHealthbar = false;
 
 		data.color = static_cast<CBaseAnimating*>(entry.entity)->IsAmmoPack()
-		? Config.colors.ammopack
-		: Config.colors.healthkit;
+		? config::colors::ammopack.Get()
+		: config::colors::healthkit.Get();
 
 		tempData.emplace_back(data);
 	}
@@ -369,7 +371,7 @@ static void DrawBox(ImDrawList* pDraw, const ESPData& data)
 		255 // default is 0
 	);
 
-	float rounding = (float)Config.esp.custom.box_rounding;
+	float rounding = config::esp::custom_box_rounding.Get();
 	DrawImGuiBox(pDraw, data.x, data.y, data.w, data.h, iColor, rounding);
 }
 
@@ -404,7 +406,7 @@ static void DrawHealthbar(ImDrawList* pDraw, ESPData& data)
 		hb.x, hb.y,
 		hb.w, hb.h,
 		IM_COL32(20, 20, 20, 255),
-		(float)Config.esp.custom.healthbar_rounding
+		config::esp::custom_healthbar_rounding.Get()
 	);
 
 	// bar
@@ -422,7 +424,7 @@ static void DrawHealthbar(ImDrawList* pDraw, ESPData& data)
 		(
 			pDraw, hb.bar_x, y, hb.bar_w, filled,
 			IM_COL32(r, g, 100, 255),
-			Config.esp.custom.healthbar_rounding);
+			config::esp::custom_healthbar_rounding.Get());
 	}
 	else // horizontal
 	{
@@ -430,7 +432,7 @@ static void DrawHealthbar(ImDrawList* pDraw, ESPData& data)
 
 		DrawImGuiBoxFilled(pDraw, hb.bar_x, hb.bar_y, filled, hb.bar_h,
 			IM_COL32(r, g, 100, 255),
-			Config.esp.custom.healthbar_rounding);
+			config::esp::custom_healthbar_rounding.Get());
 	}
 }
 
@@ -453,7 +455,7 @@ static void DrawText(ImDrawList* pDraw, const std::string& text, ESPData& data, 
 	text_size.x *= data.text_scale;
 	text_size.y *= data.text_scale;
 
-	float padding = (float)Config.esp.custom.text_padding;
+	float padding = config::esp::custom_text_padding.Get();
 	float draw_x = 0.0f;
 	float draw_y = 0.0f;
 
@@ -491,33 +493,30 @@ static void DrawText(ImDrawList* pDraw, const std::string& text, ESPData& data, 
 
 static void DrawClass(ImDrawList* pDraw, ESPData& data)
 {
-	if (!Config.esp.packed.class_name) return;
+	if (!config::esp::class_name.Get()) return;
 
-	TextSide side = static_cast<TextSide>(Config.esp.sides.classname);
+	TextSide side = static_cast<TextSide>(config::esp::side_classname.Get());
 	DrawText(pDraw, data.className, data, side);
 }
 
 static void DrawPlayerConditions(ImDrawList* pDraw, ESPData& data)
 {
-	if (Config.esp.conditions.raw == 0)
-		return;
+	if (config::esp::condition_jarated.Get() && data.isJarated)
+		DrawText(pDraw, "Jarate", data, static_cast<TextSide>(config::esp::side_jarate.Get()), Color(255, 200, 0, 255));
 
-	if (Config.esp.conditions.jarated && data.isJarated)
-		DrawText(pDraw, "Jarate", data, static_cast<TextSide>(Config.esp.sides.jarate), Color(255, 200, 0, 255));
+	if (config::esp::condition_bonked.Get() && data.isBonked)
+		DrawText(pDraw, "Bonk", data, static_cast<TextSide>(config::esp::side_bonk.Get()));
 
-	if (Config.esp.conditions.bonked && data.isBonked)
-		DrawText(pDraw, "Bonk", data, static_cast<TextSide>(Config.esp.sides.bonk));
+	if (config::esp::condition_ubered.Get() && data.isUbered)
+		DrawText(pDraw, "Uber", data, static_cast<TextSide>(config::esp::side_uber.Get()), Color(255, 100, 100, 255));
 
-	if (Config.esp.conditions.ubered && data.isUbered)
-		DrawText(pDraw, "Uber", data, static_cast<TextSide>(Config.esp.sides.uber), Color(255, 100, 100, 255));
-
-	if (Config.esp.conditions.zoomed && data.isZoomed)
-		DrawText(pDraw, "Zoom", data, static_cast<TextSide>(Config.esp.sides.zoom));
+	if (config::esp::condition_zoomed.Get() && data.isZoomed)
+		DrawText(pDraw, "Zoom", data, static_cast<TextSide>(config::esp::side_zoom.Get()));
 }
 
 static void DrawHealthText(ImDrawList* pDraw, ESPData& data)
 {
-	HealthMode mode = static_cast<HealthMode>(Config.esp.health);
+	HealthMode mode = static_cast<HealthMode>(config::esp::health.Get());
 	if (mode >= HealthMode::MAX || mode <= HealthMode::INVALID)
 		return;
 
@@ -536,16 +535,16 @@ static void DrawHealthText(ImDrawList* pDraw, ESPData& data)
 	GetHealthColor(iHealth, iMaxHealth, r, g);
 	Color color(r, g, 100, 255);
 
-	TextSide side = static_cast<TextSide>(Config.esp.sides.healthbar);
+	TextSide side = static_cast<TextSide>(config::esp::health_bar.Get());
 	DrawText(pDraw, text, data, side, color);
 }
 
 static void DrawWeapon(ImDrawList* pDraw, ESPData& data)
 {
-	if (!Config.esp.packed.weapon)
+	if (!config::esp::weapon.Get())
 		return;
 
-	TextSide side = static_cast<TextSide>(Config.esp.sides.weaponname);
+	TextSide side = static_cast<TextSide>(config::esp::side_weaponname.Get());
 	DrawText(pDraw, data.weaponName, data, side);
 }
 
@@ -564,7 +563,7 @@ void ESP::OnImGui()
 	if (interfaces::Engine->IsTakingScreenshot())
 		return;
 
-	if (!Config.esp.packed.enabled)
+	if (!config::esp::enabled.Get())
 		return;
 
 	ImDrawList* pDraw = ImGui::GetBackgroundDrawList();
@@ -582,18 +581,18 @@ void ESP::OnImGui()
 
 		data.ResetOffsets();
 
-		if (Config.esp.packed.box)
+		if (config::esp::box.Get())
 			DrawBox(pDraw, data);
 
-		if (static_cast<HealthMode>(Config.esp.health) != HealthMode::NONE)
+		if (static_cast<HealthMode>(config::esp::health.Get()) != HealthMode::NONE)
 		{
 			DrawHealthbar(pDraw, data);
 			DrawHealthText(pDraw, data);
 		}
 
-		if (Config.esp.packed.name)
+		if (config::esp::name.Get())
 		{
-			TextSide side = static_cast<TextSide>(Config.esp.sides.name);
+			TextSide side = static_cast<TextSide>(config::esp::side_name.Get());
 			DrawText(pDraw, data.name, data, side, data.color);
 		}
 
@@ -608,7 +607,7 @@ void ESP::OnFrameStageNotify()
 	if (!interfaces::Engine->IsInGame() || !interfaces::Engine->IsConnected())
                 return Reset();
 
-	if (!Config.esp.packed.enabled)
+	if (!config::esp::enabled.Get())
 		return Reset();
 
 	CTFPlayer* pLocal = features::entities.GetLocal();

@@ -3,8 +3,8 @@
 #include "../sdk/signatures/signatures.h"
 
 #include "../thirdparty/libdetour/libdetour.h"
-#include "../settings/settings.h"
 
+#include "../features/misc/misc.h"
 #include "../features/entitylist/entitylist.h"
 #include "../features/logs/logs.h"
 #include "../features/hook_initializer/initializer.h"
@@ -34,7 +34,7 @@ bool CViewRender_ShouldDrawViewModel(void* self, bool bDrawviewmodel)
 {
 	if (gApp->IsInitialized())
 	{
-		if (Config.misc.packed.no_zoom)
+		if (config::no_zoom::enabled.Get())
 		{
 			CTFPlayer* pLocal = features::entities.GetLocal();
 			if (pLocal && pLocal->InCond(TF_COND_ZOOMED))

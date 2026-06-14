@@ -1,11 +1,12 @@
 #include "../sdk/interfaces/interfaces.h"
 
-#include "../settings/settings.h"
+#include "../features/config/config.h"
 
 #include "../hooks.h"
 #include "../core/core.h"
 
 #include "../features/hook_initializer/initializer.h"
+#include "../features/misc/misc.h"
 
 using GetScreenAspectRatioFn = float(*)(void* self);
 
@@ -13,8 +14,8 @@ static float GetScreenAspectRatio(void* self)
 {
 	if (gApp->IsInitialized())
 	{
-		if (Config.misc.aspectratio > 0 && !interfaces::Engine->IsTakingScreenshot())
-			return Config.misc.aspectratio;
+		if (config::aspect_ratio::value.Get() > 0 && !interfaces::Engine->IsTakingScreenshot())
+			return config::aspect_ratio::value.Get();
 	}
 
 	auto original = VMTHooks::Engine.GetOriginal<GetScreenAspectRatioFn>(95);

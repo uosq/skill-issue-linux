@@ -1,6 +1,5 @@
 #include "aimbot.h"
 
-#include "../binds/binds.h"
 #include "../ticks/ticks.h"
 #include "../visuals/customfov/customfov.h"
 
@@ -8,10 +7,11 @@
 #include "utils/utils.h"
 
 #include "projectile/projectile.h"
+#include "../config/config.h"
 
 static void DrawFOVIndicator(ImDrawList* pDraw)
 {
-	if (Config.aimbot.fov >= 90 || !Config.aimbot.packed.draw_fov_indicator)
+	if (config::aimbot::fov.Get() >= 90 || !config::aimbot::fov_indicator.Get())
 		return;
 
 	float aimFov = DEG2RAD(AimbotUtils::GetAimbotFovScaled());
@@ -89,7 +89,7 @@ void Aimbot::Run(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCmd)
 
 void Aimbot::OnImGui(ImDrawList* pDraw)
 {
-	if (!Config.aimbot.key->IsEnabled())
+	if (!config::aimbot::key.Get().IsEnabled())
 		return;
 
 	DrawFOVIndicator(pDraw);

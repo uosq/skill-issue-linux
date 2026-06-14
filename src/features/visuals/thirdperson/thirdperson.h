@@ -2,9 +2,16 @@
 
 #include "../../../sdk/helpers/helper.h"
 #include "../../../sdk/interfaces/interfaces.h"
-#include "../../../settings/settings.h"
 
+#include "../../config/config.h"
 #include "../../feature.h"
+
+BEGIN_CONFIG(thirdperson)
+
+	ADD_CONFIG(key, "third person key", Hotkey{})
+	ADD_CONFIG(offset, "third person offset", (std::array<float, 4>{}))
+
+END_CONFIG()
 
 class Thirdperson
 {

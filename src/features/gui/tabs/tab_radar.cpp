@@ -1,18 +1,15 @@
 #include "../../../thirdparty/imgui/imgui.h"
-#include "../../../settings/settings.h"
-
-#include "../utils/gui_utils.h"
+#include "../../radar/radar.h"
 
 void DrawRadarTab()
 {
-	ImGui_CheckboxBit("Enabled", Config.radar.packed.enabled);
-	ImGui_SliderIntBit("Size", Config.radar.packed.size, 1, 300);
-	ImGui_SliderIntBit("Icon Size", Config.radar.packed.icon_size, 1, 15);
-	ImGui_SliderIntBit("Range", Config.radar.packed.range, 10, 3000);
+	ImGui::Checkbox("Enabled", &config::radar::enabled.Get());
+	ImGui::SliderInt("Size", &config::radar::size.Get(), 1, 300);
+	ImGui::SliderInt("Icon Size", &config::radar::icon_size.Get(), 1, 15);
+	ImGui::SliderInt("Range", &config::radar::range.Get(), 10, 3000);
 
 	ImGui::Separator();
-	ImGui_CheckboxBit("Players", Config.radar.packed.players);
-	ImGui_CheckboxBit("Projectiles", Config.radar.packed.projectiles);
-	// ImGui_CheckboxBit("Objective", Config.radar.packed.objective);
-	ImGui_CheckboxBit("Buildings", Config.radar.packed.buildings);
+	ImGui::Checkbox("Players", &config::radar::players.Get());
+	ImGui::Checkbox("Projectiles", &config::radar::projectiles.Get());
+	ImGui::Checkbox("Buildings", &config::radar::buildings.Get());
 }

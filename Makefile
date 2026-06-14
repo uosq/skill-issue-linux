@@ -37,11 +37,11 @@ endif
 DEP_FLAGS = -MMD -MP
 
 # Compiler flags
-CFLAGS = -march=$(MARCH) -shared -std=c++17 $(OPT) -fPIC -Werror -g -rdynamic -DSOL_ALL_SAFETIES_ON=1 $(DEP_FLAGS) -lcurl
+CFLAGS = -march=$(MARCH) -shared -std=c++17 $(OPT) -fPIC -Werror -g -rdynamic -DSOL_ALL_SAFETIES_ON=1 $(DEP_FLAGS)
 CFLAGS_C = -march=$(MARCH) $(OPT) -fPIC -Werror -g -rdynamic $(DEP_FLAGS)
 
 # Linker flags
-LDFLAGS = -lSDL2 -lvulkan -lm -ldl
+LDFLAGS = -lSDL2 -lvulkan -lm -ldl -lcurl
 $(BIN): $(OBJS)
 	@mkdir -p $(dir $@)
 	$(CC_CPP) $(CFLAGS) -o $@ $^ $(LDFLAGS) $(shell find $(BUILD_DIR) -name '*.a' 2>/dev/null)
@@ -81,13 +81,8 @@ $(BIN): $(OBJS)
 	$(CC_CPP) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
 ifneq ($(DEBUG), 1)
-	# Create debug symbols
 	objcopy --compress-debug-sections=zlib --only-keep-debug $@ $@$(DEBUG_EXT)
-
-	# Strip binary
 	strip --strip-unneeded $@
-
-	# Attach debug symbols
 	objcopy --add-gnu-debuglink=$@$(DEBUG_EXT) $@
 endif
 

@@ -1,12 +1,14 @@
 #include "projectile.h"
 
+#include <cmath>
+
 #include "../../../sdk/imgui_utils/imgui_utils.h"
 
 #include "../../logs/logs.h"
 #include "../../prediction/prediction.h"
 #include "../../../sdk/definitions/vphysics_interface.h"
 
-#include <cmath>
+#include "../aimbot.h"
 
 CAimbotProjectile::CAimbotProjectile()
 {
@@ -93,7 +95,7 @@ bool CAimbotProjectile::CheckTrajectory(CBaseEntity *pTarget, const Vector vecSt
 
 	float flClock	= 0.0f;
 	float flDt	= interfaces::GlobalVars->interval_per_tick;
-	float flMaxTime = Config.aimbot.max_sim_time;
+	float flMaxTime = config::aimbot::max_sim_time.Get();
 
 	while (flClock < flMaxTime)
 	{
@@ -142,7 +144,7 @@ std::vector<PotentialTarget> CAimbotProjectile::GetBestTargets(CTFPlayer *pLocal
 	Vector vecViewAngles;
 	interfaces::Engine->GetViewAngles(vecViewAngles);
 
-	bool bNoFovLimit = Config.aimbot.fov >= 180.0f;
+	bool bNoFovLimit = config::aimbot::fov.Get() >= 180.0f;
 
 	for (const auto &targetEntry : vTargets)
 	{
@@ -187,12 +189,12 @@ void CAimbotProjectile::RunMain(CTFPlayer *pLocal, CTFWeaponBase *pWeapon)
 	}
 	#endif
 
-	if (!Config.aimbot.key->IsEnabled())
+	if (!config::aimbot::key.Get().IsEnabled())
 		return;
 
-	bool bVisualsEnabled = Config.aimbot.packed.proj_path || Config.aimbot.packed.proj_indicator;
+	bool bVisualsEnabled = config::aimbot::draw_predicted_player_path.Get() || config::aimbot::draw_predicted_player_indicator.Get();
 
-	if (!bVisualsEnabled && !Config.aimbot.key->IsActive())
+	if (!bVisualsEnabled && !config::aimbot::key.Get().IsActive())
 		return;
 
 	static ConVar *sv_gravity = interfaces::Cvar->FindVar("sv_gravity");
@@ -228,7 +230,7 @@ void CAimbotProjectile::RunMain(CTFPlayer *pLocal, CTFWeaponBase *pWeapon)
 			continue;
 
 		float flTime = target.distance / prjInfo.speed;
-		if (flTime > Config.aimbot.max_sim_time)
+		if (flTime > config::aimbot::max_sim_time.Get())
 			continue;
 
 		flTime += flPrimeTime;
@@ -338,7 +340,7 @@ bool CAimbotProjectile::ApplyPlainAim(CTFPlayer* pLocal, CTFWeaponBase* pWeapon,
 
 	bool shooting = false;
 
-	if (Config.aimbot.packed.autoshoot)
+	if (config::aimbot::autoshoot.Get())
 		shooting = helper::localplayer::Shoot(pLocal, pWeapon, pCmd, m_pTarget);
 
 	return shooting;
@@ -346,7 +348,7 @@ bool CAimbotProjectile::ApplyPlainAim(CTFPlayer* pLocal, CTFWeaponBase* pWeapon,
 
 bool CAimbotProjectile::ApplySmoothAssistanceAim(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd, AimbotState& pState)
 {
-	if (Config.aimbot.packed.aimmethod_projectile == (int)AimbotMode::ASSISTANCE && pCmd->mousedx == 0 && pCmd->mousedy == 0)
+	if (config::aimbot::projectile_method.Get() == (int)AimbotMode::ASSISTANCE && pCmd->mousedx == 0 && pCmd->mousedy == 0)
 		return false;
 
 	Vec3 viewAngles; /* = */ interfaces::Engine->GetViewAngles(viewAngles);
@@ -366,7 +368,7 @@ bool CAimbotProjectile::ApplySmoothAssistanceAim(CTFPlayer* pLocal, CTFWeaponBas
 
 	bool shooting = false;
 
-	if (Config.aimbot.packed.autoshoot)
+	if (config::aimbot::autoshoot.Get())
 		shooting = helper::localplayer::Shoot(pLocal, pWeapon, pCmd, m_pTarget);
 
 	return shooting;
@@ -379,7 +381,7 @@ bool CAimbotProjectile::ApplySilentAim(CTFPlayer* pLocal, CTFWeaponBase* pWeapon
 
 	bool shooting = false;
 
-	if (Config.aimbot.packed.autoshoot)
+	if (config::aimbot::autoshoot.Get())
 		shooting = helper::localplayer::Shoot(pLocal, pWeapon, pCmd, m_pTarget);
 
 	if (shooting || helper::localplayer::IsAttacking(pLocal, pWeapon, pCmd))
@@ -394,7 +396,7 @@ bool CAimbotProjectile::ApplySilentAim(CTFPlayer* pLocal, CTFWeaponBase* pWeapon
 
 bool CAimbotProjectile::ApplyAim(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd, AimbotState& pState)
 {
-	AimbotMode mode = static_cast<AimbotMode>(Config.aimbot.packed.aimmethod_projectile);
+	AimbotMode mode = static_cast<AimbotMode>(config::aimbot::projectile_method.Get());
 	bool ret = false;
 
 	switch(mode)
@@ -431,7 +433,7 @@ void CAimbotProjectile::OnGenericWeapons(CTFPlayer* pLocal, CTFWeaponBase* pWeap
 {
 	bool shooting = false;
 
-	if (Config.aimbot.packed.autoshoot)
+	if (config::aimbot::autoshoot.Get())
 		shooting = helper::localplayer::Shoot(pLocal, pWeapon, pCmd, m_pTarget);
 
 	if (shooting || helper::localplayer::IsAttacking(pLocal, pWeapon, pCmd))
@@ -442,7 +444,7 @@ void CAimbotProjectile::OnGenericWeapons(CTFPlayer* pLocal, CTFWeaponBase* pWeap
 // like sticky bomb launcher and huntsman
 void CAimbotProjectile::OnChargeWeapons(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd, AimbotState& pState)
 {
-	bool autoshoot = Config.aimbot.packed.autoshoot;
+	bool autoshoot = config::aimbot::autoshoot.Get();
 	bool shooting = false;
 
 	if (autoshoot)
@@ -455,7 +457,7 @@ void CAimbotProjectile::OnChargeWeapons(CTFPlayer* pLocal, CTFWeaponBase* pWeapo
 // very basic and doesn't work right 100% of the time
 void CAimbotProjectile::OnRightClickWeapons(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd, AimbotState& pState)
 {
-	if (Config.aimbot.packed.autoshoot)
+	if (config::aimbot::autoshoot.Get())
 		pCmd->buttons |= IN_ATTACK2;
 
 	if (pCmd->buttons & IN_ATTACK2)
@@ -467,7 +469,7 @@ void CAimbotProjectile::OnRightClickWeapons(CTFPlayer* pLocal, CTFWeaponBase* pW
 
 void CAimbotProjectile::RunAim(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCmd, AimbotState &pState)
 {
-	if (!Config.aimbot.key->IsActive())
+	if (!config::aimbot::key.Get().IsActive())
 		return;
 
 	if (m_pTarget == nullptr || m_vecPath.empty())
@@ -485,13 +487,13 @@ void CAimbotProjectile::ResetIndicator()
 
 void CAimbotProjectile::RunIndicator(ImDrawList* pDraw)
 {
-	if (!Config.aimbot.key->IsEnabled())
+	if (!config::aimbot::key.Get().IsEnabled())
 		return;
 
 	if (interfaces::Engine->IsTakingScreenshot())
 		return ResetIndicator();
 
-	if (Config.aimbot.packed.proj_indicator == static_cast<int>(AimbotIndicatorStyle::NONE))
+	if (config::aimbot::draw_predicted_player_indicator.Get() == static_cast<int>(AimbotIndicatorStyle::NONE))
 		return ResetIndicator();
 
 	CTFPlayer *pLocal = features::entities.GetLocal();
@@ -518,7 +520,7 @@ void CAimbotProjectile::RunIndicator(ImDrawList* pDraw)
 	{
 		constexpr int iSIZE = 5;
 
-		switch (static_cast<AimbotIndicatorStyle>(Config.aimbot.packed.proj_indicator))
+		switch (static_cast<AimbotIndicatorStyle>(config::aimbot::draw_predicted_player_indicator.Get()))
 		{
 		case AimbotIndicatorStyle::NONE:
 			break;
@@ -557,7 +559,7 @@ float CAimbotProjectile::GetAimDrop(float flGravity, float flTimeSeconds)
 
 void CAimbotProjectile::RunPath(ImDrawList* pDraw)
 {
-	if (!Config.aimbot.packed.proj_path || m_pTarget == nullptr || m_vecPath.empty())
+	if (!config::aimbot::draw_predicted_player_path.Get() || m_pTarget == nullptr || m_vecPath.empty())
 		return;
 
 	DrawPath(pDraw, m_vecPath);

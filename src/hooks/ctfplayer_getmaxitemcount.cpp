@@ -3,8 +3,8 @@
 #include "../sdk/signatures/signatures.h"
 
 #include "../thirdparty/libdetour/libdetour.h"
-#include "../settings/settings.h"
 
+#include "../features/misc/misc.h"
 #include "../features/hook_initializer/initializer.h"
 
 ADD_SIG(CTFPlayer_GetMaxItemCount, "client.so",
@@ -18,7 +18,7 @@ int Hooked_GetMaxItemCount(void *thisptr)
 {
 	if (gApp->IsInitialized())
 	{
-		if (Config.misc.packed.backpack_expander)
+		if (config::backpack_expander::enabled.Get())
 			return 4000;
 	}
 

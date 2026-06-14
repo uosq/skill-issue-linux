@@ -2,7 +2,6 @@
 
 #include "../sdk/interfaces/interfaces.h"
 
-#include "../settings/settings.h"
 #include "../hooks.h"
 
 #include "../features/backtrack/backtrack.h"
@@ -14,6 +13,7 @@
 #include "../features/playerlist/playerlist.h"
 #include "../features/hook_initializer/initializer.h"
 #include "../features/nopush/nopush.h"
+#include "../features/visuals/thirdperson/thirdperson.h"
 
 using FrameStageNotifyFn = void (*)(CHLClient* rdi, int stage);
 
@@ -28,7 +28,7 @@ static void FrameStageNotify(CHLClient* rdi, int stage)
 	{
 		case FRAME_RENDER_START:
 		{
-			if (Config.misc.thirdperson_key->IsActive())
+			if (config::thirdperson::key.Get().IsActive())
 			{
 				CTFPlayer *pLocal = features::entities.GetLocal();
 				if (pLocal && pLocal->IsAlive())

@@ -3,9 +3,9 @@
 #include "../sdk/interfaces/interfaces.h"
 #include "../sdk/signatures/signatures.h"
 
-#include "../settings/settings.h"
 #include "../thirdparty/libdetour/libdetour.h"
 
+#include "../features/misc/misc.h"
 #include "../features/hook_initializer/initializer.h"
 
 ADD_SIG(CInventoryManager_ShowItemsPickedUp, "client.so", "55 48 89 E5 41 57 41 56 41 55 41 54 53 48 83 EC 48 48 8B 07")
@@ -17,7 +17,7 @@ bool HookedShowItemsPickedUpFn(void *thisptr, bool bForce, bool bReturnToGame, b
 {
 	if (gApp->IsInitialized())
 	{
-		if (Config.misc.packed.accept_item_drop)
+		if (config::accept_item_drop::enabled.Get())
 		{
 			interfaces::Cvar->ConsolePrintf("Collected item drop\n");
 			DETOUR_ORIG_CALL(&showitemsctx, original_ShowItemsPickedUpFn, thisptr, true, true, true);
@@ -25,7 +25,7 @@ bool HookedShowItemsPickedUpFn(void *thisptr, bool bForce, bool bReturnToGame, b
 		}
 	}
 
-	bool ret;
+	bool ret {};
 	DETOUR_ORIG_GET(&showitemsctx, ret, original_ShowItemsPickedUpFn, thisptr, bForce, bReturnToGame, bNoPanel);
 	return ret;
 }

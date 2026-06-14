@@ -4,12 +4,12 @@
 
 void Radar::Run()
 {
-	if (!Config.radar.packed.enabled)
+	if (!config::radar::enabled.Get())
 		return;
 
-	int size   = Config.radar.packed.size;
+	int size   = config::radar::size.Get();
 
-	m_iRange   = Config.radar.packed.range;
+	m_iRange   = config::radar::range.Get();
 	m_flRadius = size * 0.5f;
 
 	// Shouldn't be possible without Lua
@@ -18,7 +18,7 @@ void Radar::Run()
 		return;
 
 	int flags = ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse;
-	if (!Settings::menu_open)
+	if (!menu_open.Get())
 		flags |= ImGuiWindowFlags_NoMove;
 
 	if (ImGui::Begin("Radar", nullptr, flags))
@@ -69,7 +69,7 @@ int Radar::GetRange()
 
 void Radar::DrawContents()
 {
-	int size	 = Config.radar.packed.size;
+	int size	 = config::radar::size.Get();
 	ImVec2 pos	 = ImGui::GetCursorScreenPos();
 	ImVec2 center	 = {pos.x + m_flRadius, pos.y + m_flRadius};
 	ImDrawList *draw = ImGui::GetWindowDrawList();
@@ -92,7 +92,7 @@ void Radar::DrawContents()
 	interfaces::Engine->GetViewAngles(viewAngles);
 	float viewYaw = viewAngles.y - 90.0f;
 
-	int iconSize = Config.radar.packed.icon_size;
+	int iconSize = config::radar::icon_size.Get();
 
 	for (const auto &entry : features::entities.GetEntities())
 	{
@@ -106,14 +106,14 @@ void Radar::DrawContents()
 		if (entry.ptr == features::entities.GetLocal())
 			continue;
 
-		if (entry.flags & EntityFlags::IsBuilding && !Config.radar.packed.buildings)
+		if (entry.flags & EntityFlags::IsBuilding && !config::radar::buildings.Get())
 			continue;
 
 		if (entry.flags & EntityFlags::IsPlayer &&
-		    (!Config.radar.packed.players || !static_cast<CTFPlayer *>(entry.ptr)->IsAlive()))
+		    (!config::radar::players.Get() || !static_cast<CTFPlayer *>(entry.ptr)->IsAlive()))
 			continue;
 
-		if (entry.flags & EntityFlags::IsProjectile && !Config.radar.packed.projectiles)
+		if (entry.flags & EntityFlags::IsProjectile && !config::radar::projectiles.Get())
 			continue;
 
 		Vec2 p	    = WorldToRadar(localPos, entry.ptr->GetAbsOrigin(), viewYaw);

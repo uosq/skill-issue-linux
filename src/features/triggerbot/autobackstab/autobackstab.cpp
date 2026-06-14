@@ -1,6 +1,7 @@
 #include "autobackstab.h"
 
 #include "../../backtrack/backtrack.h"
+#include "../triggerbot.h"
 
 bool AutoBackstab::IsBehindEntity(Vector localCenter, Vector targetCenter, Vector targetViewAngles)
 {
@@ -224,7 +225,7 @@ void AutoBackstab::Run(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCmd
 	if (pWeapon->GetWeaponID() != TF_WEAPON_KNIFE)
 		return;
 
-	switch (static_cast<GenericMode>(Config.trigger.packed.autobackstab))
+	switch (static_cast<GenericMode>(config::autobackstab::enabled.Get()))
 	{
 	case GenericMode::NONE:
 		break;

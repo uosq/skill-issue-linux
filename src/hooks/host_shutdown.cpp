@@ -5,9 +5,9 @@
 
 #include "../features/gui/gui.h"
 
+#include "../features/MaterialManager/materialmanager.h"
 #include "../features/scriptmanager/scriptmanager.h"
 #include "../features/chams/chams.h"
-#include "../features/materialregistry/reg.h"
 #include "../features/playerlist/playerlist.h"
 #include "../features/hook_initializer/initializer.h"
 #include "../features/network/network.h"
@@ -23,9 +23,9 @@ void HookedHost_ShutdownFn(void)
 	{
 		features::chams.OnGameShutdown();
 		features::playerlist.Shutdown();
-		features::material_registry.Shutdown();
 		features::network.shutdown();
 		features::gui.shutdown();
+		features::materials.Uninitialize();
 	
 		features::scriptmanager.CallHooks("GameShutdown");
 	}

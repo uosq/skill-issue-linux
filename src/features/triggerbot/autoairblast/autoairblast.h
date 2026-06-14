@@ -7,10 +7,16 @@
 #include "../../../sdk/definitions/cusercmd.h"
 #include "../../../sdk/helpers/helper.h"
 
-#include "../../../settings/settings.h"
+#include "../../config/config.h"
 #include "../../entitylist/entitylist.h"
 
 #include "../../feature.h"
+
+BEGIN_CONFIG(autoairblast)
+
+	ADD_CONFIG(enabled, "trigger auto airblast enabled", 0)
+
+END_CONFIG()
 
 class AutoAirblast
 {

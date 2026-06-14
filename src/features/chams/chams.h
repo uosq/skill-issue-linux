@@ -9,6 +9,15 @@
 #include "../entitylist/entitylist.h"
 #include "../feature.h"
 
+#include "../config/config.h"
+
+BEGIN_CONFIG(chams)
+
+	ADD_CONFIG(enabled, "chams enabled", false)
+	ADD_CONFIG(material, "chams material", 0)
+
+END_CONFIG()
+
 class Chams
 {
 public:

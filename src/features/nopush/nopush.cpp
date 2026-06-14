@@ -5,13 +5,11 @@
 #include "../../sdk/interfaces/interfaces.h"
 #include "../../sdk/definitions/inetmessage.h"
 
-#include "../../settings/settings.h"
-
 void CNoPush::OnFrameStageNotify()
 {
 	static ConVar* tf_avoidteammates_pushaway = interfaces::Cvar->FindVar("tf_avoidteammates_pushaway");
 
-	bool should_nopush = Config.misc.packed.nopush;
+	bool should_nopush = config::nopush::enabled.Get();
 	bool can_be_pushed = tf_avoidteammates_pushaway->GetBool();
 	
 	if (should_nopush)
@@ -28,7 +26,7 @@ void CNoPush::OnFrameStageNotify()
 
 void CNoPush::OnSendNetMsg(INetMessage& msg)
 {
-	if (!Config.misc.packed.nopush)
+	if (!config::nopush::enabled.Get())
 		return;
 
 	NET_SetConVar& cvars = reinterpret_cast<NET_SetConVar&>(msg);

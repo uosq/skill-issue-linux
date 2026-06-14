@@ -4,8 +4,8 @@
 #include "../sdk/signatures/signatures.h"
 
 #include "../thirdparty/libdetour/libdetour.h"
-#include "../settings/settings.h"
 
+#include "../features/misc/misc.h"
 #include "../features/logs/logs.h"
 #include "../features/hook_initializer/initializer.h"
 
@@ -18,7 +18,7 @@ static bool Hooked_InCond(void* rdi, ETFCond eCond)
 {
 	if (gApp->IsInitialized())
 	{
-		if (eCond == TF_COND_ZOOMED && Config.misc.packed.no_scope_overlay)
+		if (eCond == TF_COND_ZOOMED && config::no_scope_overlay::enabled.Get())
 			return false;
 	}
 

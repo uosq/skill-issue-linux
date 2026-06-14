@@ -3,8 +3,6 @@
 #include "../../../sdk/interfaces/interfaces.h"
 #include "../../../sdk/classes/player.h"
 
-#include "../../../settings/settings.h"
-
 static float get_unzoomed_fov(CTFPlayer* local)
 {
 	assert(local);
@@ -17,8 +15,8 @@ static float get_unzoomed_fov(CTFPlayer* local)
 
 	if (local->IsAlive())
 	{
-		if (Config.misc.packed.customfov_enabled)
-			return Config.misc.customfov;
+		if (config::customfov::enabled.Get())
+			return config::customfov::unzoomed.Get();
 	}
 
 	return fov_desired->GetFloat();
@@ -30,8 +28,8 @@ static float get_zoomed_fov(CTFPlayer* local)
 
 	if (local->IsAlive())
 	{
-		if (Config.misc.packed.customfov_enabled)
-			return Config.misc.zoomedfov;
+		if (config::customfov::enabled.Get())
+			return config::customfov::zoomed.Get();
 	}
 
 	return 20.0f;

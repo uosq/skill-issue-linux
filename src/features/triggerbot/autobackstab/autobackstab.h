@@ -6,10 +6,16 @@
 #include "../../../sdk/definitions/ctracefilters.h"
 #include "../../../sdk/helpers/helper.h"
 
-#include "../../../settings/settings.h"
+#include "../../config/config.h"
 #include "../../aimbot/utils/utils.h"
 
 #include "../../feature.h"
+
+BEGIN_CONFIG(autobackstab)
+
+	ADD_CONFIG(enabled, "trigger auto backstab enabled", 0)
+
+END_CONFIG()
 
 class AutoBackstab
 {

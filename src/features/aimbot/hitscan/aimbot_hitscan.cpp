@@ -3,6 +3,8 @@
 #include "../../backtrack/backtrack.h"
 #include "../../../sdk/math.h"
 
+#include "../aimbot.h"
+
 HitscanOffset AimbotHitscan::GetInitialOffset(CTFPlayer *pLocal, CTFWeaponBase *pWeapon)
 {
 	if (pWeapon == nullptr)
@@ -132,7 +134,7 @@ bool AimbotHitscan::EvaluatePlayerTarget(CTFPlayer *pLocal, CTFWeaponBase *pWeap
 				float fov = Math::CalcFov(viewAngles, angle);
 
 				if ((bNoFovLimit || fov <= maxFov) &&
-				    (!Config.aimbot.packed.waitforcharge || !bIsZoomed || !bIsSniperRifle || AimbotUtils::CanDamageWithSniperRifle(pLocal, pTargetEntity, pWeapon)))
+				    (!config::aimbot::wait_for_charge.Get() || !bIsZoomed || !bIsSniperRifle || AimbotUtils::CanDamageWithSniperRifle(pLocal, pTargetEntity, pWeapon)))
 				{
 					outTarget = {angle, pos, distance, fov, pTargetEntity, predictedTime, false};
 					bFoundRecord = true;
@@ -141,7 +143,7 @@ bool AimbotHitscan::EvaluatePlayerTarget(CTFPlayer *pLocal, CTFWeaponBase *pWeap
 		}
 	}
 
-	if (!bFoundRecord && Config.backtrack.packed.enabled)
+	if (!bFoundRecord && config::backtrack::enabled.Get())
 	{
 		std::vector<LagCompRecord> records;
 		if (features::backtrack.GetRecords(pTargetEntity, records) && !records.empty())
@@ -165,7 +167,7 @@ bool AimbotHitscan::EvaluatePlayerTarget(CTFPlayer *pLocal, CTFWeaponBase *pWeap
 				if (!bNoFovLimit && fov > maxFov)
 					continue;
 
-				if (Config.aimbot.packed.waitforcharge && bIsZoomed && bIsSniperRifle &&
+				if (config::aimbot::wait_for_charge.Get() && bIsZoomed && bIsSniperRifle &&
 				    !AimbotUtils::CanDamageWithSniperRifle(pLocal, pTargetEntity, pWeapon))
 					continue;
 
@@ -213,7 +215,7 @@ bool AimbotHitscan::FindBestTarget(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CU
 
 	int localTeam = pLocal->m_iTeamNum();
 	float maxFov = AimbotUtils::GetAimbotFovScaled();
-	bool bNoFovLimit = Config.aimbot.fov >= 180.0f;
+	bool bNoFovLimit = config::aimbot::fov.Get() >= 180.0f;
 	bool bCanHitTeammates = pWeapon->CanHitTeammates();
 
 	for (EntityListEntry entry : AimbotUtils::GetTargets(bCanHitTeammates, localTeam))
@@ -245,7 +247,7 @@ bool AimbotHitscan::FindBestTarget(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CU
 
 static void PlainAimbot(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd, const AimbotTarget& target)
 {
-	if (Config.aimbot.packed.autoshoot)
+	if (config::aimbot::autoshoot.Get())
 		helper::localplayer::Shoot(pLocal, pWeapon, pCmd, target.entity);
 
 	Vec3 angle = target.dir;
@@ -279,7 +281,7 @@ static void SmoothAssistanceAimbot(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CU
 	if (trace.DidHit() && trace.m_pEnt == target.entity)
 		bShouldShoot = true;
 	
-	if (bShouldShoot && Config.aimbot.packed.autoshoot)
+	if (bShouldShoot && config::aimbot::autoshoot.Get())
 		helper::localplayer::Shoot(pLocal, pWeapon, pCmd, target.entity);
 }
 
@@ -287,7 +289,7 @@ static void SilentAimbot(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pC
 {
 	bool shooting = false;
 
-	if (Config.aimbot.packed.autoshoot)
+	if (config::aimbot::autoshoot.Get())
 		shooting = helper::localplayer::Shoot(pLocal, pWeapon, pCmd, target.entity);
 
 	if (shooting || helper::localplayer::IsAttacking(pLocal, pWeapon, pCmd))
@@ -309,7 +311,7 @@ static void ApplyAim(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCmd, 
 	if (target.entity == nullptr)
 		return;
 
-	AimbotMode mode = static_cast<AimbotMode>(Config.aimbot.packed.aimmethod_hitscan);
+	AimbotMode mode = static_cast<AimbotMode>(config::aimbot::hitscan_method.Get());
 
 	switch (mode)
 	{
@@ -362,14 +364,14 @@ void AimbotHitscan::Run(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCm
 	if (IsLocalPlayerInvalid(pLocal) || IsWeaponInvalid(pWeapon))
 		return;
 
-	if (!Config.aimbot.key->IsActive())
+	if (!config::aimbot::key.Get().IsActive())
 		return;
 
-	if (Config.aimbot.packed.waitforcharge && pWeapon->IsAmbassador())
+	if (config::aimbot::wait_for_charge.Get() && pWeapon->IsAmbassador())
 		if (!pWeapon->CanAmbassadorHeadshot())
 			return;
 
-	if (Config.aimbot.packed.hold_minigun_spin && pWeapon->GetWeaponID() == TF_WEAPON_MINIGUN)
+	if (config::aimbot::hold_minigun_spin.Get() && pWeapon->GetWeaponID() == TF_WEAPON_MINIGUN)
 		pCmd->buttons |= IN_ATTACK2;
 
 	Vector shootPos = pLocal->GetEyePos();

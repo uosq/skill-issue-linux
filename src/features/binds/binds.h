@@ -1,7 +1,7 @@
 #pragma once
 
 #include <memory>
-#include <string>
+#include <string_view>
 #include <vector>
 
 #include "../../thirdparty/imgui/imgui.h"
@@ -24,7 +24,7 @@ enum class InputType
 
 struct Hotkey
 {
-	std::string m_strName;
+	std::string_view m_strName;
 
 	InputType m_iType  = InputType::None;
 	HotkeyMode m_iMode = HotkeyMode::Off;
@@ -36,28 +36,17 @@ struct Hotkey
 
 	bool m_bCapturing  = false;
 
-	bool IsActive()
-	{
-		return m_bState;
-	}
+	Hotkey* next       = nullptr;
 
-	bool IsEnabled()
-	{
-		return m_iType == InputType::VirtualKey && m_iMode != HotkeyMode::Off;
-	}
+	bool IsActive() { return m_bState;}
+	bool IsEnabled() { return m_iType == InputType::VirtualKey && m_iMode != HotkeyMode::Off; }
 };
 
 class Binds
 {
-private:
-	std::vector<std::unique_ptr<Hotkey>> m_hotkeys;
-	bool IsKeyDown(const Hotkey *hk);
-	int GetPressedKey();
-	const char *GetKeyName(const Hotkey *hk);
-
 public:
-	Hotkey *RegisterHotkey(const char *name);
-	std::vector<std::unique_ptr<Hotkey>> &GetHotkeys();
+	static void RegisterHotkey(Hotkey* hk);
+
 	bool IsActive(const Hotkey *hk) const;
 	bool IsEnabled(const Hotkey *hk) const;
 	void Update();
@@ -65,6 +54,17 @@ public:
 
 	const char *GetModeName(HotkeyMode mode);
 	void DrawWindow(bool bMenuOpen);
+
+	static Hotkey*& GetHead()
+	{
+		static Hotkey* head = nullptr;
+		return head;
+	}
+
+private:
+	bool IsKeyDown(const Hotkey *hk);
+	int GetPressedKey();
+	const char *GetKeyName(const Hotkey *hk);
 };
 
 DECLARE_FEATURE(Binds, binds)

@@ -1,7 +1,8 @@
 #include "warp.h"
-#include "../../thirdparty/imgui/imgui.h"
-#include "../../settings/settings.h"
+
 #include <cstdio>
+
+#include "../../thirdparty/imgui/imgui.h"
 
 void Warp::Reset()
 {
@@ -20,10 +21,10 @@ int Warp::GetMaxTicks()
 
 void Warp::RunCreateMove(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCmd)
 {
-	if (!Config.warp.key->IsActive() && !Config.warp.recharge_key->IsActive())
+	if (!config::warp::key.Get().IsActive() && !config::warp::recharge_key.Get().IsActive())
 		Warp::m_iDesiredState = WarpState::WAITING;
 
-	if (!Config.warp.key->IsEnabled())
+	if (!config::warp::key.Get().IsEnabled())
 		return;
 
 	if (!interfaces::Engine->IsInGame() || !interfaces::Engine->IsConnected())
@@ -32,13 +33,13 @@ void Warp::RunCreateMove(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pC
 	if (interfaces::EngineVGui->IsGameUIVisible() || interfaces::EngineVGui->IsConsoleVisible())
 		return;
 
-	if (Config.warp.key->IsActive() && Warp::m_iStoredTicks > 0)
+	if (config::warp::key.Get().IsActive() && Warp::m_iStoredTicks > 0)
 	{
 		Warp::m_iDesiredState = WarpState::RUNNING;
 		return;
 	}
 
-	if (Config.warp.recharge_key->IsActive() && Warp::m_iStoredTicks < GetMaxTicks())
+	if (config::warp::recharge_key.Get().IsActive() && Warp::m_iStoredTicks < GetMaxTicks())
 	{
 		Warp::m_iDesiredState = WarpState::RECHARGING;
 		return;
@@ -71,11 +72,11 @@ void Warp::DrawContents()
 
 void Warp::RunWindow()
 {
-	if (!Config.warp.key->IsEnabled())
+	if (!config::warp::key.Get().IsEnabled())
 		return;
 
 	int flags = ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse;
-	if (!Settings::menu_open)
+	if (!menu_open.Get())
 		flags |= ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoDecoration;
 
 	if (ImGui::Begin("Stored Ticks", nullptr, flags))

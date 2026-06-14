@@ -40,14 +40,14 @@ void Thirdperson::OverrideView(CTFPlayer *pLocal, CViewSetup *pView)
 
 	if (interfaces::CInput->CAM_IsThirdPerson())
 	{
-		bool bActive	     = Config.misc.thirdperson_key->IsActive();
+		bool bActive	     = config::thirdperson::key.Get().IsActive();
 		Vector vecViewAngles = pView->angles;
 		Vector vecCamOffset  = GetCameraOffset();
 
 		Vector vecForward, vecRight, vecUp;
 		Math::AngleVectors(vecViewAngles, &vecForward, &vecRight, &vecUp);
 
-		float flScale	 = bActive ? Config.misc.thirdperson_offset[3] : 1.0f;
+		float flScale	 = bActive ? config::thirdperson::offset.Get()[3] : 1.0f;
 
 		Vector vecOrigin = pView->origin;
 
@@ -79,14 +79,14 @@ bool Thirdperson::ShouldIgnoreBind(CTFPlayer *pLocal)
 
 bool Thirdperson::IsThirdPerson(CTFPlayer *pLocal)
 {
-	return Config.misc.thirdperson_key->IsActive() || ShouldIgnoreBind(pLocal);
+	return config::thirdperson::key.Get().IsActive() || ShouldIgnoreBind(pLocal);
 }
 
 Vector Thirdperson::GetCameraOffset()
 {
-	if (Config.misc.thirdperson_key->IsActive())
-		return {Config.misc.thirdperson_offset[0], Config.misc.thirdperson_offset[1],
-			Config.misc.thirdperson_offset[2]};
+	if (config::thirdperson::key.Get().IsActive())
+		return {config::thirdperson::offset.Get()[0], config::thirdperson::offset.Get()[1],
+			config::thirdperson::offset.Get()[2]};
 	else
 		return {-150.0f, 0, CAM_UP_OFFSET};
 }

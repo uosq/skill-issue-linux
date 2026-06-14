@@ -3,9 +3,13 @@
 #include "../../sdk/classes/player.h"
 #include "../../sdk/definitions/cusercmd.h"
 #include "../../sdk/helpers/helper.h"
-#include "../../settings/settings.h"
 
 #include "../feature.h"
+#include "../config/config.h"
+
+BEGIN_CONFIG(autostrafe)
+	ADD_CONFIG(enabled, "autostrafe enabled", false)
+END_CONFIG()
 
 class Autostrafe
 {

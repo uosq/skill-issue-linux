@@ -4,10 +4,9 @@
 #include "../sdk/interfaces/interfaces.h"
 #include "../sdk/definitions/fnv.h"
 
-#include "../settings/settings.h"
-
 #include "../hooks.h"
 
+#include "../features/misc/misc.h"
 #include "../features/hook_initializer/initializer.h"
 
 using PaintTraverseFn = void (*)(IPanel* rdi, VPANEL vguiPanel, bool forceRepaint, bool allowForce);
@@ -19,7 +18,7 @@ static void PaintTraverse(IPanel* rdi, VPANEL vguiPanel, bool forceRepaint, bool
 		const char *panelName = interfaces::VGui->GetName(vguiPanel);
 	
 		// https://github.com/rei-2/Amalgam/blob/master/Amalgam/src/Hooks/IPanel_PaintTraverse.cpp
-		if (Config.misc.packed.streamer_mode)
+		if (config::streamer_mode::enabled.Get())
 		{
 			switch (fnv::Hash(panelName))
 			{
@@ -32,7 +31,7 @@ static void PaintTraverse(IPanel* rdi, VPANEL vguiPanel, bool forceRepaint, bool
 			}
 		}
 	
-		if (Config.misc.packed.no_scope_overlay)
+		if (config::no_scope_overlay::enabled.Get())
 		{
 			if (fnv::Hash(panelName) == fnv::HashConst("HudScope"))
 				return;

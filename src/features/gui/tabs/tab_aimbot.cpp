@@ -1,22 +1,8 @@
 #include "../../binds/binds.h"
-#include "../../../settings/settings.h"
+#include "../../config/config.h"
 
-#include "../utils/gui_utils.h"
-
-/*static void make_hitscan_popup()
-{
-	if (ImGui::BeginPopup("HitscanPopup"))
-	{
-		{
-			constexpr const char *items[]{"Plain", "Smooth", "Assistance", "Silent"};
-			int temp = Config.aimbot.packed.aimmethod_hitscan;
-			ImGui::Combo("Method##Hitscan", &temp, items, 4);
-			Config.aimbot.packed.aimmethod_hitscan = temp;
-		}
-
-		ImGui::EndPopup();
-	}
-}*/
+#include "../../aimbot/aimbot.h"
+#include "../../triggerbot/triggerbot.h"
 
 #define AIM_METHOD(name, item) \
 do { \
@@ -32,17 +18,17 @@ static void setup_swingpred_popup()
 		return;
 
 	{
-		ImGui_CheckboxBit("Predict LocalPlayer", Config.aimbot.packed.swing_pred_local);
+		ImGui::Checkbox("Predict LocalPlayer", &config::aimbot::swing_melee_local.Get());
 	
 		if (ImGui::IsItemHovered())
 			ImGui::SetTooltip("If we should predict the localplayer\nwhen doing swing prediction");
 	}
 
 	{
-		int range = static_cast<int>(Config.aimbot.swing_pred_range);
+		int range = static_cast<int>(config::aimbot::swing_melee_range.Get());
 
 		if (ImGui::SliderInt("Range", &range, 0, 100, "%d%%"))
-			Config.aimbot.swing_pred_range = static_cast<uint8_t>(range);
+			config::aimbot::swing_melee_range.Get() = static_cast<uint8_t>(range);
 
 		if (ImGui::IsItemHovered())
 			ImGui::SetTooltip("Melee's swing range\n0%% = no range, 100%% = full swing range");
@@ -57,35 +43,33 @@ static void DrawLeftColumn()
 
 	ImGui::TextUnformatted("Targeting");
 	{
-		AIM_METHOD("Hitscan Aim Method", Config.aimbot.packed.aimmethod_hitscan)
-		AIM_METHOD("Projectile Aim Method", Config.aimbot.packed.aimmethod_projectile)
-		AIM_METHOD("Melee Aim Method", Config.aimbot.packed.aimmethod_melee)
+		AIM_METHOD("Hitscan Aim Method", config::aimbot::hitscan_method.Get())
+		AIM_METHOD("Projectile Aim Method", config::aimbot::projectile_method.Get())
+		AIM_METHOD("Melee Aim Method", config::aimbot::melee_method.Get())
 	}
 	{
 		constexpr const char *items[]{"None", "Legit", "Rage"};
-		int temp = Config.aimbot.packed.meleemode;
-		ImGui::Combo("Melee Aimbot Mode", &temp, items, 3);
-		Config.aimbot.packed.meleemode = temp;
+		ImGui::Combo("Melee Aimbot Mode", &config::aimbot::melee_mode.Get(), items, 3);
 	}
 	{
 		constexpr const char *items[]{"Only Enemies", "Only Teammates", "Both"};
-		int temp = Config.aimbot.packed.teamselection;
+		int temp = config::aimbot::team_selected.Get();
 		ImGui::Combo("Team Selection", &temp, items, 3);
-		Config.aimbot.packed.teamselection = temp;
+		config::aimbot::team_selected.Get() = temp;
 	}
 
 	ImGui::Separator();
 
 	ImGui::TextUnformatted("Toggles");
-	ImGui_CheckboxBit("Autoshoot", Config.aimbot.packed.autoshoot);
-	ImGui_CheckboxBit("ViewModel Aim", Config.aimbot.packed.viewmodelaim);
-	ImGui_CheckboxBit("Wait For Charge", Config.aimbot.packed.waitforcharge);
-	ImGui_CheckboxBit("Hold Minigun Spin", Config.aimbot.packed.hold_minigun_spin);
+	ImGui::Checkbox("Autoshoot", &config::aimbot::autoshoot.Get());
+	ImGui::Checkbox("ViewModel Aim", &config::aimbot::viewmodel_aim.Get());
+	ImGui::Checkbox("Wait For Charge", &config::aimbot::wait_for_charge.Get());
+	ImGui::Checkbox("Hold Minigun Spin", &config::aimbot::hold_minigun_spin.Get());
 
 	{
 		setup_swingpred_popup();
 
-		ImGui_CheckboxBit("Swing Prediction", Config.aimbot.packed.swing_pred);
+		ImGui::Checkbox("Swing Prediction", &config::aimbot::swing_pred.Get());
 
 		ImGui::SameLine();
 
@@ -96,55 +80,55 @@ static void DrawLeftColumn()
 	ImGui::Separator();
 
 	ImGui::TextUnformatted("Ignore Options");
-	ImGui_CheckboxBit("Cloaked", Config.aimbot.packed.ignorecloaked);
-	ImGui_CheckboxBit("Ubercharged", Config.aimbot.packed.ignoreubered);
-	ImGui_CheckboxBit("Hoovy", Config.aimbot.packed.ignorehoovy);
-	ImGui_CheckboxBit("Bonked", Config.aimbot.packed.ignorebonked);
+	ImGui::Checkbox("Cloaked", &config::aimbot::ignore_cloaked.Get());
+	ImGui::Checkbox("Ubercharged", &config::aimbot::ignore_uber.Get());
+	ImGui::Checkbox("Hoovy", &config::aimbot::ignore_hoovy.Get());
+	ImGui::Checkbox("Bonked", &config::aimbot::ignore_bonked.Get());
 }
 
 static void DrawRightColumn()
 {
 	ImGui::TextUnformatted("Adjustments");
-	ImGui::SliderFloat("Fov", &Config.aimbot.fov, 0.0f, 180.0f);
+	ImGui::SliderFloat("Fov", &config::aimbot::fov.Get(), 0.0f, 180.0f);
 
-	ImGui::SliderFloat("Smoothness", &Config.aimbot.smoothness, 0.0f, 100.0f);
+	ImGui::SliderFloat("Smoothness", &config::aimbot::smoothness.Get(), 0.0f, 100.0f);
 	if (ImGui::IsItemHovered())
 		ImGui::SetTooltip("Higher is smoother");
 
-	ImGui::SliderFloat("Max Sim Time", &Config.aimbot.max_sim_time, 0.0f, 5.0f);
+	ImGui::SliderFloat("Max Sim Time", &config::aimbot::max_sim_time.Get(), 0.0f, 5.0f);
 
 	ImGui::Separator();
 
 	ImGui::TextUnformatted("Visuals");
-	ImGui_CheckboxBit("Draw FOV Indicator", Config.aimbot.packed.draw_fov_indicator);
-	ImGui_CheckboxBit("Draw Target Path", Config.aimbot.packed.proj_path);
+	ImGui::Checkbox("Draw FOV Indicator", &config::aimbot::fov_indicator.Get());
+	ImGui::Checkbox("Draw Target Path", &config::aimbot::draw_predicted_player_path.Get());
 	{
 		constexpr const char *items[]{"None", "Circle", "Square", "Triangle"};
-		int temp = Config.aimbot.packed.proj_indicator;
+		int temp = config::aimbot::draw_predicted_player_indicator.Get();
 		ImGui::Combo("Indicator Style", &temp, items, 4);
-		Config.aimbot.packed.proj_indicator = temp;
+		config::aimbot::draw_predicted_player_indicator.Get() = temp;
 	}
 
 	ImGui::Separator();
 
 	ImGui::TextUnformatted("TriggerBot");
 
-	features::binds.RenderHotkey("Key", Config.trigger.key);
-	ImGui::PushStyleVar(ImGuiStyleVar_Alpha, Config.trigger.key->IsEnabled() ? 1.0f : 0.5f);
+	features::binds.RenderHotkey("Key", &config::trigger::key.Get());
+	ImGui::PushStyleVar(ImGuiStyleVar_Alpha, config::trigger::key.Get().IsEnabled() ? 1.0f : 0.5f);
 	{
-		ImGui_CheckboxBit("Hitscan##Trigger", Config.trigger.packed.hitscan);
+		ImGui::Checkbox("Hitscan##Trigger", &config::trigger::hitscan.Get());
 
 		{
 			constexpr const char *items[]{"None", "Legit", "Rage"};
 			int temp = 0;
 
-			temp = Config.trigger.packed.autobackstab;
+			temp = config::autobackstab::enabled.Get();
 			ImGui::Combo("Auto Backstab##Trigger", &temp, items, 3);
-			Config.trigger.packed.autobackstab = temp;
+			config::autobackstab::enabled.Set(temp);
 
-			temp = Config.trigger.packed.autoairblast;
+			temp = config::autoairblast::enabled.Get();
 			ImGui::Combo("Auto Airblast##Trigger", &temp, items, 3);
-			Config.trigger.packed.autoairblast = temp;
+			config::autoairblast::enabled.Set(temp);
 		}
 	}
 	ImGui::PopStyleVar();
@@ -152,9 +136,9 @@ static void DrawRightColumn()
 
 void DrawAimbotTab()
 {
-	features::binds.RenderHotkey("Aimbot", Config.aimbot.key);
+	features::binds.RenderHotkey("Aimbot", &config::aimbot::key.Get());
 
-	ImGui::PushStyleVar(ImGuiStyleVar_Alpha, Config.aimbot.key->IsEnabled() ? 1.0f : 0.5f);
+	ImGui::PushStyleVar(ImGuiStyleVar_Alpha, config::aimbot::key.Get().IsEnabled() ? 1.0f : 0.5f);
 	{
 		if (ImGui::BeginTable("##AimbotContents", 2, ImGuiTableFlags_BordersInnerV | ImGuiTableFlags_SizingStretchProp))
 		{

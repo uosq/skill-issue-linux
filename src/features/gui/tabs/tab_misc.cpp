@@ -1,22 +1,33 @@
 #include "../../../thirdparty/imgui/imgui.h"
-#include "../../../settings/settings.h"
 
-#include "../utils/gui_utils.h"
+#include "../../misc/misc.h"
+#include "../../nopush/nopush.h"
+#include "../../antiafk/antiafk.h"
+#include "../../spyalert/spyalert.h"
+#include "../../backtrack/backtrack.h"
+#include "../../spectators/spectators.h"
+#include "../../warp/warp.h"
+#include "../../autostrafe/autostrafe.h"
+#include "../../bhop/bhop.h"
+#include "../../visuals/norecoil/norecoil.h"
+#include "../../visuals/thirdperson/thirdperson.h"
+#include "../../visuals/customfov/customfov.h"
+#include "../../visuals/viewmodel_interp/viewmodel_interp.h"
+#include "../../visuals/viewmodel_offset/viewmodel_offset.h"
+#include "../../playerlist/playerlist.h"
 
 static void setup_norecoil_popup()
 {
 	if (ImGui::BeginPopup("NoRecoilPopup"))
 	{
 		{
-			int scale = Config.misc.packed.norecoil_scale;
-			if (ImGui::SliderInt("Scale", &scale, 0, 100, "%d%%"))
-				Config.misc.packed.norecoil_scale = scale;
+			ImGui::SliderInt("Scaled", &config::norecoil::scale.Get(), 0, 100);
 
 			if (ImGui::IsItemHovered())
 				ImGui::SetTooltip("How much recoil should we see\n0%% = no recoil, 100%% = full recoil");
 		}
 
-		ImGui_CheckboxBit("Ignore Spectators", Config.misc.packed.norecoil_ignore_spectators);
+		ImGui::Checkbox("Ignore Spectators", &config::norecoil::ignore_spectators.Get());
 
 		if (ImGui::IsItemHovered())
 			ImGui::SetTooltip("If no recoil should appear to spectators");
@@ -38,23 +49,23 @@ void DrawMiscTab()
 		ImGui::TableNextColumn();
 
 		//ImGui::TextUnformatted("Safe Mode");
-		//ImGui_CheckboxBit("Enabled##Safe Mode", Config.misc.packed.safemode);
+		//ImG::i_Checkbox("Enabled##Safe Mode", );
 
 		ImGui::Separator();
 
 		ImGui::TextUnformatted("General");
-		ImGui_CheckboxBit("Spectator List", Config.misc.packed.spectatorlist);
-		ImGui_CheckboxBit("Player List", Config.misc.packed.playerlist);
-		ImGui_CheckboxBit("sv_pure bypass", Config.misc.packed.sv_pure_bypass);
-		ImGui_CheckboxBit("Streamer Mode", Config.misc.packed.streamer_mode);
-		ImGui_CheckboxBit("Bhop", Config.misc.packed.bhop);
-		ImGui_CheckboxBit("Autostrafe", Config.misc.packed.autostrafe);
-		ImGui_CheckboxBit("Backpack Expander", Config.misc.packed.backpack_expander);
-		ImGui_CheckboxBit("Accept Item Drops", Config.misc.packed.accept_item_drop);
+		ImGui::Checkbox("Spectator List", &config::spectators::enabled.Get());
+		ImGui::Checkbox("Player List", &config::playerlist::enabled.Get());
+		ImGui::Checkbox("sv_pure bypass", &config::sv_pure_bypass::enabled.Get());
+		ImGui::Checkbox("Streamer Mode", &config::streamer_mode::enabled.Get());
+		ImGui::Checkbox("Bhop", &config::bhop::enabled.Get());
+		ImGui::Checkbox("Autostrafe", &config::autostrafe::enabled.Get());
+		ImGui::Checkbox("Backpack Expander", &config::backpack_expander::enabled.Get());
+		ImGui::Checkbox("Accept Item Drops", &config::accept_item_drop::enabled.Get());
 
 		{
 			setup_norecoil_popup();
-			ImGui_CheckboxBit("No Recoil", Config.misc.packed.norecoil);
+			ImGui::Checkbox("No Recoil", &config::norecoil::enabled.Get());
 
 			ImGui::SameLine();
 
@@ -62,70 +73,67 @@ void DrawMiscTab()
 				ImGui::OpenPopup("NoRecoilPopup");
 		}
 
-		ImGui_CheckboxBit("No Push", Config.misc.packed.nopush);
-		ImGui_CheckboxBit("No Engine Sleep", Config.misc.packed.no_engine_sleep);
-		ImGui_CheckboxBit("No Scope Overlay", Config.misc.packed.no_scope_overlay);
-		ImGui_CheckboxBit("No Zoom", Config.misc.packed.no_zoom);
-		ImGui_CheckboxBit("Anti AFK", Config.misc.packed.antiafk);
-		ImGui_CheckboxBit("Info Panel", Config.misc.packed.infopanel);
-		ImGui_CheckboxBit("Spy Alert", Config.misc.packed.spyalert);
-		// ImGui_CheckboxBit("No Survey", Config.misc.packed.no_survey);
+		ImGui::Checkbox("No Push", &config::nopush::enabled.Get());
+		ImGui::Checkbox("No Engine Sleep", &config::no_engine_sleep::enabled.Get());
+		ImGui::Checkbox("No Scope Overlay", &config::no_scope_overlay::enabled.Get());
+		ImGui::Checkbox("No Zoom", &config::no_zoom::enabled.Get());
+		ImGui::Checkbox("Anti AFK", &config::antiafk::enabled.Get());
+		ImGui::Checkbox("Spy Alert", &config::spyalert::enabled.Get());
+		// Im::ui_Checkbox("No Survey", );
 
 		ImGui::Separator();
 
 		ImGui::TextUnformatted("Backtrack");
-		ImGui_CheckboxBit("Enabled##Backtrack", Config.backtrack.packed.enabled);
+		ImGui::Checkbox("Enabled##Backtrack", &config::backtrack::enabled.Get());
 
 		{
 			constexpr const char *items[]{"None", "Last Record Only", "All Records"};
-			int temp = Config.backtrack.packed.draw_mode;
-			ImGui::Combo("Mode##Backtrack", &temp, items, 3);
-			Config.backtrack.packed.draw_mode = temp;
+			ImGui::Combo("Mode##Backtrack", &config::backtrack::draw_mode.Get(), items, 3);
 		}
 
 		// right column
 		ImGui::TableNextColumn();
 
 		ImGui::TextUnformatted("Third Person");
-		features::binds.RenderHotkey("Key", Config.misc.thirdperson_key);
-		ImGui::SliderFloat4("Offset", Config.misc.thirdperson_offset, -100.0f, 100.0f);
+		features::binds.RenderHotkey("Key", &config::thirdperson::key.Get());
+		ImGui::SliderFloat4("Offset", config::thirdperson::offset.Get().data(), -100.0f, 100.0f);
 
 		ImGui::Separator();
 
 		ImGui::TextUnformatted("Field of View");
-		ImGui_CheckboxBit("Custom Fov Enabled", Config.misc.packed.customfov_enabled);
+		ImGui::Checkbox("Custom Fov Enabled", &config::customfov::enabled.Get());
 
-		ImGui::PushStyleVar(ImGuiStyleVar_Alpha, Config.misc.packed.customfov_enabled ? 1.0f : 0.5f);
+		ImGui::PushStyleVar(ImGuiStyleVar_Alpha, config::customfov::enabled.Get() ? 1.0f : 0.5f);
 		{
-			ImGui::SliderFloat("Custom Fov", &Config.misc.customfov, 1.0f, 120.0f);
-			ImGui::SliderFloat("Zoomed Fov", &Config.misc.zoomedfov, 1.0f, 120.0f);
+			ImGui::SliderFloat("Custom Fov", &config::customfov::unzoomed.Get(), 1.0f, 120.0f);
+			ImGui::SliderFloat("Zoomed Fov", &config::customfov::zoomed.Get(), 1.0f, 120.0f);
 		}
 		ImGui::PopStyleVar();
 
 		ImGui::Separator();
 
 		ImGui::TextUnformatted("Viewmodel");
-		ImGui_CheckboxBit("No Viewmodel Bob", Config.misc.packed.no_viewmodel_bob);
-		ImGui::SliderFloat3("Viewmodel Offset", Config.misc.viewmodel_offset, -20.0f, 20.0f);
-		ImGui::SliderFloat("Viewmodel Interp", &Config.misc.viewmodel_interp, 0.0f, 50.0f);
+		ImGui::Checkbox("No Viewmodel Bob", &config::viewmodel_bob::enabled.Get());
+		ImGui::SliderFloat3("Viewmodel Offset", config::viewmodel_offset::offset.Get().data(), -20.0f, 20.0f);
+		ImGui::SliderFloat("Viewmodel Interp", &config::viewmodel_interp::enabled.Get(), 0.0f, 50.0f);
 
 		ImGui::Separator();
 
-		ImGui::PushStyleVar(ImGuiStyleVar_Alpha, Config.warp.key->IsEnabled() ? 1.0f : 0.5f);
+		ImGui::PushStyleVar(ImGuiStyleVar_Alpha, config::warp::key.Get().IsEnabled() ? 1.0f : 0.5f);
 		{
 			ImGui::TextUnformatted("Warp");
-			features::binds.RenderHotkey("Key", Config.warp.key);
-			features::binds.RenderHotkey("Recharge Key", Config.warp.recharge_key);
-			ImGui_SliderIntBit("Speed##Warp", Config.warp.packed.speed, 1, 24);
+			features::binds.RenderHotkey("Key", &config::warp::key.Get());
+			features::binds.RenderHotkey("Recharge Key", &config::warp::recharge_key.Get());
+			ImGui::SliderInt("Speed##Warp", &config::warp::speed.Get(), 1, 24);
 		}
 		ImGui::PopStyleVar();
 
 		ImGui::Separator();
 
 		ImGui::TextUnformatted("Screen");
-		ImGui::PushStyleVar(ImGuiStyleVar_Alpha, Config.misc.aspectratio > 0 ? 1.0f : 0.5f);
+		ImGui::PushStyleVar(ImGuiStyleVar_Alpha, config::aspect_ratio::value.Get() > 0 ? 1.0f : 0.5f);
 		{
-			ImGui::SliderFloat("Aspect Ratio", &Config.misc.aspectratio, 0.0f, 5.0f);
+			ImGui::SliderFloat("Aspect Ratio", &config::aspect_ratio::value.Get(), 0.0f, 5.0f);
 		}
 		ImGui::PopStyleVar();
 

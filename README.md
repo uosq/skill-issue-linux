@@ -2,15 +2,8 @@
 
 A project for me to learn more about TF2 and how it works
 
-This is made for Linux, so trying to build it on Windows or non Unix-like systems might not work!
-
-Use the x86-64 build if you have errours about illegal instructions when attaching
-
-In most cases you should use the x86-64-v3 builds as the performance should be better
-
-[Download latest x86-64 build](https://nightly.link/uosq/skill-issue-linux/workflows/main/main/skillissue-compat.zip)
-
-[Download latest x86-64-v3 build](https://nightly.link/uosq/skill-issue-linux/workflows/main/main/skillissue-v3.zip)
+[!WARNING]
+This project is designed exclusively for Linux. Attempting to build or run it on Windows or other non-Unix-like systems might/will not work
 
 [Click me to join the discord server](https://discord.com/invite/dA4nYDBZzu)
 
@@ -24,46 +17,58 @@ ocornut - [imgui](https://github.com/ocornut/imgui)
 
 brofield - [simpleini](https://github.com/brofield/simpleini)
 
-## Info
+## Prerequisites
 
-The files `attach.sh`, `build.sh` and `debug.sh` can be specified which version to use
+Before building, make sure your system meets the following requirements:
 
-Example:
+* OS: Linux (Ubuntu, Arch, Gentoo, Nix, etc)
+* Compiler: GCC (supporting at least the C++17 standard)
+* Dependencies: libsdl2-dev, libcurl4-openssl-dev, libsdl2-dev, libvulkan-dev
 
-Building with x86-64-v3 march
-```bash
-./build.sh v3
-```
+## Build Architecture
 
-Building with x86-64 march
-```bash
-./build.sh compat
-```
+| Flag | Target | Description
+| - | - | - |
+| v3 | x86-64-v3 | **Recommended**, has better performance |
+| compat | x86-64 (Generic) | Use this if you see "Illegal Instruction" errors when attaching |
 
-The scripts will try to identify which architecture it should use if you don't specify it (v3 or compat)
+## How To Build
+
+You can compile the project using the provided `build.sh` script
+
+### First Option: Auto
+
+If you don't specify a mode, the build script will try to identify what instructions your CPU can use and will choose between `v3` and `compat`
+
 ```bash
 ./build.sh
 ```
 
-## How to attach
+### Second Option: Manual
 
-Run the `attach.sh` file as **sudo**/**root**!
+If you specify a mode (either `v3` or `compat`), the build script will compile to that architecture
 
-TF2 **should be** open and in the main menu. Currently this does not wait for the libraries to be opened so it will **silently fail** if you dont wait long enough
+[Go to Build Architecture to understand the differences](#build-architecture)
+
+The files `attach.sh`, `build.sh` and `debug.sh` can be specified which version to use
+
+## How To Attach
+
+Once you have successfully built the `.so` file, you can follow these very simple steps to attach it to the game:
+
+1. Launch TF2
+2. Run the `attach.sh` script inside the `build` folder as **sudo**
+
+You don't need to wait for TF2 to be fully loaded to attach, but it is safer to wait until you can see the main menu to avoid crashes while attaching
+
+Example:
 
 ```bash
 cd build
 sudo ./attach.sh
 ```
+## Loader
 
-## How to build
+There is a separate loader you can use: `sk_loader.sh` that provides a very user-friendly and easy to use UI
 
-* Requirements
-  * Linux
-  * GCC/G++ (compiled with atleast standard C++17)
-
-Run `build.sh` to build the .so file
-
-```bash
-./build.sh
-```
+To use it, you'll need the following dependencies: **wget**, **whiptail**, **unzip**, **make**, **grep**

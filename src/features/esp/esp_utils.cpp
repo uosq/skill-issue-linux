@@ -1,9 +1,13 @@
 #include "esp_utils.h"
 
+#include "../colors/colors.h"
+
+#include "esp.h"
+
 Color ESP_Utils::GetEntityColor(CBaseEntity *entity)
 {
 	if (entity == features::entities.GetAimbotTarget())
-		return Config.colors.aimbot_target;
+		return config::colors::aimbot_target.Get();
 
 	switch(entity->GetClassID())
 	{
@@ -12,9 +16,9 @@ Color ESP_Utils::GetEntityColor(CBaseEntity *entity)
 			CBaseAnimating* animating = static_cast<CBaseAnimating*>(entity);
 
 			if (animating->IsMedkit())
-				return Config.colors.healthkit;
+				return config::colors::healthkit.Get();
 			else if (animating->IsAmmoPack())
-				return Config.colors.ammopack;
+				return config::colors::ammopack.Get();
 
 			break;
 		}
@@ -26,9 +30,9 @@ Color ESP_Utils::GetEntityColor(CBaseEntity *entity)
 	switch (entity->m_iTeamNum())
 	{
 	case ETeam::TEAM_RED:
-		return Config.colors.red_team;
+		return config::colors::red_team.Get();
 	case ETeam::TEAM_BLU:
-		return Config.colors.blu_team;
+		return config::colors::blu_team.Get();
 	default:
 		break;
 	}
@@ -53,10 +57,10 @@ bool ESP_Utils::IsValidPlayer(CTFPlayer *pLocal, CBaseEntity *entity)
 	if (!player->IsAlive())
 		return false;
 
-	if (player->InCond(TF_COND_CLOAKED) && Config.esp.packed.ignorecloaked)
+	if (player->InCond(TF_COND_CLOAKED) && config::esp::ignore_cloaked.Get())
 		return false;
 
-	const ESPTeamSelectionMode mode = static_cast<ESPTeamSelectionMode>(Config.esp.team_selection);
+	const ESPTeamSelectionMode mode = static_cast<ESPTeamSelectionMode>(config::esp::team_selected.Get());
 
 	bool bIsEnemy			= pLocal->m_iTeamNum() != entity->m_iTeamNum();
 
@@ -77,7 +81,7 @@ bool ESP_Utils::IsValidBuilding(CTFPlayer *pLocal, CBaseObject *entity)
 	if (entity->IsDormant())
 		return false;
 
-	const ESPTeamSelectionMode mode = static_cast<ESPTeamSelectionMode>(Config.esp.team_selection);
+	const ESPTeamSelectionMode mode = static_cast<ESPTeamSelectionMode>(config::esp::team_selected.Get());
 
 	if (mode >= ESPTeamSelectionMode::MAX || mode <= ESPTeamSelectionMode::INVALID)
 		return false;

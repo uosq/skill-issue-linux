@@ -1,11 +1,24 @@
 #pragma once
 
 #include "../../thirdparty/imgui/imgui.h"
-#include "../../settings/settings.h"
 
+#include "../config/config.h"
 #include "../entitylist/entitylist.h"
+
 #include "../esp/esp.h"
 #include "../feature.h"
+
+BEGIN_CONFIG(radar)
+
+	ADD_CONFIG(enabled, "radar enabled", false)
+	ADD_CONFIG(size, "radar window size", 50)
+	ADD_CONFIG(range, "radar detection range", 2048)
+	ADD_CONFIG(icon_size, "radar icon size", 10)
+	ADD_CONFIG(buildings, "radar show buildings", false)
+	ADD_CONFIG(projectiles, "radar show projectiles", false)
+	ADD_CONFIG(players, "radar show players", false)
+
+END_CONFIG()
 
 class Radar
 {

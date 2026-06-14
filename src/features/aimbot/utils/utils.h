@@ -5,17 +5,9 @@
 #include "../../../sdk/definitions/cgametrace.h"
 #include "../../../sdk/definitions/ctracefilters.h"
 #include "../../../sdk/helpers/helper.h"
-#include "../../../settings/settings.h"
-#include "../../entitylist/entitylist.h"
 
-struct PotentialTarget
-{
-	Vector dir;
-	Vector center;
-	float distance;
-	float fov;
-	CBaseEntity *entity;
-};
+#include "../../config/config.h"
+#include "../../entitylist/entitylist.h"
 
 struct AimbotState
 {

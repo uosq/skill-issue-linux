@@ -4,16 +4,17 @@
 
 #include "../../sdk/interfaces/interfaces.h"
 
-#include "../../settings/settings.h"
 #include "../entitylist/entitylist.h"
-#include "../esp/esp_utils.h"
 
-#include "../materialregistry/reg.h"
+#include "../esp/esp_utils.h"
+#include "../esp/esp.h"
+#include "../colors/colors.h"
+
+#include "../MaterialManager/materialmanager.h"
 
 void Chams::Init()
 {
-	Config.chams.active_materials.emplace_back("basic flat");
-	Config.chams.active_materials.emplace_back("basic shaded");
+
 }
 
 void Chams::OnLevelPostEntity()
@@ -37,13 +38,13 @@ void Chams::OnDoPostScreenSpaceEffects(CTFPlayer* pLocal)
 
 	Reset();
 
-	if (!Config.chams.enabled)
+	if (!config::chams::enabled.Get())
 		return;
 
 	if (pLocal == nullptr)
 		return;
 
-	if (Config.chams.active_materials.empty())
+	if (config::chams::material.Get() == 0)
 		return;
 
 	if (interfaces::Engine->IsTakingScreenshot())
@@ -70,15 +71,15 @@ void Chams::OnDoPostScreenSpaceEffects(CTFPlayer* pLocal)
 
 void Chams::DoAttachmentColorModulation(CBaseEntity* attachment, const Color& orig_color)
 {
-	bool highlight_weapons = Config.esp.packed.weapon;
+	bool highlight_weapons = config::esp::enabled.Get();
 
 	if (attachment->IsWeapon() && highlight_weapons)
 	{
 		float color[3]
 		{
-			Config.colors.weapon.r()/255.0f,
-			Config.colors.weapon.g()/255.0f,
-			Config.colors.weapon.b()/255.0f,
+			config::colors::weapon.Get().r()/255.0f,
+			config::colors::weapon.Get().g()/255.0f,
+			config::colors::weapon.Get().b()/255.0f,
 		};
 
 		interfaces::RenderView->SetColorModulation(color);
@@ -166,20 +167,36 @@ void Chams::DrawEntityAndAttachments(CBaseEntity* entity, int drawflags)
 
 void Chams::ApplyMaterials(CBaseEntity* entity, int drawflags)
 {
-	for (const auto& mat_name : Config.chams.active_materials)
-	{
-		const auto& mat = features::material_registry.GetMaterialByName(mat_name);
+	const uint32_t activeMask = config::chams::material.Get();
+	if (activeMask == 0)
+		return; // No materials selected
 
-		if (!mat || !mat->IsValidMat())
+	const auto& loadedMaterials = features::materials.GetMaterials();
+
+	is_drawing = true;
+
+	// Loop over all materials and render active ones sequentially
+	for (const auto& mat : loadedMaterials)
+	{
+		if (mat->m_iSlotIndex == -1 || !mat->IsValidMat())
 			continue;
 
-		interfaces::RenderView->SetBlend(mat->GetAlpha());
-		interfaces::ModelRender->ForcedMaterialOverride(mat->GetMaterial());
+		// Check if this specific material's bit is active in the configuration mask
+		if ((activeMask & (1u << mat->m_iSlotIndex)) != 0)
+		{
+			// Apply this layer's properties
+			interfaces::RenderView->SetBlend(mat->GetAlpha());
+			interfaces::ModelRender->ForcedMaterialOverride(mat->GetMaterial());
 
-		is_drawing = true;
-		DrawEntityAndAttachments(entity, drawflags);
-		is_drawing = false;
+			// Render the model pass
+			DrawEntityAndAttachments(entity, drawflags);
+		}
 	}
+
+	is_drawing = false;
+
+	// Reset material override when done rendering all stacked passes
+	interfaces::ModelRender->ForcedMaterialOverride(nullptr);
 }
 
 bool Chams::IsDrawing()
@@ -209,5 +226,5 @@ void Chams::Reset()
 
 void Chams::OnGameShutdown()
 {
-	Config.chams.active_materials.clear();
+
 }

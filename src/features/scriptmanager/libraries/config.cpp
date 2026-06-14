@@ -19,6 +19,6 @@ void BindConfig(sol::state& lua)
 		if (filepath.length() == 0)
 			return;
 
-		features::configs.Save(filepath);
+		
 	};
 }

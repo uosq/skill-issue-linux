@@ -4,9 +4,9 @@ void ViewmodelOffset::Run(Vector &position, Vector &angle)
 {
 	Vector offset
 	{
-		Config.misc.viewmodel_offset[0],
-		Config.misc.viewmodel_offset[1],
-		Config.misc.viewmodel_offset[2]
+		config::viewmodel_offset::offset.Get()[0],
+		config::viewmodel_offset::offset.Get()[1],
+		config::viewmodel_offset::offset.Get()[2]
 	};
 
 	if (offset.IsZero())

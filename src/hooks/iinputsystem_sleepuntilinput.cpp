@@ -1,8 +1,8 @@
 #include "../core/core.h"
 
 #include "../hooks.h"
-#include "../settings/settings.h"
 
+#include "../features/misc/misc.h"
 #include "../features/hook_initializer/initializer.h"
 
 using SleepUntilInputFn = void (*)(void* rdi, int nMaxSleepTimeMS);
@@ -11,7 +11,7 @@ static void SleepUntilInput(void* rdi, int nMaxSleepTimeMS)
 {
 	if (gApp->IsInitialized())
 	{
-		if (Config.misc.packed.no_engine_sleep)
+		if (config::no_engine_sleep::enabled.Get())
 			return;
 	}
 

@@ -26,7 +26,7 @@ float GetSideSpeed()
 
 void Autostrafe::Run(CTFPlayer *pLocal, CUserCmd *pCmd)
 {
-	if (!Config.misc.packed.autostrafe || pLocal->GetWaterLevel() > WL_Feet)
+	if (!config::autostrafe::enabled.Get() || pLocal->GetWaterLevel() > WL_Feet)
 		return;
 
 	bool bIsOnGround = pLocal->GetFlags() & FL_ONGROUND;

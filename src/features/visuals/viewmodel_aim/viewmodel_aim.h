@@ -3,8 +3,8 @@
 #include "../../../features/aimbot/aimbot.h"
 #include "../../../sdk/helpers/helper.h"
 #include "../../../sdk/interfaces/interfaces.h"
-#include "../../../settings/settings.h"
 
+#include "../../config/config.h"
 #include "../../feature.h"
 
 class ViewmodelAim

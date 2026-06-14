@@ -10,7 +10,8 @@
 
 #include "../../thirdparty/simpleini/SimpleIni.h"
 #include "../../thirdparty/imgui/imgui.h"
-#include "../../settings/settings.h"
+
+#include "../colors/colors.h"
 
 #define CACHE_FILE "./skill-issue/players.ini"
 
@@ -182,7 +183,7 @@ void Playerlist::SetPlayerPriority(uint32_t steamID3, uint8_t new_priority)
 
 void Playerlist::DrawWindow()
 {
-	if (!Config.misc.packed.playerlist)
+	if (!config::playerlist::enabled.Get())
 		return;
 
 	if (interfaces::Engine->IsTakingScreenshot())
@@ -197,11 +198,11 @@ void Playerlist::DrawWindow()
 	ImGui::SetNextWindowSizeConstraints(ImVec2(150.0f, 0.0f), ImVec2(FLT_MAX, FLT_MAX));
 
 	int flags = ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse;
-	if (!Settings::menu_open)
+	if (!menu_open.Get())
 		flags |= ImGuiWindowFlags_NoMove;
 
-	const Color& blu_team_color = Config.colors.blu_team;
-	const Color& red_team_color = Config.colors.red_team;
+	const Color& blu_team_color = config::colors::blu_team.Get();
+	const Color& red_team_color = config::colors::red_team.Get();
 
 	if (ImGui::Begin("Player List", nullptr, flags))
 	{

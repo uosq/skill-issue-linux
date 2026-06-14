@@ -3,6 +3,8 @@
 #include "../../prediction/prediction.h"
 #include "../../backtrack/backtrack.h"
 
+#include "../aimbot.h"
+
 //#include "../../../sdk/classes/cobjectsentrygun.h"
 
 static bool CanHit
@@ -73,7 +75,7 @@ static bool CanWrenchHitBuilding(CBaseEntity* pTarget, CTFWeaponBase* pWeapon)
 static bool ShouldPredictSwing(CTFPlayer* pLocal, CTFWeaponBase* pWeapon)
 {
 	int local_team = pLocal->m_iTeamNum();
-	float swing_range = pWeapon->GetSwingRange() * (Config.aimbot.swing_pred_range/100.0f);
+	float swing_range = pWeapon->GetSwingRange() * (config::aimbot::swing_melee_range.Get()/100.0f);
 	bool is_wrench = pWeapon->GetWeaponID() == TF_WEAPON_WRENCH;
 	bool can_hit_teammates = pWeapon->CanHitTeammates();
 
@@ -83,7 +85,7 @@ static bool ShouldPredictSwing(CTFPlayer* pLocal, CTFWeaponBase* pWeapon)
 
 	float smack_delay = pWeapon->GetSmackDelay() + features::backtrack.GetInterp() + features::backtrack.GetLatency();
 
-	if (Config.aimbot.packed.swing_pred_local)
+	if (config::aimbot::swing_melee_local.Get())
 	{
 		std::vector<Vec3> path;
 
@@ -166,7 +168,7 @@ static bool ApplyAim(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CBaseEntity* pTa
 
 	bool shooting = false;
 
-	switch ((AimbotMode)Config.aimbot.packed.aimmethod_melee)
+	switch ((AimbotMode)config::aimbot::melee_method.Get())
 	{
 	case AimbotMode::PLAIN:
 	{
@@ -174,7 +176,7 @@ static bool ApplyAim(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CBaseEntity* pTa
 		pCmd->viewangles = targetAngles;
 		state.angle = targetAngles;
 
-		if (Config.aimbot.packed.autoshoot)
+		if (config::aimbot::autoshoot.Get())
 			pCmd->buttons |= IN_ATTACK;
 
 		if (helper::localplayer::IsAttacking(pLocal, pWeapon, pCmd))
@@ -186,7 +188,7 @@ static bool ApplyAim(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CBaseEntity* pTa
 	case AimbotMode::SMOOTH:
 	case AimbotMode::ASSISTANCE:
 	{
-		if (Config.aimbot.packed.aimmethod_melee == (int)AimbotMode::ASSISTANCE)
+		if (config::aimbot::melee_method.Get() == (int)AimbotMode::ASSISTANCE)
 		{
 			if (pCmd->mousedx == 0 && pCmd->mousedy == 0)
 				break;
@@ -203,7 +205,7 @@ static bool ApplyAim(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CBaseEntity* pTa
 		if (pAimEntity != pTarget)
 			break;
 
-		if (Config.aimbot.packed.autoshoot)
+		if (config::aimbot::autoshoot.Get())
 			pCmd->buttons |= IN_ATTACK;
 
 		if (helper::localplayer::IsAttacking(pLocal, pWeapon, pCmd))
@@ -214,7 +216,7 @@ static bool ApplyAim(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CBaseEntity* pTa
 
 	case AimbotMode::SILENT:
 	{
-		if (Config.aimbot.packed.autoshoot)
+		if (config::aimbot::autoshoot.Get())
 			pCmd->buttons |= IN_ATTACK;
 
 		if (helper::localplayer::IsAttacking(pLocal, pWeapon, pCmd))
@@ -274,7 +276,7 @@ static bool LegitMelee(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd
 	state.shouldSilent = false;
 	state.running = true;
 
-	if (Config.aimbot.packed.autoshoot)
+	if (config::aimbot::autoshoot.Get())
 		pCmd->buttons |= IN_ATTACK;
 
 	features::entities.SetAimbotTarget(pTarget);
@@ -293,7 +295,7 @@ static void RageMelee(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd,
 	int local_team = pLocal->m_iTeamNum();
 
 	float smallest_fov = FLT_MAX;
-	float max_fov = (MeleeMode)Config.aimbot.packed.meleemode == MeleeMode::LEGIT ? 90 : 180;
+	float max_fov = (MeleeMode)config::aimbot::melee_mode.Get() == MeleeMode::LEGIT ? 90 : 180;
 	float swing_range = pWeapon->GetSwingRange();
 
 	bool is_wrench = pWeapon->GetWeaponID() == TF_WEAPON_WRENCH;
@@ -411,19 +413,19 @@ static void RageMelee(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCmd,
 
 void AimbotMelee::Run(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCmd, AimbotState &state)
 {
-	if (!Config.aimbot.key->IsActive())
+	if (!config::aimbot::key.Get().IsActive())
 		return;
 
-	if (Config.aimbot.packed.meleemode == static_cast<int>(MeleeMode::NONE) || pWeapon->GetWeaponID() == TF_WEAPON_KNIFE)
+	if (config::aimbot::melee_mode.Get() == static_cast<int>(MeleeMode::NONE) || pWeapon->GetWeaponID() == TF_WEAPON_KNIFE)
 		return;
 
-	if (Config.aimbot.packed.swing_pred)
+	if (config::aimbot::swing_pred.Get())
 	{
 		if (ShouldPredictSwing(pLocal, pWeapon))
 			pCmd->buttons |= IN_ATTACK; 
 	}
 
-	MeleeMode mode = (MeleeMode)Config.aimbot.packed.meleemode;
+	MeleeMode mode = (MeleeMode)config::aimbot::melee_mode.Get();
 
 	switch (mode)
 	{

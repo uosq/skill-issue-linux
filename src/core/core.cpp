@@ -13,7 +13,7 @@
 #include "../features/visuals/viewmodel_aim/viewmodel_aim.h"
 #include "../features/visuals/viewmodel_interp/viewmodel_interp.h"
 #include "../features/backtrack/backtrack.h"
-#include "../features/materialregistry/reg.h"
+#include "../features/MaterialManager/materialmanager.h"
 #include "../features/playerlist/playerlist.h"
 #include "../features/hook_initializer/initializer.h"
 #include "../features/network/network.h"
@@ -41,12 +41,10 @@ void CApp::Setup()
 
 	Netvars::Setup();
 
-	Settings::InitBinds();
 	features::scriptmanager.Init();
 
 	features::ticks.Init();
-	MaterialManager::Init();
-	features::material_registry.Init();
+	features::materials.Init();
 	features::playerlist.Init();
 
 	features::backtrack.Init();

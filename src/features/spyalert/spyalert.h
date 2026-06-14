@@ -1,7 +1,16 @@
 #pragma once
 
-#include "../feature.h"
 #include <cstdint>
+
+#include "../feature.h"
+
+#include "../config/config.h"
+
+BEGIN_CONFIG(spyalert)
+
+	ADD_CONFIG(enabled, "spyalert enabled", false)
+
+END_CONFIG()
 
 class CTFPlayer;
 struct ImDrawList;

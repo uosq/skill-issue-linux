@@ -1,16 +1,16 @@
 #include "../core/core.h"
 
 #include "../sdk/interfaces/interfaces.h"
-#include "../settings/settings.h"
 
 #include "../hooks.h"
 
+#include "../features/config/config.h"
 #include "../features/hook_initializer/initializer.h"
 
 using ISurface_LockCursorFn = void (*)(void* rdi);
 static void ISurface_LockCursor(void* rdi)
 {
-	if (gApp->IsInitialized() && Settings::menu_open)
+	if (gApp->IsInitialized() && menu_open.Get())
 		return interfaces::Surface->UnlockCursor();
 
 	auto original = VMTHooks::Surface.GetOriginal<ISurface_LockCursorFn>(62);
@@ -20,7 +20,7 @@ static void ISurface_LockCursor(void* rdi)
 using ISurface_SetCursorFn = void (*)(void* rdi, HCursor cursor);
 static void ISurface_SetCursor(void* rdi, HCursor cursor)
 {
-	if (gApp->IsInitialized() && Settings::menu_open)
+	if (gApp->IsInitialized() && menu_open.Get())
 	{
 		switch (cursor)
 		{

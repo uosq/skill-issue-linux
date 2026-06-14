@@ -1,14 +1,16 @@
 #include "viewmodel_aim.h"
 
+#include "../../aimbot/aimbot.h"
+
 void ViewmodelAim::Run(Vector &angle)
 {
-	if (!Config.aimbot.packed.viewmodelaim)
+	if (!config::aimbot::viewmodel_aim.Get())
 		return;
 
-	constexpr float interval = 0.5f;
+	constexpr float DURATION = 0.5f;
 
 	if (features::aimbot.IsRunning() && interfaces::GlobalVars && interfaces::GlobalVars->curtime)
-		m_flStopTime = interfaces::GlobalVars->curtime + interval;
+		m_flStopTime = interfaces::GlobalVars->curtime + DURATION;
 
 	if (interfaces::GlobalVars && interfaces::GlobalVars->curtime && interfaces::GlobalVars->curtime < m_flStopTime)
 		angle = features::aimbot.GetAngle();

@@ -1,7 +1,17 @@
 #pragma once
+
 #include "../../sdk/helpers/helper.h"
 
 #include "../feature.h"
+#include "../config/config.h"
+
+BEGIN_CONFIG(warp)
+
+	ADD_CONFIG(key, "warp key", Hotkey{})
+	ADD_CONFIG(recharge_key, "warp recharge key", Hotkey{})
+	ADD_CONFIG(speed, "warp speed", 0)
+
+END_CONFIG()
 
 enum class WarpState
 {

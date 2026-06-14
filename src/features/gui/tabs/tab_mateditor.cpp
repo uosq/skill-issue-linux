@@ -1,185 +1,171 @@
-#include <algorithm>
 #include <filesystem>
 #include <string>
 #include <vector>
 
 #include "../../../thirdparty/imgui/imgui.h"
 #include "../../../thirdparty/imgui/texteditor/TextEditor.h"
-#include "../../../settings/settings.h"
 
-#include "../../materialregistry/reg.h"
+#include "../../../sdk/definitions/fnv.h"
 
-void ToggleMaterialUsage(std::vector<std::string>& mats, const std::string& matName, const char* label)
+#include "../../config/config.h"
+#include "../../MaterialManager/materialmanager.h"
+
+#include "../../chams/chams.h"
+#include "../../backtrack/backtrack.h"
+
+void ToggleMaterialUsage(ConfigValue<int>& configItem, int slotIndex, const char* label)
 {
-	bool isUsed = std::find(mats.begin(), mats.end(), matName) != mats.end();
+        if (slotIndex < 0 || slotIndex >= 32) return;
 
-	if (ImGui::Checkbox(label, &isUsed))
-	{
-		if (isUsed)
-			mats.push_back(matName);
-		else
-			mats.erase(std::remove(mats.begin(), mats.end(), matName), mats.end());
-	}
+        uint32_t currentMask = configItem.Get();
+
+        bool isActive = (currentMask & (1u << slotIndex)) != 0;
+
+        if (ImGui::Checkbox(label, &isActive))
+        {
+                if (isActive)
+                        configItem.Set(currentMask | (1u << slotIndex));  // Flip bit to 1
+                else
+                        configItem.Set(currentMask & ~(1u << slotIndex)); // Flip bit to 0
+        }
 }
 
 void DrawMaterialEditor()
 {
-	static TextEditor editor{};
-	static int selected = -1;
-	static int last_selected = -1;
-	
-	auto& materials = features::material_registry.GetMaterials();
+        static TextEditor editor{};
+        static int selected = -1;
+        static int last_selected = -1;
+        
+        // CHANGED: Pulling straight from unified manager instance
+        auto& materials = features::materials.GetMaterials();
 
-	constexpr int TABLE_FLAGS =ImGuiTableFlags_Resizable | 
-				ImGuiTableFlags_BordersInnerV |
-				ImGuiTableFlags_SizingStretchSame;
+        constexpr int TABLE_FLAGS = ImGuiTableFlags_Resizable | 
+                                    ImGuiTableFlags_BordersInnerV |
+                                    ImGuiTableFlags_SizingStretchSame;
 
-	if (ImGui::BeginTable("##ChamsTable", 2, TABLE_FLAGS))
-	{
-		ImGui::TableSetupColumn("Materials", ImGuiTableColumnFlags_WidthStretch, 0.35f);
-		ImGui::TableSetupColumn("Editor", ImGuiTableColumnFlags_WidthStretch, 0.65f);
+        if (ImGui::BeginTable("##ChamsTable", 2, TABLE_FLAGS))
+        {
+                ImGui::TableSetupColumn("Materials", ImGuiTableColumnFlags_WidthStretch, 0.35f);
+                ImGui::TableSetupColumn("Editor", ImGuiTableColumnFlags_WidthStretch, 0.65f);
 
-		ImGui::TableNextRow();
-	
-		// Material List
-		ImGui::TableNextColumn();
-		{
-			if (ImGui::BeginChild("##MatList"))
-			{
-				//ImGui::Checkbox("Enabled##MatList", &Settings::ESP.chams);
-				//ImGui::SliderFloat("Alpha##Chams", &Settings::ESP.chams_alpha, 0.0f, 1.0f);
+                ImGui::TableNextRow();
+        
+                // Material List View
+                ImGui::TableNextColumn();
+                {
+                        if (ImGui::BeginChild("##MatList"))
+                        {
+                                ImGui::Separator();
+                                for (int i = 0; i < materials.size(); i++)
+                                {
+                                        if (!materials[i]->IsValidMat())
+                                                continue;
 
-				ImGui::Separator();
+                                        bool is_selected = (selected == i);
+                                        if (ImGui::Selectable(materials[i]->GetDisplayName().c_str(), is_selected))
+                                                selected = i;
+                                }
+                                ImGui::Separator();
 
-				for (int i = 0; i < materials.size(); i++)
-				{
-					auto& mat = materials[i];
-					if (!mat->IsValidMat())
-						continue;
+                                // New Popup Handler
+                                if (ImGui::BeginPopup("NewMaterialPopup"))
+                                {
+                                        static char text[50] = "chams/my_material"; // Recommend user specifies folder prefix
+                                        ImGui::InputText("Material Path/Name", text, sizeof(text));
 
-					bool is_selected = (selected == i);
+                                        if (ImGui::Button("Create"))
+                                        {
+                                                std::string vmt = "UnlitGeneric\n{\n\t$basetexture \"white\"\n}";
+                                                std::shared_ptr<CustomMaterial> dummy;
+                                                
+                                                // CHANGED: Calling Unified AddMaterial
+                                                if (features::materials.AddMaterial(text, vmt, dummy))
+                                                {
+                                                        selected = materials.size() - 1;
+                                                        editor.SetText(vmt);
+                                                }
+                                                ImGui::CloseCurrentPopup();
+                                        }
+                                        ImGui::SameLine();
+                                        if (ImGui::Button("Cancel")) ImGui::CloseCurrentPopup();
+                                        ImGui::EndPopup();
+                                        }
 
-					if (ImGui::Selectable(mat->GetDisplayName().c_str(), is_selected))
-						selected = i;
-				}
+                                        if (ImGui::Button("+ New")) ImGui::OpenPopup("NewMaterialPopup");
+                                        
+                                        ImGui::SameLine();
+                                        if (ImGui::Button("- Delete") && selected != -1)
+                                        {
+                                                auto& mat = materials[selected];
+                                                if (mat->IsValidMat())
+                                                {
+                                                        const std::string& dispName = mat->GetDisplayName();
+                                                        std::filesystem::path filePath = std::filesystem::path(MATERIAL_DIR) / (dispName + ".vmt");
 
-				ImGui::Separator();
+                                                        if (std::filesystem::exists(filePath))
+                                                                std::filesystem::remove(filePath);
 
-				{
-					if (ImGui::BeginPopup("NewMaterialPopup"))
+                                                        uint32_t matHash = fnv::Hash(dispName.c_str());
+                                                        if (config::chams::material.Get() == matHash)
+                                                                config::chams::material.Set(0);
+                                                        if (config::backtrack::material.Get() == matHash)
+                                                                config::backtrack::material.Set(0);
+
+                                                        // CHANGED: Call unified manager removal
+                                                        features::materials.RemoveMaterial(dispName);
+                                                        selected = -1;
+                                                }
+                                        }
+                                }
+                                ImGui::EndChild();
+                        }
+
+                // Code Editor View
+                ImGui::TableNextColumn();
+                {
+                        if (ImGui::BeginChild("##MatEditor"))
+                        {
+                                if (selected != -1)
+                                {
+                                        auto& mat = materials[selected];
+
+                                        if (selected != last_selected)
+                                        {
+                                                editor.SetText(mat->GetVMT());
+                                                last_selected = selected;
+                                        }
+
+                                        ImGui::Text("Editing: %s", mat->GetDisplayName().c_str());
+                                        ImGui::Separator();
+
+                                        ImVec2 avail = ImGui::GetContentRegionAvail();
+                                        editor.Render("##Editor", ImVec2(avail.x, avail.y - 25));
+
+                                        if (ImGui::Button("Apply & Reload"))
+                                        {
+                                                mat->SetVMT(editor.GetText());
+                                                mat->Refresh();
+                                        }
+
+                                        ImGui::SameLine();
+                                        if (ImGui::Button("Get VMT")) editor.SetText(mat->GetVMT());
+
+                                        if (mat->m_iSlotIndex != -1)
 					{
-						static char text[50] = "name here";
-						ImGui::InputText("Material Name##Chams", text, sizeof(text));
-
-						if (ImGui::Button("Create"))
-						{
-							std::string vmt =
-							"UnlitGeneric\n"
-							"{\n"
-							"\t$basetexture \"white\"\n"
-							"}";
-
-							materials.emplace_back(std::make_shared<CustomMaterial>(text, vmt));
-
-							selected = materials.size() - 1;
-							editor.SetText(vmt);
-
-							ImGui::CloseCurrentPopup();
-						}
-
+						ToggleMaterialUsage(config::chams::material, mat->m_iSlotIndex, "Used for Chams");
 						ImGui::SameLine();
-
-						if (ImGui::Button("Cancel"))
-							ImGui::CloseCurrentPopup();
-
-						ImGui::EndPopup();
+						ToggleMaterialUsage(config::backtrack::material, mat->m_iSlotIndex, "Used for Backtrack");
 					}
 
-					if (ImGui::Button("+ New"))
-						ImGui::OpenPopup("NewMaterialPopup");
-				}
-				ImGui::SameLine();
-				if (ImGui::Button("- Delete") && selected != -1)
-				{
-					auto& mat = materials[selected];
-					if (mat->IsValidMat())
-					{
-						const std::string& matName = mat->GetInternalName();
-						std::filesystem::path filePath = std::filesystem::path(MATERIAL_DIR) / (matName + ".vmt");
-
-						if (std::filesystem::exists(filePath))
-						{
-							std::filesystem::remove(filePath);
-						}
-
-						auto remove_from_vec =
-						[&matName](std::vector<std::string>& vec)
-						{
-							vec.erase(std::remove(vec.begin(), vec.end(), matName), vec.end());
-						};
-						remove_from_vec(Config.chams.active_materials);
-						remove_from_vec(Config.backtrack.active_materials);
-
-						features::material_registry.RemoveMaterial(matName);
-
-						selected = -1;
-					}
-				}
-			}
-			ImGui::EndChild();
-		}
-
-		// Editor
-		ImGui::TableNextColumn();
-		{
-			if (ImGui::BeginChild("##MatEditor"))
-			{
-				if (selected != -1)
-				{
-					auto& mat = materials[selected];
-
-					// load text when selection changes
-					if (selected != last_selected)
-					{
-						editor.SetText(mat->GetVMT());
-						last_selected = selected;
-					}
-
-					ImGui::Text("Editing: %s", mat->GetDisplayName().c_str());
-					ImGui::Separator();
-
-					ImVec2 avail = ImGui::GetContentRegionAvail();
-					editor.Render("##Editor", ImVec2(avail.x, avail.y - 25));
-
-					if (ImGui::Button("Apply & Reload"))
-					{
-						const std::string& text = editor.GetText();
-
-						mat->SetVMT(text);
-						mat->Refresh();
-					}
-
-					ImGui::SameLine();
-
-					if (ImGui::Button("Get VMT"))
-						editor.SetText(mat->GetVMT());
-
-					const std::string& matName = mat->GetInternalName();
-					
-					ToggleMaterialUsage(Config.chams.active_materials, matName, "Used for Chams");
-					ImGui::SameLine();
-					ToggleMaterialUsage(Config.backtrack.active_materials, matName, "Used for Backtrack");
-
-					float alpha = mat->GetAlpha();
-					if (ImGui::SliderFloat("Alpha##Chams", &alpha, 0.0f, 1.0f))
-						mat->SetAlpha(alpha);
-				}
-				else
-					ImGui::TextUnformatted("Select a material to edit");
-			}
-			ImGui::EndChild();
-		}
-	
-		ImGui::EndTable();
-	}
+                                        float alpha = mat->GetAlpha();
+                                        if (ImGui::SliderFloat("Alpha##Chams", &alpha, 0.0f, 1.0f))
+                                                mat->SetAlpha(alpha);
+                                }
+                                else
+                                        ImGui::TextUnformatted("Select a material to edit");
+                        }
+                        ImGui::EndChild();
+                }
+                ImGui::EndTable();
+        }
 }

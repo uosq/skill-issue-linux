@@ -3,11 +3,9 @@
 #include "../../entitylist/entitylist.h"
 #include "../../spectators/spectators.h"
 
-#include "../../../settings/settings.h"
-
 float NoRecoil::GetScale()
 {
-	float value = Config.misc.packed.norecoil_scale / 100.0f;
+	float value = config::norecoil::scale.Get() / 100.0f;
 	return 1.0f - std::clamp(value, 0.0f, 1.0f);
 }
 
@@ -16,7 +14,7 @@ void NoRecoil::RunOverrideView(CTFPlayer *pLocal, CViewSetup *pView)
 	if (!pLocal->IsAlive())
 		return;
 
-	if (!Config.misc.packed.norecoil)
+	if (!config::norecoil::enabled.Get())
 		return;
 
 	if (interfaces::CInput->CAM_IsThirdPerson())
@@ -31,7 +29,7 @@ void NoRecoil::RunOverrideView(CTFPlayer *pLocal, CViewSetup *pView)
 
 void NoRecoil::RunCreateMove(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCmd)
 {
-	if (!Config.misc.packed.norecoil)
+	if (!config::norecoil::enabled.Get())
 		return;
 
 	if (!helper::localplayer::IsAttacking(pLocal, pWeapon, pCmd))
@@ -42,7 +40,7 @@ void NoRecoil::RunCreateMove(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd
 		return;
 
 	// can't ignore
-	if (!Config.misc.packed.norecoil_ignore_spectators)
+	if (!config::norecoil::ignore_spectators.Get())
 	{
 		int spectator_amount = 0;
 
@@ -55,7 +53,7 @@ void NoRecoil::RunCreateMove(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd
 
 void NoRecoil::RunCalcViewModelView(Vector &angle)
 {
-	if (!Config.misc.packed.norecoil)
+	if (!config::norecoil::enabled.Get())
 		return;
 
 	CTFPlayer* pLocal = features::entities.GetLocal();

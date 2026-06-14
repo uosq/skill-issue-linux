@@ -8,7 +8,7 @@ void Bhop::Reset()
 
 void Bhop::Run(CTFPlayer *pLocal, CUserCmd *pCmd)
 {
-	if (!Config.misc.packed.bhop || pLocal->GetWaterLevel() > WL_Feet)
+	if (!config::bhop::enabled.Get() || pLocal->GetWaterLevel() > WL_Feet)
 		return;
 
 	bool wantsJump	= pCmd->buttons & IN_JUMP;

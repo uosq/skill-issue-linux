@@ -1,5 +1,7 @@
 #include "autoairblast.h"
 
+#include "../triggerbot.h"
+
 // This is probabaly not as good as doing with traces and stuff
 // But couldn't get it to work lol
 bool AutoAirblast::CanAirblastHit(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CBaseEntity *pTarget, Vector &vecForward)
@@ -82,7 +84,7 @@ void AutoAirblast::Run(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCmd
 	if (!pWeapon->CanAirblast())
 		return;
 
-	if (Config.trigger.packed.autoairblast == static_cast<int>(GenericMode::LEGIT))
+	if (config::autoairblast::enabled.Get() == static_cast<int>(GenericMode::LEGIT))
 		LegitAirblast(pLocal, pWeapon, pCmd);
 	else
 		RageAirblast(pLocal, pWeapon, pCmd, pSendPacket);

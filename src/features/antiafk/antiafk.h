@@ -1,6 +1,11 @@
 #pragma once
 
 #include "../feature.h"
+#include "../config/config.h"
+
+BEGIN_CONFIG(antiafk)
+	ADD_CONFIG(enabled, "antiafk enabled", false)
+END_CONFIG()
 
 class CUserCmd;
 

@@ -7,6 +7,14 @@
 
 #include "../feature.h"
 
+#include "../config/config.h"
+
+BEGIN_CONFIG(spectators)
+
+	ADD_CONFIG(enabled, "spectator list enabled", false)
+
+END_CONFIG()
+
 struct SpectatorData
 {
 	std::string name;

@@ -5,6 +5,23 @@
 
 #include "../utils/utils.h"
 
+struct PotentialTarget
+{
+	Vector dir;
+	Vector center;
+	float distance;
+	float fov;
+	CBaseEntity *entity;
+};
+
+enum class AimbotIndicatorStyle
+{
+	NONE = 0,
+	CIRCLE,
+	SQUARE,
+	TRIANGLE,
+};
+
 class CAimbotProjectile
 {
 public:

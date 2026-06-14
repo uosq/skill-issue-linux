@@ -1,7 +1,7 @@
 #include "glow.h"
 
-#include "../../settings/settings.h"
 #include "../esp/esp_utils.h"
+#include "../colors/colors.h"
 
 void Glow::Init()
 {
@@ -12,29 +12,29 @@ void Glow::Init()
 	    interfaces::MaterialSystem->FindMaterial("dev/glow_color", TEXTURE_GROUP_OTHER, true);
 
 	m_Materials.haloAddToScreen =
-	    MaterialManager::CreateMaterial("GlowMaterial1", "UnlitGeneric\n"
+	    CustomMaterial{"GlowMaterial1", "UnlitGeneric\n"
 							     "{\n"
 							     "	$basetexture \"GlowBuffer1\"\n"
 							     "	$additive \"1\"\n"
-							     "}");
+							     "}"}.GetMaterial();
 
-	m_Materials.blurX = MaterialManager::CreateMaterial("GlowMatBlurX", "BlurFilterX\n"
+	m_Materials.blurX = CustomMaterial{"GlowMatBlurX", "BlurFilterX\n"
 									    "{\n"
 									    "	$basetexture \"GlowBuffer1\"\n"
-									    "}");
+									    "}"}.GetMaterial();
 
-	m_Materials.blurY = MaterialManager::CreateMaterial("GlowMatBlurY", "BlurFilterY\n"
+	m_Materials.blurY = CustomMaterial{"GlowMatBlurY", "BlurFilterY\n"
 									    "{\n"
 									    "	$basetexture \"GlowBuffer2\"\n"
-									    "}");
+									    "}"}.GetMaterial();
 
 	m_Materials.pRtFullFrame =
 	    interfaces::MaterialSystem->FindTexture("_rt_FullFrameFB", "RenderTargets", true);
 
-	m_Materials.glowBuffer1 = MaterialManager::CreateTextureNamedRenderTarget(
+	m_Materials.glowBuffer1 = features::materials.CreateTextureNamedRenderTarget(
 	    "GlowBuffer1", m_Materials.pRtFullFrame->GetActualWidth(),
 	    m_Materials.pRtFullFrame->GetActualHeight());
-	m_Materials.glowBuffer2 = MaterialManager::CreateTextureNamedRenderTarget(
+	m_Materials.glowBuffer2 = features::materials.CreateTextureNamedRenderTarget(
 	    "GlowBuffer2", m_Materials.pRtFullFrame->GetActualWidth(),
 	    m_Materials.pRtFullFrame->GetActualHeight());
 
@@ -63,9 +63,9 @@ void Glow::DrawEntities()
 			int passes     = 0;
 			while (moveChild != nullptr && passes <= 32)
 			{
-				if (Config.glow.packed.weapon && static_cast<CBaseEntity *>(moveChild)->IsWeapon())
+				if (config::glow::weapon.Get() && static_cast<CBaseEntity *>(moveChild)->IsWeapon())
 				{
-					color.SetRawColor(Config.colors.weapon.GetRawColor());
+					color.SetRawColor(config::colors::weapon.Get().GetRawColor());
 
 					// this is fucking stupid
 					// why is a array not assignable?
@@ -137,10 +137,10 @@ void Glow::Run()
 	if (!glowEnts.empty())
 		glowEnts.clear();
 
-	if (!Config.glow.packed.enabled)
+	if (!config::glow::enabled.Get())
 		return;
 
-	if (Config.glow.packed.blur == 0 && Config.glow.packed.stencil == 0)
+	if (config::glow::blur.Get() == 0 && config::glow::stencil.Get() == 0)
 		return;
 
 	if (interfaces::Engine->IsTakingScreenshot())
@@ -201,12 +201,12 @@ void Glow::Run()
 	}
 
 	// blur pass
-	if (Config.glow.packed.blur > 0)
+	if (config::glow::blur.Get() > 0)
 	{
 		pRenderContext->PushRenderTargetAndViewport();
 		pRenderContext->Viewport(0, 0, w, h);
 
-		for (int i = 0; i < Config.glow.packed.blur; ++i)
+		for (int i = 0; i < config::glow::blur.Get(); ++i)
 		{
 			pRenderContext->SetRenderTarget(m_Materials.glowBuffer2);
 			pRenderContext->DrawScreenSpaceRectangle(m_Materials.blurX, 0, 0, w, h, 0, 0, w - 1,
@@ -232,9 +232,9 @@ void Glow::Run()
 		pRenderContext->SetStencilZFailOperation(STENCILOPERATION_KEEP);
 
 		// this is from amalgam
-		if (Config.glow.packed.stencil)
+		if (config::glow::stencil.Get())
 		{
-			int side = (Config.glow.packed.stencil + 1) / 2;
+			int side = (config::glow::stencil.Get() + 1) / 2;
 			pRenderContext->DrawScreenSpaceRectangle(m_Materials.haloAddToScreen, -side, 0, w, h, 0,
 								 0, w - 1, h - 1, w, h);
 			pRenderContext->DrawScreenSpaceRectangle(m_Materials.haloAddToScreen, 0, -side, w, h, 0,
@@ -244,7 +244,7 @@ void Glow::Run()
 			pRenderContext->DrawScreenSpaceRectangle(m_Materials.haloAddToScreen, 0, side, w, h, 0,
 								 0, w - 1, h - 1, w, h);
 
-			int corner = Config.glow.packed.stencil / 2;
+			int corner = config::glow::stencil.Get() / 2;
 			if (corner)
 			{
 				pRenderContext->DrawScreenSpaceRectangle(m_Materials.haloAddToScreen, -corner,
@@ -262,7 +262,7 @@ void Glow::Run()
 			}
 		}
 
-		if (Config.glow.packed.blur)
+		if (config::glow::blur.Get())
 			pRenderContext->DrawScreenSpaceRectangle(m_Materials.haloAddToScreen, 0, 0, w, h, 0, 0,
 								 w - 1, h - 1, w, h);
 

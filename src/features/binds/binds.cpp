@@ -40,17 +40,10 @@ const char *Binds::GetKeyName(const Hotkey *hk)
 	return ImGui::GetKeyName((ImGuiKey)hk->m_iKey);
 }
 
-Hotkey* Binds::RegisterHotkey(const char *name)
+void Binds::RegisterHotkey(Hotkey* hk)
 {
-	m_hotkeys.push_back(std::make_unique<Hotkey>());
-	auto* hk = m_hotkeys.back().get();
-	hk->m_strName = name;
-	return hk;
-}
-
-std::vector<std::unique_ptr<Hotkey>> &Binds::GetHotkeys()
-{
-	return m_hotkeys;
+	hk->next = GetHead();
+	GetHead() = hk;
 }
 
 bool Binds::IsActive(const Hotkey *hk) const
@@ -60,37 +53,19 @@ bool Binds::IsActive(const Hotkey *hk) const
 
 void Binds::Update()
 {
-	for (auto &ptr : m_hotkeys)
+	for (Hotkey* hk = GetHead(); hk != nullptr; hk = hk->next)
 	{
-		Hotkey *hk	      = ptr.get();
-
 		bool currentlyPressed = IsKeyDown(hk);
-		bool wasPressed	      = hk->m_bIsPressed;
-
+		bool wasPressed       = hk->m_bIsPressed;
 		hk->m_bIsPressed      = currentlyPressed;
 
 		switch (hk->m_iMode)
 		{
-		case HotkeyMode::Hold:
-			hk->m_bState = currentlyPressed;
-			break;
-
-		case HotkeyMode::Toggle:
-			if (currentlyPressed && !wasPressed)
-				hk->m_bState = !hk->m_bState;
-			break;
-
-		case HotkeyMode::HoldOff:
-			hk->m_bState = !currentlyPressed;
-			break;
-
-		case HotkeyMode::Always:
-			hk->m_bState = true;
-			break;
-
-		default:
-			hk->m_bState = false;
-			break;
+		case HotkeyMode::Hold:    hk->m_bState = currentlyPressed; break;
+		case HotkeyMode::Toggle:  if (currentlyPressed && !wasPressed) hk->m_bState = !hk->m_bState; break;
+		case HotkeyMode::HoldOff: hk->m_bState = !currentlyPressed; break;
+		case HotkeyMode::Always:  hk->m_bState = true; break;
+		default:                  hk->m_bState = false; break;
 		}
 	}
 }
@@ -192,33 +167,29 @@ void Binds::DrawWindow(bool bMenuOpen)
 	ImGui::SetNextWindowSizeConstraints(ImVec2{150.0f, 0.0f}, ImVec2(FLT_MAX, FLT_MAX));
 
 	int flags = ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse;
-	if (!bMenuOpen)
-		flags |= ImGuiWindowFlags_NoMove;
+	if (!bMenuOpen) flags |= ImGuiWindowFlags_NoMove;
 
 	ImGui::Begin("Binds", nullptr, flags);
 
-	for (const auto &bind : m_hotkeys)
+	// Loop through the intrusive linked list
+	for (Hotkey* hk = GetHead(); hk != nullptr; hk = hk->next)
 	{
-		if (bind->m_iType == InputType::None)
+		if (hk->m_iType == InputType::None)
 			continue;
 
-		const HotkeyMode &iMode	   = bind->m_iMode;
-		const std::string &strName = bind->m_strName;
+		const HotkeyMode &iMode = hk->m_iMode;
+		const char* strModeName = GetModeName(iMode);
+		const char* strKeyName  = GetKeyName(hk);
 
-		const char *strModeName	   = GetModeName(iMode);
-		const char *strKeyName	   = GetKeyName(bind.get());
-
-		if (bind->m_iMode != HotkeyMode::Off)
+		if (hk->m_iMode != HotkeyMode::Off)
 		{
-			ImVec4 color = ImGui::ColorConvertU32ToFloat4(bind->m_bState ? IM_COL32(100, 255, 100, 255)
+			ImVec4 color = ImGui::ColorConvertU32ToFloat4(hk->m_bState ? IM_COL32(100, 255, 100, 255)
 										     : IM_COL32(255, 255, 255, 255));
-
-			// F4 - Aimbot Key - Toggle
-			ImGui::TextColored(color, "%s - %s [%s]", strKeyName, strName.c_str(), strModeName);
+			ImGui::TextColored(color, "%s - %s [%s]", strKeyName, hk->m_strName.data(), strModeName);
 		}
 		else
 		{
-			ImGui::TextDisabled("%s - %s [%s]", strKeyName, strName.c_str(), strModeName);
+			ImGui::TextDisabled("%s - %s [%s]", strKeyName, hk->m_strName.data(), strModeName);
 		}
 	}
 

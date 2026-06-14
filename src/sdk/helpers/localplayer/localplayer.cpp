@@ -1,6 +1,6 @@
 #include "localplayer.h"
 
-#include "../../../settings/settings.h"
+#include "../../../features/aimbot/aimbot.h"
 
 #include "../../../sdk/classes/cbaseobject.h"
 #include "../../../sdk/classes/ctfrobotdestruction_robot.h"
@@ -84,7 +84,7 @@ bool helper::localplayer::Shoot(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUser
 			return true;
 		}
 		
-		if (pTarget && Config.aimbot.packed.waitforcharge)
+		if (pTarget && config::aimbot::wait_for_charge.Get())
 		{
 			int damage = pWeapon->GetWeaponData().m_nDamage * clip1;
 			int minimum_damage = GetMinimumRocketDamage(pTarget);
@@ -114,7 +114,7 @@ bool helper::localplayer::Shoot(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUser
 		{
 			case TF_WEAPON_REVOLVER:
 			{
-				if (pWeapon->IsAmbassador() && Config.aimbot.packed.waitforcharge)
+				if (pWeapon->IsAmbassador() && config::aimbot::wait_for_charge.Get())
 				{
 					if (!pWeapon->CanAmbassadorHeadshot())
 						return false;
@@ -126,7 +126,7 @@ bool helper::localplayer::Shoot(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUser
 
 			case TF_WEAPON_SNIPERRIFLE:
 			{
-				if (pTarget && pLocal->InCond(TF_COND_ZOOMED) && Config.aimbot.packed.waitforcharge)
+				if (pTarget && pLocal->InCond(TF_COND_ZOOMED) && config::aimbot::wait_for_charge.Get())
 				{
 					CTFSniperRifle* pRifle = static_cast<CTFSniperRifle*>(pWeapon);
 					float damage = pRifle->GetChargedDamage();
@@ -147,7 +147,7 @@ bool helper::localplayer::Shoot(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUser
 				bool onground = (pLocal->GetFlags() & FL_ONGROUND);
 				float damage = pClassic->GetChargedDamage();
 
-				if (pClassic->m_bCharging() && Config.aimbot.packed.waitforcharge)
+				if (pClassic->m_bCharging() && config::aimbot::wait_for_charge.Get())
 				{
 					// we can headshot now
 					if (damage >= 450.0f && onground)

@@ -6,8 +6,43 @@
 #include "../../sdk/helpers/helper.h"
 #include "../../sdk/interfaces/interfaces.h"
 
-#include "../../settings/settings.h"
+#include "../config/config.h"
 #include "../entitylist/entitylist.h"
+
+enum class ESPTeamSelectionMode
+{
+	INVALID = -1,
+	ENEMIES,
+	TEAMMATES,
+	BOTH,
+	MAX,
+};
+
+enum class HealthMode
+{
+	INVALID = -1,
+	NONE,
+	TEXT,
+	BAR,
+	BOTH,
+	MAX
+};
+
+enum class ESPConditionFlags
+{
+	Zoomed	= 1 << 0,
+	Bonked	= 1 << 1,
+	Ubered	= 1 << 2,
+	Jarated = 1 << 3,
+};
+
+enum class ESPFont
+{
+	INVALID = -1,
+	TF2BUILD,
+	ARIAL,
+	COUNT,
+};
 
 namespace ESP_Utils
 {

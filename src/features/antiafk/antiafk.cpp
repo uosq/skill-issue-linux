@@ -1,7 +1,5 @@
 #include "antiafk.h"
 
-#include "../../settings/settings.h"
-
 #include "../../sdk/interfaces/interfaces.h"
 #include "../../sdk/definitions/cusercmd.h"
 #include "../../sdk/defs.h"
@@ -15,7 +13,7 @@ void Antiafk::OnCreateMove(CUserCmd *pCmd)
 	if (mp_idlemaxtime == nullptr)
 		return features::logs.Error("[AntiAFK::OnCreateMove] mp_idlemaxtime is null");
 
-	if (!Config.misc.packed.antiafk)
+	if (!config::antiafk::enabled.Get())
 		return;
 
 	m_afkticks++;

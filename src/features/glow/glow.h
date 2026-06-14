@@ -3,13 +3,26 @@
 #include <unordered_set>
 #include <vector>
 
-#include "../../sdk/MaterialManager/materialmanager.h"
+#include "../MaterialManager/materialmanager.h"
 #include "../../sdk/definitions/itexture.h"
 #include "../../sdk/definitions/texture_group_names.h"
 #include "../../sdk/helpers/helper.h"
 
 #include "../../features/esp/esp.h"
+
+#include "../config/config.h"
 #include "../feature.h"
+
+BEGIN_CONFIG(glow)
+
+	ADD_CONFIG(enabled, "glow enabled", false)
+	ADD_CONFIG(weapon, "glow weapon", false)
+	ADD_CONFIG(healthpack, "glow healthpack", false)
+	ADD_CONFIG(ammopack, "glow ammopack", false)
+	ADD_CONFIG(stencil, "glow stencil", 0)
+	ADD_CONFIG(blur, "glow blur", 0)
+
+END_CONFIG()
 
 struct GlowMaterials
 {

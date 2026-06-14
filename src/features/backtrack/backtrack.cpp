@@ -4,10 +4,11 @@
 #include "../../sdk/helpers/localplayer/localplayer.h"
 #include "../../sdk/interfaces/interfaces.h"
 
-#include "../../settings/settings.h"
 #include "../aimbot/utils/utils.h"
 
-#include "../materialregistry/reg.h"
+#include "../MaterialManager/materialmanager.h"
+#include "../colors/colors.h"
+
 
 // #include "../ticks/ticks.h"
 
@@ -59,7 +60,7 @@ void Backtrack::Run(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCmd)
 	if (pWeapon->GetWeaponType() == EWeaponType::PROJECTILE || pWeapon->GetWeaponType() == EWeaponType::UNKNOWN)
 		return;
 
-	if (!Config.backtrack.packed.enabled)
+	if (!config::backtrack::enabled.Get())
 		return;
 
 	if (!helper::localplayer::IsAttacking(pLocal, pWeapon, pCmd))
@@ -165,7 +166,7 @@ void Backtrack::CleanRecords(CUserCmd* pCmd)
 
 void Backtrack::Store()
 {
-	if (!Config.backtrack.packed.enabled)
+	if (!config::backtrack::enabled.Get())
 		return;
 
 	CTFPlayer* pLocal = features::entities.GetLocal();
@@ -212,13 +213,12 @@ void Backtrack::Store()
 
 void Backtrack::Init()
 {
-	Config.backtrack.active_materials.emplace_back("basic flat");
-	Config.backtrack.active_materials.emplace_back("basic shaded");
+	
 }
 
 void Backtrack::DoPostScreenSpaceEffects()
 {
-	if (!Config.backtrack.packed.enabled)
+	if (!config::backtrack::enabled.Get())
 		return;
 
 	if (m_records.empty())
@@ -236,12 +236,12 @@ void Backtrack::DoPostScreenSpaceEffects()
 	if (!(pWeapon->IsMelee() || pWeapon->IsHitscan()))
 		return;
 
-	BacktrackMode mode = static_cast<BacktrackMode>(Config.backtrack.packed.draw_mode);
+	BacktrackMode mode = static_cast<BacktrackMode>(config::backtrack::draw_mode.Get());
 	if (mode >= BacktrackMode::MAX || mode <= BacktrackMode::INVALID || mode == BacktrackMode::NONE)
 		return;
 
 	// no materials no drawing
-	if (Config.backtrack.active_materials.empty())
+	if (config::backtrack::material.Get() == 0)
 		return;
 
 	float savedColor[3], savedBlend;
@@ -302,26 +302,26 @@ void Backtrack::DoPostScreenSpaceEffects()
 
 	float color[3]
 	{
-		Config.colors.backtrack.r()/255.0f,
-		Config.colors.backtrack.g()/255.0f,
-		Config.colors.backtrack.b()/255.0f
+		config::colors::backtrack.Get().r()/255.0f,
+		config::colors::backtrack.Get().g()/255.0f,
+		config::colors::backtrack.Get().b()/255.0f
 	};
 	interfaces::RenderView->SetColorModulation(color);
 
-	for (const auto& mat_name : Config.backtrack.active_materials)
-	{
-		auto mat = features::material_registry.GetMaterialByName(mat_name);
+	const auto& matID = config::backtrack::material.Get();
 
-		if (!mat || !mat->IsValidMat())
-			continue;
+	if (matID == 0)
+		return;
 
-		interfaces::RenderView->SetBlend(mat->GetAlpha());
-		interfaces::ModelRender->ForcedMaterialOverride(mat->GetMaterial());
+	const auto& mat = features::materials.FindMaterial(matID);
+	if (!mat) return;
 
-		m_drawing = true;
-		DrawRecords();
-		m_drawing = false;
-	}
+	interfaces::RenderView->SetBlend((*mat)->GetAlpha());
+	interfaces::ModelRender->ForcedMaterialOverride((*mat)->GetMaterial());
+
+	m_drawing = true;
+	DrawRecords();
+	m_drawing = false;
 
 	m_current_drawing_record = nullptr;
 
@@ -332,7 +332,7 @@ void Backtrack::DoPostScreenSpaceEffects()
 
 bool Backtrack::GetRecords(CTFPlayer *pEntity, std::vector<LagCompRecord> &out)
 {
-	if (!Config.backtrack.packed.enabled)
+	if (!config::backtrack::enabled.Get())
 	{
 		matrix3x4 bones[MAXSTUDIOBONES];
 		if (!pEntity->SetupBones(bones, MAXSTUDIOBONES, BONE_USED_BY_ANYTHING, interfaces::GlobalVars->curtime))

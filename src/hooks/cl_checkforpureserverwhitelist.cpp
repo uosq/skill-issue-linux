@@ -2,10 +2,10 @@
 
 #include "../sdk/signatures/signatures.h"
 
-#include "../settings/settings.h"
 #include "../thirdparty/libdetour/libdetour.h"
 
 #include "../features/hook_initializer/initializer.h"
+#include "../features/misc/misc.h"
 
 ADD_SIG(CL_CheckForPureServerWhitelist, "engine.so", "83 3D ? ? ? ? 01 7E ? 80 3D ? ? ? ? 00 75")
 
@@ -16,7 +16,7 @@ void Hooked_CL_CheckForPureServerWhitelist(void *&pFilesToReload)
 {
 	if (gApp->IsInitialized())
 	{
-		if (Config.misc.packed.sv_pure_bypass)
+		if (config::sv_pure_bypass::enabled.Get())
 			return;
 	}
 

@@ -19,7 +19,7 @@ enum class SpyStatus : uint8_t
 
 void SpyAlert::OnFrameStageNotify()
 {
-	if (!Config.misc.packed.spyalert)
+	if (!config::spyalert::enabled.Get())
 		return;
 
 	s_iSpyStatus = (int)SpyStatus::NONE;
@@ -71,7 +71,7 @@ void SpyAlert::OnFrameStageNotify()
 
 void SpyAlert::OnImGui(ImDrawList* pDraw)
 {
-	if (!Config.misc.packed.spyalert)
+	if (!config::spyalert::enabled.Get())
 		return;
 
 	if (s_iSpyStatus == 0)

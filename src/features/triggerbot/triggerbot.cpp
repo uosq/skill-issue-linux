@@ -9,9 +9,6 @@ void Triggerbot::Hitscan(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pC
 	if (pLocal == nullptr || pWeapon == nullptr)
 		return;
 
-	if (!Config.trigger.packed.hitscan)
-		return;
-
 	CGameTrace trace;
 	CTraceFilterHitscan filter;
 	filter.pSkip = pLocal;
@@ -54,16 +51,16 @@ void Triggerbot::Run(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCmd)
 	if (helper::engine::IsConsoleVisible())
 		return;
 
-	if (!Config.trigger.key->IsActive())
+	if (!config::trigger::key.Get().IsActive())
 		return;
 
-	if (Config.trigger.packed.hitscan && pWeapon->IsHitscan())
+	if (config::trigger::hitscan.Get() && pWeapon->IsHitscan())
 		Hitscan(pLocal, pWeapon, pCmd);
 
-	if (Config.trigger.packed.autobackstab != static_cast<int>(GenericMode::NONE) && pWeapon->IsMelee())
+	if (config::autobackstab::enabled.Get() != static_cast<int>(GenericMode::NONE) && pWeapon->IsMelee())
 		features::autobackstab.Run(pLocal, pWeapon, pCmd, &features::ticks.GetSendPacket());
 
-	if (Config.trigger.packed.autoairblast != static_cast<int>(GenericMode::NONE) &&
+	if (config::autoairblast::enabled.Get() != static_cast<int>(GenericMode::NONE) &&
 	    pWeapon->GetWeaponID() == TF_WEAPON_FLAMETHROWER)
 		features::autoairblast.Run(pLocal, pWeapon, pCmd, &features::ticks.GetSendPacket());
 }

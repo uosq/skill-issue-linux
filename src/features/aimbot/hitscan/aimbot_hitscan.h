@@ -1,5 +1,8 @@
 #pragma once
 
+#include <cmath>
+#include <vector>
+
 #include "../../../sdk/classes/player.h"
 #include "../../../sdk/classes/weaponbase.h"
 #include "../../../sdk/definitions/bspflags.h"
@@ -10,13 +13,11 @@
 #include "../../../sdk/definitions/studio.h"
 #include "../../../sdk/handle_utils.h"
 #include "../../../sdk/helpers/helper.h"
-#include "../../../settings/settings.h"
 
+#include "../../config/config.h"
 #include "../../entitylist/entitylist.h"
-#include "../utils/utils.h"
 
-#include <cmath>
-#include <vector>
+#include "../utils/utils.h"
 
 enum class HitscanOffset
 {

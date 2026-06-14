@@ -7,19 +7,18 @@
 
 #include "../../sdk/interfaces/interfaces.h"
 
-#include "../../settings/settings.h"
-
-#include "../../features/binds/binds.h"
-#include "../../features/logs/logs.h"
-#include "../../features/spectators/spectators.h"
-#include "../../features/esp/esp.h"
-#include "../../features/aimbot/aimbot.h"
-#include "../../features/infopanel/infopanel.h"
-#include "../../features/spyalert/spyalert.h"
-#include "../../features/playerlist/playerlist.h"
-#include "../../features/radar/radar.h"
-#include "../../features/warp/warp.h"
-#include "../../features/scriptmanager/scriptmanager.h"
+#include "../config/config.h"
+#include "../binds/binds.h"
+#include "../logs/logs.h"
+#include "../spectators/spectators.h"
+#include "../esp/esp.h"
+#include "../aimbot/aimbot.h"
+#include "../spyalert/spyalert.h"
+#include "../playerlist/playerlist.h"
+#include "../radar/radar.h"
+#include "../warp/warp.h"
+#include "../scriptmanager/scriptmanager.h"
+#include "../esp/esp_utils.h"
 
 extern const unsigned int Arial_compressed_size;
 extern const unsigned char Arial_compressed_data[668199];
@@ -183,7 +182,7 @@ void CGui::sdl_process_event(SDL_Event* event, int ret)
 	if (game_window && ImGui::GetCurrentContext())
 		ImGui_ImplSDL2_ProcessEvent(event);
 
-	if (Settings::menu_open)
+	if (menu_open.Get())
 		event->type = 0;
 }
 
@@ -340,14 +339,14 @@ static void update_toggle_menu()
 {
 	if (ImGui::IsKeyPressed(ImGuiKey_Insert, false) || ImGui::IsKeyPressed(ImGuiKey_F11, false))
 	{
-		Settings::menu_open = !Settings::menu_open;
-		interfaces::Surface->SetCursorAlwaysVisible(Settings::menu_open);
+		menu_open.Get() = !menu_open.Get();
+		interfaces::Surface->SetCursorAlwaysVisible(menu_open.Get());
 	}
 
 	if (ImGui::IsKeyPressed(ImGuiKey_Escape, false))
 	{
-		Settings::menu_open = false;
-		interfaces::Surface->SetCursorAlwaysVisible(Settings::menu_open);
+		menu_open.Get() = false;
+		interfaces::Surface->SetCursorAlwaysVisible(menu_open.Get());
 	}
 }
 
@@ -360,15 +359,15 @@ void CGui::begin_main_window()
 
 	window_pushed_font = false;
 
-	switch (static_cast<ESPFont>(Config.esp.font.selected))
+	switch ((ESPFont)config::esp::font_selected.Get())
 	{
 		case ESPFont::TF2BUILD:
-		ImGui::PushFont(tf2_build, Config.esp.font.size);
+		ImGui::PushFont(tf2_build, config::esp::font_size.Get());
 		window_pushed_font = true;
 		break;
 
 		case ESPFont::ARIAL:
-		ImGui::PushFont(arial, Config.esp.font.size);
+		ImGui::PushFont(arial, config::esp::font_size.Get());
 		window_pushed_font = true;
 		break;
 
@@ -389,7 +388,7 @@ void CGui::end_main_window()
 
 void CGui::render_main_window_content()
 {
-	if (Settings::menu_open && !helper::engine::IsTakingScreenshot())
+	if (menu_open.Get() && !helper::engine::IsTakingScreenshot())
 	{
 		if (ImGui::Begin("Skill Issue", nullptr, ImGuiWindowFlags_NoCollapse))
 		{
@@ -511,17 +510,16 @@ void CGui::render_windows()
 	features::spectators.DrawList();
 	features::aimbot.OnImGui(pDraw);
 	features::esp.OnImGui();
-	features::infopanel.OnImGui(Settings::menu_open);
 	features::spyalert.OnImGui(pDraw);
 	features::playerlist.DrawWindow();
-	features::binds.DrawWindow(Settings::menu_open);
+	features::binds.DrawWindow(menu_open.Get());
 
 	render_main_window_content();
 
-	if (Settings::menu_open)
+	if (menu_open.Get())
 	{
 		pDraw->AddText(ImVec2(10, 10), IM_COL32(255, 255, 255, 255), "Skill Issue");
-		pDraw->AddText(ImVec2(10, 10 + Config.esp.font.size), IM_COL32(255, 255, 255, 255), "Build date: " __DATE__ " " __TIME__);
+		pDraw->AddText(ImVec2(10, 10 + config::esp::font_size.Get()), IM_COL32(255, 255, 255, 255), "Build date: " __DATE__ " " __TIME__);
 	}
 
 	end_main_window();

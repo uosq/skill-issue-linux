@@ -278,12 +278,12 @@ void TickManager::Run(float accumulated_extra_samples, bool bFinalTick)
 		features::warp.m_iShiftAmount = 0;
 		features::warp.m_bShifting = true;
 
-		for (int n = 0; n < Config.warp.packed.speed; n++)
+		for (int n = 0; n < config::warp::speed.Get(); n++)
 		{
 			if (features::warp.m_iStoredTicks <= 0)
 				break;
 
-			bool isFinalTick = (n == Config.warp.packed.speed - 1) || (features::warp.m_iStoredTicks == 1);
+			bool isFinalTick = (n == config::warp::speed.Get() - 1) || (features::warp.m_iStoredTicks == 1);
 			CL_Move(accumulated_extra_samples, isFinalTick);
 			features::warp.m_iStoredTicks--;
 			features::warp.m_iShiftAmount++;

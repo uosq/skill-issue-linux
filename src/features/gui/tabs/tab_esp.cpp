@@ -1,76 +1,70 @@
-#include "../../../thirdparty/imgui/imgui.h"
-#include "../../../settings/settings.h"
-
-#include "../utils/gui_utils.h"
 #include <algorithm>
+#include <cstdint>
 
-#define ImGui_CheckboxWithSideBit(label, bitfield, side_bitfield) \
-[&]() \
-{ \
-	bool temp = (bitfield); \
-	side_bitfield = DrawCheckboxWithSide(label, &temp, side_bitfield); \
-	if (temp != (bitfield)) bitfield = temp; \
-}()
+#include "../../../thirdparty/imgui/imgui.h"
+
+#include "../../esp/esp.h"
+#include "../../colors/colors.h"
+#include "../../glow/glow.h"
+#include "../../chams/chams.h"
 
 // normal checkbox
-static uint32_t DrawCheckboxWithSide(const char* label, bool* v, uint32_t current_side)
+static void DrawCheckboxWithSide(const char* label, bool* v, int& current_side)
 {
-	ImGui::PushID(label);
+        ImGui::PushID(label);
 
-	ImGui::Checkbox(label, v);
-	ImGui::SameLine();
+        ImGui::Checkbox(label, v);
+        ImGui::SameLine();
 
-	if (ImGui::Button("+", ImVec2(22, 0)))
-		ImGui::OpenPopup("SidePopup");
+        if (ImGui::Button("+", ImVec2(22, 0)))
+                ImGui::OpenPopup("SidePopup");
 
-	uint32_t out_side = current_side;
-	if (ImGui::BeginPopup("SidePopup"))
-	{
-		ImGui::TextDisabled("Position: %s", label);
-		ImGui::Separator();
+        if (ImGui::BeginPopup("SidePopup"))
+        {
+                ImGui::TextDisabled("Position: %s", label);
+                ImGui::Separator();
 
-		int temp = static_cast<int>(current_side);
-		if (ImGui::Selectable("Left", temp == 0)) temp = 0;
-		if (ImGui::Selectable("Right", temp == 1)) temp = 1;
-		if (ImGui::Selectable("Top", temp == 2)) temp = 2;
-		if (ImGui::Selectable("Bottom", temp == 3)) temp = 3;
-		out_side = static_cast<uint32_t>(temp);
+                int temp = current_side;
+                if (ImGui::Selectable("Left",   temp == 0)) temp = 0;
+                if (ImGui::Selectable("Right",  temp == 1)) temp = 1;
+                if (ImGui::Selectable("Top",    temp == 2)) temp = 2;
+                if (ImGui::Selectable("Bottom", temp == 3)) temp = 3;
+                
+                current_side = temp;
 
-		ImGui::EndPopup();
-	}
+                ImGui::EndPopup();
+        }
 
-	ImGui::PopID();
-	return out_side;
+        ImGui::PopID();
 }
 
-static uint32_t DrawComboWithSide(const char* label, int* current_item, const char* const items[], int items_count, uint32_t current_side)
+static void DrawComboWithSide(const char* label, int* current_item, const char* const items[], int items_count, int& current_side)
 {
-	ImGui::PushID(label);
+        ImGui::PushID(label);
 
-	ImGui::Combo(label, current_item, items, items_count);
-	ImGui::SameLine();
+        ImGui::Combo(label, current_item, items, items_count);
+        ImGui::SameLine();
 
-	if (ImGui::Button("+", ImVec2(22, 0)))
-		ImGui::OpenPopup("SidePopup");
+        if (ImGui::Button("+", ImVec2(22, 0)))
+                ImGui::OpenPopup("SidePopup");
 
-	uint32_t out_side = current_side;
-	if (ImGui::BeginPopup("SidePopup"))
-	{
-		ImGui::TextDisabled("Position: %s", label);
-		ImGui::Separator();
+        if (ImGui::BeginPopup("SidePopup"))
+        {
+                ImGui::TextDisabled("Position: %s", label);
+                ImGui::Separator();
 
-		int temp = static_cast<int>(current_side);
-		if (ImGui::Selectable("Left",   temp == 0)) temp = 0;
-		if (ImGui::Selectable("Right",  temp == 1)) temp = 1;
-		if (ImGui::Selectable("Top",    temp == 2)) temp = 2;
-		if (ImGui::Selectable("Bottom", temp == 3)) temp = 3;
-		out_side = static_cast<uint32_t>(temp);
+                int temp = current_side;
+                if (ImGui::Selectable("Left",   temp == 0)) temp = 0;
+                if (ImGui::Selectable("Right",  temp == 1)) temp = 1;
+                if (ImGui::Selectable("Top",    temp == 2)) temp = 2;
+                if (ImGui::Selectable("Bottom", temp == 3)) temp = 3;
+                
+                current_side = temp;
 
-		ImGui::EndPopup();
-	}
+                ImGui::EndPopup();
+        }
 
-	ImGui::PopID();
-	return out_side;
+        ImGui::PopID();
 }
 
 static uint32_t DrawSliderWithFlag(const char* label, uint32_t flagValue, int min, int max)
@@ -82,7 +76,7 @@ static uint32_t DrawSliderWithFlag(const char* label, uint32_t flagValue, int mi
 
 static void ChangeMenuAccentColor()
 {
-	const Color& accent = Config.colors.menu_accent;
+	const Color& accent = config::colors::menu_accent.Get();
 	ImGuiStyle& style = ImGui::GetStyle();
 
 	// Divide by 255.0f to convert 0-255 into 0.0f-1.0f for ImGui math
@@ -154,106 +148,101 @@ static bool CustomColorEdit(const char* label, Color& color)
 
 void DrawESPTab()
 {
-	if (ImGui::BeginTable("##ESPContents", 2, ImGuiTableFlags_BordersInnerV | ImGuiTableFlags_SizingStretchProp))
-	{
-		ImGui::TableSetupColumn("LeftSide");
-		ImGui::TableSetupColumn("RightSide");
+        if (ImGui::BeginTable("##ESPContents", 2, ImGuiTableFlags_BordersInnerV | ImGuiTableFlags_SizingStretchProp))
+        {
+                ImGui::TableSetupColumn("LeftSide");
+                ImGui::TableSetupColumn("RightSide");
 
-		// row 1
-		ImGui::TableNextRow();
+                ImGui::TableNextRow();
+                ImGui::TableNextColumn();
+                
+                ImGui::TextUnformatted("ESP");
+                ImGui::Checkbox("Enabled##ESP", &config::esp::enabled.Get());
 
-		ImGui::TableNextColumn();
-		ImGui::TextUnformatted("ESP");
-		ImGui_CheckboxBit("Enabled##ESP", Config.esp.packed.enabled);
+                ImGui::BeginDisabled(!config::esp::enabled.Get());
+                {
+                        // FIXED: Passing the underlying value references cleanly
+                        DrawCheckboxWithSide("Name", &config::esp::name.Get(), config::esp::side_name.Get());
+                        ImGui::Checkbox("Box", &config::esp::box.Get());
+                        ImGui::Checkbox("Ignore Cloaked", &config::esp::ignore_cloaked.Get());
+                        ImGui::Checkbox("Buildings", &config::esp::buildings.Get());
 
-		ImGui::BeginDisabled(!Config.esp.packed.enabled);
-		{
-			ImGui_CheckboxWithSideBit("Name", Config.esp.packed.name, Config.esp.sides.name);
-			ImGui_CheckboxBit("Box", Config.esp.packed.box);
-			ImGui_CheckboxBit("Ignore Cloaked", Config.esp.packed.ignorecloaked);
-			ImGui_CheckboxBit("Buildings", Config.esp.packed.buildings);
+                        DrawCheckboxWithSide("Weapon", &config::esp::weapon.Get(), config::esp::side_weaponname.Get());
+                        DrawCheckboxWithSide("Class", &config::esp::class_name.Get(), config::esp::side_classname.Get());
 
-			ImGui_CheckboxWithSideBit("Weapon", Config.esp.packed.weapon, Config.esp.sides.weaponname);
-			ImGui_CheckboxWithSideBit("Class", Config.esp.packed.class_name, Config.esp.sides.classname);
+                        ImGui::Checkbox("Ammo Pack", &config::esp::ammopack.Get());
+                        ImGui::Checkbox("Medkit", &config::esp::medkit.Get());
 
-			ImGui_CheckboxBit("Ammo Pack", Config.esp.packed.ammopack);
-			ImGui_CheckboxBit("Medkit", Config.esp.packed.medkit);
+                        {
+                                constexpr const char *items[]{"None", "Text", "Bar", "Both"};
+                                // FIXED: No return value wrapping needed anymore
+                                DrawComboWithSide("Health##ESP", &config::esp::health.Get(), items, 4, config::esp::side_healthbar.Get());
+                        }
 
-			{
-				constexpr const char *items[]{"None", "Text", "Bar", "Both"};
-				Config.esp.sides.healthbar = DrawComboWithSide("Health##ESP", &Config.esp.health, items, 4, Config.esp.sides.healthbar);
-			}
+                        {
+                                constexpr const char *items[]{"Only Enemies", "Only Teammates", "Both"};
+                                ImGui::Combo("Team Selection##ESP", &config::esp::team_selected.Get(), items, 3);
+                        }
+                }
+                ImGui::EndDisabled();
 
-			{
-				constexpr const char *items[]{"Only Enemies", "Only Teammates", "Both"};
-				ImGui::Combo("Team Selection##ESP", &Config.esp.team_selection, items, 3);
-			}
-		}
-		ImGui::EndDisabled();
+                {
+                        constexpr const char *items[]{"TF2", "Arial"};
+                        ImGui::Combo("Font", &config::esp::font_selected.Get(), items, 2);
+                        ImGui::SliderInt("Font Size ##ESP", &config::esp::font_size.Get(), 8, 32);
+                }
 
-		{
-			constexpr const char *items[]{"TF2", "Arial"};
+                ImGui::TableNextColumn();
 
-			int temp_font = Config.esp.font.selected;
-			if (ImGui::Combo("Font", &temp_font, items, 2))
-				Config.esp.font.selected = temp_font;
+                ImGui::TextUnformatted("Conditions");
+                // FIXED: Direct values references passed straight through
+                DrawCheckboxWithSide("Zoom", &config::esp::condition_zoomed.Get(), config::esp::side_zoom.Get());
+                DrawCheckboxWithSide("Ubercharge", &config::esp::condition_ubered.Get(), config::esp::side_uber.Get());
+                DrawCheckboxWithSide("Jarate", &config::esp::condition_jarated.Get(), config::esp::side_jarate.Get());
+                DrawCheckboxWithSide("Bonk", &config::esp::condition_bonked.Get(), config::esp::side_bonk.Get());
 
-			ImGui_SliderIntBit("Font Size##ESP", Config.esp.font.size, 8, 32);
-		}
+                ImGui::Separator();
 
-		ImGui::TableNextColumn();
+                ImGui::TextUnformatted("Glow");
+                ImGui::Checkbox("Enabled##Glow", &config::glow::enabled.Get());
+                ImGui::SliderInt("Stencil##Glow", &config::glow::stencil.Get(), 0, 10);
+                ImGui::SliderInt("Blur##Glow", &config::glow::blur.Get(), 0, 10);
+                ImGui::Checkbox("Highlight Weapon##Glow", &config::glow::weapon.Get());
 
-		ImGui::TextUnformatted("Conditions");
-		ImGui_CheckboxWithSideBit("Zoom", Config.esp.conditions.zoomed, Config.esp.sides.zoom);
-		ImGui_CheckboxWithSideBit("Ubercharge", Config.esp.conditions.ubered, Config.esp.sides.uber);
-		ImGui_CheckboxWithSideBit("Jarate", Config.esp.conditions.jarated, Config.esp.sides.jarate);
-		ImGui_CheckboxWithSideBit("Bonk", Config.esp.conditions.bonked, Config.esp.sides.bonk);
+                ImGui::Separator();
 
-		ImGui::Separator();
+                ImGui::TextUnformatted("Chams");
+                ImGui::Checkbox("Enabled##Chams", &config::chams::enabled.Get());
 
-		ImGui::TextUnformatted("Glow");
-		ImGui_CheckboxBit("Enabled##Glow", Config.glow.packed.enabled);
-		ImGui_SliderIntBit("Stencil##Glow", Config.glow.packed.stencil, 0, 10);
-		ImGui_SliderIntBit("Blur##Glow", Config.glow.packed.blur, 0, 10);
-		ImGui_CheckboxBit("Highlight Weapon##Glow", Config.glow.packed.weapon);
+                // Row 2
+                ImGui::TableNextRow();
+                ImGui::TableNextColumn();
+                ImGui::Separator();
 
-		ImGui::Separator();
+                ImGui::TextUnformatted("Colors");
+                CustomColorEdit("RED Team", config::colors::red_team.Get());
+                CustomColorEdit("BLU Team", config::colors::blu_team.Get());
+                CustomColorEdit("Aimbot Target", config::colors::aimbot_target.Get());
+                CustomColorEdit("Weapon", config::colors::weapon.Get());
 
-		ImGui::TextUnformatted("Chams");
-		ImGui::Checkbox("Enabled##Chams", &Config.chams.enabled);
+                if (CustomColorEdit("Menu Accent", config::colors::menu_accent.Get()))
+                        ChangeMenuAccentColor();
 
-		// row 2
-		ImGui::TableNextRow();
+                CustomColorEdit("Ammo Pack", config::colors::ammopack.Get());
+                CustomColorEdit("Medkit", config::colors::healthkit.Get());
+                CustomColorEdit("Backtrack", config::colors::backtrack.Get());
 
-		ImGui::TableNextColumn();
-		ImGui::Separator();
+                ImGui::TableNextColumn();
+                ImGui::Separator();
 
-		ImGui::TextUnformatted("Colors");
+                ImGui::TextUnformatted("Customization");
+                config::esp::custom_box_rounding.Set(DrawSliderWithFlag("Box Roundness", config::esp::custom_box_rounding.Get(), 0, 15));
+                config::esp::custom_healthbar_rounding.Set(DrawSliderWithFlag("Health Bar Roundness", config::esp::custom_healthbar_rounding.Get(), 0, 15));
+                config::esp::custom_healthbar_margin.Set(DrawSliderWithFlag("Health Bar Margin", config::esp::custom_healthbar_margin.Get(), 0, 15));
+                config::esp::custom_healthbar_thickness.Set(DrawSliderWithFlag("Health Bar Thickness", config::esp::custom_healthbar_thickness.Get(), 1, 15));
+                config::esp::custom_gap.Set(DrawSliderWithFlag("Health Bar Padding", config::esp::custom_gap.Get(), 0, 15));
+                config::esp::custom_text_padding.Set(DrawSliderWithFlag("Text Padding", config::esp::custom_text_padding.Get(), 0, 15));
 
-		CustomColorEdit("RED Team", Config.colors.red_team);
-		CustomColorEdit("BLU Team", Config.colors.blu_team);
-		CustomColorEdit("Aimbot Target", Config.colors.aimbot_target);
-		CustomColorEdit("Weapon", Config.colors.weapon);
-
-		if (CustomColorEdit("Menu Accent", Config.colors.menu_accent))
-			ChangeMenuAccentColor();
-
-		CustomColorEdit("Ammo Pack", Config.colors.ammopack);
-		CustomColorEdit("Medkit", Config.colors.healthkit);
-		CustomColorEdit("Backtrack", Config.colors.backtrack);
-
-		ImGui::TableNextColumn();
-		ImGui::Separator();
-
-		ImGui::TextUnformatted("Customization");
-
-		Config.esp.custom.box_rounding = DrawSliderWithFlag("Box Roundness", Config.esp.custom.box_rounding, 0, 15);
-		Config.esp.custom.healthbar_rounding = DrawSliderWithFlag("Health Bar Roundness", Config.esp.custom.healthbar_rounding, 0, 15);
-		Config.esp.custom.healthbar_margin = DrawSliderWithFlag("Health Bar Margin", Config.esp.custom.healthbar_margin, 0, 15);
-		Config.esp.custom.healthbar_thickness = DrawSliderWithFlag("Health Bar Thickness", Config.esp.custom.healthbar_thickness, 1, 15);
-		Config.esp.custom.gap = DrawSliderWithFlag("Health Bar Padding", Config.esp.custom.gap, 0, 15);
-		Config.esp.custom.text_padding = DrawSliderWithFlag("Text Padding", Config.esp.custom.text_padding, 0, 15);
-
-		ImGui::EndTable();
-	} // table end
+                ImGui::EndTable();
+        }
 }
