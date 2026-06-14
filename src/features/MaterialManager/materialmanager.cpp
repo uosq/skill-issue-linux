@@ -114,7 +114,6 @@ void CMaterialManager::LoadMaterialsFromDirectory(const std::string& dir_name)
                 }
         }
 
-        // AFTER LOADING ALL MATERIALS: Re-assign sequence bit slots cleanly (0-31)
         for (size_t i = 0; i < m_Materials.size(); ++i)
         {
                 m_Materials[i]->m_iSlotIndex = static_cast<int>(i);
