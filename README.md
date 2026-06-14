@@ -2,8 +2,7 @@
 
 A project for me to learn more about TF2 and how it works
 
-[!WARNING]
-This project is designed exclusively for Linux. Attempting to build or run it on Windows or other non-Unix-like systems might/will not work
+This is designed exclusively for Linux. Attempting to build or run it on Windows or other non-Unix-like systems might/will not work
 
 [Click me to join the discord server](https://discord.com/invite/dA4nYDBZzu)
 
