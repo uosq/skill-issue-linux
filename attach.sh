@@ -1,21 +1,16 @@
 #!/usr/bin/env bash
 
-PID=$(pidof -s tf_linux64)
-MODE="$1"
-SO=""
+PID=${1:-$(pidof tf_linux64)}
+PID=${PID%%[[:space:]]*}
+SO="$(cd -- "$(dirname -- "$0")" && pwd)/libvapo.so"
 
-if [ "$MODE" = "v3" ]; then
-	SO="$PWD/x86-64-v3/libvapo.so"
-elif [ "$MODE" = "compat" ]; then
-	SO="$PWD/x86-64/libvapo.so"
-else
-	if grep -q avx2 /proc/cpuinfo; then
-		SO="$PWD/x86-64-v3/libvapo.so"
-		echo "Auto: v3"
-	else
-		SO="$PWD/x86-64/libvapo.so"
-		echo "Auto: compat"
-	fi
+if [ -z "$PID" ]; then
+	read -r -p "tf_linux64 was not found. Enter PID: " PID
+fi
+
+if [[ ! $PID =~ ^[0-9]+$ ]]; then
+	echo "Invalid PID: $PID" >&2
+	exit 1
 fi
 
 gdb -q -n --batch -p "$PID" \
