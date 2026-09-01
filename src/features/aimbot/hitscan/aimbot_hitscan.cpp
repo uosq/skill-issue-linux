@@ -379,13 +379,21 @@ void AimbotHitscan::Run(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCm
 			return;
 
 	if (config::aimbot::sniper_mode.Get() && pWeapon->IsSniperRifle() &&
-	    pWeapon->GetWeaponID() != TF_WEAPON_SNIPERRIFLE_CLASSIC &&
-	    !pLocal->InCond(TF_COND_ZOOMED))
+	    pWeapon->GetWeaponID() != TF_WEAPON_SNIPERRIFLE_CLASSIC)
 	{
-		pCmd->buttons &= ~IN_ATTACK;
-		if (config::aimbot::autoshoot.Get())
-			pCmd->buttons |= IN_ATTACK2;
-		return;
+		if (!pLocal->InCond(TF_COND_ZOOMED))
+		{
+			pCmd->buttons &= ~IN_ATTACK;
+			if (config::aimbot::autoshoot.Get())
+				pCmd->buttons |= IN_ATTACK2;
+			return;
+		}
+
+		if (config::aimbot::autoshoot.Get() && GetInitialOffset(pLocal, pWeapon) != HitscanOffset::HEAD)
+		{
+			pCmd->buttons &= ~IN_ATTACK;
+			return;
+		}
 	}
 
 	if (config::aimbot::hold_minigun_spin.Get() && pWeapon->GetWeaponID() == TF_WEAPON_MINIGUN)
