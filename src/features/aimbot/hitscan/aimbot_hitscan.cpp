@@ -27,7 +27,7 @@ HitscanOffset AimbotHitscan::GetInitialOffset(CTFPlayer *pLocal, CTFWeaponBase *
 		if (!pLocal->InCond(TF_COND_ZOOMED))
 			return HitscanOffset::CHEST;
 
-		if (static_cast<CTFSniperRifle *>(pWeapon)->m_flChargedDamage() < 50.0f)
+		if (static_cast<CTFSniperRifle *>(pWeapon)->m_flChargedDamage() < 1.0f)
 			return HitscanOffset::CHEST;
 
 		return HitscanOffset::HEAD;
