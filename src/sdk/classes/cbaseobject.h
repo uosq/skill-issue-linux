@@ -42,4 +42,10 @@ public:
 	{
 		return GetAbsOrigin() + (m_vecBuildMins() + m_vecBuildMaxs()) * 0.5f;
 	}
+
+	float GetHealthFraction()
+	{
+		const float frac = static_cast<float>(m_iHealth())/static_cast<float>(m_iMaxHealth());
+		return std::clamp(frac, 0.0f, 1.0f);
+	}
 };

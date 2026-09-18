@@ -55,7 +55,7 @@ struct LagCompRecord
 		memcpy(m_Bones, pBones, sizeof(m_Bones));
 	}
 
-	bool IsValid(CUserCmd* pCmd);
+	bool IsValid(const CUserCmd* pCmd) const;
 
 	float m_flSimTime;
 	Vec3 m_vecAbsCenter;
@@ -76,8 +76,9 @@ public:
 	void Store();
 	void Init();
 	void DoPostScreenSpaceEffects();
-	float GetInterp();
-	float GetLatency();
+
+	static float GetInterp();
+	static float GetLatency();
 
 	void CleanRecords(CUserCmd* pCmd);
 	bool GetRecords(CTFPlayer *pEntity, std::vector<LagCompRecord> &out);

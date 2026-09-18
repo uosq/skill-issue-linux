@@ -4,6 +4,16 @@
 #include "basecombatweapon.h"
 #include "entity.h"
 
+// Grenade Launcher mode (for pipebombs)
+enum
+{
+	TF_GL_MODE_REGULAR = 0,
+	TF_GL_MODE_REMOTE_DETONATE,
+	TF_GL_MODE_REMOTE_DETONATE_PRACTICE,
+	TF_GL_MODE_CANNONBALL,
+};
+
+
 class CBaseProjectile : public CBaseAnimating
 {
 public:
@@ -39,6 +49,8 @@ public:
 	NETVAR(m_iType, "CTFGrenadePipebombProjectile->m_iType", int);
 	NETVAR(m_hLauncher, "CTFGrenadePipebombProjectile->m_hLauncher", EHANDLE);
 	NETVAR(m_bDefensiveBomb, "CTFGrenadePipebombProjectile->m_bDefensiveBomb", bool);
+	NETVAR_OFFSET(m_flCreationTime, "CTFGrenadePipebombProjectile->m_iType", float, 4);
+	NETVAR_OFFSET(m_flDetonateTime, "CTFWeaponBaseGrenadeProj->m_bCritical", float, -17);
 
 	float GetLiveTime()
 	{
@@ -51,5 +63,39 @@ public:
 		// check for powerups here!
 
 		return flLiveTime;
+	}
+
+	float GetDamageRadius()
+	{
+		const float base_radius = AttributeHookValue(m_DmgRadius(), "mult_explosion_radius", this, nullptr, false);
+		float radius_mod = 1.0f;
+
+		if (m_iType() == TF_GL_MODE_REMOTE_DETONATE)
+		{
+			if (!m_bTouched())
+			{
+				static ConVar* tf_grenadelauncher_livetime = interfaces::Cvar->FindVar("tf_grenadelauncher_livetime");
+				static ConVar* tf_sticky_radius_ramp_time = interfaces::Cvar->FindVar("tf_sticky_radius_ramp_time");
+				static ConVar* tf_sticky_airdet_radius = interfaces::Cvar->FindVar("tf_sticky_airdet_radius");
+
+				if (tf_grenadelauncher_livetime && tf_sticky_radius_ramp_time && tf_sticky_airdet_radius)
+				{
+					const float arm_time = tf_grenadelauncher_livetime->GetFloat();
+					const float radius_ramp_time = tf_sticky_radius_ramp_time->GetFloat();
+					const float creation_time = m_flCreationTime();
+					const float cur_time = interfaces::GlobalVars->curtime;
+					const float airdet_radius = tf_sticky_airdet_radius->GetFloat();
+
+					radius_mod *= Math::RemapVal(cur_time - creation_time, arm_time, arm_time + radius_ramp_time, airdet_radius, 1.0f);
+				}
+			}
+		}
+
+		return base_radius * radius_mod;
+	}
+
+	bool CanExplode()
+	{
+		return interfaces::GlobalVars->curtime <= m_flDetonateTime();
 	}
 };

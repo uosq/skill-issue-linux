@@ -131,7 +131,7 @@ void EntityList::Store()
 		case ETFClassID::CTFProjectile_JarGas:
 		case ETFClassID::CTFProjectile_JarMilk:
 		case ETFClassID::CTFProjectile_SentryRocket:
-		case ETFClassID::CTFStickBomb:
+		case ETFClassID::CTFGrenadePipebombProjectile:
 		{
 			CBaseProjectile *baseEnt = static_cast<CBaseProjectile *>(entity);
 

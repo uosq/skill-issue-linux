@@ -13,7 +13,7 @@
 // #include "../ticks/ticks.h"
 
 // https://github.com/ValveSoftware/source-sdk-2013/blob/master/src/game/server/player_lagcompensation.cpp#L381-L412
-bool LagCompRecord::IsValid(CUserCmd* pCmd)
+bool LagCompRecord::IsValid(const CUserCmd* pCmd) const
 {
 	float correct		 = 0.0f;
 
@@ -24,7 +24,7 @@ bool LagCompRecord::IsValid(CUserCmd* pCmd)
 		correct += netchan->GetLatency(FLOW_INCOMING);
 	}
 
-	correct += features::backtrack.GetInterp();
+	correct += Backtrack::GetInterp();
 
 	static ConVar *sv_maxunlag = interfaces::Cvar->FindVar("sv_maxunlag");
 	correct			   = std::clamp(correct, 0.0f, sv_maxunlag->GetFloat());
@@ -142,8 +142,8 @@ void Backtrack::CleanRecords(CUserCmd* pCmd)
 	// todo: make this shit look good
 	for (auto it = m_records.begin(); it != m_records.end();)
 	{
-		CTFPlayer *entity = static_cast<CTFPlayer *>(interfaces::EntityList->GetClientEntity(it->first));
-		auto &records	  = it->second;
+		auto* entity = reinterpret_cast<CTFPlayer *>(interfaces::EntityList->GetClientEntity(it->first));
+		auto &records = it->second;
 
 		if (!entity || !entity->IsAlive())
 		{
@@ -184,7 +184,7 @@ void Backtrack::Store()
 		if (entry.ptr->IsBuilding())
 			continue;
 
-		CTFPlayer* pEntity = static_cast<CTFPlayer*>(entry.ptr);
+		auto* pEntity = reinterpret_cast<CTFPlayer*>(entry.ptr);
 
 		if (localTeam == pEntity->m_iTeamNum())
 			continue;
@@ -228,7 +228,7 @@ void Backtrack::DoPostScreenSpaceEffects()
 	if (pLocal == nullptr || !pLocal->IsAlive())
 		return;
 
-	CTFWeaponBase *pWeapon = HandleAs<CTFWeaponBase *>(pLocal->GetActiveWeapon());
+	auto* pWeapon = HandleAs<CTFWeaponBase *>(pLocal->GetActiveWeapon());
 	if (pWeapon == nullptr)
 		return;
 

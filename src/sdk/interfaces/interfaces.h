@@ -30,6 +30,7 @@
 #include "../definitions/ilocalize.h"
 #include "../definitions/demo.h"
 #include "../definitions/cclientstate.h"
+#include "../definitions/ispacialpartition.h"
 
 using AttributeHookValueFn = float (*)(float defaultValue, const char *attribName, CBaseEntity *pEntity, void *, bool);
 extern AttributeHookValueFn AttributeHookValue;
@@ -69,6 +70,7 @@ namespace interfaces
 	extern ILocalize* VGuiLocalize;
 	extern IDemoPlayer* DemoPlayer;
 	extern IDemoRecorder* DemoRecorder;
+	extern ISpatialPartition* partition;
 } // namespace interfaces
 
 bool init_factories();

@@ -51,9 +51,7 @@ void Chams::OnDoPostScreenSpaceEffects(CTFPlayer* pLocal)
 		return;
 
 	float savedColor[3];
-	float savedBlend;
-
-	savedBlend = interfaces::RenderView->GetBlend();
+	const float savedBlend = interfaces::RenderView->GetBlend();
 	interfaces::RenderView->GetColorModulation(savedColor);
 
 	for (auto& ent : features::entities.GetEntities())
@@ -75,7 +73,7 @@ void Chams::DoAttachmentColorModulation(CBaseEntity* attachment, const Color& or
 
 	if (attachment->IsWeapon() && highlight_weapons)
 	{
-		float color[3]
+		const float color[3]
 		{
 			config::colors::weapon.Get().r()/255.0f,
 			config::colors::weapon.Get().g()/255.0f,
@@ -86,7 +84,7 @@ void Chams::DoAttachmentColorModulation(CBaseEntity* attachment, const Color& or
 	}
 	else
 	{
-		float color[3]
+		const float color[3]
 		{
 			orig_color.r()/255.0f,
 			orig_color.g()/255.0f,
@@ -99,9 +97,6 @@ void Chams::DoAttachmentColorModulation(CBaseEntity* attachment, const Color& or
 
 void Chams::DrawAttachments(CBaseEntity* entity, int drawflags, const Color& orig_color)
 {
-	if (entity == nullptr)
-		return;
-
 	constexpr int MAX_PASSES = 32;
 	IClientRenderable* child = entity->FirstShadowChild();
 
@@ -131,7 +126,7 @@ void Chams::DrawAttachments(CBaseEntity* entity, int drawflags, const Color& ori
 
 		DoAttachmentColorModulation(attachment, orig_color);
 
-		int entindex = attachment->GetIndex();
+		const int entindex = attachment->GetIndex();
 
 		// fixes invisible viewmodel
 		if (entindex > 0)
@@ -144,13 +139,13 @@ void Chams::DrawAttachments(CBaseEntity* entity, int drawflags, const Color& ori
 	}
 }
 
-void Chams::DrawEntityAndAttachments(CBaseEntity* entity, int drawflags)
+void Chams::DrawEntityAndAttachments(CBaseEntity* entity, const int drawflags)
 {
 	if (entity == nullptr)
 		return;
 
-	Color color = ESP_Utils::GetEntityColor(entity);
-	float clr[3]
+	const Color color = ESP_Utils::GetEntityColor(entity);
+	const float clr[3]
 	{
 		color.r()/255.0f,
 		color.g()/255.0f,
@@ -175,7 +170,6 @@ void Chams::ApplyMaterials(CBaseEntity* entity, int drawflags)
 
 	is_drawing = true;
 
-	// Loop over all materials and render active ones sequentially
 	for (const auto& mat : loadedMaterials)
 	{
 		if (mat->m_iSlotIndex == -1 || !mat->IsValidMat())
@@ -199,7 +193,7 @@ void Chams::ApplyMaterials(CBaseEntity* entity, int drawflags)
 	interfaces::ModelRender->ForcedMaterialOverride(nullptr);
 }
 
-bool Chams::IsDrawing()
+bool Chams::IsDrawing() const
 {
 	return is_drawing;
 }

@@ -115,7 +115,6 @@ public:
 
 	bool IsAlive();
 	bool InCond(ETFCond cond);
-	Vector GetCenter();
 	Vector GetEyePos();
 	bool IsGhost();
 	bool IsTaunting();

@@ -30,14 +30,14 @@ public:
 	void OnDoPostScreenSpaceEffects(CTFPlayer* pLocal);
 
 	bool ShouldHide(int entindex);
-	bool IsDrawing();
+	bool IsDrawing() const;
 
 	void ApplyMaterials(CBaseEntity* entity, int drawflags);
 
-	bool IsValidEntity(CTFPlayer* pLocal, const EntityListEntry& entity);
+	static bool IsValidEntity(CTFPlayer* pLocal, const EntityListEntry& entity);
 
 private:
-	void DoAttachmentColorModulation(CBaseEntity* attachment, const Color& orig_color);
+	static void DoAttachmentColorModulation(CBaseEntity* attachment, const Color& orig_color);
 	void DrawAttachments(CBaseEntity* entity, int drawflags, const Color& orig_color);
 	void DrawEntityAndAttachments(CBaseEntity* entity, int drawflags);
 

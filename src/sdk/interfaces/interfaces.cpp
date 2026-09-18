@@ -40,6 +40,7 @@ namespace interfaces
 	ILocalize* VGuiLocalize = nullptr;
 	IDemoPlayer* DemoPlayer = nullptr;
 	IDemoRecorder* DemoRecorder = nullptr;
+	ISpatialPartition* partition = nullptr;
 } // namespace interfaces
 
 namespace factories
@@ -204,6 +205,9 @@ bool init_interfaces()
 		return false;
 
 	if (!GetInterface(interfaces::VGuiLocalize, factories::vgui2, "VGUI_Localize005"))
+		return false;
+
+	if (!GetInterface(interfaces::partition, factories::engine, "SpatialPartition001"))
 		return false;
 
 	{

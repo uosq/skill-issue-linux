@@ -3,6 +3,7 @@
 
 #include "../ticks/ticks.h"
 #include "autobackstab/autobackstab.h"
+#include "autodetonate/autodetonate.h"
 
 void Triggerbot::Hitscan(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCmd)
 {
@@ -63,4 +64,7 @@ void Triggerbot::Run(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCmd)
 	if (config::autoairblast::enabled.Get() != static_cast<int>(GenericMode::NONE) &&
 	    pWeapon->GetWeaponID() == TF_WEAPON_FLAMETHROWER)
 		features::autoairblast.Run(pLocal, pWeapon, pCmd, &features::ticks.GetSendPacket());
+
+	if (config::autodetonate::enabled.Get() && pLocal->m_iClass() == TF_CLASS_DEMOMAN)
+		features::autodetonate.Run(pCmd, pLocal);
 }

@@ -76,11 +76,6 @@ bool CTFPlayer::InCond(ETFCond cond)
 	return false;
 }
 
-Vector CTFPlayer::GetCenter()
-{
-	return GetAbsOrigin() + ((m_vecMins() + m_vecMaxs()) * 0.5f);
-}
-
 Vector CTFPlayer::GetEyePos()
 {
 	return GetAbsOrigin() + m_vecViewOffset();
@@ -241,8 +236,7 @@ void CTFPlayer::ThirdPersonSwitch(bool state)
 using GetEntityFromLoadoutSlotFn = CBaseEntity *(*)(CTFPlayer * pPlayer, int slot);
 CBaseEntity *CTFPlayer::GetEntityFromLoadoutSlot(int slot)
 {
-	static GetEntityFromLoadoutSlotFn orig =
-	    reinterpret_cast<GetEntityFromLoadoutSlotFn>(Sigs::GetEntityForLoadoutSlot.GetPointer());
+	static auto orig = reinterpret_cast<GetEntityFromLoadoutSlotFn>(Sigs::GetEntityForLoadoutSlot.GetPointer());
 	return orig(this, slot);
 }
 
@@ -302,7 +296,7 @@ int CTFPlayer::GetMaxBuffedHealth()
 
 float CTFPlayer::GetHealthFraction()
 {
-	float frac = static_cast<float>(GetHealth())/static_cast<float>(GetMaxHealth());
+	const float frac = static_cast<float>(GetHealth())/static_cast<float>(GetMaxHealth());
 	return std::clamp(frac, 0.0f, 1.0f);
 }
 

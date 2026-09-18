@@ -8,13 +8,12 @@
 // $NoKeywords: $
 //=============================================================================//
 
-//-----------------------------------------------------------------------------
-// forward declarations
-//-----------------------------------------------------------------------------
+#include "cmodel.h"
+#include "types.h"
+#include "ihandleentity.h"
+#include "icliententity.h"
 
-class Vector;
-struct Ray_t;
-class IHandleEntity;
+class CBaseEntity;
 
 //-----------------------------------------------------------------------------
 // These are the various partition lists. Note some are server only, some
@@ -182,4 +181,36 @@ class ISpatialPartition
 	virtual void ReportStats(const char *pFileName)						  = 0;
 
 	virtual void InstallQueryCallback(IPartitionQueryCallback *pCallback)			  = 0;
+};
+
+class CFlaggedEntitiesEnum : public IPartitionEnumerator
+{
+public:
+	CFlaggedEntitiesEnum(CBaseEntity** list, int list_max, int flag_mask)
+	{
+		m_pList = list;
+		m_listMax = list_max;
+		m_flagMask = flag_mask;
+		m_count = 0;
+	}
+
+	virtual IterationRetval_t EnumElement(IHandleEntity* entity);
+
+	int GetCount() { return m_count; }
+
+	bool AddToList(CBaseEntity* entity)
+	{
+		if (m_count >= m_listMax)
+			return false;
+
+		m_pList[m_count] = entity;
+		m_count++;
+		return true;
+	}
+
+private:
+	CBaseEntity** m_pList;
+	int m_listMax;
+	int m_flagMask;
+	int m_count;
 };

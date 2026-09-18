@@ -11,6 +11,7 @@
 
 #include "autoairblast/autoairblast.h"
 #include "autobackstab/autobackstab.h"
+#include "autodetonate/autodetonate.h"
 
 #include "../feature.h"
 

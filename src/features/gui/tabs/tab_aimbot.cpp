@@ -119,6 +119,7 @@ static void DrawRightColumn()
 		constexpr const char* items[]{"None", "Legit", "Rage"};
 		ImGui::Combo("Auto Backstab##Trigger", &config::autobackstab::enabled.Get(), items, 3);
 		ImGui::Combo("Auto Airblast##Trigger", &config::autoairblast::enabled.Get(), items, 3);
+		ImGui::Checkbox("Auto Detonate##Trigger", &config::autodetonate::enabled.Get());
 	}
 	ImGui::PopStyleVar();
 }

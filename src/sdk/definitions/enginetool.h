@@ -3,6 +3,7 @@
 #include "../interfaces/createinterface.h"
 #include "ibaseinterface.h"
 #include "ienginetrace.h"
+#include "ispacialpartition.h"
 #include "types.h"
 
 class CViewSetup;
@@ -12,14 +13,12 @@ class ITraceFilter;
 class CBaseTrace;
 struct dlight_t;
 struct AudioState_t;
-class SpatialPartitionHandle_t;
 class soundlevel_t;
 class HTOOLHANDLE;
-class model_t;
+struct model_t;
 class studiohdr_t;
 class IPartitionQueryCallback;
 class IHandleEntity;
-class SpatialPartitionListMask_t;
 class IVideoRecorder;
 class LightDesc_t;
 

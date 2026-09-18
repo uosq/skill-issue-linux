@@ -69,6 +69,7 @@ public:
 	NETVAR(m_flNextAttack, "CBaseCombatCharacter->m_flNextAttack", float);
 	NETVAR_OFFSET(m_flRadius, "CBaseEntity->m_usSolidFlags", float, -sizeof(float));
 	//NETVAR_OFFSET(m_iEFlags, "CBaseEntity->m_Collision", int, -6);
+	NETVAR_OFFSET(m_fFlags, "CBaseEntity->m_CollisionGrouo", int, -4);
 
 	bool IsPlayer();
 	bool IsWeapon();
