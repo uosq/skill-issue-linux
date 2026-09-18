@@ -27,7 +27,9 @@ void DrawConfigTab()
 		s_iSelectedIndex = -1;
 	}
 
+	const auto& defaultConfig = features::configs.GetDefault();
 	ImGui::SameLine();
+	ImGui::TextDisabled("Default: %s", defaultConfig.empty() ? "None" : defaultConfig.c_str());
 
 	float buttonWidth = 120.0f;
 	ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x - buttonWidth - ImGui::GetStyle().ItemSpacing.x);
@@ -77,6 +79,16 @@ void DrawConfigTab()
 					(void)features::configs.Save(fullPath);
 					features::configs.RefreshConfigs();
 				}
+
+				ImGui::SameLine();
+
+				if (configs[i] == features::configs.GetDefault())
+				{
+					if (ImGui::Button("Clear Default"))
+						features::configs.SetDefault("");
+				}
+				else if (ImGui::Button("Set as Default"))
+					features::configs.SetDefault(configs[i]);
 
 				ImGui::SameLine();
 

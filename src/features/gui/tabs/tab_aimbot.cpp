@@ -60,6 +60,8 @@ static void DrawLeftColumn()
 
 	ImGui::TextUnformatted("Toggles");
 	ImGui::Checkbox("Autoshoot", &config::aimbot::autoshoot.Get());
+	ImGui::Checkbox("Headshot Only", &config::aimbot::head_only.Get());
+	ImGui::Checkbox("Sniper Mode", &config::aimbot::sniper_mode.Get());
 	ImGui::Checkbox("ViewModel Aim", &config::aimbot::viewmodel_aim.Get());
 	ImGui::Checkbox("Wait For Charge", &config::aimbot::wait_for_charge.Get());
 	ImGui::Checkbox("Hold Minigun Spin", &config::aimbot::hold_minigun_spin.Get());

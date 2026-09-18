@@ -1,6 +1,8 @@
 #include "configmgr.h"
 
+#include <algorithm>
 #include <filesystem>
+#include <fstream>
 #include <string>
 #include <vector>
 
@@ -10,6 +12,7 @@
 #include "../logs/logs.h"
 
 #define CONFIG_FOLDER "./skill-issue/configs"
+#define DEFAULT_CONFIG_FILE "./skill-issue/default_profile"
 
 void ConfigManager::RefreshConfigs()
 {
@@ -23,6 +26,14 @@ void ConfigManager::RefreshConfigs()
 		if (entry.is_regular_file() && entry.path().extension() == ".ini")
 			configs.push_back(entry.path().stem().string());
 	}
+
+	std::sort(configs.begin(), configs.end());
+
+	defaultConfig.clear();
+	std::ifstream defaultFile(DEFAULT_CONFIG_FILE);
+	std::getline(defaultFile, defaultConfig);
+	if (std::find(configs.begin(), configs.end(), defaultConfig) == configs.end())
+		defaultConfig.clear();
 }
 
 int ConfigManager::Save(const std::string &fullPath)
@@ -137,12 +148,56 @@ int ConfigManager::Load(const std::string &fullPath)
 	return SI_OK;
 }
 
+int ConfigManager::LoadDefault()
+{
+	RefreshConfigs();
+	if (defaultConfig.empty())
+		return SI_OK;
+
+	return Load((std::filesystem::path(CONFIG_FOLDER) / (defaultConfig + ".ini")).string());
+}
+
+bool ConfigManager::SetDefault(const std::string &configName)
+{
+	if (!configName.empty() && std::find(configs.begin(), configs.end(), configName) == configs.end())
+		return false;
+
+	if (configName.empty())
+	{
+		std::error_code error;
+		std::filesystem::remove(DEFAULT_CONFIG_FILE, error);
+		if (error)
+			return false;
+
+		defaultConfig.clear();
+		return true;
+	}
+
+	std::filesystem::create_directories(std::filesystem::path(DEFAULT_CONFIG_FILE).parent_path());
+	std::ofstream defaultFile(DEFAULT_CONFIG_FILE, std::ios::trunc);
+	defaultFile << configName;
+	if (!defaultFile)
+		return false;
+
+	defaultConfig = configName;
+	return true;
+}
+
 bool ConfigManager::Delete(const std::string &filePath)
 {
-	return std::filesystem::remove(filePath);
+	const bool removed = std::filesystem::remove(filePath);
+	if (removed && std::filesystem::path(filePath).stem() == defaultConfig)
+		SetDefault("");
+
+	return removed;
 }
 
 std::vector<std::string>& ConfigManager::GetConfigs()
 {
 	return configs;
+}
+
+const std::string& ConfigManager::GetDefault() const
+{
+	return defaultConfig;
 }
