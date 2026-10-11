@@ -1,0 +1,30 @@
+name: Makefile CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install Dependencies
+      run: sudo apt install libsdl2-dev libcurl4-openssl-dev libvulkan-dev
+
+    - name: Build the project (v3)
+      run: make v3
+
+    - name: Build the project (compat)
+      run: make compat
+
+    - name: Upload a Build Artifact
+      uses: actions/upload-artifact@v7.0.2
+      with:
+        name: artifact
+        path: build/*
