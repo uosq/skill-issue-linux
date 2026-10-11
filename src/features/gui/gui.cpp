@@ -180,10 +180,21 @@ void CGui::sdl_process_event(SDL_Event* event, int ret)
 	}
 
 	if (game_window && ImGui::GetCurrentContext())
+	{
 		ImGui_ImplSDL2_ProcessEvent(event);
 
-	if (menu_open.Get())
-		event->type = 0;
+		if (menu_open.Get())
+		{
+			const ImGuiIO& io = ImGui::GetIO();
+
+			const bool is_key_event = event->type == SDL_KEYDOWN || event->type == SDL_KEYUP;
+			const bool is_mouse_event = event->type == SDL_MOUSEMOTION || event->type == SDL_MOUSEBUTTONDOWN
+						|| event->type == SDL_MOUSEBUTTONUP || event->type == SDL_MOUSEWHEEL;
+			
+			if ((is_key_event && (io.WantCaptureKeyboard || event->key.keysym.scancode == SDL_SCANCODE_ESCAPE)) || is_mouse_event)
+				event->type = 0;
+		}
+	}
 }
 
 void CGui::on_swapwindow(SDL_Window* window)
