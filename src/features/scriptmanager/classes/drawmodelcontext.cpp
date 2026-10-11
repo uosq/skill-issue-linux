@@ -1,3 +1,4 @@
+#include "../../../thirdparty/sol3/lua/lua.hpp"
 #include "../../../thirdparty/sol3/sol.hpp"
 
 #include "../../../sdk/classes/entity.h"
