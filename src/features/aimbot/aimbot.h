@@ -38,7 +38,9 @@ BEGIN_CONFIG(aimbot)
 	ADD_CONFIG(projectile_method, "aimbot projectile method", 0)
 
 	// HITSCAN
+	ADD_CONFIG(head_only, "aimbot head only", false)
 	ADD_CONFIG(hold_minigun_spin, "aimbot hold minigun spin", false)
+	ADD_CONFIG(sniper_mode, "aimbot sniper mode", false)
 
 	// MELEE
 	ADD_CONFIG(melee_mode, "aimbot melee mode", 0)

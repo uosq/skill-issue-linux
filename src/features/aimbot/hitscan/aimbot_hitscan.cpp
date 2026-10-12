@@ -27,7 +27,7 @@ HitscanOffset AimbotHitscan::GetInitialOffset(CTFPlayer *pLocal, CTFWeaponBase *
 		if (!pLocal->InCond(TF_COND_ZOOMED))
 			return HitscanOffset::CHEST;
 
-		if (static_cast<CTFSniperRifle *>(pWeapon)->m_flChargedDamage() < 50.0f)
+		if (static_cast<CTFSniperRifle *>(pWeapon)->m_flChargedDamage() < 1.0f)
 			return HitscanOffset::CHEST;
 
 		return HitscanOffset::HEAD;
@@ -53,13 +53,15 @@ bool AimbotHitscan::GetShotPosition(CTFPlayer *pLocal, CBaseEntity *pTarget, CTF
 	CTraceFilterHitscan filter;
 	filter.pSkip       = pLocal;
 
-	auto initialOffset = GetInitialOffset(pLocal, pWeapon);
+	const bool bHeadOnly = config::aimbot::head_only.Get();
+	auto initialOffset = bHeadOnly ? HitscanOffset::HEAD : GetInitialOffset(pLocal, pWeapon);
 	switch (initialOffset)
 	{
 	case HitscanOffset::HEAD:
 	{
 		Vector boneCenter;
-		static_cast<CBaseAnimating *>(pTarget)->GetHitboxCenter(pBones, HITBOX_HEAD, boneCenter);
+		if (!static_cast<CBaseAnimating *>(pTarget)->GetHitboxCenter(pBones, HITBOX_HEAD, boneCenter))
+			break;
 
 		helper::engine::Trace(eyePos, boneCenter, MASK_SHOT | CONTENTS_HITBOX, &filter, &trace);
 		if (!trace.DidHit() || trace.m_pEnt != pTarget)
@@ -71,7 +73,8 @@ bool AimbotHitscan::GetShotPosition(CTFPlayer *pLocal, CBaseEntity *pTarget, CTF
 	case HitscanOffset::CHEST:
 	{
 		Vector boneCenter;
-		static_cast<CBaseAnimating *>(pTarget)->GetHitboxCenter(pBones, HITBOX_SPINE0, boneCenter);
+		if (!static_cast<CBaseAnimating *>(pTarget)->GetHitboxCenter(pBones, HITBOX_SPINE0, boneCenter))
+			break;
 
 		helper::engine::Trace(eyePos, boneCenter, MASK_SHOT | CONTENTS_HITBOX, &filter, &trace);
 		if (!trace.DidHit() || trace.m_pEnt != pTarget)
@@ -81,6 +84,9 @@ bool AimbotHitscan::GetShotPosition(CTFPlayer *pLocal, CBaseEntity *pTarget, CTF
 		return true;
 	}
 	}
+
+	if (bHeadOnly)
+		return false;
 
 	for (int i = 0; i < HITBOX_LEFT_UPPERARM; i++)
 	{
@@ -228,7 +234,7 @@ bool AimbotHitscan::FindBestTarget(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CU
 			if (EvaluatePlayerTarget(pLocal, pWeapon, static_cast<CTFPlayer*>(entity), pCmd, shootPos, viewAngles, maxFov, bNoFovLimit, potentialTarget))
 				targets.push_back(potentialTarget);
 		}
-		else
+		else if (!config::aimbot::head_only.Get())
 		{
 			if (EvaluateNonPlayerTarget(pLocal, entity, shootPos, viewAngles, maxFov, bNoFovLimit, potentialTarget))
 				targets.push_back(potentialTarget);
@@ -278,7 +284,8 @@ static void SmoothAssistanceAimbot(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CU
 	
 	bool bShouldShoot = false;
 	
-	if (trace.DidHit() && trace.m_pEnt == target.entity)
+	if (trace.DidHit() && trace.m_pEnt == target.entity &&
+	    (!config::aimbot::head_only.Get() || trace.hitbox == HITBOX_HEAD))
 		bShouldShoot = true;
 	
 	if (bShouldShoot && config::aimbot::autoshoot.Get())
@@ -370,6 +377,24 @@ void AimbotHitscan::Run(CTFPlayer *pLocal, CTFWeaponBase *pWeapon, CUserCmd *pCm
 	if (config::aimbot::wait_for_charge.Get() && pWeapon->IsAmbassador())
 		if (!pWeapon->CanAmbassadorHeadshot())
 			return;
+
+	if (config::aimbot::sniper_mode.Get() && pWeapon->IsSniperRifle() &&
+	    pWeapon->GetWeaponID() != TF_WEAPON_SNIPERRIFLE_CLASSIC)
+	{
+		if (!pLocal->InCond(TF_COND_ZOOMED))
+		{
+			pCmd->buttons &= ~IN_ATTACK;
+			if (config::aimbot::autoshoot.Get())
+				pCmd->buttons |= IN_ATTACK2;
+			return;
+		}
+
+		if (config::aimbot::autoshoot.Get() && GetInitialOffset(pLocal, pWeapon) != HitscanOffset::HEAD)
+		{
+			pCmd->buttons &= ~IN_ATTACK;
+			return;
+		}
+	}
 
 	if (config::aimbot::hold_minigun_spin.Get() && pWeapon->GetWeaponID() == TF_WEAPON_MINIGUN)
 		pCmd->buttons |= IN_ATTACK2;

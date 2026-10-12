@@ -41,6 +41,21 @@ sk_get_march()
 
 MARCH=$(sk_get_march)
 
+sk_project_dir()
+{
+	if [ -f "$PWD/Makefile" ] && [ -d "$PWD/src" ]; then
+		pwd -P
+		return 0
+	fi
+
+	if [ -d "$PWD/skill-issue" ]; then
+		(cd -- "$PWD/skill-issue" && pwd -P)
+		return
+	fi
+
+	return 1
+}
+
 sk_update_app()
 {
 	if [ -d "skill-issue" ]; then
@@ -52,14 +67,29 @@ sk_update_app()
 	unzip skill-issue/skillissue-$MARCH.zip -d skill-issue
 }
 
+sk_compile()
+{
+	local project_dir
+	project_dir=$(sk_project_dir) || return 1
+
+	(cd -- "$project_dir" && make "$MARCH")
+}
+
 sk_attach()
 {
-	SO=""
+	local project_dir
+	local SO
+	project_dir=$(sk_project_dir) || return 1
 
 	if [ "$MARCH" = "v3" ]; then
-		SO="$PWD/build/x86-64-v3/libvapo.so"
+		SO="$project_dir/build/x86-64-v3/libvapo.so"
 	elif [ "$MARCH" = "compat" ]; then
-		SO="$PWD/build/x86-64/libvapo.so"
+		SO="$project_dir/build/x86-64/libvapo.so"
+	fi
+
+	if [ ! -f "$SO" ]; then
+		echo "Build not found: $SO" >&2
+		return 1
 	fi
 
 	gdb -q -n --batch -p "$PID" \
@@ -97,14 +127,10 @@ while true; do
 		"Compile")
 		whiptail --title "Compiling" --infobox "Compiling the code..." 8 40
 
-		if [ ! -d "skill-issue" ]; then
-			whiptail --title "Fail" --msgbox "No skill-issue folder found! Did you forget to download?" 8 40
-		else
-			cd skill-issue
-			make
-			cd ..
-
+		if sk_compile; then
 			whiptail --title "Success" --msgbox "Compilation complete!" 8 40
+		else
+			whiptail --title "Fail" --msgbox "Compilation failed! Run the loader from the repository root or download the project first." 8 65
 		fi
 		;;
 
@@ -116,15 +142,11 @@ while true; do
 		if [ -z "$PID" ]; then
 			whiptail --title "Fail" --msgbox "TF2 is not open!" 8 40
 		else
-			cd skill-issue
-
 			if sk_attach; then
 				whiptail --title "Success" --msgbox "Attached!" 8 40
 			else
-				whiptail --title "Fail" --msgbox "Failed to attach! (Check terminal for GDB errors)" 8 40
+				whiptail --title "Fail" --msgbox "Failed to attach! Build the project first and check the terminal for GDB errors." 8 65
 			fi
-
-			cd ..
 		fi
 		;;
 

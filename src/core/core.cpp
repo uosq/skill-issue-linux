@@ -15,6 +15,7 @@
 #include "../features/backtrack/backtrack.h"
 #include "../features/MaterialManager/materialmanager.h"
 #include "../features/playerlist/playerlist.h"
+#include "../features/configmanager/configmgr.h"
 #include "../features/hook_initializer/initializer.h"
 #include "../features/network/network.h"
 #include "../features/gui/gui.h"
@@ -40,6 +41,7 @@ void CApp::Setup()
 		return;
 
 	Netvars::Setup();
+	(void)features::configs.LoadDefault();
 
 	features::scriptmanager.Init();
 
