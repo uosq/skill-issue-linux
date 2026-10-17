@@ -22,5 +22,6 @@ gdb -q -n --batch -p "$PID" \
 	-ex "set pagination off" \
 	-ex "call (void*)dlopen(\"$SO\", 2)" \
 	-ex "call (char*)dlerror()" \
+	-ex "call (void)InitSkillIssue()" \
 	-ex "detach" \
 	-ex "quit"

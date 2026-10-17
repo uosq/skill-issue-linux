@@ -171,7 +171,6 @@ void Binds::DrawWindow(bool bMenuOpen)
 
 	ImGui::Begin("Binds", nullptr, flags);
 
-	// Loop through the intrusive linked list
 	for (Hotkey* hk = GetHead(); hk != nullptr; hk = hk->next)
 	{
 		if (hk->m_iType == InputType::None)

@@ -1,13 +1,6 @@
-#include "../core/core.h"
-
-#include "../sdk/signatures/signatures.h"
-
-#include "../thirdparty/libdetour/libdetour.h"
-
 #include "../features/misc/misc.h"
 #include "../features/entitylist/entitylist.h"
-#include "../features/logs/logs.h"
-#include "../features/hook_initializer/initializer.h"
+#include "../features/hookmanager/hookmanager.hpp"
 
 /*
 xref: CViewRender::DrawViewModel
@@ -25,33 +18,15 @@ xref: CViewRender::DrawViewModel
 		local_180 = (long *)(**(code **)(*DAT_03025308 + 0x310))();
 		if (local_180 != (long *)0x0) {
 */
-ADD_SIG(CViewRender_ShouldDrawViewModel, "client.so", "40 84 F6 74 ? 48 8B 05 ? ? ? ? 8B 50 58")
-DETOUR_DECL_TYPE(bool, ShouldDrawViewModel, void* self, bool bDrawviewmodel);
 
-static detour_ctx_t ctx;
-
-bool CViewRender_ShouldDrawViewModel(void* self, bool bDrawviewmodel)
+INIT_HOOK(CViewRender_ShouldDrawViewModel, bool, (void* rdi, bool bDrawviewmodel), "client.so", "40 84 F6 74 ? 48 8B 05 ? ? ? ? 8B 50 58")
 {
-	if (gApp->IsInitialized())
+	if (config::no_zoom::enabled.Get())
 	{
-		if (config::no_zoom::enabled.Get())
-		{
-			CTFPlayer* pLocal = features::entities.GetLocal();
-			if (pLocal && pLocal->InCond(TF_COND_ZOOMED))
-				return true;
-		}
+		CTFPlayer* pLocal = features::entities.GetLocal();
+		if (pLocal && pLocal->InCond(TF_COND_ZOOMED))
+			return true;
 	}
 	
-	bool ret = true;
-	DETOUR_ORIG_GET(&ctx, ret, ShouldDrawViewModel, self, bDrawviewmodel);
-	return ret;
+	return original_CViewRender_ShouldDrawViewModel(rdi, bDrawviewmodel);
 }
-
-void Hook_ShouldDrawViewModel()
-{
-	detour_init(&ctx, Sigs::CViewRender_ShouldDrawViewModel.GetPointer(), (void*)&CViewRender_ShouldDrawViewModel);
-	if (!detour_enable(&ctx))
-		return features::logs.Error("Couldnt hook CViewRender::ShouldDrawViewModel");
-}
-
-MARK_FOR_INIT(Hook_ShouldDrawViewModel)

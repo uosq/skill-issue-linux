@@ -36,6 +36,24 @@ static void setup_norecoil_popup()
 	}
 }
 
+static void setup_bhop_popup()
+{
+	if (ImGui::BeginPopup("BhopPopup"))
+	{
+		ImGui::SliderInt("Max Chance", &config::bhop::maxchance.Get(), 0, 100);
+		
+		if (ImGui::IsItemHovered())
+			ImGui::SetTooltip("Max chance of a successful bhop");
+	
+		ImGui::Checkbox("No random chance", &config::bhop::perfect.Get());
+	
+		if (ImGui::IsItemHovered())
+			ImGui::SetTooltip("Never intentionally miss. Makes the max chance option not work");
+	
+		ImGui::EndPopup();
+	}
+}
+
 void DrawMiscTab()
 {
 	if (ImGui::BeginTable("##MiscContents", 2, ImGuiTableFlags_BordersInnerV | ImGuiTableFlags_SizingStretchProp))
@@ -58,7 +76,18 @@ void DrawMiscTab()
 		ImGui::Checkbox("Player List", &config::playerlist::enabled.Get());
 		ImGui::Checkbox("sv_pure bypass", &config::sv_pure_bypass::enabled.Get());
 		ImGui::Checkbox("Streamer Mode", &config::streamer_mode::enabled.Get());
-		ImGui::Checkbox("Bhop", &config::bhop::enabled.Get());
+		
+		{
+			setup_bhop_popup();
+
+			ImGui::Checkbox("Bhop", &config::bhop::enabled.Get());
+
+			ImGui::SameLine();
+
+			if (ImGui::Button("+##Bhop"))
+				ImGui::OpenPopup("BhopPopup");
+		}
+
 		ImGui::Checkbox("Autostrafe", &config::autostrafe::enabled.Get());
 		ImGui::Checkbox("Backpack Expander", &config::backpack_expander::enabled.Get());
 		ImGui::Checkbox("Accept Item Drops", &config::accept_item_drop::enabled.Get());
@@ -69,7 +98,7 @@ void DrawMiscTab()
 
 			ImGui::SameLine();
 
-			if (ImGui::Button("+"))
+			if (ImGui::Button("+##NoRecoil"))
 				ImGui::OpenPopup("NoRecoilPopup");
 		}
 

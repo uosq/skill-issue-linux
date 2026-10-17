@@ -9,18 +9,20 @@
 BEGIN_CONFIG(bhop)
 
 	ADD_CONFIG(enabled, "bhop enabled", false)
+	ADD_CONFIG(maxchance, "bhop chance", 100)
+	ADD_CONFIG(perfect, "bhop perfect", false)
 
 END_CONFIG()
 
-class Bhop
+struct Bhop
 {
-public:
 	void Run(CTFPlayer *pLocal, CUserCmd *pCmd);
 	void Reset();
 
-private:
-	bool m_bJumpReleased{false};
-	bool m_bUsedAirJump{false};
+	bool m_bLastWantsJump = false;
+	bool m_bJumpReleased = false;
+	bool m_bUsedAirJump = false;
+	int m_iJumps = 0;
 };
 
 DECLARE_FEATURE(Bhop, bhop)

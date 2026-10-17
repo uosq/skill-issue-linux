@@ -1,13 +1,9 @@
-#include "../core/core.h"
+#if 0
 
 #include <cstdint>
 
+#include "../features/hookmanager/hookmanager.hpp"
 #include "../sdk/signatures/signatures.h"
-
-#include "../thirdparty/libdetour/libdetour.h"
-
-#include "../features/logs/logs.h"
-#include "../features/hook_initializer/initializer.h"
 
 /*
 xref: Announcer.SummaryScreenWinners
@@ -26,7 +22,6 @@ xref: Announcer.SummaryScreenWinners
     }
     *(undefined4 *)(param_1 + 0xd38) = 1;
 */
-ADD_SIG(CTFMatchSummary_OnTick, "client.so", "55 48 89 E5 41 57 41 56 49 89 FE 41 55 4C 8D 6F 40 41 54 4C 89 EF")
 
 /*
 Just look at the code above ^
@@ -35,10 +30,7 @@ ADD_SIG(GTFGCClientSystem, "client.so",
 	"E8 ? ? ? ? 4C 8D 6D DC 48 89 C7 E8 ? ? ? ? 4C 89 EF 89 45 DC E8 ? ? "
 	"? ? 48 8D 75 D8 4C 89 EA")
 
-detour_ctx_t summary_ontick_ctx;
-DETOUR_DECL_TYPE(void, CTFMatchSummary_OnTick, void *self);
-
-void Hooked_CTFMatchSummary_OnTick(void *self)
+INIT_HOOK(CTFMatchSummary_OnTick, void, (void* rdi), "client.so", "E8 ? ? ? ? 4C 8D 6D DC 48 89 C7 E8 ? ? ? ? 4C 89 EF 89 45 DC E8 ? ? ? ? 48 8D 75 D8 4C 89 EA")
 {
 	/*
 	the offset is from this lVar7 + 0x818
@@ -49,26 +41,15 @@ void Hooked_CTFMatchSummary_OnTick(void *self)
 	}
 	*/
 
-	if (gApp->IsInitialized())
-	{
-		// remember, GCTFGCClientSystem is a function that returns a pointer!
-		auto gc	      = reinterpret_cast<uintptr_t (*)()>(Sigs::GTFGCClientSystem.GetPointer())();
-		auto match_id = reinterpret_cast<uint32_t *>(gc + 0x818);
-	
-		// why the fuck did Valve even make this shitty ass survey??
-		if (*match_id & 2)
-			*match_id &= ~2;
-	}
+	// remember, GCTFGCClientSystem is a function that returns a pointer!
+	auto gc = reinterpret_cast<uintptr_t (*)()>(Sigs::GTFGCClientSystem.GetPointer())();
+	auto match_id = reinterpret_cast<uint32_t *>(gc + 0x818);
 
-	DETOUR_ORIG_CALL(&summary_ontick_ctx, CTFMatchSummary_OnTick, self);
+	// why the fuck did Valve even make this shitty ass survey??
+	if (*match_id & 2)
+		*match_id &= ~2;
+
+	original_CTFMatchSummary_OnTick(rdi);
 }
 
-void Hook_CTFMatchSummary_OnTick()
-{
-	detour_init(&summary_ontick_ctx, Sigs::CTFMatchSummary_OnTick.GetPointer(),
-		    (void *)&Hooked_CTFMatchSummary_OnTick);
-	if (!detour_enable(&summary_ontick_ctx))
-		features::logs.Error("Couldn't hook CTFMatchSumary::OnTick");
-}
-
-//MARK_FOR_INIT(Hook_CTFMatchSummary_OnTick)
+#endif

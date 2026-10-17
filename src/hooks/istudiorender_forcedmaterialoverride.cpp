@@ -1,33 +1,13 @@
-#include "../core/core.h"
-
-#include "../hooks.h"
-
 #include "../features/chams/chams.h"
 #include "../features/glow/glow.h"
-#include "../features/hook_initializer/initializer.h"
+#include "../features/hookmanager/hookmanager.hpp"
 
 using ForcedMaterialOverrideFn = void (*)(IStudioRender* rdi, IMaterial* mat, OverrideType_t nOverrideType);
 
-static void ForcedMaterialOverride(IStudioRender* rdi, IMaterial *mat, OverrideType_t nOverrideType)
+INIT_VTABLE_HOOK(ForcedMaterialOverride, void, (IStudioRender* rdi, IMaterial *mat, OverrideType_t nOverrideType), interfaces::StudioRender, 33)
 {
-	if (gApp->IsInitialized())
-	{
-		if (features::chams.IsDrawing() || features::glow.IsRunning())
-			return;
-	}
+	if (features::chams.IsDrawing() || features::glow.IsRunning())
+		return;
 
-	auto original = VMTHooks::StudioRender.GetOriginal<ForcedMaterialOverrideFn>(33);
-	original(rdi, mat, nOverrideType);
+	original_ForcedMaterialOverride(rdi, mat, nOverrideType);
 }
-
-void HookForcedMaterialOverride()
-{
-	VMTHooks::StudioRender.Hook(33, &ForcedMaterialOverride);
-
-#ifdef DEBUG
-	constexpr Color_t color = {100, 255, 100, 255};
-	helper::console::ColoredPrint("IStudioRender::ForcedMaterialOverride hooked\n", color);
-#endif
-}
-
-MARK_FOR_INIT(HookForcedMaterialOverride)

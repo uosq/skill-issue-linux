@@ -1,8 +1,4 @@
-#include "../core/core.h"
-
 #include "../sdk/interfaces/interfaces.h"
-
-#include "../hooks.h"
 
 #include "../features/backtrack/backtrack.h"
 #include "../features/entitylist/entitylist.h"
@@ -11,19 +7,14 @@
 #include "../features/esp/esp.h"
 #include "../features/spyalert/spyalert.h"
 #include "../features/playerlist/playerlist.h"
-#include "../features/hook_initializer/initializer.h"
+#include "../features/hookmanager/hookmanager.hpp"
 #include "../features/nopush/nopush.h"
 #include "../features/visuals/thirdperson/thirdperson.h"
 
 using FrameStageNotifyFn = void (*)(CHLClient* rdi, int stage);
 
-static void FrameStageNotify(CHLClient* rdi, int stage)
+INIT_VTABLE_HOOK(FrameStageNotify, void, (CHLClient* rdi, int stage), interfaces::ClientDLL, 35)
 {
-	auto original = VMTHooks::Client.GetOriginal<FrameStageNotifyFn>(35);
-
-	if (!gApp->IsInitialized())
-		return original(rdi, stage);
-
 	switch (stage)
 	{
 		case FRAME_RENDER_START:
@@ -40,7 +31,7 @@ static void FrameStageNotify(CHLClient* rdi, int stage)
 		default: break;
 	}
 
-	original(rdi, stage);
+	original_FrameStageNotify(rdi, stage);
 
 	features::scriptmanager.CallHooks("FrameStageNotify", stage);
 
@@ -66,15 +57,3 @@ static void FrameStageNotify(CHLClient* rdi, int stage)
 		break;
 	}
 }
-
-void HookFrameStageNotify()
-{
-	VMTHooks::Client.Hook(35, &FrameStageNotify);
-
-#ifdef DEBUG
-	constexpr Color_t color = {100, 255, 100, 255};
-	helper::console::ColoredPrint("IBaseClientDll::FrameStageNotify hooked\n", color);
-#endif
-}
-
-MARK_FOR_INIT(HookFrameStageNotify)

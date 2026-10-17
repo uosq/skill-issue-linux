@@ -1,6 +1,3 @@
-#include "../hooks.h"
-#include "../core/core.h"
-
 #include "../features/entitylist/entitylist.h"
 #include "../features/spectators/spectators.h"
 #include "../features/visuals/viewmodel_aim/viewmodel_aim.h"
@@ -8,17 +5,13 @@
 #include "../features/esp/esp.h"
 
 #include "../features/scriptmanager/scriptmanager.h"
-#include "../features/hook_initializer/initializer.h"
+#include "../features/hookmanager/hookmanager.hpp"
 
 using LevelInitPostEntityFn = void (*)(CHLClient *thisptr);
 
-static void LevelInitPostEntity(CHLClient* rdi)
+INIT_VTABLE_HOOK(LevelInitPostEntity, void, (CHLClient* rdi), interfaces::ClientDLL, 6)
 {
-	auto original = VMTHooks::Client.GetOriginal<LevelInitPostEntityFn>(6);
-	original(rdi);
-
-	if (!gApp->IsInitialized())
-		return;
+	original_LevelInitPostEntity(rdi);
 
 	features::entities.Reserve();
 	features::viewmodel_aim.ResetStopTime();
@@ -28,15 +21,3 @@ static void LevelInitPostEntity(CHLClient* rdi)
 
 	features::scriptmanager.CallHooks("LevelInitPostEntity");
 }
-
-void HookLevelInitPostEntity()
-{
-	VMTHooks::Client.Hook(6, &LevelInitPostEntity);
-
-#ifdef DEBUG
-	constexpr Color_t color = {100, 255, 100, 255};
-	helper::console::ColoredPrint("BaseClientDll::LevelInitPostEntity hooked\n", color);
-#endif
-}
-
-MARK_FOR_INIT(HookLevelInitPostEntity)

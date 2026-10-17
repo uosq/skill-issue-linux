@@ -1,49 +1,60 @@
-#include "core/core.h"
-
-#include <cstdio>
 #include <thread>
 #include <chrono>
 
+#include "features/MaterialManager/materialmanager.h"
+#include "features/backtrack/backtrack.h"
+#include "features/chams/chams.h"
+#include "features/glow/glow.h"
+#include "features/hookmanager/hookmanager.hpp"
+#include "features/network/network.h"
+#include "features/playerlist/playerlist.h"
+#include "features/radar/radar.h"
+#include "features/scriptmanager/scriptmanager.h"
+#include "features/ticks/ticks.h"
+#include "features/visuals/viewmodel_aim/viewmodel_aim.h"
+#include "features/visuals/viewmodel_interp/viewmodel_interp.h"
 #include "sdk/interfaces/interfaces.h"
+#include "sdk/netvars/netvar.h"
+#include "sdk/signatures/signatures.h"
 
 static void InitThread()
 {
 	while (true)
 	{
-		if (init_factories())
+		if (init_factories() && init_interfaces() && init_global_interfaces())
 			break;
 
 		std::this_thread::sleep_for(std::chrono::milliseconds(200));
 	}
 
-	while (true)
-	{
-		if (init_interfaces() && init_global_interfaces())
-			break;
+	// we're fucked
+	if (!features::network.init())
+		return;
 
-		std::this_thread::sleep_for(std::chrono::milliseconds(200));
-	}
+	if (!Sigs_InitAll())
+		return;
 
-	gApp->Setup();
+	Netvars::Setup();
 
-	std::fprintf(stdout, "[+] Skill issue successfully attached and initialized!\n");
+	features::scriptmanager.Init();
+
+	features::ticks.Init();
+	features::materials.Init();
+	features::playerlist.Init();
+
+	features::backtrack.Init();
+	features::viewmodel_interp.Init();
+	features::viewmodel_aim.Init();
+	features::radar.Init();
+	features::esp.Init();
+	features::glow.Init();
+	features::chams.Init();
+
+	CHookManager::LoadAllHooks();
 }
 
-__attribute__((constructor)) void init(void)
+extern "C" void __attribute__((visibility("default"))) InitSkillIssue()
 {
-	// never trust C++ initialization
-	// fuck C++
-	gApp = new CApp();
-
 	std::thread init_thread(InitThread);
 	init_thread.detach();
-}
-
-__attribute__((destructor)) void unload(void)
-{
-	if (gApp)
-	{
-		delete gApp;
-		gApp = nullptr;
-	}
 }

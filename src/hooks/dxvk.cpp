@@ -4,172 +4,50 @@
 #include "../sdk/definitions/d3d9.h"
 
 #include "../thirdparty/imgui/imgui_impl_dx9.h"
-#include "../thirdparty/libdetour/libdetour.h"
 
 #include "../features/gui/gui.h"
 
-#include "../features/hook_initializer/initializer.h"
+#include "../features/hookmanager/hookmanager.hpp"
 
-typedef HRESULT(__stdcall *Present_t)(IDirect3DDevice9 *, CONST RECT *, CONST RECT *, HWND, CONST RGNDATA *);
-typedef HRESULT(__stdcall *Reset_t)(IDirect3DDevice9 *, D3DPRESENT_PARAMETERS *);
+LPDIRECT3DDEVICE9 d3d_device = nullptr;
 
-DETOUR_DECL_TYPE(HRESULT, original_Present, IDirect3DDevice9 *, CONST RECT *, CONST RECT *, HWND, CONST RGNDATA *);
-DETOUR_DECL_TYPE(HRESULT, original_Reset, IDirect3DDevice9 *, D3DPRESENT_PARAMETERS *);
-
-static detour_ctx_t present_ctx;
-static detour_ctx_t reset_ctx;
-
-HRESULT __stdcall Hooked_Present
-(
-	IDirect3DDevice9 *pDevice,
-	const RECT *pSourceRect, const RECT *pDestRect,
-	HWND hDestWindowOverride, const RGNDATA *pDirtyRegion
-)
+// 2 vfunctions after D3D9DeviceEx::Reset
+// you find vfunction18 (Present) which calls PresentEx
+// but PresentEx and Present are generic as shit so can't reliably sig them
+// so use the D3D9SwapChainEx::Present instead
+// https://github.com/doitsujin/dxvk/blob/64542839fedb9684a5636660d1d138121ee17eec/src/d3d9/d3d9_device.cpp#L4248
+INIT_HOOK(D3D9SwapChainEx_Present, HRESULT, (IDirect3DSwapChain9Ex* swapchain, const RECT* pSourceRect,
+    const RECT* pDestRect,
+	  HWND hDestWindowOverride,
+    const RGNDATA* pDirtyRegion,
+	  DWORD dwFlags), "libdxvk_d3d9.so", "41 57 41 56 49 89 D6 41 55 41 54 55 48 89 FD")
 {
-	features::gui.on_present(pDevice, pSourceRect, pDestRect, hDestWindowOverride, pDirtyRegion);
+	if (!d3d_device)
+	{
+		(void)swapchain->GetDevice(&d3d_device);
+		// undo the AddRef from GetDevice
+		// https://github.com/doitsujin/dxvk/blob/a9ab43b31d6ee5054a69d31080d43f867bed1d15/src/util/com/com_pointer.h#L17
+		// https://github.com/doitsujin/dxvk/blob/a9ab43b31d6ee5054a69d31080d43f867bed1d15/src/d3d9/d3d9_device_child.h#L56
+		if (d3d_device) d3d_device->Release();
+	}
 
-	HRESULT ret;
-	DETOUR_ORIG_GET(&present_ctx, ret, original_Present, pDevice, pSourceRect, pDestRect, hDestWindowOverride,
-			pDirtyRegion);
-	return ret;
+	if (d3d_device)
+	{
+		features::gui.on_present(d3d_device, pSourceRect, pDestRect, hDestWindowOverride, pDirtyRegion);
+	}
+
+	return original_D3D9SwapChainEx_Present(swapchain, pSourceRect, pDestRect, hDestWindowOverride, pDirtyRegion, dwFlags);
 }
 
-HRESULT __stdcall Hooked_Reset(IDirect3DDevice9 *pDevice, D3DPRESENT_PARAMETERS *pPresentationParameters)
+// xref: Device reset failed because device still has alive losable resources: Device not reset. Remaining resources:
+INIT_HOOK(D3D9DeviceEx_Reset, HRESULT, (LPDIRECT3DDEVICE9 device, D3DPRESENT_PARAMETERS* pPresentationParameters), "libdxvk_d3d9.so", "41 57 41 56 45 31 F6 41 55 41 54 49 89 F4")
 {
-	features::gui.on_reset(pDevice, pPresentationParameters);
+	features::gui.on_reset(d3d_device, pPresentationParameters);
 
-	HRESULT ret;
-	DETOUR_ORIG_GET(&reset_ctx, ret, original_Reset, pDevice, pPresentationParameters);
+	HRESULT ret = original_D3D9DeviceEx_Reset(device, pPresentationParameters);
 
 	if (SUCCEEDED(ret))
 		features::gui.update_presentation_parameters(pPresentationParameters);
 
 	return ret;
 }
-
-void *GetModuleBaseAddress(const char *module_name)
-{
-	std::ifstream file("/proc/self/maps");
-	if (!file.is_open())
-		return nullptr;
-
-	std::string line;
-	while (std::getline(file, line))
-	{
-		if (line.find(module_name) != std::string::npos)
-		{
-			size_t dash_pos = line.find('-');
-			if (dash_pos != std::string::npos)
-			{
-				std::string addr_str = line.substr(0, dash_pos);
-				return (void *)std::stoull(addr_str, nullptr, 16);
-			}
-		}
-	}
-
-	return nullptr;
-}
-
-bool HookD3D9VTable()
-{
-	// DXVK creates a D3D9 device, we need to get the vtable
-	void *dxvk_base = GetModuleBaseAddress("libdxvk_d3d9.so");
-	if (!dxvk_base)
-	{
-		interfaces::Cvar->ConsolePrintf("DXVK not found\n");
-		return false;
-	}
-
-#ifdef DEBUG
-	interfaces::Cvar->ConsolePrintf("DXVK base: %p\n", dxvk_base);
-#endif
-
-	// Create a temporary D3D9 device to get the vtable
-	void *d3d9_lib = dlopen("libdxvk_d3d9.so", RTLD_LAZY | RTLD_NOLOAD);
-	if (!d3d9_lib)
-	{
-		interfaces::Cvar->ConsolePrintf("Could not load libdxvk_d3d9.so\n");
-		return false;
-	}
-
-	typedef IDirect3D9 *(__stdcall * Direct3DCreate9_t)(UINT);
-	Direct3DCreate9_t pDirect3DCreate9 = (Direct3DCreate9_t)dlsym(d3d9_lib, "Direct3DCreate9");
-
-	if (!pDirect3DCreate9)
-	{
-		interfaces::Cvar->ConsolePrintf("Could not find Direct3DCreate9\n");
-		return false;
-	}
-
-	IDirect3D9 *pD3D = pDirect3DCreate9(D3D_SDK_VERSION);
-	if (!pD3D)
-	{
-		interfaces::Cvar->ConsolePrintf("Direct3DCreate9 failed\n");
-		return false;
-	}
-
-	// Create a dummy device to get vtable
-	D3DPRESENT_PARAMETERS d3dpp    = {};
-	d3dpp.Windowed		       = TRUE;
-	d3dpp.SwapEffect	       = D3DSWAPEFFECT_DISCARD;
-	d3dpp.BackBufferFormat	       = D3DFMT_UNKNOWN;
-	d3dpp.BackBufferWidth	       = 1;
-	d3dpp.BackBufferHeight	       = 1;
-	d3dpp.hDeviceWindow	       = nullptr; // DXVK doesnt require this
-
-	IDirect3DDevice9 *pDummyDevice = nullptr;
-	HRESULT hr		       = pD3D->CreateDevice(D3DADAPTER_DEFAULT,
-							    D3DDEVTYPE_NULLREF, // Use null reference device for dummy
-							    nullptr, D3DCREATE_SOFTWARE_VERTEXPROCESSING, &d3dpp, &pDummyDevice);
-
-	if (FAILED(hr) || !pDummyDevice)
-	{
-		interfaces::Cvar->ConsolePrintf("Failed to create dummy device (0x%X)\n", hr);
-		pD3D->Release();
-		return false;
-	}
-
-	void **vtable	       = *(void ***)pDummyDevice;
-
-	void *original_Present = vtable[17];
-	void *original_Reset   = vtable[16];
-
-	detour_init(&present_ctx, original_Present, (void *)&Hooked_Present);
-	if (!detour_enable(&present_ctx))
-	{
-		interfaces::Cvar->ConsolePrintf("Failed to hook Present\n");
-		pDummyDevice->Release();
-		pD3D->Release();
-		return false;
-	}
-
-	detour_init(&reset_ctx, original_Reset, (void *)&Hooked_Reset);
-	if (!detour_enable(&reset_ctx))
-	{
-		interfaces::Cvar->ConsolePrintf("Failed to hook Reset\n");
-		detour_disable(&present_ctx);
-		pDummyDevice->Release();
-		pD3D->Release();
-		return false;
-	}
-
-	// Cleanup dummy resources
-	pDummyDevice->Release();
-	pD3D->Release();
-
-#ifdef DEBUG
-	interfaces::Cvar->ConsolePrintf("D3D9/DXVK hooked successfully\n");
-#endif
-	return true;
-}
-
-void HookDXVK()
-{
-	if (GetModuleBaseAddress("libdxvk_d3d9.so") == nullptr)
-		return interfaces::Cvar->ConsolePrintf("DXVK not loaded\n");
-
-	if (!HookD3D9VTable())
-		return interfaces::Cvar->ConsolePrintf("Failed to hook DXVK\n");
-}
-
-MARK_FOR_INIT(HookDXVK);

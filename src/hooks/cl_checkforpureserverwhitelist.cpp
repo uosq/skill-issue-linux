@@ -1,38 +1,10 @@
-#include "../core/core.h"
-
-#include "../sdk/signatures/signatures.h"
-
-#include "../thirdparty/libdetour/libdetour.h"
-
-#include "../features/hook_initializer/initializer.h"
+#include "../features/hookmanager/hookmanager.hpp"
 #include "../features/misc/misc.h"
 
-ADD_SIG(CL_CheckForPureServerWhitelist, "engine.so", "83 3D ? ? ? ? 01 7E ? 80 3D ? ? ? ? 00 75")
-
-DETOUR_DECL_TYPE(void, originalCheckForPureServerWhitelistFn, void *&pFilesToReload);
-detour_ctx_t CL_CheckForPureServerWhitelist_ctx;
-
-void Hooked_CL_CheckForPureServerWhitelist(void *&pFilesToReload)
+INIT_HOOK(CL_CheckForPureServerWhitelist, void, (void *&pFilesToReload), "engine.so", "83 3D ? ? ? ? 01 7E ? 80 3D ? ? ? ? 00 75")
 {
-	if (gApp->IsInitialized())
-	{
-		if (config::sv_pure_bypass::enabled.Get())
-			return;
-	}
+	if (config::sv_pure_bypass::enabled.Get())
+		return;
 
-	DETOUR_ORIG_CALL(&CL_CheckForPureServerWhitelist_ctx, originalCheckForPureServerWhitelistFn, pFilesToReload);
+	original_CL_CheckForPureServerWhitelist(pFilesToReload);
 }
-
-void HookCheckForPure()
-{
-	detour_init(&CL_CheckForPureServerWhitelist_ctx, Sigs::CL_CheckForPureServerWhitelist.GetPointer(),
-		    (void *)&Hooked_CL_CheckForPureServerWhitelist);
-	detour_enable(&CL_CheckForPureServerWhitelist_ctx);
-
-#ifdef DEBUG
-	constexpr Color_t color{100, 255, 100, 255};
-	interfaces::Cvar->ConsoleColorPrintf(color, "CL_CheckForPureServerWhitelist hooked\n");
-#endif
-}
-
-MARK_FOR_INIT(HookCheckForPure)

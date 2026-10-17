@@ -1,6 +1,3 @@
-#include "../hooks.h"
-#include "../core/core.h"
-
 #include "../features/aimbot/aimbot.h"
 #include "../features/backtrack/backtrack.h"
 #include "../features/bhop/bhop.h"
@@ -12,39 +9,23 @@
 #include "../features/antiafk/antiafk.h"
 
 #include "../features/scriptmanager/scriptmanager.h"
-#include "../features/hook_initializer/initializer.h"
+#include "../features/hookmanager/hookmanager.hpp"
 
 using LevelShutdownFn = void (*)(CHLClient* rdi);
 
-static void LevelShutdown(CHLClient* rdi)
+INIT_VTABLE_HOOK(LevelShutdown, void, (CHLClient* rdi), interfaces::ClientDLL, 7)
 {
-	if (gApp->IsInitialized())
-	{
-		features::entities.Clear();
-		features::warp.Reset();
-		features::backtrack.Reset();
-		features::aimbot.Reset();
-		features::bhop.Reset();
-		features::spectators.OnLevelShutdown();
-		features::chams.OnLevelShutdown();
-		features::esp.OnLevelShutdown();
-		features::antiafk.OnLevelShutdown();
-	
-		features::scriptmanager.CallHooks("LevelShutdown");
-	}
+	features::entities.Clear();
+	features::warp.Reset();
+	features::backtrack.Reset();
+	features::aimbot.Reset();
+	features::bhop.Reset();
+	features::spectators.OnLevelShutdown();
+	features::chams.OnLevelShutdown();
+	features::esp.OnLevelShutdown();
+	features::antiafk.OnLevelShutdown();
 
-	auto original = VMTHooks::Client.GetOriginal<LevelShutdownFn>(7);
-	original(rdi);
+	features::scriptmanager.CallHooks("LevelShutdown");
+
+	original_LevelShutdown(rdi);
 }
-
-void HookLevelShutdown()
-{
-	VMTHooks::Client.Hook(7, &LevelShutdown);
-
-#ifdef DEBUG
-	constexpr Color_t color = {100, 255, 100, 255};
-	helper::console::ColoredPrint("BaseClientDll::LevelShutdown hooked\n", color);
-#endif
-}
-
-MARK_FOR_INIT(HookLevelShutdown)

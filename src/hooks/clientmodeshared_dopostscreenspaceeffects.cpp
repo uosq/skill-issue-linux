@@ -1,41 +1,21 @@
-#include "../core/core.h"
-
 #include "../features/backtrack/backtrack.h"
 #include "../features/chams/chams.h"
 #include "../features/glow/glow.h"
 #include "../features/scriptmanager/scriptmanager.h"
-#include "../features/hook_initializer/initializer.h"
-
-#include "../hooks.h"
+#include "../features/hookmanager/hookmanager.hpp"
 
 using DoPostScreenSpaceEffectsFn = bool (*)(IClientMode* rdi, CViewSetup* setup);
 
-static bool DoPostScreenSpaceEffects(IClientMode* rdi, CViewSetup* setup)
+INIT_VTABLE_HOOK(DoPostScreenSpaceEffects, bool, (IClientMode* rdi, CViewSetup* setup), interfaces::ClientMode, 40)
 {
-	if (gApp->IsInitialized())
-	{
-		features::backtrack.DoPostScreenSpaceEffects();
-		//Chams::Run();
-		features::glow.Run();
-	
-		if (auto pLocal = features::entities.GetLocal(); pLocal != nullptr)
-			features::chams.OnDoPostScreenSpaceEffects(pLocal);
-	
-		features::scriptmanager.CallHooks("DoPostScreenSpaceEffects");
-	}
+	features::backtrack.DoPostScreenSpaceEffects();
+	//Chams::Run();
+	features::glow.Run();
 
-	auto original = VMTHooks::ClientMode.GetOriginal<DoPostScreenSpaceEffectsFn>(40);
-	return original(rdi, setup);
+	if (auto pLocal = features::entities.GetLocal(); pLocal != nullptr)
+		features::chams.OnDoPostScreenSpaceEffects(pLocal);
+
+	features::scriptmanager.CallHooks("DoPostScreenSpaceEffects");
+
+	return original_DoPostScreenSpaceEffects(rdi, setup);
 }
-
-void HookDoPostScreenSpaceEffects(void)
-{
-	VMTHooks::ClientMode.Hook(40, &DoPostScreenSpaceEffects);
-
-#ifdef DEBUG
-	constexpr Color_t color = {100, 255, 100, 255};
-	helper::console::ColoredPrint("ClientMode::DoPostScreenSpaceEffects Hooked\n", color);
-#endif
-}
-
-MARK_FOR_INIT(HookDoPostScreenSpaceEffects)

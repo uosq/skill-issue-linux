@@ -1,35 +1,15 @@
-#include "../core/core.h"
-
-#include "../hooks.h"
-
 #include "../sdk/definitions/ivengineclient.h"
+#include "../sdk/interfaces/interfaces.h"
 
 #include "../features/scriptmanager/scriptmanager.h"
-#include "../features/hook_initializer/initializer.h"
+#include "../features/hookmanager/hookmanager.hpp"
 
 using LevelInitPreEntityFn = void(*)(CHLClient* thisptr, const char* mapName);
 
-static void LevelInitPreEntity(CHLClient* thisptr, const char* mapName)
+INIT_VTABLE_HOOK(LevelInitPreEntity, void, (CHLClient* thisptr, const char* mapName), interfaces::ClientDLL, 5)
 {
-	auto original = VMTHooks::Client.GetOriginal<LevelInitPreEntityFn>(5);
+	// lua callback
+	features::scriptmanager.CallHooks("LevelInitPreEntity", &mapName);
 
-	if (gApp->IsInitialized())
-	{
-		// lua callback
-		features::scriptmanager.CallHooks("LevelInitPreEntity", &mapName);
-	}
-
-	original(thisptr, mapName);
+	original_LevelInitPreEntity(thisptr, mapName);
 }
-
-void HookLevelInitPreEntity()
-{
-	VMTHooks::Client.Hook(5, &LevelInitPreEntity);
-
-#ifdef DEBUG
-	constexpr Color_t color{100, 255, 100, 255};
-	helper::console::ColoredPrint("BaseClientDll::LevelInitPreEntity hooked\n", color);
-#endif
-}
-
-MARK_FOR_INIT(HookLevelInitPreEntity)

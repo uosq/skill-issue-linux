@@ -38,7 +38,7 @@ DEP_FLAGS = -MMD -MP
 
 # Compiler flags
 CFLAGS = -march=$(MARCH) -shared -std=c++17 $(OPT) -fPIC -Werror -g -rdynamic -DSOL_ALL_SAFETIES_ON=1 $(DEP_FLAGS)
-CFLAGS_C = -march=$(MARCH) $(OPT) -fPIC -Werror -g -rdynamic $(DEP_FLAGS)
+CFLAGS_C = -march=$(MARCH) $(OPT) -fPIC -Werror -g -rdynamic $(DEP_FLAGS) -DFUNCHOOK_USE_DISTORM -DDISASM_DISTORM
 
 # Linker flags
 LDFLAGS = -lSDL2 -lvulkan -lm -ldl -lcurl

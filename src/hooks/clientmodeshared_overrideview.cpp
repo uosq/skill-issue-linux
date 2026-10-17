@@ -1,24 +1,20 @@
 #include "../sdk/classes/player.h"
 
-#include "../hooks.h"
-#include "../core/core.h"
-
 #include "../features/entitylist/entitylist.h"
 #include "../features/visuals/norecoil/norecoil.h"
 #include "../features/visuals/thirdperson/thirdperson.h"
 
 #include "../features/scriptmanager/scriptmanager.h"
 #include "../features/visuals/customfov/customfov.h"
-#include "../features/hook_initializer/initializer.h"
+#include "../features/hookmanager/hookmanager.hpp"
 
 using OverrideViewFn = void (*)(IClientMode* rdi, CViewSetup *pView);
 
-static void OverrideView(IClientMode* rdi, CViewSetup *pView)
+INIT_VTABLE_HOOK(OverrideView, void, (IClientMode* rdi, CViewSetup* pView), interfaces::ClientDLL, 17)
 {
-	auto original = VMTHooks::ClientMode.GetOriginal<OverrideViewFn>(17);
-	original(rdi, pView);
+	original_OverrideView(rdi, pView);
 
-	if (!gApp->IsInitialized() || pView == nullptr)
+	if (pView == nullptr)
 		return;
 
 	features::scriptmanager.CallHooks("OverrideView", pView);
@@ -30,15 +26,3 @@ static void OverrideView(IClientMode* rdi, CViewSetup *pView)
 		features::customfov.OnOverrideView(pLocal, pView);
 	}
 }
-
-void HookOverrideView()
-{
-	VMTHooks::ClientMode.Hook(17, &OverrideView);
-
-#ifdef DEBUG
-	constexpr Color_t color = {100, 255, 100, 255};
-	helper::console::ColoredPrint("ClientModeShared::OverrideView hooked\n", color);
-#endif
-}
-
-MARK_FOR_INIT(HookOverrideView)

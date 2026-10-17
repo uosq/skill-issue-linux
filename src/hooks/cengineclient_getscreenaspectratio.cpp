@@ -2,28 +2,9 @@
 
 #include "../features/config/config.h"
 
-#include "../hooks.h"
-#include "../core/core.h"
-
-#include "../features/hook_initializer/initializer.h"
+#include "../features/hookmanager/hookmanager.hpp"
 #include "../features/misc/misc.h"
 
-using GetScreenAspectRatioFn = float(*)(void* self);
-
-static float GetScreenAspectRatio(void* self)
-{
-	if (gApp->IsInitialized())
-	{
-		if (config::aspect_ratio::value.Get() > 0 && !interfaces::Engine->IsTakingScreenshot())
-			return config::aspect_ratio::value.Get();
-	}
-
-	auto original = VMTHooks::Engine.GetOriginal<GetScreenAspectRatioFn>(95);
-	return original(self);
-}
-
-static void Hook_CEngineClient_GetScreenAspectRatio()
-{
 /*
 void FUN_01f20050(undefined8 param_1,long *param_2)
 {
@@ -52,7 +33,10 @@ inside CTFMatchSummary::InitPlayerList( TFSectionedListPanel *pPlayerList, int n
 first variable
 */
 
-	VMTHooks::Engine.Hook(95, &GetScreenAspectRatio);
-}
+INIT_VTABLE_HOOK(GetScreenAspectRatio, float, (void* self), interfaces::Engine, 95)
+{
+	if (config::aspect_ratio::value.Get() > 0 && !interfaces::Engine->IsTakingScreenshot())
+		return config::aspect_ratio::value.Get();
 
-MARK_FOR_INIT(Hook_CEngineClient_GetScreenAspectRatio)
+	return original_GetScreenAspectRatio(self);
+}

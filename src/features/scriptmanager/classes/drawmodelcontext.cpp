@@ -2,7 +2,6 @@
 #include "../../../thirdparty/sol3/sol.hpp"
 
 #include "../../../sdk/classes/entity.h"
-#include "../../../hooks.h"
 
 #include "drawmodelcontext.h"
 
@@ -46,8 +45,7 @@ void DrawModelContext::CallOriginal()
 {
 	if (!valid) return;
 
-	auto original = VMTHooks::ModelRender.GetOriginal<DrawModelExecuteFn>(19);
-	original(thisptr, state, pInfo, pCustomBoneToWorld);
+	// oh no
 }
 
 void BindDrawModelContext(sol::state& lua)

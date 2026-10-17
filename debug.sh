@@ -21,4 +21,5 @@ sudo gdb -q -n -p "$PID" \
 	-ex "set pagination off" \
 	-ex "set print pretty on" \
 	-ex "call (void*)dlopen(\"$SO\", 2)" \
-	-ex "call (char*)dlerror()"
+	-ex "call (char*)dlerror()" \
+	-ex "call (void)InitSkillIssue()"

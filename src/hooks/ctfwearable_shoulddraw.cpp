@@ -1,8 +1,12 @@
+#if 0
+
+/*
+!!! If for whatever reason we need this, update this to the new hook system!!!
+*/
+
 #include "../sdk/signatures/signatures.h"
 
-#include "../thirdparty/libdetour/libdetour.h"
-
-#include "../features/hook_initializer/initializer.h"
+#include "../features/hookmanager/hookmanager.hpp"
 
 // CTFWearable::ShouldDraw(void* self);
 // sig 55 48 89 E5 41 57 41 56 41 55 41 54 49 89 FC 53 48 83 EC 18 8B 97 54 07 00 00
@@ -34,3 +38,5 @@ void Hook_CTFWearable_ShouldDraw()
 }
 
 MARK_FOR_INIT(Hook_CTFWearable_ShouldDraw)
+
+#endif

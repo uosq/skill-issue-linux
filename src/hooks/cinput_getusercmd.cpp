@@ -1,24 +1,10 @@
 #include "../sdk/interfaces/interfaces.h"
 
-#include "../hooks.h"
-
-#include "../features/hook_initializer/initializer.h"
+#include "../features/hookmanager/hookmanager.hpp"
 
 using GetUserCmdFn = CUserCmd *(*)(void *input, int sequence_number);
 
-static CUserCmd* GetUserCmd(void *input, int sequence_number)
+INIT_VTABLE_HOOK(GetUserCmd, CUserCmd*, (void* input, int sequence), interfaces::CInput, 8)
 {
-	return &(static_cast<IInput *>(interfaces::CInput)->m_pCommands[sequence_number % 90]);
+	return &(static_cast<IInput *>(interfaces::CInput)->m_pCommands[sequence % 90]);
 }
-
-static void Hook_GetUserCmd(void)
-{
-	VMTHooks::CInput.Hook(8, &GetUserCmd);
-
-#ifdef DEBUG
-	interfaces::Cvar->ConsolePrintf("Hooked CInput::GetUserCmd\n");
-
-	#endif
-}
-
-MARK_FOR_INIT(Hook_GetUserCmd)

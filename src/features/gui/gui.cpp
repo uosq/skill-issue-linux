@@ -1,7 +1,5 @@
 #include "gui.h"
 
-#include "../../core/core.h"
-
 #include "../../thirdparty/imgui/imgui_impl_opengl3.h"
 #include "../../thirdparty/imgui/imgui_impl_sdl2.h"
 
@@ -199,9 +197,6 @@ void CGui::sdl_process_event(SDL_Event* event, int ret)
 
 void CGui::on_swapwindow(SDL_Window* window)
 {
-	if (!gApp->IsInitialized())
-		return;
-
 	if (our_context == nullptr || game_context == nullptr)
 	{
 		game_context = SDL_GL_GetCurrentContext();
@@ -318,9 +313,6 @@ void CGui::dxvk_new_frame()
 
 void CGui::on_present(IDirect3DDevice9* pDevice, const RECT* pSourceRect, const RECT* pDestRect, HWND hDestWindowOverride, const RGNDATA* pDirtyRegion)
 {
-	if (!gApp->IsInitialized())
-		return;
-
 	if (!pd3dDevice)
 		pd3dDevice = pDevice;
 
@@ -330,7 +322,7 @@ void CGui::on_present(IDirect3DDevice9* pDevice, const RECT* pSourceRect, const 
 
 void CGui::on_reset(IDirect3DDevice9* pDevice, D3DPRESENT_PARAMETERS* pPresentationParameters)
 {
-	if (gApp->IsInitialized() && dxvk_initialized)
+	if (dxvk_initialized)
 	{
 		ImGui_ImplDX9_Shutdown();
 		ImGui_ImplSDL2_Shutdown();
@@ -340,9 +332,6 @@ void CGui::on_reset(IDirect3DDevice9* pDevice, D3DPRESENT_PARAMETERS* pPresentat
 
 void CGui::update_presentation_parameters(D3DPRESENT_PARAMETERS* pPresentationParameters)
 {
-	if (!gApp->IsInitialized())
-		return;
-
 	d3dpp = *pPresentationParameters;
 }
 
@@ -504,10 +493,6 @@ void CGui::render_main_window_content()
 
 void CGui::render_windows()
 {
-	// we didnt even start, so give up
-	if (!gApp->IsInitialized())
-		return;
-
 	ImDrawList* pDraw = ImGui::GetBackgroundDrawList();
 	if (pDraw == nullptr)
 		return;
